@@ -23,6 +23,8 @@ namespace exSales.DTO.Network
         public double WithdrawalMin { get; set; }
         [JsonPropertyName("withdrawalPeriod")]
         public int WithdrawalPeriod { get; set; }
+        [JsonPropertyName("plan")]
+        public NetworkPlanEnum Plan { get; set; }
         [JsonPropertyName("status")]
         public NetworkStatusEnum Status { get; set; }
     }

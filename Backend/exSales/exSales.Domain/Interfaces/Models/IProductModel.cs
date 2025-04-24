@@ -26,7 +26,7 @@ namespace exSales.Domain.Interfaces.Models
 
         IEnumerable<IProductModel> ListByNetwork(long networkId, IProductDomainFactory factory);
         IProductModel GetById(long id, IProductDomainFactory factory);
-        IProductModel Insert(IProductModel model, IProductDomainFactory factory);
-        IProductModel Update(IProductModel model, IProductDomainFactory factory);
+        IProductModel Insert(IProductDomainFactory factory);
+        IProductModel Update(IProductDomainFactory factory);
     }
 }

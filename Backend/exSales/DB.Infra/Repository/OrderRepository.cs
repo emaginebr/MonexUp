@@ -58,11 +58,20 @@ namespace DB.Infra.Repository
             return model;
         }
 
-        public IEnumerable<IOrderModel> ListByUser(long networkId, long userId, IOrderDomainFactory factory)
+        public IEnumerable<IOrderModel> List(long networkId, long userId, int status, IOrderDomainFactory factory)
         {
-            return _ccsContext.Orders
-                .Where(x => x.Product.NetworkId == networkId && x.UserId == userId)
-                .Select(x => DbToModel(factory, x));
+            var q = _ccsContext.Orders;
+            if (networkId > 0)
+            {
+                q.Where(x => x.Product.NetworkId == networkId);
+            }
+            if (userId > 0) {
+                q.Where(x => x.UserId == userId);
+            }
+            if (status > 0) {
+                q.Where(x => x.Status == status);
+            }
+            return q.ToList().Select(x => DbToModel(factory, x));
         }
 
         public IOrderModel GetById(long id, IOrderDomainFactory factory)

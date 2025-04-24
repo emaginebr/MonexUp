@@ -8,7 +8,7 @@ namespace Core.Domain.Repository
 {
     public interface IInvoiceRepository<TModel, TFactory>
     {
-        IEnumerable<TModel> ListByUser(long networkId, long userId, TFactory factory);
+        IEnumerable<TModel> List(long networkId, long orderId, long userId, int status, TFactory factory);
         TModel GetById(long id, TFactory factory);
         TModel Insert(TModel model, TFactory factory);
         TModel Update(TModel model, TFactory factory);

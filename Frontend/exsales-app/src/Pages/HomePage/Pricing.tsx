@@ -44,7 +44,8 @@ export default function Header() {
                                             <ul className="list-unstyled">
                                                 <li>1 Rede</li>
                                                 <li>3 Produtos</li>
-                                                <li>5 Vendedores</li>
+                                                <li>5% sobre as trasações</li>
+                                                <li>15 Vendedores</li>
                                             </ul>
                                         </div>
                                     </CardText>
@@ -71,15 +72,14 @@ export default function Header() {
                                             <ul className="list-unstyled">
                                                 <li>3 Redes</li>
                                                 <li>100 produtos por rede</li>
+                                                <li>sem taxa sobre trasações</li>
                                                 <li>Vendedores Ilimitados</li>
                                             </ul>
 
                                         </div>
                                     </CardText>
                                     <div className="d-grid lc-block">
-                                        <Button variant="primary" size="lg" onClick={(e) => {
-                                            navigate("/network");
-                                        }}>Order Now</Button>
+                                        <Button variant="primary" size="lg" disabled>Comming Soon</Button>
                                     </div>
                                 </CardBody>
                             </Card>
@@ -100,14 +100,13 @@ export default function Header() {
                                             <ul className="list-unstyled">
                                                 <li>10 Redes</li>
                                                 <li>1.000 produtos por rede</li>
+                                                <li>sem taxa sobre trasações</li>
                                                 <li>Vendedores Ilimitados</li>
                                             </ul>
                                         </div>
                                     </div>
                                     <div className="d-grid lc-block">
-                                        <Button variant="primary" size="lg" onClick={(e) => {
-                                            navigate("/network");
-                                        }}>Order Now</Button>
+                                        <Button variant="primary" size="lg" disabled>Comming Soon</Button>
                                     </div>
                                 </div>
                             </div>

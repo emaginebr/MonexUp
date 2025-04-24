@@ -18,9 +18,9 @@ namespace exSales.Domain.Interfaces.Models
 
         OrderStatusEnum Status { get; set; }
 
-        IEnumerable<IOrderModel> ListByUser(long networkId, long userId, IOrderDomainFactory factory);
+        IEnumerable<IOrderModel> List(long networkId, long userId, OrderStatusEnum? status, IOrderDomainFactory factory);
         IOrderModel GetById(long id, IOrderDomainFactory factory);
-        IOrderModel Insert(IOrderModel model, IOrderDomainFactory factory);
-        IOrderModel Update(IOrderModel model, IOrderDomainFactory factory);
+        IOrderModel Insert(IOrderDomainFactory factory);
+        IOrderModel Update(IOrderDomainFactory factory);
     }
 }

@@ -27,19 +27,19 @@ namespace exSales.Domain.Impl.Models
         public long UserId { get; set; }
         public OrderStatusEnum Status { get; set; }
 
-        public IOrderModel Insert(IOrderModel model, IOrderDomainFactory factory)
+        public IOrderModel Insert(IOrderDomainFactory factory)
         {
-            return _repositoryOrder.Insert(model, factory);
+            return _repositoryOrder.Insert(this, factory);
         }
 
-        public IOrderModel Update(IOrderModel model, IOrderDomainFactory factory)
+        public IOrderModel Update(IOrderDomainFactory factory)
         {
-            return _repositoryOrder.Update(model, factory);
+            return _repositoryOrder.Update(this, factory);
         }
 
-        public IEnumerable<IOrderModel> ListByUser(long networkId, long userId, IOrderDomainFactory factory)
+        public IEnumerable<IOrderModel> List(long networkId, long userId, OrderStatusEnum? status, IOrderDomainFactory factory)
         {
-            return _repositoryOrder.ListByUser(networkId, userId, factory);
+            return _repositoryOrder.List(networkId, userId, (status.HasValue ? (int) status : 0), factory);
         }
 
         public IOrderModel GetById(long id, IOrderDomainFactory factory)

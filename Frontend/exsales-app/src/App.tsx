@@ -22,6 +22,8 @@ import InvoiceListPage from './Pages/InvoiceListPage';
 import ProductListPage from './Pages/ProductListPage';
 import ProductEditPage from './Pages/ProductEditPage';
 import ProductPage from './Pages/ProductPage';
+import NetworkInsertPage from './Pages/NetworkInsertPage';
+import NetworkProvider from './Contexts/Network/NetworkProvider';
 
 function Error404() {
   return (
@@ -41,7 +43,7 @@ function Layout() {
 }
 
 function App() {
-  const ContextContainer = ContextBuilder([AuthProvider, UserProvider]);
+  const ContextContainer = ContextBuilder([AuthProvider, UserProvider, NetworkProvider]);
 
   return (
     <ContextContainer>
@@ -50,7 +52,7 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="new-seller" element={<SellerPage />} />
           <Route path="network">
-            <Route index element={<NetworkEditPage />} />
+            <Route index element={<NetworkInsertPage />} />
             <Route path="search" element={<NetworkListPage />} />
           </Route>
           <Route path="network" element={<NetworkEditPage />} />

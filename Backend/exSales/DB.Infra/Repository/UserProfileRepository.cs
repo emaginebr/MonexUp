@@ -26,6 +26,7 @@ namespace DB.Infra.Repository
             md.NetworkId = row.NetworkId;
             md.Name = row.Name;
             md.Commission = row.Commission;
+            md.Level = row.Level;
             return md;
         }
 
@@ -35,6 +36,7 @@ namespace DB.Infra.Repository
             row.NetworkId = md.NetworkId;
             row.Name = md.Name;
             row.Commission = md.Commission;
+            row.Level = md.Level;
         }
 
         public IUserProfileModel Insert(IUserProfileModel model, IUserProfileDomainFactory factory)
@@ -61,6 +63,29 @@ namespace DB.Infra.Repository
             return _ccsContext.UserProfiles
                 .Where(x => x.NetworkId == networkId)
                 .Select(x => DbToModel(factory, x));
+        }
+
+        public IUserProfileModel GetById(long profileId, IUserProfileDomainFactory factory)
+        {
+            return DbToModel(factory, _ccsContext.UserProfiles.Find(profileId));
+        }
+
+        public int GetUsersCount(long networkId, long profileId)
+        {
+            return _ccsContext.UserNetworks
+                .Where(x => x.NetworkId == networkId && x.ProfileId == profileId)
+                .Count();
+        }
+
+        public void Delete(long id)
+        {
+            var row = _ccsContext.UserProfiles.Find(id);
+            if (row == null)
+            {
+                return;
+            }
+            _ccsContext.UserProfiles.Remove(row);
+            _ccsContext.SaveChanges();
         }
     }
 }

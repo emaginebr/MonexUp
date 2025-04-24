@@ -65,11 +65,22 @@ namespace DB.Infra.Repository
             return model;
         }
 
-        public IEnumerable<IInvoiceModel> ListByUser(long networkId, long userId, IInvoiceDomainFactory factory)
+        public IEnumerable<IInvoiceModel> List(long networkId, long orderId, long userId, int status, IInvoiceDomainFactory factory)
         {
-            return _ccsContext.Invoices
-                .Where(x => x.Order.Product.NetworkId == networkId && x.UserId == userId)
-                .Select(x => DbToModel(factory, x));
+            var q = _ccsContext.Invoices.Where(x => x.Order.Product.NetworkId == networkId);
+            if (orderId > 0)
+            {
+                q = q.Where(x => x.OrderId == orderId);
+            }
+            if (userId > 0)
+            {
+                q = q.Where(x => x.UserId == userId);
+            }
+            if (status > 0)
+            {
+                q = q.Where(x => x.Status == status);
+            }
+            return q.ToList().Select(x => DbToModel(factory, x));
         }
 
         public IInvoiceModel GetById(long id, IInvoiceDomainFactory factory)

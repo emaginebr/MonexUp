@@ -24,24 +24,27 @@ namespace exSales.Domain.Impl.Models
 
         public long UserId { get; set; }
         public long NetworkId { get; set; }
-        public long ProfileId { get; set; }
+        public long? ProfileId { get; set; }
         public UserRoleEnum Role { get; set; }
         public UserNetworkStatusEnum Status { get; set; }
         public long? ReferrerId { get; set; }
 
-        public IUserNetworkModel Insert(IUserNetworkModel model, IUserNetworkDomainFactory factory)
+        public IUserNetworkModel Insert(IUserNetworkDomainFactory factory)
         {
-            return _repositoryNetwork.Insert(model, factory);
+            return _repositoryNetwork.Insert(this, factory);
         }
-
+        public IUserNetworkModel Update(IUserNetworkDomainFactory factory)
+        {
+            return _repositoryNetwork.Update(this, factory);
+        }
         public IEnumerable<IUserNetworkModel> ListByUser(long userId, IUserNetworkDomainFactory factory)
         {
             return _repositoryNetwork.ListByUser(userId, factory);
         }
 
-        public IUserNetworkModel Update(IUserNetworkModel model, IUserNetworkDomainFactory factory)
+        public IUserNetworkModel Get(long networkId, long userId, IUserNetworkDomainFactory factory)
         {
-            return _repositoryNetwork.Update(model, factory);
+            return _repositoryNetwork.Get(networkId, userId, factory);
         }
     }
 }

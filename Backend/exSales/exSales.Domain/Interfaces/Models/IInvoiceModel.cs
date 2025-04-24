@@ -29,7 +29,7 @@ namespace exSales.Domain.Interfaces.Models
         IInvoiceModel Insert(IInvoiceDomainFactory factory);
         IInvoiceModel Update(IInvoiceDomainFactory factory);
 
-        IEnumerable<IInvoiceModel> ListByUser(long networkId, long userId, IInvoiceDomainFactory factory);
+        IEnumerable<IInvoiceModel> List(long networkId, long orderId, long userId, InvoiceStatusEnum? status, IInvoiceDomainFactory factory);
         IInvoiceModel GetById(long id, IInvoiceDomainFactory factory);
     }
 }

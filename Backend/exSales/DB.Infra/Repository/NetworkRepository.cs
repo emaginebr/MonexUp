@@ -26,10 +26,12 @@ namespace DB.Infra.Repository
             var md = factory.BuildNetworkModel();
             md.NetworkId = row.NetworkId;
             md.Name = row.Name;
+            md.Slug = row.Slug;
             md.Email = row.Email;
             md.Commission = row.Commission;
             md.WithdrawalMin = row.WithdrawalMin;
             md.WithdrawalPeriod = row.WithdrawalPeriod;
+            md.Plan = (NetworkPlanEnum)row.Plan;
             md.Status = (NetworkStatusEnum) row.Status;
             return md;
         }
@@ -38,10 +40,12 @@ namespace DB.Infra.Repository
         {
             row.NetworkId = md.NetworkId;
             row.Name = md.Name;
+            row.Slug = md.Slug;
             row.Email = md.Email;
             row.Commission = md.Commission;
             row.WithdrawalMin = md.WithdrawalMin;
             row.WithdrawalPeriod = md.WithdrawalPeriod;
+            row.Plan = (int)md.Plan;
             row.Status = (int)md.Status;
         }
 
@@ -64,9 +68,10 @@ namespace DB.Infra.Repository
             return model;
         }
 
-        public IEnumerable<INetworkModel> ListAll(INetworkDomainFactory factory)
+        public IEnumerable<INetworkModel> ListByStatus(int status, INetworkDomainFactory factory)
         {
-            return _ccsContext.Networks.Select(x => DbToModel(factory, x));
+            var networks = _ccsContext.Networks.Where(x => x.Status == status).ToList(); 
+            return networks.Select(x => DbToModel(factory, x));
         }
 
         public INetworkModel GetById(long id, INetworkDomainFactory factory)
@@ -74,6 +79,21 @@ namespace DB.Infra.Repository
             var row = _ccsContext.Networks.Find(id);
             if (row == null)
                 return null;
+            return DbToModel(factory, row);
+        }
+
+        public bool ExistSlug(long networkId, string slug)
+        {
+            return _ccsContext.Networks.Where(x => x.Slug == slug && (networkId == 0 || x.NetworkId != networkId)).Any();
+        }
+
+        public INetworkModel GetByEmail(string email, INetworkDomainFactory factory)
+        {
+            var row = _ccsContext.Networks.Where(x => x.Email == email).FirstOrDefault();
+            if (row == null)
+            {
+                return null;
+            }
             return DbToModel(factory, row);
         }
     }

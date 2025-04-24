@@ -24,21 +24,37 @@ namespace exSales.Domain.Impl.Models
         public long ProfileId { get; set; }
         public long NetworkId { get; set; }
         public string Name { get; set; }
-        public int Commission { get; set; }
-
-        public IUserProfileModel Insert(IUserProfileModel model, IUserProfileDomainFactory factory)
-        {
-            return _repositoryProfile.Insert(model, factory);
-        }
+        public double Commission { get; set; }
+        public int Level { get; set; }
 
         public IEnumerable<IUserProfileModel> ListByNetwork(long networkId, IUserProfileDomainFactory factory)
         {
             return _repositoryProfile.ListByNetwork(networkId, factory);
         }
 
-        public IUserProfileModel Update(IUserProfileModel model, IUserProfileDomainFactory factory)
+        public IUserProfileModel GetById(long profileId, IUserProfileDomainFactory factory)
         {
-            return _repositoryProfile.Update(model, factory);
+            return _repositoryProfile.GetById(profileId, factory);
+        }
+
+        public IUserProfileModel Insert(IUserProfileDomainFactory factory)
+        {
+            return _repositoryProfile.Insert(this, factory);
+        }
+
+        public IUserProfileModel Update(IUserProfileDomainFactory factory)
+        {
+            return _repositoryProfile.Update(this, factory);
+        }
+
+        public int GetUsersCount(long networkId, long profileId)
+        {
+            return _repositoryProfile.GetUsersCount(networkId, profileId);
+        }
+
+        public void Delete(long profileId)
+        {
+            _repositoryProfile.Delete(profileId);
         }
     }
 }

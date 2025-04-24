@@ -14,7 +14,7 @@ namespace exSales.Domain.Interfaces.Models
 
         long NetworkId { get; set; }
 
-        long ProfileId { get; set; }
+        long? ProfileId { get; set; }
 
         UserRoleEnum Role { get; set; }
 
@@ -23,7 +23,8 @@ namespace exSales.Domain.Interfaces.Models
         long? ReferrerId { get; set; }
 
         IEnumerable<IUserNetworkModel> ListByUser(long userId, IUserNetworkDomainFactory factory);
-        IUserNetworkModel Insert(IUserNetworkModel model, IUserNetworkDomainFactory factory);
-        IUserNetworkModel Update(IUserNetworkModel model, IUserNetworkDomainFactory factory);
+        IUserNetworkModel Get(long networkId, long userId, IUserNetworkDomainFactory factory);
+        IUserNetworkModel Insert(IUserNetworkDomainFactory factory);
+        IUserNetworkModel Update(IUserNetworkDomainFactory factory);
     }
 }

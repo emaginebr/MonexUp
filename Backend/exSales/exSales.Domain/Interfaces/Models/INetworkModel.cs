@@ -21,12 +21,15 @@ namespace exSales.Domain.Interfaces.Models
         double WithdrawalMin { get; set; }
 
         int WithdrawalPeriod { get; set; }
+        NetworkPlanEnum Plan { get; set; }
 
         NetworkStatusEnum Status { get; set; }
 
-        IEnumerable<INetworkModel> ListAll(INetworkDomainFactory factory);
+        IEnumerable<INetworkModel> ListByStatus(NetworkStatusEnum status, INetworkDomainFactory factory);
         INetworkModel GetById(long id, INetworkDomainFactory factory);
-        INetworkModel Insert(INetworkModel model, INetworkDomainFactory factory);
-        INetworkModel Update(INetworkModel model, INetworkDomainFactory factory);
+        INetworkModel Insert(INetworkDomainFactory factory);
+        INetworkModel Update(INetworkDomainFactory factory);
+        bool ExistSlug(long networkId, string slug);
+        INetworkModel GetByEmail(string email, INetworkDomainFactory factory);
     }
 }

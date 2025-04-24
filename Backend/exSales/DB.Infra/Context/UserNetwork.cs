@@ -9,7 +9,7 @@ public partial class UserNetwork
 
     public long NetworkId { get; set; }
 
-    public long ProfileId { get; set; }
+    public long? ProfileId { get; set; }
 
     public int Role { get; set; }
 

@@ -273,10 +273,11 @@ public partial class ExSalesContext : DbContext
 
         modelBuilder.Entity<UserNetwork>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("user_networks");
+            entity.HasKey(e => new { e.UserId, e.NetworkId }).HasName("pk_user_network");
 
+            entity.ToTable("user_networks");
+
+            entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.NetworkId).HasColumnName("network_id");
             entity.Property(e => e.ProfileId).HasColumnName("profile_id");
             entity.Property(e => e.ReferrerId).HasColumnName("referrer_id");
@@ -286,23 +287,21 @@ public partial class ExSalesContext : DbContext
             entity.Property(e => e.Status)
                 .HasDefaultValue(1)
                 .HasColumnName("status");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
 
-            entity.HasOne(d => d.Network).WithMany()
+            entity.HasOne(d => d.Network).WithMany(p => p.UserNetworks)
                 .HasForeignKey(d => d.NetworkId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_user_network_network");
 
-            entity.HasOne(d => d.Profile).WithMany()
+            entity.HasOne(d => d.Profile).WithMany(p => p.UserNetworks)
                 .HasForeignKey(d => d.ProfileId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_user_network_profile");
 
-            entity.HasOne(d => d.Referrer).WithMany()
+            entity.HasOne(d => d.Referrer).WithMany(p => p.UserNetworkReferrers)
                 .HasForeignKey(d => d.ReferrerId)
                 .HasConstraintName("fk_user_network_referrer");
 
-            entity.HasOne(d => d.User).WithMany()
+            entity.HasOne(d => d.User).WithMany(p => p.UserNetworkUsers)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_user_network_user");
@@ -336,9 +335,10 @@ public partial class ExSalesContext : DbContext
             entity.Property(e => e.ProfileId)
                 .HasDefaultValueSql("nextval('profile_id_seq'::regclass)")
                 .HasColumnName("profile_id");
-            entity.Property(e => e.Commission)
-                .HasDefaultValue(0)
-                .HasColumnName("commission");
+            entity.Property(e => e.Commission).HasColumnName("commission");
+            entity.Property(e => e.Level)
+                .HasDefaultValue(1)
+                .HasColumnName("level");
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(80)

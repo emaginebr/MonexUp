@@ -11,7 +11,11 @@ public partial class UserProfile
 
     public string Name { get; set; }
 
-    public int Commission { get; set; }
+    public double Commission { get; set; }
+
+    public int Level { get; set; }
 
     public virtual Network Network { get; set; }
+
+    public virtual ICollection<UserNetwork> UserNetworks { get; set; } = new List<UserNetwork>();
 }

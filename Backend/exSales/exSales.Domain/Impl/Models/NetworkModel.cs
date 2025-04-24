@@ -29,26 +29,38 @@ namespace exSales.Domain.Impl.Models
         public double Commission { get; set; }
         public double WithdrawalMin { get; set; }
         public int WithdrawalPeriod { get; set; }
+        public NetworkPlanEnum Plan { get; set; }
         public NetworkStatusEnum Status { get; set; }
 
-        public INetworkModel Insert(INetworkModel model, INetworkDomainFactory factory)
+        public INetworkModel Insert(INetworkDomainFactory factory)
         {
-            return _repositoryNetwork.Insert(model, factory);
+            return _repositoryNetwork.Insert(this, factory);
         }
 
-        public INetworkModel Update(INetworkModel model, INetworkDomainFactory factory)
+        public INetworkModel Update(INetworkDomainFactory factory)
         {
-            return _repositoryNetwork.Update(model, factory);
+            return _repositoryNetwork.Update(this, factory);
         }
 
-        public IEnumerable<INetworkModel> ListAll(INetworkDomainFactory factory)
+        public IEnumerable<INetworkModel> ListByStatus(NetworkStatusEnum status, INetworkDomainFactory factory)
         {
-            return _repositoryNetwork.ListAll(factory);
+            return _repositoryNetwork.ListByStatus((int)status, factory);
         }
 
         public INetworkModel GetById(long id, INetworkDomainFactory factory)
         {
             return _repositoryNetwork.GetById(id, factory);
+        }
+
+        public bool ExistSlug(long networkId, string slug)
+        {
+            return _repositoryNetwork.ExistSlug(networkId, slug);
+        }
+
+        public INetworkModel GetByEmail(string email, INetworkDomainFactory factory)
+        {
+            return _repositoryNetwork.GetByEmail(email, factory);
+
         }
     }
 }

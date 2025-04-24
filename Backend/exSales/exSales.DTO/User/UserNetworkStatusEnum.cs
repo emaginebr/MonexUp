@@ -9,7 +9,8 @@ namespace exSales.DTO.User
     public enum UserNetworkStatusEnum
     {
         Active = 1,
-        Inactive = 2,
-        Blocked = 3
+        WaitForApproval = 2,
+        Inactive = 3,
+        Blocked = 4
     }
 }

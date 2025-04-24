@@ -15,10 +15,14 @@ namespace exSales.Domain.Interfaces.Models
 
         string Name { get; set; }
 
-        int Commission { get; set; }
+        double Commission { get; set; }
+        int Level { get; set; }
 
         IEnumerable<IUserProfileModel> ListByNetwork(long networkId, IUserProfileDomainFactory factory);
-        IUserProfileModel Insert(IUserProfileModel model, IUserProfileDomainFactory factory);
-        IUserProfileModel Update(IUserProfileModel model, IUserProfileDomainFactory factory);
+        IUserProfileModel GetById(long profileId, IUserProfileDomainFactory factory);
+        IUserProfileModel Insert(IUserProfileDomainFactory factory);
+        IUserProfileModel Update(IUserProfileDomainFactory factory);
+        int GetUsersCount(long networkId, long profileId);
+        void Delete(long profileId);
     }
 }

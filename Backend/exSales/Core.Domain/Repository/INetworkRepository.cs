@@ -8,9 +8,11 @@ namespace Core.Domain.Repository
 {
     public interface INetworkRepository<TModel, TFactory>
     {
-        IEnumerable<TModel> ListAll(TFactory factory);
+        IEnumerable<TModel> ListByStatus(int status, TFactory factory);
         TModel GetById(long id, TFactory factory);
+        TModel GetByEmail(string email, TFactory factory);
         TModel Insert(TModel model, TFactory factory);
         TModel Update(TModel model, TFactory factory);
+        bool ExistSlug(long networkId, string slug);
     }
 }

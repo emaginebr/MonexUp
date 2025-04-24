@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 namespace Core.Domain.Repository
 {
     public interface IUserNetworkRepository<TModel, TFactory>
-    {
+    { 
         IEnumerable<TModel> ListByUser(long userId, TFactory factory);
+        TModel Get(long networkId, long userId, TFactory factory);
         TModel Insert(TModel model, TFactory factory);
         TModel Update(TModel model, TFactory factory);
     }

@@ -71,5 +71,13 @@ namespace DB.Infra.Repository
                 .Where(x => x.UserId == userId)
                 .Select(x => DbToModel(factory, x));
         }
+
+        public IUserNetworkModel Get(long networkId, long userId, IUserNetworkDomainFactory factory)
+        {
+            return _ccsContext.UserNetworks
+                .Where(x => x.NetworkId == networkId && x.UserId == userId)
+                .Select(x => DbToModel(factory, x))
+                .FirstOrDefault();
+        }
     }
 }

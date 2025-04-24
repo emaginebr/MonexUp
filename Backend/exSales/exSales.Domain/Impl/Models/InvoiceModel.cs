@@ -41,9 +41,9 @@ namespace exSales.Domain.Impl.Models
             return _repositoryInvoice.Update(this, factory);
         }
 
-        public IEnumerable<IInvoiceModel> ListByUser(long networkId, long userId, IInvoiceDomainFactory factory)
+        public IEnumerable<IInvoiceModel> List(long networkId, long orderId, long userId, InvoiceStatusEnum? status, IInvoiceDomainFactory factory)
         {
-            return _repositoryInvoice.ListByUser(networkId, userId, factory);
+            return _repositoryInvoice.List(networkId, orderId, userId, (status.HasValue ? 0 : (int)status), factory);
         }
 
         public IInvoiceModel GetById(long id, IInvoiceDomainFactory factory)

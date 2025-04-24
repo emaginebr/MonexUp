@@ -36,19 +36,18 @@ namespace exSales.Domain.Impl.Models
             return _repositoryProduct.GetById(id, factory);
         }
 
-        public IProductModel Insert(IProductModel model, IProductDomainFactory factory)
-        {
-            return _repositoryProduct.Insert(model, factory);
-        }
-
         public IEnumerable<IProductModel> ListByNetwork(long networkId, IProductDomainFactory factory)
         {
             return _repositoryProduct.ListByNetwork(networkId, factory);
         }
-
-        public IProductModel Update(IProductModel model, IProductDomainFactory factory)
+        public IProductModel Insert(IProductDomainFactory factory)
         {
-            return _repositoryProduct.Update(model, factory);
+            return _repositoryProduct.Insert(this, factory);
+        }
+
+        public IProductModel Update(IProductDomainFactory factory)
+        {
+            return _repositoryProduct.Update(this, factory);
         }
     }
 }
