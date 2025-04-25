@@ -11,6 +11,7 @@ export default interface INetworkService {
     insert: (network: NetworkInsertInfo, token: string) => Promise<NetworkResult>;
     update: (network: NetworkInfo, token: string) => Promise<NetworkResult>;
     listByUser: (token: string) => Promise<UserNetworkListResult>;
+    getById: (networkId: number, token: string) => Promise<NetworkResult>;
     requestAccess: (networkId: number, referrerId?: number) => Promise<StatusRequest>;
     changeStatus: (networkId: number, userId: number, status: number, token: string) => Promise<StatusRequest>;
 }

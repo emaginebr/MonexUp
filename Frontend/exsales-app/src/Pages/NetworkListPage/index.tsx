@@ -9,11 +9,21 @@ import { Link, useNavigate } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
+import NetworkContext from "../../Contexts/Network/NetworkContext";
 
 export default function NetworkListPage() {
 
 
     let navigate = useNavigate();
+    const networkContext = useContext(NetworkContext);
+
+    useEffect(() => {
+        networkContext.listByUser().then((ret) => {
+            if (!ret.sucesso) {
+                alert(ret.mensagemErro);
+            }
+        });
+    }, []);
 
     return (
         <>
@@ -42,48 +52,41 @@ export default function NetworkListPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td><Link to="/minha-rede/dashboard">Minha Rede Principal</Link></td>
-                                    <td style={{ textAlign: "right" }}>10%</td>
-                                    <td>Rodrigo L.</td>
-                                    <td style={{ textAlign: "right" }}>7/100</td>
-                                    <td>
-                                        <Link to="/minha-rede">
-                                            <FontAwesomeIcon icon={faSearch} fixedWidth />
-                                        </Link>
-                                        <Link to="/minha-rede/dashboard">
-                                            <FontAwesomeIcon icon={faTrash} fixedWidth />
-                                        </Link>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><Link to="/minha-rede/dashboard">Rede Secundária</Link></td>
-                                    <td style={{ textAlign: "right" }}>15%</td>
-                                    <td>Rodrigo L.</td>
-                                    <td style={{ textAlign: "right" }}>0/10</td>
-                                    <td>
-                                        <Link to="/minha-rede">
-                                            <FontAwesomeIcon icon={faSearch} fixedWidth />
-                                        </Link>
-                                        <Link to="/minha-rede/dashboard">
-                                            <FontAwesomeIcon icon={faTrash} fixedWidth />
-                                        </Link>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><Link to="/minha-rede/dashboard">Última rede</Link></td>
-                                    <td style={{ textAlign: "right" }}>5%</td>
-                                    <td>Rodrigo L.</td>
-                                    <td style={{ textAlign: "right" }}>1/5</td>
-                                    <td>
-                                        <Link to="/minha-rede">
-                                            <FontAwesomeIcon icon={faSearch} fixedWidth />
-                                        </Link>
-                                        <Link to="/minha-rede/dashboard">
-                                            <FontAwesomeIcon icon={faTrash} fixedWidth />
-                                        </Link>
-                                    </td>
-                                </tr>
+                                {
+                                    networkContext.loading &&
+                                    <tr>
+                                        <td colSpan={5}>
+                                            <div className="d-flex justify-content-center">
+                                                <div className="spinner-border" role="status">
+                                                    <span className="visually-hidden">Loading...</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                {!networkContext.loading && networkContext.userNetworks && networkContext.userNetworks.map((network) => {
+                                    return (
+                                        <tr>
+                                            <td><a href="#" onClick={(e) => {
+                                                e.preventDefault();
+                                                networkContext.setNetwork(network.network);
+                                                navigate("/admin/dashboard");
+
+                                            }}>{network.network.name}</a></td>
+                                            <td style={{ textAlign: "right" }}>{network.network.comission}%</td>
+                                            <td>Unknow</td>
+                                            <td style={{ textAlign: "right" }}>{network.network.qtdyUsers}/{network.network.maxUsers}</td>
+                                            <td>
+                                                <Link to={"/" + network.network.slug}>
+                                                    <FontAwesomeIcon icon={faSearch} fixedWidth />
+                                                </Link>
+                                                <Link to="/admin/dashboard">
+                                                    <FontAwesomeIcon icon={faTrash} fixedWidth />
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </Table>
                     </Col>

@@ -31,5 +31,7 @@ namespace exSales.Domain.Interfaces.Models
         INetworkModel Update(INetworkDomainFactory factory);
         bool ExistSlug(long networkId, string slug);
         INetworkModel GetByEmail(string email, INetworkDomainFactory factory);
+        INetworkModel GetByName(string name, INetworkDomainFactory factory);
+        int MaxQtdyUserByNetwork();
     }
 }

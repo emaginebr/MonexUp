@@ -48,7 +48,22 @@ const NetworkService : INetworkService = {
     },
     listByUser: async (token: string) => {
         let ret: UserNetworkListResult;
-        let request = await _httpClient.doGet<UserNetworkListResult>("/api/Network/listByUser", {});
+        let request = await _httpClient.doGetAuth<UserNetworkListResult>("/api/Network/listByUser", token);
+        if (request.success) {
+            return request.data;
+        }
+        else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    },
+    getById: async (networkId: number, token: string) => {
+        let ret: NetworkResult;
+        let request = await _httpClient.doGetAuth<NetworkResult>("/api/Network/getById/" + networkId, token);
         if (request.success) {
             return request.data;
         }

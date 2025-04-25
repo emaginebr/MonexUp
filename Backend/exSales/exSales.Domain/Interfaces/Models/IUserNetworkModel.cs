@@ -24,6 +24,7 @@ namespace exSales.Domain.Interfaces.Models
 
         IEnumerable<IUserNetworkModel> ListByUser(long userId, IUserNetworkDomainFactory factory);
         IUserNetworkModel Get(long networkId, long userId, IUserNetworkDomainFactory factory);
+        int GetQtdyUserByNetwork(long networkId);
         IUserNetworkModel Insert(IUserNetworkDomainFactory factory);
         IUserNetworkModel Update(IUserNetworkDomainFactory factory);
     }

@@ -17,13 +17,15 @@ namespace exSales.API.Controllers
     public class NetworkController : ControllerBase
     {
         private readonly INetworkDomainFactory _networkFactory;
+        private readonly IUserNetworkDomainFactory _userNetworkFactory;
         private readonly IUserService _userService;
         private readonly INetworkService _networkService;
         private readonly IProfileService _profileService;
 
-        public NetworkController(INetworkDomainFactory networkFactory, IUserService userService, INetworkService networkService, IProfileService profileService)
+        public NetworkController(INetworkDomainFactory networkFactory, IUserNetworkDomainFactory userNetworkFactory, IUserService userService, INetworkService networkService, IProfileService profileService)
         {
             _networkFactory = networkFactory;
+            _userNetworkFactory = userNetworkFactory;
             _userService = userService;
             _networkService = networkService;
             _profileService = profileService;
@@ -87,6 +89,8 @@ namespace exSales.API.Controllers
                     return StatusCode(401, "Not Authorized");
                 }
 
+                var mdUserNetwork = _userNetworkFactory.BuildUserNetworkModel();
+
                 var networks = _networkService
                     .ListByUser(userSession.UserId)
                     .Select(x => _networkService.GetUserNetworkInfo(x))
@@ -95,6 +99,8 @@ namespace exSales.API.Controllers
                 {
                     var md = _networkFactory.BuildNetworkModel().GetById(network.NetworkId, _networkFactory);
                     network.Network = _networkService.GetNetworkInfo(md);
+                    network.Network.QtdyUsers = mdUserNetwork.GetQtdyUserByNetwork(network.NetworkId);
+                    network.Network.MaxUsers = md.MaxQtdyUserByNetwork();
                     if (network.ProfileId.HasValue)
                     {
                         var mdProfile = _profileService.GetById(network.ProfileId.Value);
@@ -104,6 +110,38 @@ namespace exSales.API.Controllers
                 return new NetworkListResult()
                 {
                     Networks = networks
+                };
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpGet("getById/{networkId}")]
+        public ActionResult<NetworkResult> GetById(long networkId)
+        {
+            try
+            {
+                var userSession = _userService.GetUserInSession(HttpContext);
+                if (userSession == null)
+                {
+                    return StatusCode(401, "Not Authorized");
+                }
+
+                var mdUserNetwork = _userNetworkFactory.BuildUserNetworkModel();
+
+                var network = _networkService.GetById(networkId);
+                var networkInfo = _networkService.GetNetworkInfo(network);
+                if (networkInfo != null)
+                {
+                    networkInfo.QtdyUsers = mdUserNetwork.GetQtdyUserByNetwork(network.NetworkId);
+                    networkInfo.MaxUsers = network.MaxQtdyUserByNetwork();
+                }
+                return new NetworkResult()
+                {
+                    Network = networkInfo
                 };
             }
             catch (Exception ex)

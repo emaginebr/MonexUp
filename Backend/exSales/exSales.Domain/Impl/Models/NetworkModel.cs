@@ -62,5 +62,24 @@ namespace exSales.Domain.Impl.Models
             return _repositoryNetwork.GetByEmail(email, factory);
 
         }
+
+        public INetworkModel GetByName(string name, INetworkDomainFactory factory)
+        {
+            return _repositoryNetwork.GetByName(name, factory);
+        }
+
+        public int MaxQtdyUserByNetwork() {
+            int max = 0;
+            switch (Plan)
+            {
+                case NetworkPlanEnum.Free:
+                    max = 15;
+                    break;
+                default:
+                    max = 0;
+                    break;
+            }
+            return max;
+        }
     }
 }

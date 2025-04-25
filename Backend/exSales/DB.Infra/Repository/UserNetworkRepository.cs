@@ -67,17 +67,28 @@ namespace DB.Infra.Repository
 
         public IEnumerable<IUserNetworkModel> ListByUser(long userId, IUserNetworkDomainFactory factory)
         {
-            return _ccsContext.UserNetworks
-                .Where(x => x.UserId == userId)
-                .Select(x => DbToModel(factory, x));
+            var rows = _ccsContext.UserNetworks
+                .Where(x => x.UserId == userId).ToList();
+            return rows.Select(x => DbToModel(factory, x));
         }
 
         public IUserNetworkModel Get(long networkId, long userId, IUserNetworkDomainFactory factory)
         {
-            return _ccsContext.UserNetworks
+            var row = _ccsContext.UserNetworks
                 .Where(x => x.NetworkId == networkId && x.UserId == userId)
-                .Select(x => DbToModel(factory, x))
                 .FirstOrDefault();
+            if (row == null)
+            {
+                return null;
+            }
+            return DbToModel(factory, row);
+        }
+
+        public int GetQtdyUserByNetwork(long networkId)
+        {
+            return _ccsContext.UserNetworks
+                .Where(x => x.NetworkId == networkId)
+                .Count();
         }
     }
 }

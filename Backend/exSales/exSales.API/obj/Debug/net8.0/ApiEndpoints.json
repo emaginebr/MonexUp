@@ -27,6 +27,32 @@
   },
   {
     "ContainingType": "exSales.API.Controllers.NetworkController",
+    "Method": "GetById",
+    "RelativePath": "api/Network/getById/{networkId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "networkId",
+        "Type": "System.Int64",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "exSales.DTO.Network.NetworkResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "exSales.API.Controllers.NetworkController",
     "Method": "Insert",
     "RelativePath": "api/Network/insert",
     "HttpMethod": "POST",

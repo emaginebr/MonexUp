@@ -8,4 +8,6 @@ export default interface NetworkInfo {
     withdrawalPeriod: number;
     plan: number;
     status: number;
+    qtdyUsers: number;
+    maxUsers: number;
 }

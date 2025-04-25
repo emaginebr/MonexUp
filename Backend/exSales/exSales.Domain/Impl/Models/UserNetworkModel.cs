@@ -46,5 +46,10 @@ namespace exSales.Domain.Impl.Models
         {
             return _repositoryNetwork.Get(networkId, userId, factory);
         }
+
+        public int GetQtdyUserByNetwork(long networkId)
+        {
+            return _repositoryNetwork.GetQtdyUserByNetwork(networkId);
+        }
     }
 }

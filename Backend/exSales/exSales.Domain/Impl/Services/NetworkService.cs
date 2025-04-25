@@ -58,6 +58,14 @@ namespace exSales.Domain.Impl.Services
             {
                 throw new Exception("Name is empty");
             }
+            else
+            {
+                var networkWithName = model.GetByName(network.Name, _networkFactory);
+                if (networkWithName != null && networkWithName.NetworkId != model.NetworkId)
+                {
+                    throw new Exception("Network with this name already registered");
+                }
+            }
             if (string.IsNullOrEmpty(network.Email))
             {
                 throw new Exception("Email is empty");
@@ -76,6 +84,8 @@ namespace exSales.Domain.Impl.Services
             }
 
             model.Name = network.Name;
+            model.Email = network.Email;
+            model.Commission = network.Commission;
             model.Plan = network.Plan;
             model.WithdrawalMin = 300;
             model.WithdrawalPeriod = 30;
@@ -136,6 +146,14 @@ namespace exSales.Domain.Impl.Services
             {
                 throw new Exception("Name is empty");
             }
+            else
+            {
+                var networkWithName = model.GetByName(network.Name, _networkFactory);
+                if (networkWithName != null && networkWithName.NetworkId != network.NetworkId)
+                {
+                    throw new Exception("Network with this name already registered");
+                }
+            }
             if (string.IsNullOrEmpty(network.Email))
             {
                 throw new Exception("Email is empty");
@@ -147,13 +165,17 @@ namespace exSales.Domain.Impl.Services
                     throw new Exception("Email is not valid");
                 }
                 var networkWithEmail = model.GetByEmail(network.Email, _networkFactory);
-                if (networkWithEmail != null && networkWithEmail.NetworkId != model.NetworkId)
+                if (networkWithEmail != null && networkWithEmail.NetworkId != network.NetworkId)
                 {
                     throw new Exception("Network with email already registered");
                 }
             }
 
+            model.NetworkId = network.NetworkId;
             model.Name = network.Name;
+            model.Slug = network.Slug;
+            model.Email = network.Email;
+            model.Commission = network.Commission;
             model.Plan = network.Plan;
             model.WithdrawalMin = network.WithdrawalMin;
             model.WithdrawalPeriod = network.WithdrawalPeriod;
@@ -173,6 +195,11 @@ namespace exSales.Domain.Impl.Services
             return _userNetworkFactory.BuildUserNetworkModel().ListByUser(userId, _userNetworkFactory).ToList();
         }
 
+        public INetworkModel GetById(long networkId)
+        {
+            return _networkFactory.BuildNetworkModel().GetById(networkId, _networkFactory);
+        }
+
         public UserNetworkInfo GetUserNetworkInfo(IUserNetworkModel model)
         {
             return new UserNetworkInfo
@@ -182,7 +209,8 @@ namespace exSales.Domain.Impl.Services
                 ProfileId = model.ProfileId,
                 ReferrerId = model.ReferrerId,
                 Role = model.Role,
-                Status = model.Status
+                Status = model.Status,
+                
             };
         }
 

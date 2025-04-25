@@ -8,9 +8,10 @@ namespace exSales.DTO.User
 {
     public enum UserRoleEnum
     {
+        MoRole = 0,
         User = 1,
         Seller = 2,
         NetworkManager = 3,
-        Root = 4
+        Administrator = 4
     }
 }

@@ -7,6 +7,7 @@ import NetworkInfo from "../../DTO/Domain/NetworkInfo";
 import UserNetworkInfo from "../../DTO/Domain/UserNetworkInfo";
 import NetworkInsertInfo from "../../DTO/Domain/NetworkInsertInfo";
 import NetworkFactory from "../../Business/Factory/NetworkFactory";
+import { UserRoleEnum } from "../../DTO/Enum/UserRoleEnum";
 
 export default function NetworkProvider(props: any) {
 
@@ -16,7 +17,9 @@ export default function NetworkProvider(props: any) {
     const [loadingChangeStatus, setLoadingChangeStatus] = useState<boolean>(false);
 
     const [network, _setNetwork] = useState<NetworkInfo>(null);
+    const [userNetwork, _setUserNetwork] = useState<UserNetworkInfo>(null);
     const [userNetworks, setUserNetworks] = useState<UserNetworkInfo[]>([]);
+    const [currentRole, _setCurrentRole] = useState<UserRoleEnum>(UserRoleEnum.User);
 
     const networkProviderValue: INetworkProvider = {
         loading: loading,
@@ -25,33 +28,43 @@ export default function NetworkProvider(props: any) {
         loadingChangeStatus: loadingChangeStatus,
 
         network: network,
+        userNetwork: userNetwork,
         userNetworks: userNetworks,
+        currentRole: currentRole,
 
         setNetwork: (network: NetworkInfo) => {
             _setNetwork(network);
+        },
+        setUserNetwork: (userNetwork: UserNetworkInfo) => {
+            _setUserNetwork(userNetwork);
+            _setNetwork(userNetwork?.network);
+            _setCurrentRole(UserRoleEnum.User);
+        },
+        setCurrentRole: (role: UserRoleEnum) => {
+            _setCurrentRole(role);
         },
         insert: async (network: NetworkInsertInfo) => {
             let ret: Promise<ProviderResult>;
             setLoadingUpdate(true);
             //try {
-                let brt = await NetworkFactory.NetworkBusiness.insert(network);
-                if (brt.sucesso) {
-                    setLoadingUpdate(false);
-                    _setNetwork(brt.dataResult);
-                    return {
-                        ...ret,
-                        sucesso: true,
-                        mensagemSucesso: "Network added"
-                    };
-                }
-                else {
-                    setLoadingUpdate(false);
-                    return {
-                        ...ret,
-                        sucesso: false,
-                        mensagemErro: brt.mensagem
-                    };
-                }
+            let brt = await NetworkFactory.NetworkBusiness.insert(network);
+            if (brt.sucesso) {
+                setLoadingUpdate(false);
+                _setNetwork(brt.dataResult);
+                return {
+                    ...ret,
+                    sucesso: true,
+                    mensagemSucesso: "Network added"
+                };
+            }
+            else {
+                setLoadingUpdate(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: brt.mensagem
+                };
+            }
             /*
             }
             catch (err) {
@@ -104,10 +117,48 @@ export default function NetworkProvider(props: any) {
                 if (brt.sucesso) {
                     setLoading(false);
                     setUserNetworks(brt.dataResult);
+                    if (!userNetwork) {
+                        if (brt.dataResult.length > 0) {
+                            _setUserNetwork(brt.dataResult[0]);
+                            _setNetwork(brt.dataResult[0].network);
+                        }
+                    }
                     return {
                         ...ret,
                         sucesso: true,
                         mensagemSucesso: "Network list"
+                    };
+                }
+                else {
+                    setLoading(false);
+                    return {
+                        ...ret,
+                        sucesso: false,
+                        mensagemErro: brt.mensagem
+                    };
+                }
+            }
+            catch (err) {
+                setLoading(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: JSON.stringify(err)
+                };
+            }
+        },
+        getById: async (networkId: number) => {
+            let ret: Promise<ProviderResult>;
+            setLoading(true);
+            try {
+                let brt = await NetworkFactory.NetworkBusiness.getById(networkId);
+                if (brt.sucesso) {
+                    setLoading(false);
+                    _setNetwork(brt.dataResult);
+                    return {
+                        ...ret,
+                        sucesso: true,
+                        mensagemSucesso: "Load Network"
                     };
                 }
                 else {

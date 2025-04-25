@@ -27,5 +27,9 @@ namespace exSales.DTO.Network
         public NetworkPlanEnum Plan { get; set; }
         [JsonPropertyName("status")]
         public NetworkStatusEnum Status { get; set; }
+        [JsonPropertyName("qtdyUsers")]
+        public int QtdyUsers { get; set; }
+        [JsonPropertyName("maxUsers")]
+        public int MaxUsers { get; set; }
     }
 }

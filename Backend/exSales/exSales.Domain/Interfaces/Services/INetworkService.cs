@@ -12,6 +12,7 @@ namespace exSales.Domain.Interfaces.Services
     public interface INetworkService
     {
         IList<INetworkModel> ListByStatus(NetworkStatusEnum status);
+        INetworkModel GetById(long networkId);
         UserNetworkInfo GetUserNetworkInfo(IUserNetworkModel model);
         NetworkInfo GetNetworkInfo(INetworkModel model);
         INetworkModel Insert(NetworkInsertInfo network, long userId);

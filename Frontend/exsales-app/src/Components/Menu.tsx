@@ -13,7 +13,8 @@ import { faBitcoinSign, faBoltLightning, faBox, faBrazilianRealSign, faBuilding,
 import MessageToast from './MessageToast';
 import { MessageToastEnum } from '../DTO/Enum/MessageToastEnum';
 import env from 'react-dotenv';
-import { RoleEnum } from '../DTO/Enum/RoleEnum';
+import { UserRoleEnum } from '../DTO/Enum/UserRoleEnum';
+import NetworkContext from '../Contexts/Network/NetworkContext';
 
 
 export default function Menu() {
@@ -28,37 +29,37 @@ export default function Menu() {
     setShowMessage(true);
   };
 
-  const showRoleText = (role: RoleEnum) => {
+  const showRoleText = (role: UserRoleEnum) => {
     switch (role) {
-      case RoleEnum.NoRole:
+      case UserRoleEnum.NoRole:
         return (
           <>
             <FontAwesomeIcon icon={faCancel} fixedWidth />&nbsp;No role
           </>
         );
         break;
-      case RoleEnum.User:
+      case UserRoleEnum.User:
         return (
           <>
             <FontAwesomeIcon icon={faUser} fixedWidth />&nbsp;User
           </>
         );
         break;
-      case RoleEnum.Seller:
+      case UserRoleEnum.Seller:
         return (
           <>
             <FontAwesomeIcon icon={faUserMd} fixedWidth />&nbsp;Seller
           </>
         );
         break;
-      case RoleEnum.NetworkManager:
+      case UserRoleEnum.NetworkManager:
         return (
           <>
             <FontAwesomeIcon icon={faUserGroup} fixedWidth />&nbsp;Network Manager
           </>
         );
         break;
-      case RoleEnum.Administrator:
+      case UserRoleEnum.Administrator:
         return (
           <>
             <FontAwesomeIcon icon={faUserGear} fixedWidth />&nbsp;Adminstrator
@@ -71,9 +72,17 @@ export default function Menu() {
   let navigate = useNavigate();
 
   const authContext = useContext(AuthContext);
+  const networkContext = useContext(NetworkContext);
 
   useEffect(() => {
     authContext.loadUserSession();
+    //if (authContext.sessionInfo?.userId > 0) {
+    networkContext.listByUser().then((ret) => {
+      if (!ret.sucesso) {
+        throwError(ret.mensagemErro);
+      }
+    });
+    //}
   }, []);
   return (
     <>
@@ -83,7 +92,7 @@ export default function Menu() {
         messageText={messageText}
         onClose={() => setShowMessage(false)}
       ></MessageToast>
-      <Navbar expand="lg" className="mb-3 border-bottom">
+      <Navbar expand="lg" className="navbar-dark bg-dark mb-3 border-bottom">
         <Container>
           <Link className='navbar-brand' to="/">{env.PROJECT_NAME}</Link>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -102,24 +111,24 @@ export default function Menu() {
                 } id="basic-nav-dropdown">
                   <NavDropdown.ItemText className='small text-center'>Network</NavDropdown.ItemText>
                   <NavDropdown.Item onClick={() => {
-                    navigate("/minha-rede/network");
+                    navigate("/admin/network");
                   }}><FontAwesomeIcon icon={faCog} fixedWidth />&nbsp;Preferences</NavDropdown.Item>
                   <NavDropdown.Item onClick={() => {
-                    navigate("/minha-rede/team-structure");
+                    navigate("/admin/team-structure");
                   }}><FontAwesomeIcon icon={faUserCog} fixedWidth />&nbsp;Team Structure</NavDropdown.Item>
                   <NavDropdown.Item onClick={() => {
-                    navigate("/minha-rede/teams");
+                    navigate("/admin/teams");
                   }}><FontAwesomeIcon icon={faUserGroup} fixedWidth />&nbsp;Teams</NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.ItemText className='small text-center'>Finances</NavDropdown.ItemText>
                   <NavDropdown.Item onClick={() => {
-                    navigate("/minha-rede/orders");
+                    navigate("/admin/orders");
                   }}><FontAwesomeIcon icon={faFileWord} fixedWidth />&nbsp;Orders</NavDropdown.Item>
                   <NavDropdown.Item onClick={() => {
-                    navigate("/minha-rede/invoices");
+                    navigate("/admin/invoices");
                   }}><FontAwesomeIcon icon={faDollar} fixedWidth />&nbsp;Invoices</NavDropdown.Item>
                   <NavDropdown.Item onClick={() => {
-                    navigate("/minha-rede/products");
+                    navigate("/admin/products");
                   }}><FontAwesomeIcon icon={faBox} fixedWidth />&nbsp;Products</NavDropdown.Item>
                 </NavDropdown>
               }
@@ -132,33 +141,61 @@ export default function Menu() {
                 <>
                   <NavDropdown title={
                     <>
-                      <FontAwesomeIcon icon={faUserGroup} />&nbsp;Minha Rede Principal
+                      {networkContext.userNetwork ?
+                        <>
+                          <FontAwesomeIcon icon={faUserGroup} />&nbsp;{networkContext.userNetwork?.network.name}
+                        </>
+                        :
+                        <>
+                          <FontAwesomeIcon icon={faCancel} />&nbsp;No network selected
+                        </>
+                      }
                     </>
                   } id="basic-nav-dropdown">
                     <NavDropdown.ItemText className='small'>Select network to connect</NavDropdown.ItemText>
                     <NavDropdown.Divider />
-                    <NavDropdown.Item onClick={() => {
-                      navigate("/minha-rede/dashboard");
-                    }}><FontAwesomeIcon icon={faUserGroup} />&nbsp;Minha Rede Principal</NavDropdown.Item>
-                    <NavDropdown.Item onClick={() => {
-                      navigate("/minha-rede/dashboard");
-                    }}><FontAwesomeIcon icon={faUserGroup} />&nbsp;Rede Secundária</NavDropdown.Item>
-                    <NavDropdown.Item onClick={() => {
-                      navigate("/minha-rede/dashboard");
-                    }}><FontAwesomeIcon icon={faUserGroup} />&nbsp;Última Rede</NavDropdown.Item>
+                    {networkContext.userNetworks && networkContext.userNetworks.map((network) => {
+                      return (
+                        <NavDropdown.Item onClick={() => {
+                          networkContext.setUserNetwork(network);
+                          navigate("/admin/dashboard");
+                        }}><FontAwesomeIcon icon={faUserGroup} />&nbsp;{network.network.name}</NavDropdown.Item>
+                      )
+                    })}
                     <NavDropdown.Divider />
                     <NavDropdown.Item onClick={() => {
                       navigate("/network/search");
                     }}><FontAwesomeIcon icon={faSearch} />&nbsp;Buscar uma rede</NavDropdown.Item>
                   </NavDropdown>
-                  <NavDropdown title={showRoleText(RoleEnum.User)} id="basic-nav-dropdown">
+                  <NavDropdown title={showRoleText(networkContext.currentRole)} id="basic-nav-dropdown">
                     <NavDropdown.ItemText className='small'>Select the chain you will connect to</NavDropdown.ItemText>
                     <NavDropdown.Divider />
-                    <NavDropdown.Item>{showRoleText(RoleEnum.User)}</NavDropdown.Item>
-                    <NavDropdown.Item>{showRoleText(RoleEnum.Seller)}</NavDropdown.Item>
-                    <NavDropdown.Item>{showRoleText(RoleEnum.NetworkManager)}</NavDropdown.Item>
-                    <NavDropdown.Item>{showRoleText(RoleEnum.Administrator)}</NavDropdown.Item>
+                    {networkContext.userNetwork?.role >= UserRoleEnum.User &&
+                      <NavDropdown.Item onClick={(e) => {
+                        e.preventDefault();
+                        networkContext.setCurrentRole(UserRoleEnum.User);
+                      }}>{showRoleText(UserRoleEnum.User)}</NavDropdown.Item>
+                    }
+                    {networkContext.userNetwork?.role >= UserRoleEnum.Seller &&
+                      <NavDropdown.Item onClick={(e) => {
+                        e.preventDefault();
+                        networkContext.setCurrentRole(UserRoleEnum.Seller);
+                      }}>{showRoleText(UserRoleEnum.Seller)}</NavDropdown.Item>
+                    }
+                    {networkContext.userNetwork?.role >= UserRoleEnum.NetworkManager &&
+                      <NavDropdown.Item onClick={(e) => {
+                        e.preventDefault();
+                        networkContext.setCurrentRole(UserRoleEnum.NetworkManager);
+                      }}>{showRoleText(UserRoleEnum.NetworkManager)}</NavDropdown.Item>
+                    }
+                    {networkContext.userNetwork?.role >= UserRoleEnum.Administrator &&
+                      <NavDropdown.Item onClick={(e) => {
+                        e.preventDefault();
+                        networkContext.setCurrentRole(UserRoleEnum.Administrator);
+                      }}>{showRoleText(UserRoleEnum.Administrator)}</NavDropdown.Item>
+                    }
                   </NavDropdown>
+                  {/*
                   <NavDropdown title={
                     <>
                       <FontAwesomeIcon icon={faCheckCircle} />&nbsp;Edição Ativada
@@ -169,6 +206,7 @@ export default function Menu() {
                     <NavDropdown.Item><FontAwesomeIcon icon={faCheckCircle} />&nbsp;Ativar Edição</NavDropdown.Item>
                     <NavDropdown.Item><FontAwesomeIcon icon={faCircle} />&nbsp;Desativar Edição</NavDropdown.Item>
                   </NavDropdown>
+                  */}
                 </>
               }
               {

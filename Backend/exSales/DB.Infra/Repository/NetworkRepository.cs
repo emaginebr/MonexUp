@@ -27,7 +27,7 @@ namespace DB.Infra.Repository
             md.NetworkId = row.NetworkId;
             md.Name = row.Name;
             md.Slug = row.Slug;
-            md.Email = row.Email;
+            md.Email = row.Email?.ToLower();
             md.Commission = row.Commission;
             md.WithdrawalMin = row.WithdrawalMin;
             md.WithdrawalPeriod = row.WithdrawalPeriod;
@@ -87,9 +87,19 @@ namespace DB.Infra.Repository
             return _ccsContext.Networks.Where(x => x.Slug == slug && (networkId == 0 || x.NetworkId != networkId)).Any();
         }
 
+        public INetworkModel GetByName(string name, INetworkDomainFactory factory)
+        {
+            var row = _ccsContext.Networks.Where(x => x.Name.ToLower() == name.ToLower()).FirstOrDefault();
+            if (row == null)
+            {
+                return null;
+            }
+            return DbToModel(factory, row);
+        }
+
         public INetworkModel GetByEmail(string email, INetworkDomainFactory factory)
         {
-            var row = _ccsContext.Networks.Where(x => x.Email == email).FirstOrDefault();
+            var row = _ccsContext.Networks.Where(x => x.Email.ToLower() == email.ToLower()).FirstOrDefault();
             if (row == null)
             {
                 return null;

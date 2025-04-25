@@ -28,6 +28,10 @@ export default function NetworkInsertPage() {
     const [password, setPassword] = useState<string>("");
     const [confirmPassword, setConfirmPassword] = useState<string>("");
 
+    const [networkName, setNetworkName] = useState<string>("");
+    const [networkEmail, setNetworkEmail] = useState<string>(authContext.sessionInfo?.email);
+    const [networkCommission, setNetworkCommission] = useState<number>(0);
+
     const [dialog, setDialog] = useState<MessageToastEnum>(MessageToastEnum.Error);
     const [showMessage, setShowMessage] = useState<boolean>(false);
     const [messageText, setMessageText] = useState<string>("");
@@ -49,6 +53,7 @@ export default function NetworkInsertPage() {
     useEffect(() => {
         if (authContext.sessionInfo) {
             if (authContext.sessionInfo?.userId > 0) {
+                /*
                 userContext.getMe().then((ret) => {
                     if (ret.sucesso) {
                         setStep(2);
@@ -57,6 +62,8 @@ export default function NetworkInsertPage() {
                         setStep(1);
                     }
                 });
+                */
+                setStep(2);
             }
             else {
                 setStep(1);
@@ -285,12 +292,23 @@ export default function NetworkInsertPage() {
                                                     <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
                                                     <Form.Control type="text" size="lg"
                                                         placeholder="Your network name"
-                                                        value={networkContext.network?.name}
+                                                        value={networkName}
                                                         onChange={(e) => {
-                                                            networkContext.setNetwork({
-                                                                ...networkContext.network,
-                                                                name: e.target.value
-                                                            });
+                                                            setNetworkName(e.target.value);
+                                                        }} />
+                                                </InputGroup>
+                                            </Col>
+                                        </Form.Group>
+                                        <Form.Group as={Row} className="mb-3">
+                                            <Form.Label column sm="2">Email:</Form.Label>
+                                            <Col sm="10">
+                                                <InputGroup>
+                                                    <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
+                                                    <Form.Control type="email" size="lg"
+                                                        placeholder="Your network email"
+                                                        value={networkEmail}
+                                                        onChange={(e) => {
+                                                            setNetworkEmail(e.target.value);
                                                         }} />
                                                 </InputGroup>
                                             </Col>
@@ -302,12 +320,9 @@ export default function NetworkInsertPage() {
                                                     <InputGroup.Text><FontAwesomeIcon icon={faPercent} fixedWidth /></InputGroup.Text>
                                                     <Form.Control type="number" size="lg"
                                                         placeholder="Network Percent Commission"
-                                                        value={networkContext.network?.comission}
+                                                        value={networkCommission}
                                                         onChange={(e) => {
-                                                            networkContext.setNetwork({
-                                                                ...networkContext.network,
-                                                                comission: parseInt(e.target.value)
-                                                            });
+                                                            setNetworkCommission(parseFloat(e.target.value));
                                                         }}
                                                     />
                                                 </InputGroup>
@@ -321,15 +336,19 @@ export default function NetworkInsertPage() {
                                                 let networkInsert: NetworkInsertInfo;
                                                 let ret = await networkContext.insert({
                                                     ...networkInsert,
-                                                    name: networkContext.network.name,
-                                                    email: authContext.sessionInfo?.email,
-                                                    comission: networkContext.network.comission,
+                                                    name: networkName,
+                                                    email: networkEmail,
+                                                    comission: networkCommission,
                                                     plan: 1
                                                 });
                                                 if (ret.sucesso) {
                                                     showSuccessMessage(ret.mensagemSucesso);
-                                                    //alert(userContext.user?.id);
                                                     setStep(4);
+                                                    let retUsers = await networkContext.listByUser();
+                                                    if (!retUsers.sucesso) {
+                                                        throwError(retUsers.mensagemErro);    
+                                                    }
+                                                    //alert(userContext.user?.id);
                                                 }
                                                 else {
                                                     throwError(ret.mensagemErro);
@@ -345,6 +364,23 @@ export default function NetworkInsertPage() {
                                         </div>
                                     </Form>
                                 </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
+                </Container>
+            }
+            {step == 4 &&
+                <Container>
+                    <Row>
+                        <Col md="12">
+                        <Card>
+                        <Card.Body className="text-center">
+                            <h1>Sua rede foi criada com sucesso!</h1>
+                            <p>Parabéns! Você acaba de dar o primeiro passo para construir uma comunidade forte, colaborativa e pronta para alcançar resultados incríveis com o poder do marketing de rede.</p>
+                            <p>Agora você pode: Convidar novos representantes; Cadastrar produtos para doação e venda; Acompanhar o desempenho da sua rede; e Organizar eventos e campanhas;</p>
+                            <p className="text-center">Vamos começar?</p>
+                            <Button variant="primary" size="lg">Acessar minha rede <FontAwesomeIcon icon={faArrowRight} fixedWidth /></Button>
+                            </Card.Body>
                             </Card>
                         </Col>
                     </Row>

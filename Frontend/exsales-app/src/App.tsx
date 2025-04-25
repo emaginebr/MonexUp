@@ -61,7 +61,7 @@ function App() {
           <Route path="new-account" element={<UserPage />} />
           <Route path="recovery-password" element={<RecoveryPage />} />
           <Route path="change-password" element={<PasswordPage />} />
-          <Route path="minha-rede">
+          <Route path="admin">
             <Route index element={<NetworkPage />} />
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="network" element={<NetworkEditPage />} />

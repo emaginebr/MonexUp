@@ -102,6 +102,35 @@ const NetworkBusiness: INetworkBusiness = {
         throw new Error("Failed to get user by email");
       }
   },
+  getById: async (networkId: number) => {
+    try {
+        let ret: BusinessResult<NetworkInfo>;
+        let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+        if (!session) {
+          return {
+            ...ret,
+            sucesso: false,
+            mensagem: "Not logged"
+          };
+        }
+        let retServ = await _networkService.getById(networkId, session.token);
+        if (retServ.sucesso) {
+          return {
+            ...ret,
+            dataResult: retServ.network,
+            sucesso: true
+          };
+        } else {
+          return {
+            ...ret,
+            sucesso: false,
+            mensagem: retServ.mensagem
+          };
+        }
+      } catch {
+        throw new Error("Failed to get user by email");
+      }
+  },
   requestAccess: async (networkId: number, referrerId?: number) => {
     try {
         let ret: BusinessResult<boolean>;

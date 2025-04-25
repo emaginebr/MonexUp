@@ -15,13 +15,14 @@ import UserContext from "../../Contexts/User/UserContext";
 import MessageToast from "../../Components/MessageToast";
 import Moment from 'moment';
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
+import NetworkContext from "../../Contexts/Network/NetworkContext";
 
 export default function NetworkEditPage() {
 
     const authContext = useContext(AuthContext);
-    const userContext = useContext(UserContext);
+    //const userContext = useContext(UserContext);
+    const networkContext = useContext(NetworkContext);
 
-    const [insertMode, setInsertMode] = useState<boolean>(false);
 
     const [dialog, setDialog] = useState<MessageToastEnum>(MessageToastEnum.Error);
     const [showMessage, setShowMessage] = useState<boolean>(false);
@@ -42,23 +43,12 @@ export default function NetworkEditPage() {
     };
 
     useEffect(() => {
-        if (authContext.sessionInfo) {
-            if (authContext.sessionInfo?.userId > 0) {
-                userContext.getMe().then((ret) => {
-                    if (ret.sucesso) {
-                        setInsertMode(false);
-                    }
-                    else {
-                        setInsertMode(true);
-                    }
-                });
-            }
-            else {
-                setInsertMode(true);
-            }
-        }
-        else {
-            setInsertMode(true);
+        if (authContext.sessionInfo && networkContext.userNetwork) {
+            networkContext.getById(networkContext.userNetwork.networkId).then((ret) => {
+                if (!ret.sucesso) {
+                    throwError(ret.mensagemErro);
+                }
+            });
         }
     }, []);
 
@@ -75,7 +65,7 @@ export default function NetworkEditPage() {
                     <Col md="12">
                         <Card>
                             <Card.Header>
-                                <h3 className="text-center">Network registration</h3>
+                                <h3 className="text-center">Network Preferences</h3>
                             </Card.Header>
                             <Card.Body>
                                 <Form>
@@ -89,10 +79,10 @@ export default function NetworkEditPage() {
                                                 <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
                                                     placeholder="Your network name"
-                                                    value={userContext.user?.name}
+                                                    value={networkContext.network?.name}
                                                     onChange={(e) => {
-                                                        userContext.setUser({
-                                                            ...userContext.user,
+                                                        networkContext.setNetwork({
+                                                            ...networkContext.network,
                                                             name: e.target.value
                                                         });
                                                     }} />
@@ -104,12 +94,12 @@ export default function NetworkEditPage() {
                                         <Col sm="10">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faEnvelope} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg"
+                                                <Form.Control type="email" size="lg"
                                                     placeholder="Your email"
-                                                    value={userContext.user?.email}
+                                                    value={networkContext.network?.email}
                                                     onChange={(e) => {
-                                                        userContext.setUser({
-                                                            ...userContext.user,
+                                                        networkContext.setNetwork({
+                                                            ...networkContext.network,
                                                             email: e.target.value
                                                         });
                                                     }} />
@@ -121,20 +111,30 @@ export default function NetworkEditPage() {
                                         <Col sm="4">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faDollar} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg"
+                                                <Form.Control type="number" size="lg"
                                                     placeholder="Mininal Withdrawal amount"
-                                                    value={userContext.user?.email}
-                                                />
+                                                    value={networkContext.network?.withdrawalMin}
+                                                    onChange={(e) => {
+                                                        networkContext.setNetwork({
+                                                            ...networkContext.network,
+                                                            withdrawalMin: parseFloat(e.target.value)
+                                                        });
+                                                    }} />
                                             </InputGroup>
                                         </Col>
                                         <Form.Label column sm="2">Withdrawal Period:</Form.Label>
                                         <Col sm="4">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faCalendar} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg"
+                                                <Form.Control type="number" size="lg"
                                                     placeholder="Withdrawal period value in days"
-                                                    value={userContext.user?.email}
-                                                />
+                                                    value={networkContext.network?.withdrawalPeriod}
+                                                    onChange={(e) => {
+                                                        networkContext.setNetwork({
+                                                            ...networkContext.network,
+                                                            withdrawalPeriod: parseInt(e.target.value)
+                                                        });
+                                                    }} />
                                             </InputGroup>
                                         </Col>
                                     </Form.Group>
@@ -143,64 +143,37 @@ export default function NetworkEditPage() {
                                         <Col sm="4">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faPercent} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg"
+                                                <Form.Control type="number" size="lg"
                                                     placeholder="Network Percent Commission"
-                                                    value={userContext.user?.email}
-                                                />
+                                                    value={networkContext.network?.comission}
+                                                    onChange={(e) => {
+                                                        networkContext.setNetwork({
+                                                            ...networkContext.network,
+                                                            comission: parseInt(e.target.value)
+                                                        });
+                                                    }} />
                                             </InputGroup>
                                         </Col>
                                     </Form.Group>
-                                    {!insertMode &&
-                                        <Form.Group as={Row} className="mb-3">
-                                            <Form.Label column sm="2">Create At:</Form.Label>
-                                            <Col sm="4">
-                                                <InputGroup>
-                                                    <InputGroup.Text><FontAwesomeIcon icon={faCalendarAlt} fixedWidth /></InputGroup.Text>
-                                                    <Form.Control type="text" size="lg" disabled={true} readOnly={true}
-                                                        value={Moment(userContext.user?.createAt).format("MMM DD YYYY")} />
-                                                </InputGroup>
-                                            </Col>
-                                            <Form.Label column sm="2">Update At:</Form.Label>
-                                            <Col sm="4">
-                                                <InputGroup>
-                                                    <InputGroup.Text><FontAwesomeIcon icon={faCalendarAlt} fixedWidth /></InputGroup.Text>
-                                                    <Form.Control type="text" size="lg" disabled={true} readOnly={true}
-                                                        value={Moment(userContext.user?.updateAt).format("MMM DD YYYY")} />
-                                                </InputGroup>
-                                            </Col>
-                                        </Form.Group>
-                                    }
                                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                                         <Button variant="danger" size="lg" onClick={() => {
-                                            navigate("/");
+                                            navigate("/admin/dashboard");
                                         }}><FontAwesomeIcon icon={faCancel} fixedWidth /> Cancel</Button>
                                         <Button variant="success" size="lg" onClick={async (e) => {
-                                            if (insertMode) {
-                                                let ret = await userContext.insert(userContext.user);
-                                                if (ret.sucesso) {
-                                                    showSuccessMessage(ret.mensagemSucesso);
-                                                    //alert(userContext.user?.id);
-                                                }
-                                                else {
-                                                    throwError(ret.mensagemErro);
-                                                }
+                                            let ret = await networkContext.update(networkContext.network);
+                                            if (ret.sucesso) {
+                                                //alert(userContext.user?.id);
+                                                showSuccessMessage(ret.mensagemSucesso);
                                             }
                                             else {
-                                                let ret = await userContext.update(userContext.user);
-                                                if (ret.sucesso) {
-                                                    //alert(userContext.user?.id);
-                                                    showSuccessMessage(ret.mensagemSucesso);
-                                                }
-                                                else {
-                                                    throwError(ret.mensagemErro);
-                                                }
+                                                throwError(ret.mensagemErro);
                                             }
                                         }}
-                                            disabled={userContext.loadingUpdate}
+                                            disabled={networkContext.loadingUpdate}
                                         >
-                                            {userContext.loadingUpdate ? "Loading..." :
+                                            {networkContext.loadingUpdate ? "Loading..." :
                                                 <>
-                                                    Next&nbsp;<FontAwesomeIcon icon={faArrowRight} fixedWidth />
+                                                    <FontAwesomeIcon icon={faSave} fixedWidth />&nbsp;Save
                                                 </>}
                                         </Button>
                                     </div>
