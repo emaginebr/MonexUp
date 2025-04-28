@@ -19,15 +19,26 @@ namespace exSales.Domain.Impl.Services
     public class UserService : IUserService
     {
         private readonly IUserDomainFactory _userFactory;
+        private readonly IUserNetworkDomainFactory _userNetworkFactory;
         private readonly IUserPhoneDomainFactory _phoneFactory;
         private readonly IUserAddressDomainFactory _addrFactory;
+        private readonly IUserProfileDomainFactory _profileFactory;
         private readonly IMailerSendService _mailerSendService;
 
-        public UserService(IUserDomainFactory userFactory, IUserPhoneDomainFactory phoneFactory, IUserAddressDomainFactory addrFactory, IMailerSendService mailerSendService)
+        public UserService(
+            IUserDomainFactory userFactory, 
+            IUserNetworkDomainFactory userNetworkFactory, 
+            IUserPhoneDomainFactory phoneFactory, 
+            IUserAddressDomainFactory addrFactory,
+            IUserProfileDomainFactory profileFactory,
+            IMailerSendService mailerSendService
+        )
         {
             _userFactory = userFactory;
+            _userNetworkFactory = userNetworkFactory;
             _phoneFactory = phoneFactory;
             _addrFactory = addrFactory;
+            _profileFactory = profileFactory;
             _mailerSendService = mailerSendService;
         }
 
@@ -460,6 +471,46 @@ namespace exSales.Domain.Impl.Services
                         City = x.City,
                         State = x.State
                     }).ToList()
+            };
+        }
+
+        public UserListPagedResult Search(long networkId, string keyword, long? profileId, int pageNum)
+        {
+            var userModel = _userFactory.BuildUserModel();
+            var profileModel = _profileFactory.BuildUserProfileModel();
+            var model = _userNetworkFactory.BuildUserNetworkModel();
+            int pageCount = 0;
+            var usersNetwork = model.Search(networkId, keyword, (profileId.GetValueOrDefault() == 0 ? null : profileId), pageNum, out pageCount, _userNetworkFactory);
+            var users = new List<UserNetworkSearchInfo>();
+            foreach (var user in usersNetwork)
+            {
+                var mdUser = userModel.GetById(user.UserId, _userFactory);
+                var info = new UserNetworkSearchInfo
+                {
+                    UserId = user.UserId,
+                    NetworkId = user.NetworkId,
+                    ProfileId = user.ProfileId,
+                    Name = mdUser.Name,
+                    Email = mdUser.Email,
+                    
+                    Role = user.Role,
+                    Status = user.Status
+                };
+                if (user.ProfileId.HasValue)
+                {
+                    var mdProfile = profileModel.GetById(user.ProfileId.Value, _profileFactory);
+                    info.Profile = mdProfile.Name;
+                    info.Commission = mdProfile.Commission;
+                    info.Level = mdProfile.Level;
+                }
+                users.Add(info);
+            }
+            return new UserListPagedResult
+            {
+                Sucesso = true,
+                Users = users,
+                PageNum = pageNum,
+                PageCount = pageCount
             };
         }
 

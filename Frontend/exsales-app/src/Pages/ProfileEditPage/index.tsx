@@ -7,19 +7,24 @@ import AuthContext from "../../Contexts/Auth/AuthContext";
 import Button from "react-bootstrap/esm/Button";
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAddressBook, faArrowRight, faBitcoinSign, faCalendar, faCalendarAlt, faCancel, faClose, faDollar, faEnvelope, faEthernet, faIdCard, faLock, faPercent, faPhone, faSave, faSignInAlt, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
-import Table from "react-bootstrap/esm/Table";
-import { Link, useNavigate } from "react-router-dom";
+import { faArrowLeft, faCalendar, faDollar, faPercent, faSave, faUser } from '@fortawesome/free-solid-svg-icons';
+import { Link, useNavigate, useParams } from "react-router-dom";
 import InputGroup from 'react-bootstrap/InputGroup';
-import UserContext from "../../Contexts/User/UserContext";
 import MessageToast from "../../Components/MessageToast";
 import Moment from 'moment';
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
+import NetworkContext from "../../Contexts/Network/NetworkContext";
+import ProfileContext from "../../Contexts/Profile/ProfileContext";
+import UserProfileInfo from "../../DTO/Domain/UserProfileInfo";
 
-export default function TeamStructureEditPage() {
+
+export default function ProfileEditPage() {
 
     const authContext = useContext(AuthContext);
-    const userContext = useContext(UserContext);
+    const networkContext = useContext(NetworkContext);
+    const profileContext = useContext(ProfileContext);
+
+    let { profileId } = useParams();
 
     const [insertMode, setInsertMode] = useState<boolean>(false);
 
@@ -28,7 +33,7 @@ export default function TeamStructureEditPage() {
     const [messageText, setMessageText] = useState<string>("");
 
     let navigate = useNavigate();
-    Moment.locale('en');
+    //Moment.locale('en');
 
     const throwError = (message: string) => {
         setDialog(MessageToastEnum.Error)
@@ -42,23 +47,35 @@ export default function TeamStructureEditPage() {
     };
 
     useEffect(() => {
+        let profile: UserProfileInfo = null;
+        profile = {
+            ...profile,
+            networkId: networkContext.userNetwork?.networkId,
+            name: "",
+            level: 0,
+            commission: 0
+        }
         if (authContext.sessionInfo) {
-            if (authContext.sessionInfo?.userId > 0) {
-                userContext.getMe().then((ret) => {
+            let profileIdNum: number = parseInt(profileId);
+            if (profileIdNum > 0) {
+                profileContext.getById(profileIdNum).then((ret) => {
                     if (ret.sucesso) {
                         setInsertMode(false);
                     }
                     else {
                         setInsertMode(true);
+                        profileContext.setProfile(profile);
                     }
                 });
             }
             else {
                 setInsertMode(true);
+                profileContext.setProfile(profile);
             }
         }
         else {
             setInsertMode(true);
+            profileContext.setProfile(profile);
         }
     }, []);
 
@@ -71,12 +88,22 @@ export default function TeamStructureEditPage() {
                 onClose={() => setShowMessage(false)}
             ></MessageToast>
             <Container>
+            <Row>
+                    <Col md="12">
+                        <h3>
+                            <nav aria-label="breadcrumb">
+                                <ol className="breadcrumb">
+                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">Minha Rede</Link></li>
+                                    <li className="breadcrumb-item"><Link to="/admin/team-structure">Network Team Structure</Link></li>
+                                    <li className="breadcrumb-item active" aria-current="page">New Team Structure</li>
+                                </ol>
+                            </nav>
+                        </h3>
+                    </Col>
+                </Row>
                 <Row>
                     <Col md="12">
                         <Card>
-                            <Card.Header>
-                                <h3 className="text-center">Team Structure (Profile)</h3>
-                            </Card.Header>
                             <Card.Body>
                                 <Form>
                                     <div className="text-center mb-3">
@@ -84,28 +111,18 @@ export default function TeamStructureEditPage() {
                                     </div>
                                     <Form.Group as={Row} className="mb-3">
                                         <Form.Label column sm="2">Name:</Form.Label>
-                                        <Col sm="5">
+                                        <Col sm="10">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
                                                     placeholder="Your profile name"
-                                                    value={userContext.user?.name}
+                                                    value={profileContext.profile?.name}
                                                     onChange={(e) => {
-                                                        userContext.setUser({
-                                                            ...userContext.user,
+                                                        profileContext.setProfile({
+                                                            ...profileContext.profile,
                                                             name: e.target.value
                                                         });
                                                     }} />
-                                            </InputGroup>
-                                        </Col>
-                                        <Form.Label column sm="1">Level:</Form.Label>
-                                        <Col sm="4">
-                                            <InputGroup>
-                                                <InputGroup.Text><FontAwesomeIcon icon={faDollar} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg"
-                                                    placeholder="Network level number"
-                                                    value={userContext.user?.email}
-                                                />
                                             </InputGroup>
                                         </Col>
                                     </Form.Group>
@@ -116,49 +133,39 @@ export default function TeamStructureEditPage() {
                                                 <InputGroup.Text><FontAwesomeIcon icon={faCalendar} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
                                                     placeholder="Commission in percents"
-                                                    value={userContext.user?.email}
-                                                />
+                                                    value={profileContext.profile?.commission}
+                                                    onChange={(e) => {
+                                                        profileContext.setProfile({
+                                                            ...profileContext.profile,
+                                                            commission: parseFloat(e.target.value)
+                                                        });
+                                                    }} />
                                             </InputGroup>
                                         </Col>
-                                        <Form.Label column sm="1">Status:</Form.Label>
+                                        <Form.Label column sm="1">Level:</Form.Label>
                                         <Col sm="4">
                                             <InputGroup>
-                                                <InputGroup.Text><FontAwesomeIcon icon={faPercent} fixedWidth /></InputGroup.Text>
-                                                <Form.Select size="lg">
-                                                    <option>Active</option>
-                                                    <option value="1">Inactive</option>
-                                                    <option value="2">Suspense</option>
-                                                </Form.Select>
+                                                <InputGroup.Text><FontAwesomeIcon icon={faDollar} fixedWidth /></InputGroup.Text>
+                                                <Form.Control type="number" size="lg"
+                                                    placeholder="Network level number"
+                                                    value={profileContext.profile?.level}
+                                                    onChange={(e) => {
+                                                        profileContext.setProfile({
+                                                            ...profileContext.profile,
+                                                            level: parseInt(e.target.value)
+                                                        });
+                                                    }} />
                                             </InputGroup>
                                         </Col>
                                     </Form.Group>
-                                    {!insertMode &&
-                                        <Form.Group as={Row} className="mb-3">
-                                            <Form.Label column sm="2">Create At:</Form.Label>
-                                            <Col sm="4">
-                                                <InputGroup>
-                                                    <InputGroup.Text><FontAwesomeIcon icon={faCalendarAlt} fixedWidth /></InputGroup.Text>
-                                                    <Form.Control type="text" size="lg" disabled={true} readOnly={true}
-                                                        value={Moment(userContext.user?.createAt).format("MMM DD YYYY")} />
-                                                </InputGroup>
-                                            </Col>
-                                            <Form.Label column sm="2">Update At:</Form.Label>
-                                            <Col sm="4">
-                                                <InputGroup>
-                                                    <InputGroup.Text><FontAwesomeIcon icon={faCalendarAlt} fixedWidth /></InputGroup.Text>
-                                                    <Form.Control type="text" size="lg" disabled={true} readOnly={true}
-                                                        value={Moment(userContext.user?.updateAt).format("MMM DD YYYY")} />
-                                                </InputGroup>
-                                            </Col>
-                                        </Form.Group>
-                                    }
                                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                                         <Button variant="danger" size="lg" onClick={() => {
-                                            navigate("/minha-rede/team-structure");
-                                        }}><FontAwesomeIcon icon={faCancel} fixedWidth /> Cancel</Button>
+                                            navigate("/admin/team-structure");
+                                        }}><FontAwesomeIcon icon={faArrowLeft} fixedWidth /> Back</Button>
                                         <Button variant="success" size="lg" onClick={async (e) => {
                                             if (insertMode) {
-                                                let ret = await userContext.insert(userContext.user);
+                                                //profileContext.profile.networkId = NetworkContext.
+                                                let ret = await profileContext.insert(profileContext.profile);
                                                 if (ret.sucesso) {
                                                     showSuccessMessage(ret.mensagemSucesso);
                                                     //alert(userContext.user?.id);
@@ -168,7 +175,7 @@ export default function TeamStructureEditPage() {
                                                 }
                                             }
                                             else {
-                                                let ret = await userContext.update(userContext.user);
+                                                let ret = await profileContext.update(profileContext.profile);
                                                 if (ret.sucesso) {
                                                     //alert(userContext.user?.id);
                                                     showSuccessMessage(ret.mensagemSucesso);
@@ -178,9 +185,9 @@ export default function TeamStructureEditPage() {
                                                 }
                                             }
                                         }}
-                                            disabled={userContext.loadingUpdate}
+                                            disabled={profileContext.loadingUpdate}
                                         >
-                                            {userContext.loadingUpdate ? "Loading..." :
+                                            {profileContext.loadingUpdate ? "Loading..." :
                                                 <>
                                                     <FontAwesomeIcon icon={faSave} fixedWidth />&nbsp;Save
                                                 </>}

@@ -27,5 +27,7 @@ namespace exSales.DTO.Network
         public NetworkInfo Network { get; set; }
         [JsonPropertyName("profile")]
         public UserProfileInfo Profile { get; set; }
+        [JsonPropertyName("user")]
+        public UserInfo User { get; set; }
     }
 }

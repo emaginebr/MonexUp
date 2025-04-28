@@ -1,5 +1,8 @@
 import UserInfo from "../../DTO/Domain/UserInfo";
+import UserSearchParam from "../../DTO/Domain/UserSearchParam";
 import StatusRequest from "../../DTO/Services/StatusRequest";
+import UserListPagedResult from "../../DTO/Services/UserListPagedResult";
+import UserNetworkListResult from "../../DTO/Services/UserNetworkListResult";
 import UserResult from "../../DTO/Services/UserResult";
 import UserTokenResult from "../../DTO/Services/UserTokenResult";
 import IHttpClient from "../../Infra/Interface/IHttpClient"; 
@@ -166,6 +169,29 @@ const UserService : IUserService = {
             recoveryHash: recoveryHash,
             newPassword: newPassword
         });
+        if (request.success) {
+            return request.data;
+        }
+        else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    },
+    search: async (networkId: number, keyword: string, pageNum: number, token: string, profileId?: number) => {
+        let ret: UserListPagedResult;
+        let param: UserSearchParam;
+        param = {
+            ...param,
+            networkId: networkId,
+            keyword: keyword,
+            profileId: profileId,
+            pageNum: pageNum
+        };
+        let request = await _httpClient.doPostAuth<UserListPagedResult>("/api/User/search", param, token);
         if (request.success) {
             return request.data;
         }

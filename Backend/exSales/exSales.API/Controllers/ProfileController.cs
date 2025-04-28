@@ -110,6 +110,7 @@ namespace exSales.API.Controllers
                 {
                     Sucesso = true,
                     Profiles = _profileService.ListByNetwork(networkId)
+                    .OrderBy(x => x.Level)
                     .Select(x => _profileService.GetUserProfileInfo(x))
                     .ToList()
                 };

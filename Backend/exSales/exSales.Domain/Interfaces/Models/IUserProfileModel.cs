@@ -17,6 +17,7 @@ namespace exSales.Domain.Interfaces.Models
 
         double Commission { get; set; }
         int Level { get; set; }
+        int Members { get; set; }
 
         IEnumerable<IUserProfileModel> ListByNetwork(long networkId, IUserProfileDomainFactory factory);
         IUserProfileModel GetById(long profileId, IUserProfileDomainFactory factory);

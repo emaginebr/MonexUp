@@ -307,21 +307,21 @@
   },
   {
     "ContainingType": "exSales.API.Controllers.ProductController",
-    "Method": "ListByNetwork",
-    "RelativePath": "api/Product/listByNetwork/{networkId}",
-    "HttpMethod": "GET",
+    "Method": "Search",
+    "RelativePath": "api/Product/search",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "networkId",
-        "Type": "System.Int64",
+        "Name": "param",
+        "Type": "exSales.DTO.Product.ProductSearchParam",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "exSales.DTO.Product.ProductListResult",
+        "Type": "exSales.DTO.Product.ProductListPagedResult",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -674,6 +674,32 @@
     "ReturnTypes": [
       {
         "Type": "exSales.DTO.User.UserResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "exSales.API.Controllers.UserController",
+    "Method": "Search",
+    "RelativePath": "api/User/search",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "param",
+        "Type": "exSales.DTO.User.UserSearchParam",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "exSales.DTO.User.UserListPagedResult",
         "MediaTypes": [
           "text/plain",
           "application/json",

@@ -1,6 +1,9 @@
 import BusinessResult from "../../DTO/Business/BusinessResult";
 import AuthSession from "../../DTO/Domain/AuthSession";
 import UserInfo from "../../DTO/Domain/UserInfo";
+import UserListPagedInfo from "../../DTO/Domain/UserListPagedInfo";
+import UserListPagedResult from "../../DTO/Services/UserListPagedResult";
+import UserNetworkListResult from "../../DTO/Services/UserNetworkListResult";
 import IUserService from "../../Services/Interfaces/IUserService";
 import AuthFactory from "../Factory/AuthFactory";
 import IUserBusiness from "../Interfaces/IUserBusiness";
@@ -245,6 +248,43 @@ const UserBusiness: IUserBusiness = {
     } catch {
       throw new Error("Failed to change password using hash");
     }
+  },
+  search: async (networkId: number, keyword: string, pageNum: number, profileId?: number) => {
+    //try {
+      let ret: BusinessResult<UserListPagedInfo>;
+      let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+      if (!session) {
+        return {
+          ...ret,
+          sucesso: false,
+          mensagem: "Not logged"
+        };
+      }
+      let retServ = await _userService.search(networkId, keyword, pageNum, session.token, profileId);
+      if (retServ.sucesso) {
+        let dataResult: UserListPagedInfo;
+        return {
+          ...ret,
+          dataResult: {
+            ...dataResult,
+            users: retServ.users,
+            pageNum: retServ.pageNum,
+            pageCount: retServ.pageCount
+          },
+          sucesso: true
+        };
+      } else {
+        return {
+          ...ret,
+          sucesso: false,
+          mensagem: retServ.mensagem
+        };
+      }
+    /*
+    } catch {
+      throw new Error("Failed to update");
+    }
+    */
   }
 }
 

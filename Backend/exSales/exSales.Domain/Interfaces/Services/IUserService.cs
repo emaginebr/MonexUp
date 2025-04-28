@@ -24,5 +24,6 @@ namespace exSales.Domain.Interfaces.Services
         //IUserModel GetUserHash(ChainEnum chain, string address);
         UserInfo GetUserInSession(HttpContext httpContext);
         UserInfo GetUserInfoFromModel(IUserModel md);
+        UserListPagedResult Search(long networkId, string keyword, long? profileId, int pageNum);
     }
 }

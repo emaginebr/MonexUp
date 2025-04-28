@@ -4,28 +4,34 @@ import UserContext from "./UserContext";
 import UserInfo from "../../DTO/Domain/UserInfo";
 import ProviderResult from "../../DTO/Contexts/ProviderResult";
 import UserFactory from "../../Business/Factory/UserFactory";
+import UserListPagedInfo from "../../DTO/Domain/UserListPagedInfo";
+import UserProviderResult from "../../DTO/Contexts/UserProviderResult";
 
 export default function UserProvider(props: any) {
 
     const [loading, setLoading] = useState<boolean>(false);
     const [loadingPassword, setLoadingPassword] = useState<boolean>(false);
     const [loadingUpdate, setLoadingUpdate] = useState<boolean>(false);
+    const [loadingSearch, setLoadingSearch] = useState<boolean>(false);
 
     const [userHasPassword, setUserHasPassword] = useState<boolean>(false);
 
     const [user, _setUser] = useState<UserInfo>(null);
+    const [searchResult, setSearchResult] = useState<UserListPagedInfo>(null);
 
     const userProviderValue: IUserProvider = {
         loading: loading,
         loadingPassword: loadingPassword,
         loadingUpdate: loadingUpdate,
+        loadingSearch: loadingSearch,
         userHasPassword: userHasPassword,
         user: user,
+        searchResult: searchResult,
         setUser: (user: UserInfo) => {
             _setUser(user);
         },
         getMe: async () => {
-            let ret: Promise<ProviderResult>;
+            let ret: Promise<UserProviderResult>;
             setLoading(true);
             try {
                 let brt = await UserFactory.UserBusiness.getMe();
@@ -34,6 +40,7 @@ export default function UserProvider(props: any) {
                     _setUser(brt.dataResult);
                     return {
                         ...ret,
+                        user: brt.dataResult,
                         sucesso: true,
                         mensagemSucesso: "User load"
                     };
@@ -42,6 +49,7 @@ export default function UserProvider(props: any) {
                     setLoading(false);
                     return {
                         ...ret,
+                        user: null,
                         sucesso: false,
                         mensagemErro: brt.mensagem
                     };
@@ -51,6 +59,7 @@ export default function UserProvider(props: any) {
                 setLoading(false);
                 return {
                     ...ret,
+                    user: null,
                     sucesso: false,
                     mensagemErro: JSON.stringify(err)
                 };
@@ -311,6 +320,41 @@ export default function UserProvider(props: any) {
                     mensagemErro: JSON.stringify(err)
                 };
             }
+        },
+        search: async (networkId: number, keyword: string, pageNum: number, profileId?: number) => {
+            let ret: Promise<ProviderResult>;
+            setLoadingSearch(true);
+            setSearchResult(null);
+            //try {
+                let brt = await UserFactory.UserBusiness.search(networkId, keyword, pageNum, profileId);
+                if (brt.sucesso) {
+                    setLoadingSearch(false);
+                    setSearchResult(brt.dataResult);
+                    return {
+                        ...ret,
+                        sucesso: true,
+                        mensagemSucesso: "Search executed"
+                    };
+                }
+                else {
+                    setLoadingSearch(false);
+                    return {
+                        ...ret,
+                        sucesso: false,
+                        mensagemErro: brt.mensagem
+                    };
+                }
+            /*
+            }
+            catch (err) {
+                setLoadingSearch(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: JSON.stringify(err)
+                };
+            }
+            */
         }
     }
 

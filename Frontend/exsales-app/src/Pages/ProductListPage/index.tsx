@@ -26,7 +26,7 @@ export default function ProductListPage() {
                         <h3>
                             <nav aria-label="breadcrumb">
                                 <ol className="breadcrumb">
-                                    <li className="breadcrumb-item"><Link to="/minha-rede/dashboard">Minha Rede</Link></li>
+                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">Minha Rede</Link></li>
                                     <li className="breadcrumb-item active" aria-current="page">Products List</li>
                                 </ol>
                             </nav>
@@ -51,7 +51,7 @@ export default function ProductListPage() {
                                 </Dropdown.Menu>
                             </Dropdown>
                             <Button variant="success" onClick={() => {
-                                navigate("/minha-rede/products/new");
+                                navigate("/admin/products/new");
                             }}><FontAwesomeIcon icon={faPlus} fixedWidth />&nbsp;New Product</Button>
                         </InputGroup>
                     </Col>
@@ -70,57 +70,57 @@ export default function ProductListPage() {
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><Link to="/minha-rede/products/new">Doação Básica / Mensal</Link></td>
+                                    <td><Link to="/admin/products/new">Doação Básica / Mensal</Link></td>
                                     <td>Mensal</td>
                                     <td style={{ textAlign: "right" }}>R$ 29,90</td>
                                     <td>Active</td>
                                     <td>
-                                        <Link to="/minha-rede/products/new">
+                                        <Link to="/admin/products/new">
                                             <FontAwesomeIcon icon={faEdit} fixedWidth />
                                         </Link>
-                                        <Link to="/minha-rede/products/new">
+                                        <Link to="/admin/products/new">
                                             <FontAwesomeIcon icon={faTrash} fixedWidth />
                                         </Link>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><Link to="/minha-rede/products/new">Doação Avançada / Mensal</Link></td>
+                                    <td><Link to="/admin/products/new">Doação Avançada / Mensal</Link></td>
                                     <td>Mensal</td>
                                     <td style={{ textAlign: "right" }}>R$ 99,90</td>
                                     <td>Active</td>
                                     <td>
-                                        <Link to="/minha-rede/products/new">
+                                        <Link to="/admin/products/new">
                                             <FontAwesomeIcon icon={faEdit} fixedWidth />
                                         </Link>
-                                        <Link to="/minha-rede/products/new">
+                                        <Link to="/admin/products/new">
                                             <FontAwesomeIcon icon={faTrash} fixedWidth />
                                         </Link>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><Link to="/minha-rede/products/new">Doação Suprema / Mensal</Link></td>
+                                    <td><Link to="/admin/products/new">Doação Suprema / Mensal</Link></td>
                                     <td>Mensal</td>
                                     <td style={{ textAlign: "right" }}>R$ 199,90</td>
                                     <td>Active</td>
                                     <td>
-                                        <Link to="/minha-rede/products/new">
+                                        <Link to="/admin/products/new">
                                             <FontAwesomeIcon icon={faEdit} fixedWidth />
                                         </Link>
-                                        <Link to="/minha-rede/products/new">
+                                        <Link to="/admin/products/new">
                                             <FontAwesomeIcon icon={faTrash} fixedWidth />
                                         </Link>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><Link to="/minha-rede/products/new">Doação Básica / Trimestral</Link></td>
+                                    <td><Link to="/admin/products/new">Doação Básica / Trimestral</Link></td>
                                     <td>Trimestral</td>
                                     <td style={{ textAlign: "right" }}>R$ 89,70</td>
                                     <td>Active</td>
                                     <td>
-                                        <Link to="/minha-rede/products/new">
+                                        <Link to="/admin/products/new">
                                             <FontAwesomeIcon icon={faEdit} fixedWidth />
                                         </Link>
-                                        <Link to="/minha-rede/products/new">
+                                        <Link to="/admin/products/new">
                                             <FontAwesomeIcon icon={faTrash} fixedWidth />
                                         </Link>
                                     </td>

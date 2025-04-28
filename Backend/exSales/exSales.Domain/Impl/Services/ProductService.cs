@@ -2,6 +2,7 @@
 using exSales.Domain.Interfaces.Models;
 using exSales.Domain.Interfaces.Services;
 using exSales.DTO.Product;
+using exSales.DTO.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,10 +47,6 @@ namespace exSales.Domain.Impl.Services
                 }
             }
         }
-        public IList<IProductModel> ListByNetwork(long networkId)
-        {
-            return _productFactory.BuildProductModel().ListByNetwork(networkId, _productFactory).ToList();
-        }
         public IProductModel GetById(long productId)
         {
             return _productFactory.BuildProductModel().GetById(productId, _productFactory);
@@ -61,6 +58,7 @@ namespace exSales.Domain.Impl.Services
                 ProductId = md.ProductId,
                 NetworkId = md.NetworkId,
                 Name = md.Name,
+                Description = md.Description,
                 Slug = md.Slug,
                 Price = md.Price,
                 Frequency = md.Frequency,
@@ -83,6 +81,7 @@ namespace exSales.Domain.Impl.Services
             model.ProductId = product.ProductId;
             model.NetworkId = product.NetworkId;
             model.Name = product.Name;
+            model.Description = product.Description;
             model.Slug = product.Slug;
             model.Price = product.Price;
             model.Frequency = product.Frequency;
@@ -106,6 +105,7 @@ namespace exSales.Domain.Impl.Services
             model.ProductId = product.ProductId;
             model.NetworkId = product.NetworkId;
             model.Name = product.Name;
+            model.Description = product.Description;
             model.Slug = product.Slug;
             model.Price = product.Price;
             model.Frequency = product.Frequency;
@@ -113,6 +113,23 @@ namespace exSales.Domain.Impl.Services
             model.Status = product.Status;
 
             return model.Update(_productFactory);
+        }
+
+        public ProductListPagedResult Search(long networkId, string keyword, int pageNum)
+        {
+           
+            var model = _productFactory.BuildProductModel();
+            int pageCount = 0;
+            var products = model.Search(networkId, keyword, pageNum, out pageCount, _productFactory)
+                .Select(x => GetProductInfo(x))
+                .ToList();
+            return new ProductListPagedResult
+            {
+                Sucesso = true,
+                Products = products,
+                PageNum = pageNum,
+                PageCount = pageCount
+            };
         }
     }
 }

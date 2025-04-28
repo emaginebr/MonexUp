@@ -1,6 +1,6 @@
 import UserInfo from "../../DTO/Domain/UserInfo";
-import AuthResult from "../../DTO/Services/AuthResult";
 import StatusRequest from "../../DTO/Services/StatusRequest";
+import UserListPagedResult from "../../DTO/Services/UserListPagedResult";
 import UserResult from "../../DTO/Services/UserResult";
 import UserTokenResult from "../../DTO/Services/UserTokenResult";
 import IHttpClient from "../../Infra/Interface/IHttpClient";
@@ -18,4 +18,5 @@ export default interface IUserService {
     changePassword: (oldPassword: string, newPassword: string, token: string) => Promise<StatusRequest>;
     sendRecoveryEmail: (email: string) => Promise<StatusRequest>;
     changePasswordUsingHash: (recoveryHash: string, newPassword: string) => Promise<StatusRequest>; 
+    search: (networkId: number, keyword: string, pageNum: number, token: string, profileId?: number) => Promise<UserListPagedResult>;
 }

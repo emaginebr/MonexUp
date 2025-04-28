@@ -19,5 +19,7 @@ namespace exSales.DTO.Profile
         public double Commission { get; set; }
         [JsonPropertyName("level")]
         public int Level { get; set; }
+        [JsonPropertyName("members")]
+        public int Members { get; set; }
     }
 }

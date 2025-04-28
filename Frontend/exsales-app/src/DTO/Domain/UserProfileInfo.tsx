@@ -4,4 +4,5 @@ export default interface UserProfileInfo {
     name: string;
     commission: number;
     level: number;
+    members: number;
 }

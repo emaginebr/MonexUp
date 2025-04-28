@@ -23,6 +23,7 @@ namespace exSales.Domain.Interfaces.Models
         long? ReferrerId { get; set; }
 
         IEnumerable<IUserNetworkModel> ListByUser(long userId, IUserNetworkDomainFactory factory);
+        IEnumerable<IUserNetworkModel> Search(long networkId, string keyword, long? profileId, int pageNum, out int pageCount, IUserNetworkDomainFactory factory);
         IUserNetworkModel Get(long networkId, long userId, IUserNetworkDomainFactory factory);
         int GetQtdyUserByNetwork(long networkId);
         IUserNetworkModel Insert(IUserNetworkDomainFactory factory);

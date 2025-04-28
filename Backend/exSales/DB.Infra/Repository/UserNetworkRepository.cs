@@ -16,6 +16,8 @@ namespace DB.Infra.Repository
     {
         private ExSalesContext _ccsContext;
 
+        private const int PAGE_SIZE = 15;
+
         public UserNetworkRepository(ExSalesContext ccsContext)
         {
             _ccsContext = ccsContext;
@@ -89,6 +91,25 @@ namespace DB.Infra.Repository
             return _ccsContext.UserNetworks
                 .Where(x => x.NetworkId == networkId)
                 .Count();
+        }
+
+        public IEnumerable<IUserNetworkModel> Search(long networkId, string keyword, long? profileId, int pageNum, out int pageCount, IUserNetworkDomainFactory factory)
+        {
+            var q = _ccsContext.UserNetworks
+                .Where(x => x.NetworkId == networkId);
+            if (profileId.HasValue)
+            {
+                q = q.Where(x => x.ProfileId == profileId.Value);
+            }
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                q = q.Where(x => x.User.Name.Contains(keyword, StringComparison.CurrentCultureIgnoreCase));
+            }
+            var pages = (double)q.Count() / (double)PAGE_SIZE;
+            pageCount = Convert.ToInt32(Math.Ceiling(pages));
+            var rows = q.Skip((pageNum - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
+            //var rows = q.ToList();
+            return rows.Select(x => DbToModel(factory, x));
         }
     }
 }

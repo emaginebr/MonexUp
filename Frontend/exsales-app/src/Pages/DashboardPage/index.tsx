@@ -19,12 +19,15 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Badge from 'react-bootstrap/Badge';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import NetworkContext from "../../Contexts/Network/NetworkContext";
+import { UserRoleEnum } from "../../DTO/Enum/UserRoleEnum";
 
 
 
 export default function DashboardPage() {
 
     const authContext = useContext(AuthContext);
+    const networkContext = useContext(NetworkContext);
 
     let navigate = useNavigate();
 
@@ -181,58 +184,66 @@ export default function DashboardPage() {
                     </Col>
                     <Col md={4} className="py-4">
                         <ListGroup>
-                            <ListGroup.Item variant="primary">
-                                <FontAwesomeIcon icon={faUserGroup} fixedWidth /> Networks
-                            </ListGroup.Item>
-                            <ListGroup.Item action onClick={() => {
-                                navigate("/minha-rede/network");
-                            }}>
-                                <div className="ms-2 me-auto">
-                                    <FontAwesomeIcon icon={faCog} fixedWidth /> Preferences
-                                </div>
-                            </ListGroup.Item>
-                            <ListGroup.Item action onClick={() => {
-                                navigate("/minha-rede/team-structure");
-                            }}>
-                                <div className="ms-2 me-auto">
-                                    <FontAwesomeIcon icon={faUserCog} fixedWidth /> Teams Structure
-                                </div>
-                            </ListGroup.Item>
-                            <ListGroup.Item action onClick={() => {
-                                navigate("/minha-rede/teams");
-                            }}>
-                                <Badge bg="primary" pill style={{ float: "right" }}>7</Badge>
-                                <div className="ms-2 me-auto">
-                                    <FontAwesomeIcon icon={faUserGroup} fixedWidth /> Teams
-                                </div>
-                            </ListGroup.Item>
-                            <ListGroup.Item variant="primary">
-                                <FontAwesomeIcon icon={faBox} fixedWidth /> Finances
-                            </ListGroup.Item>
-                            <ListGroup.Item action onClick={() => {
-                                navigate("/minha-rede/orders");
-                            }}>
-                                <Badge bg="primary" pill style={{ float: "right" }}>14</Badge>
-                                <div className="ms-2 me-auto">
-                                    <FontAwesomeIcon icon={faList} fixedWidth /> List of Orders
-                                </div>
-                            </ListGroup.Item>
-                            <ListGroup.Item action onClick={() => {
-                                navigate("/minha-rede/invoices");
-                            }}>
-                                <Badge bg="primary" pill style={{ float: "right" }}>37</Badge>
-                                <div className="ms-2 me-auto">
-                                    <FontAwesomeIcon icon={faDollar} fixedWidth /> List of Invoices
-                                </div>
-                            </ListGroup.Item>
-                            <ListGroup.Item action onClick={() => {
-                                navigate("/minha-rede/products");
-                            }}>
-                                <Badge bg="primary" pill style={{ float: "right" }}>14</Badge>
-                                <div className="ms-2 me-auto">
-                                    <FontAwesomeIcon icon={faBox} fixedWidth /> List of Products
-                                </div>
-                            </ListGroup.Item>
+                            {networkContext.currentRole >= UserRoleEnum.NetworkManager &&
+                                <>
+                                    <ListGroup.Item variant="primary">
+                                        <FontAwesomeIcon icon={faUserGroup} fixedWidth /> Networks
+                                    </ListGroup.Item>
+                                    <ListGroup.Item action onClick={() => {
+                                        navigate("/admin/network");
+                                    }}>
+                                        <div className="ms-2 me-auto">
+                                            <FontAwesomeIcon icon={faCog} fixedWidth /> Preferences
+                                        </div>
+                                    </ListGroup.Item>
+                                    <ListGroup.Item action onClick={() => {
+                                        navigate("/admin/team-structure");
+                                    }}>
+                                        <div className="ms-2 me-auto">
+                                            <FontAwesomeIcon icon={faUserCog} fixedWidth /> Teams Structure
+                                        </div>
+                                    </ListGroup.Item>
+                                    <ListGroup.Item action onClick={() => {
+                                        navigate("/admin/teams");
+                                    }}>
+                                        <Badge bg="primary" pill style={{ float: "right" }}>7</Badge>
+                                        <div className="ms-2 me-auto">
+                                            <FontAwesomeIcon icon={faUserGroup} fixedWidth /> Teams
+                                        </div>
+                                    </ListGroup.Item>
+                                </>
+                            }
+                            {networkContext.currentRole >= UserRoleEnum.Seller &&
+                                <>
+                                    <ListGroup.Item variant="primary">
+                                        <FontAwesomeIcon icon={faBox} fixedWidth /> Finances
+                                    </ListGroup.Item>
+                                    <ListGroup.Item action onClick={() => {
+                                        navigate("/admin/orders");
+                                    }}>
+                                        <Badge bg="primary" pill style={{ float: "right" }}>14</Badge>
+                                        <div className="ms-2 me-auto">
+                                            <FontAwesomeIcon icon={faList} fixedWidth /> List of Orders
+                                        </div>
+                                    </ListGroup.Item>
+                                    <ListGroup.Item action onClick={() => {
+                                        navigate("/admin/invoices");
+                                    }}>
+                                        <Badge bg="primary" pill style={{ float: "right" }}>37</Badge>
+                                        <div className="ms-2 me-auto">
+                                            <FontAwesomeIcon icon={faDollar} fixedWidth /> List of Invoices
+                                        </div>
+                                    </ListGroup.Item>
+                                    <ListGroup.Item action onClick={() => {
+                                        navigate("/admin/products");
+                                    }}>
+                                        <Badge bg="primary" pill style={{ float: "right" }}>14</Badge>
+                                        <div className="ms-2 me-auto">
+                                            <FontAwesomeIcon icon={faBox} fixedWidth /> List of Products
+                                        </div>
+                                    </ListGroup.Item>
+                                </>
+                            }
                         </ListGroup>
                     </Col>
                 </Row>

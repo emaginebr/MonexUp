@@ -116,7 +116,8 @@ namespace exSales.Domain.Impl.Services
                 NetworkId = profile.NetworkId,
                 Name = profile.Name,
                 Commission = profile.Commission,
-                Level = profile.Level
+                Level = profile.Level,
+                Members = profile.Members
             };
         }
 

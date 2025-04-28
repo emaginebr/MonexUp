@@ -29,6 +29,15 @@ namespace exSales.Domain.Impl.Models
         public UserNetworkStatusEnum Status { get; set; }
         public long? ReferrerId { get; set; }
 
+        public IEnumerable<IUserNetworkModel> ListByUser(long userId, IUserNetworkDomainFactory factory)
+        {
+            return _repositoryNetwork.ListByUser(userId, factory);
+        }
+        public IEnumerable<IUserNetworkModel> Search(long networkId, string keyword, long? profileId, int pageNum, out int pageCount, IUserNetworkDomainFactory factory)
+        {
+            return _repositoryNetwork.Search(networkId, keyword, profileId, pageNum, out pageCount, factory);
+        }
+
         public IUserNetworkModel Insert(IUserNetworkDomainFactory factory)
         {
             return _repositoryNetwork.Insert(this, factory);
@@ -36,10 +45,6 @@ namespace exSales.Domain.Impl.Models
         public IUserNetworkModel Update(IUserNetworkDomainFactory factory)
         {
             return _repositoryNetwork.Update(this, factory);
-        }
-        public IEnumerable<IUserNetworkModel> ListByUser(long userId, IUserNetworkDomainFactory factory)
-        {
-            return _repositoryNetwork.ListByUser(userId, factory);
         }
 
         public IUserNetworkModel Get(long networkId, long userId, IUserNetworkDomainFactory factory)

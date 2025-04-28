@@ -14,9 +14,6 @@ import NetworkPage from './Pages/NetworkPage';
 import DashboardPage from './Pages/DashboardPage';
 import NetworkEditPage from './Pages/NetworkEditPage';
 import NetworkListPage from './Pages/NetworkListPage';
-import TeamStructurePage from './Pages/TeamStructurePage';
-import TeamStructureEditPage from './Pages/TeamStructureEditPage';
-import TeamPage from './Pages/TeamPage';
 import OrderListPage from './Pages/OrderListPage';
 import InvoiceListPage from './Pages/InvoiceListPage';
 import ProductListPage from './Pages/ProductListPage';
@@ -24,6 +21,10 @@ import ProductEditPage from './Pages/ProductEditPage';
 import ProductPage from './Pages/ProductPage';
 import NetworkInsertPage from './Pages/NetworkInsertPage';
 import NetworkProvider from './Contexts/Network/NetworkProvider';
+import ProfileProvider from './Contexts/Profile/ProfileProvider';
+import ProfileListPage from './Pages/ProfileListPage';
+import ProfileEditPage from './Pages/ProfileEditPage';
+import UserSearchPage from './Pages/UserSearchPage';
 
 function Error404() {
   return (
@@ -43,7 +44,7 @@ function Layout() {
 }
 
 function App() {
-  const ContextContainer = ContextBuilder([AuthProvider, UserProvider, NetworkProvider]);
+  const ContextContainer = ContextBuilder([AuthProvider, UserProvider, NetworkProvider, ProfileProvider]);
 
   return (
     <ContextContainer>
@@ -65,7 +66,11 @@ function App() {
             <Route index element={<NetworkPage />} />
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="network" element={<NetworkEditPage />} />
-            <Route path="teams" element={<TeamPage />} />
+            <Route path="teams" element={<UserSearchPage />} />
+            <Route path="teams">
+              <Route index element={<UserSearchPage />} />
+              <Route path=":pageNum" element={<UserSearchPage />} />
+            </Route>
             <Route path="orders" element={<OrderListPage />} />
             <Route path="invoices" element={<InvoiceListPage />} />
             <Route path="products">
@@ -77,9 +82,9 @@ function App() {
               <Route path=":id" element={<ProductPage />} />
             </Route>
             <Route path="team-structure">
-              <Route index element={<TeamStructurePage />} />
-              <Route path="new" element={<TeamStructureEditPage />} />
-              <Route path=":id" element={<TeamStructureEditPage />} />
+              <Route index element={<ProfileListPage />} />
+              <Route path="new" element={<ProfileEditPage />} />
+              <Route path=":profileId" element={<ProfileEditPage />} />
             </Route>
           </Route>
           <Route path="*" element={<Error404 />} />

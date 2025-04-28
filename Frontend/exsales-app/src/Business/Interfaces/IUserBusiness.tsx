@@ -1,5 +1,8 @@
 import BusinessResult from "../../DTO/Business/BusinessResult";
 import UserInfo from "../../DTO/Domain/UserInfo";
+import UserListPagedInfo from "../../DTO/Domain/UserListPagedInfo";
+import UserListPagedResult from "../../DTO/Services/UserListPagedResult";
+import UserNetworkListResult from "../../DTO/Services/UserNetworkListResult";
 import IUserService from "../../Services/Interfaces/IUserService";
 
 export default interface IUserBusiness {
@@ -14,4 +17,5 @@ export default interface IUserBusiness {
   changePassword: (oldPassword: string, newPassword: string) => Promise<BusinessResult<boolean>>;
   sendRecoveryEmail: (email: string) => Promise<BusinessResult<boolean>>;
   changePasswordUsingHash: (recoveryHash: string, newPassword: string) => Promise<BusinessResult<boolean>>; 
+  search: (networkId: number, keyword: string, pageNum: number, profileId?: number) => Promise<BusinessResult<UserListPagedInfo>>;
 }

@@ -7,7 +7,7 @@ import AuthContext from "../../Contexts/Auth/AuthContext";
 import Button from "react-bootstrap/esm/Button";
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAddressBook, faArrowRight, faBitcoinSign, faCalendar, faCalendarAlt, faCancel, faClose, faDollar, faEnvelope, faEthernet, faIdCard, faLock, faPercent, faPhone, faSave, faSignInAlt, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faAddressBook, faArrowLeft, faArrowRight, faBitcoinSign, faCalendar, faCalendarAlt, faCancel, faClose, faCode, faDollar, faEnvelope, faEthernet, faIdCard, faLock, faPercent, faPhone, faSave, faSignInAlt, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
 import Table from "react-bootstrap/esm/Table";
 import { Link, useNavigate } from "react-router-dom";
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -90,6 +90,23 @@ export default function NetworkEditPage() {
                                         </Col>
                                     </Form.Group>
                                     <Form.Group as={Row} className="mb-3">
+                                        <Form.Label column sm="2">Slug:</Form.Label>
+                                        <Col sm="10">
+                                            <InputGroup>
+                                                <InputGroup.Text><FontAwesomeIcon icon={faCode} fixedWidth /></InputGroup.Text>
+                                                <Form.Control type="text" size="lg"
+                                                    placeholder="Ex: https://monexup.io/{my-network-slug}"
+                                                    value={networkContext.network?.slug}
+                                                    onChange={(e) => {
+                                                        networkContext.setNetwork({
+                                                            ...networkContext.network,
+                                                            slug: e.target.value
+                                                        });
+                                                    }} />
+                                            </InputGroup>
+                                        </Col>
+                                    </Form.Group>
+                                    <Form.Group as={Row} className="mb-3">
                                         <Form.Label column sm="2">Email:</Form.Label>
                                         <Col sm="10">
                                             <InputGroup>
@@ -158,7 +175,7 @@ export default function NetworkEditPage() {
                                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                                         <Button variant="danger" size="lg" onClick={() => {
                                             navigate("/admin/dashboard");
-                                        }}><FontAwesomeIcon icon={faCancel} fixedWidth /> Cancel</Button>
+                                        }}><FontAwesomeIcon icon={faArrowLeft} fixedWidth /> Back</Button>
                                         <Button variant="success" size="lg" onClick={async (e) => {
                                             let ret = await networkContext.update(networkContext.network);
                                             if (ret.sucesso) {

@@ -103,33 +103,41 @@ export default function Menu() {
                 <Link className='nav-link' to="/new-seller"><FontAwesomeIcon icon={faUser} fixedWidth /> Seja um representante</Link>
               }
               <Link className='nav-link' to="/network"><FontAwesomeIcon icon={faBuilding} fixedWidth /> Crie sua rede</Link>
-              {authContext.sessionInfo &&
+              {authContext.sessionInfo && networkContext.currentRole >= UserRoleEnum.Seller &&
                 <NavDropdown title={
                   <>
                     <FontAwesomeIcon icon={faUserGroup} />&nbsp;My Network
                   </>
                 } id="basic-nav-dropdown">
-                  <NavDropdown.ItemText className='small text-center'>Network</NavDropdown.ItemText>
-                  <NavDropdown.Item onClick={() => {
-                    navigate("/admin/network");
-                  }}><FontAwesomeIcon icon={faCog} fixedWidth />&nbsp;Preferences</NavDropdown.Item>
-                  <NavDropdown.Item onClick={() => {
-                    navigate("/admin/team-structure");
-                  }}><FontAwesomeIcon icon={faUserCog} fixedWidth />&nbsp;Team Structure</NavDropdown.Item>
-                  <NavDropdown.Item onClick={() => {
-                    navigate("/admin/teams");
-                  }}><FontAwesomeIcon icon={faUserGroup} fixedWidth />&nbsp;Teams</NavDropdown.Item>
-                  <NavDropdown.Divider />
-                  <NavDropdown.ItemText className='small text-center'>Finances</NavDropdown.ItemText>
-                  <NavDropdown.Item onClick={() => {
-                    navigate("/admin/orders");
-                  }}><FontAwesomeIcon icon={faFileWord} fixedWidth />&nbsp;Orders</NavDropdown.Item>
-                  <NavDropdown.Item onClick={() => {
-                    navigate("/admin/invoices");
-                  }}><FontAwesomeIcon icon={faDollar} fixedWidth />&nbsp;Invoices</NavDropdown.Item>
-                  <NavDropdown.Item onClick={() => {
-                    navigate("/admin/products");
-                  }}><FontAwesomeIcon icon={faBox} fixedWidth />&nbsp;Products</NavDropdown.Item>
+                  {networkContext.currentRole == UserRoleEnum.NetworkManager &&
+                    <>
+                      <NavDropdown.ItemText className='small text-center'>Network</NavDropdown.ItemText>
+                      <NavDropdown.Item onClick={() => {
+                        navigate("/admin/network");
+                      }}><FontAwesomeIcon icon={faCog} fixedWidth />&nbsp;Preferences</NavDropdown.Item>
+                      <NavDropdown.Item onClick={() => {
+                        navigate("/admin/team-structure");
+                      }}><FontAwesomeIcon icon={faUserCog} fixedWidth />&nbsp;Team Structure</NavDropdown.Item>
+                      <NavDropdown.Item onClick={() => {
+                        navigate("/admin/teams");
+                      }}><FontAwesomeIcon icon={faUserGroup} fixedWidth />&nbsp;Teams</NavDropdown.Item>
+                      <NavDropdown.Divider />
+                    </>
+                  }
+                  {networkContext.currentRole >= UserRoleEnum.Seller &&
+                    <>
+                      <NavDropdown.ItemText className='small text-center'>Finances</NavDropdown.ItemText>
+                      <NavDropdown.Item onClick={() => {
+                        navigate("/admin/orders");
+                      }}><FontAwesomeIcon icon={faFileWord} fixedWidth />&nbsp;Orders</NavDropdown.Item>
+                      <NavDropdown.Item onClick={() => {
+                        navigate("/admin/invoices");
+                      }}><FontAwesomeIcon icon={faDollar} fixedWidth />&nbsp;Invoices</NavDropdown.Item>
+                      <NavDropdown.Item onClick={() => {
+                        navigate("/admin/products");
+                      }}><FontAwesomeIcon icon={faBox} fixedWidth />&nbsp;Products</NavDropdown.Item>
+                    </>
+                  }
                 </NavDropdown>
               }
             </Nav>
@@ -174,24 +182,28 @@ export default function Menu() {
                       <NavDropdown.Item onClick={(e) => {
                         e.preventDefault();
                         networkContext.setCurrentRole(UserRoleEnum.User);
+                        navigate("/admin/dashboard");
                       }}>{showRoleText(UserRoleEnum.User)}</NavDropdown.Item>
                     }
                     {networkContext.userNetwork?.role >= UserRoleEnum.Seller &&
                       <NavDropdown.Item onClick={(e) => {
                         e.preventDefault();
                         networkContext.setCurrentRole(UserRoleEnum.Seller);
+                        navigate("/admin/dashboard");
                       }}>{showRoleText(UserRoleEnum.Seller)}</NavDropdown.Item>
                     }
                     {networkContext.userNetwork?.role >= UserRoleEnum.NetworkManager &&
                       <NavDropdown.Item onClick={(e) => {
                         e.preventDefault();
                         networkContext.setCurrentRole(UserRoleEnum.NetworkManager);
+                        navigate("/admin/dashboard");
                       }}>{showRoleText(UserRoleEnum.NetworkManager)}</NavDropdown.Item>
                     }
                     {networkContext.userNetwork?.role >= UserRoleEnum.Administrator &&
                       <NavDropdown.Item onClick={(e) => {
                         e.preventDefault();
                         networkContext.setCurrentRole(UserRoleEnum.Administrator);
+                        navigate("/admin/dashboard");
                       }}>{showRoleText(UserRoleEnum.Administrator)}</NavDropdown.Item>
                     }
                   </NavDropdown>

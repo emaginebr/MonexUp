@@ -7,7 +7,7 @@ import AuthContext from "../../Contexts/Auth/AuthContext";
 import Button from "react-bootstrap/esm/Button";
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAddressBook, faBitcoinSign, faCalendar, faCalendarAlt, faCancel, faClose, faDollar, faEnvelope, faEthernet, faIdCard, faLock, faPhone, faSave, faSignInAlt, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faAddressBook, faArrowLeft, faBitcoinSign, faCalendar, faCalendarAlt, faCancel, faClose, faDollar, faEnvelope, faEthernet, faIdCard, faLock, faPhone, faSave, faSignInAlt, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
 import Table from "react-bootstrap/esm/Table";
 import { Link, useNavigate } from "react-router-dom";
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -15,6 +15,10 @@ import UserContext from "../../Contexts/User/UserContext";
 import MessageToast from "../../Components/MessageToast";
 import Moment from 'moment';
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
+import UserEditInfo from "../../DTO/Domain/UserEditInfo";
+import UserInfo from "../../DTO/Domain/UserInfo";
+import UserPhoneInfo from "../../DTO/Domain/UserPhoneInfo";
+import UserAddressInfo from "../../DTO/Domain/UserAddressInfo";
 
 export default function SellerPage() {
 
@@ -22,6 +26,8 @@ export default function SellerPage() {
     const userContext = useContext(UserContext);
 
     const [insertMode, setInsertMode] = useState<boolean>(false);
+
+    const [user, setUser] = useState<UserEditInfo>(null);
 
     const [dialog, setDialog] = useState<MessageToastEnum>(MessageToastEnum.Error);
     const [showMessage, setShowMessage] = useState<boolean>(false);
@@ -42,22 +48,43 @@ export default function SellerPage() {
     };
 
     useEffect(() => {
+        let userEdit: UserEditInfo;
         if (authContext.sessionInfo) {
             if (authContext.sessionInfo?.userId > 0) {
                 userContext.getMe().then((ret) => {
                     if (ret.sucesso) {
+                        setUser({
+                            ...userEdit,
+                            userId: ret.user.userId,
+                            name: ret.user.name,
+                            email: ret.user.email,
+                            birthDate: ret.user.birthDate,
+                            iddocument: ret.user.idDocument,
+                            pixkey: ret.user.pixKey,
+                            phone: ret.user.phones[0]?.phone,
+                            zipCode: ret.user.addresses[0]?.zipCode,
+                            address: ret.user.addresses[0]?.address,
+                            complement: ret.user.addresses[0]?.complement,
+                            neighborhood: ret.user.addresses[0]?.neighborhood,
+                            city: ret.user.addresses[0]?.city,
+                            state: ret.user.addresses[0]?.state
+                        });
+                        
                         setInsertMode(false);
                     }
                     else {
+                        setUser(userEdit);
                         setInsertMode(true);
                     }
                 });
             }
             else {
+                setUser(userEdit);
                 setInsertMode(true);
             }
         }
         else {
+            setUser(userEdit);
             setInsertMode(true);
         }
     }, []);
@@ -70,7 +97,7 @@ export default function SellerPage() {
                 messageText={messageText}
                 onClose={() => setShowMessage(false)}
             ></MessageToast>
-            <Container>
+            <Container className="mb-5">
                 <Row>
                     <Col md="12">
                         <Card>
@@ -82,43 +109,52 @@ export default function SellerPage() {
                                     <div className="text-center mb-3">
                                         Registration is not required to make swaps, but you can do so anyway to access your transaction history.
                                     </div>
-                                    {!insertMode &&
-                                        <Form.Group as={Row} className="mb-3">
-                                            <Form.Label column sm="2">Hash:</Form.Label>
-                                            <Col sm="10">
-                                                <InputGroup>
-                                                    <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
-                                                    <Form.Control type="text" size="lg" className="readonly"
-                                                        disabled={true} readOnly={true}
-                                                        value={userContext.user?.hash}
-                                                    />
-                                                </InputGroup>
-                                            </Col>
-                                        </Form.Group>
-                                    }
                                     <Form.Group as={Row} className="mb-3">
                                         <Form.Label column sm="2">Name:</Form.Label>
-                                        <Col sm="5">
+                                        <Col sm="10">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
                                                     placeholder="Your name"
-                                                    value={userContext.user?.name}
+                                                    value={user?.name}
                                                     onChange={(e) => {
-                                                        userContext.setUser({
-                                                            ...userContext.user,
+                                                        setUser({
+                                                            ...user,
                                                             name: e.target.value
                                                         });
                                                     }} />
                                             </InputGroup>
                                         </Col>
-                                        <Form.Label column sm="1">CPF:</Form.Label>
-                                        <Col sm="4">
+                                    </Form.Group>
+                                    <Form.Group as={Row} className="mb-3">
+                                    <Form.Label column sm="2">CPF:</Form.Label>
+                                        <Col sm="5">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faIdCard} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
                                                     placeholder="Seu CPF"
-                                                />
+                                                    value={user?.iddocument}
+                                                    onChange={(e) => {
+                                                        setUser({
+                                                            ...user,
+                                                            iddocument: e.target.value
+                                                        });
+                                                    }} />
+                                            </InputGroup>
+                                        </Col>
+                                        <Form.Label column sm="1">Birthday:</Form.Label>
+                                        <Col sm="4">
+                                            <InputGroup>
+                                                <InputGroup.Text><FontAwesomeIcon icon={faCalendar} fixedWidth /></InputGroup.Text>
+                                                <Form.Control type="date" size="lg"
+                                                    placeholder="Your birthday"
+                                                    value={user?.birthDate}
+                                                    onChange={(e) => {
+                                                        setUser({
+                                                            ...user,
+                                                            birthDate: e.target.value
+                                                        });
+                                                    }} />
                                             </InputGroup>
                                         </Col>
                                     </Form.Group>
@@ -127,12 +163,12 @@ export default function SellerPage() {
                                         <Col sm="5">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faEnvelope} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg"
+                                                <Form.Control type="email" size="lg"
                                                     placeholder="Your email"
-                                                    value={userContext.user?.email}
+                                                    value={user?.email}
                                                     onChange={(e) => {
-                                                        userContext.setUser({
-                                                            ...userContext.user,
+                                                        setUser({
+                                                            ...user,
                                                             email: e.target.value
                                                         });
                                                     }} />
@@ -144,8 +180,128 @@ export default function SellerPage() {
                                                 <InputGroup.Text><FontAwesomeIcon icon={faPhone} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
                                                     placeholder="Your phone"
-                                                    value={userContext.user?.email}
-                                                />
+                                                    value={user?.phone}
+                                                    onChange={(e) => {
+                                                        setUser({
+                                                            ...user,
+                                                            phone: e.target.value
+                                                        });
+                                                    }} />
+                                            </InputGroup>
+                                        </Col>
+                                    </Form.Group>
+                                    <hr />
+                                    <Form.Group as={Row} className="mb-3">
+                                        <Form.Label column sm="2">ZIP Code:</Form.Label>
+                                        <Col sm="3">
+                                            <InputGroup>
+                                                <InputGroup.Text><FontAwesomeIcon icon={faIdCard} fixedWidth /></InputGroup.Text>
+                                                <Form.Control type="text" size="lg"
+                                                    placeholder="ZIP Code"
+                                                    value={user?.zipCode}
+                                                    onChange={(e) => {
+                                                        setUser({
+                                                            ...user,
+                                                            zipCode: e.target.value
+                                                        });
+                                                    }} />
+                                            </InputGroup>
+                                        </Col>
+                                        <Form.Label column sm="1">Address:</Form.Label>
+                                        <Col sm="6">
+                                            <InputGroup>
+                                                <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
+                                                <Form.Control type="text" size="lg" 
+                                                    placeholder="Your address" 
+                                                    value={user?.address}
+                                                    onChange={(e) => {
+                                                        setUser({
+                                                            ...user,
+                                                            address: e.target.value
+                                                        });
+                                                    }} />
+                                            </InputGroup>
+                                        </Col>
+                                    </Form.Group>
+                                    <Form.Group as={Row} className="mb-3">
+                                        <Form.Label column sm="2">Complement:</Form.Label>
+                                        <Col sm="4">
+                                            <InputGroup>
+                                                <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
+                                                <Form.Control type="text" size="lg" 
+                                                    placeholder="Your Complement" 
+                                                    value={user?.complement}
+                                                    onChange={(e) => {
+                                                        setUser({
+                                                            ...user,
+                                                            complement: e.target.value
+                                                        });
+                                                    }} />
+                                            </InputGroup>
+                                        </Col>
+                                        <Form.Label column sm="2">Neighborhood:</Form.Label>
+                                        <Col sm="4">
+                                            <InputGroup>
+                                                <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
+                                                <Form.Control type="text" size="lg" 
+                                                    placeholder="Your Neighborhood" 
+                                                    value={user?.neighborhood}
+                                                    onChange={(e) => {
+                                                        setUser({
+                                                            ...user,
+                                                            neighborhood: e.target.value
+                                                        });
+                                                    }} />
+                                            </InputGroup>
+                                        </Col>
+                                    </Form.Group>
+                                    <Form.Group as={Row} className="mb-3">
+                                        <Form.Label column sm="2">City:</Form.Label>
+                                        <Col sm="5">
+                                            <InputGroup>
+                                                <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
+                                                <Form.Control type="text" size="lg" 
+                                                    placeholder="Your city" 
+                                                    value={user?.city}
+                                                    onChange={(e) => {
+                                                        setUser({
+                                                            ...user,
+                                                            city: e.target.value
+                                                        });
+                                                    }} />
+                                            </InputGroup>
+                                        </Col>
+                                        <Form.Label column sm="1">State:</Form.Label>
+                                        <Col sm="4">
+                                            <InputGroup>
+                                                <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
+                                                <Form.Control type="text" size="lg" 
+                                                    placeholder="Your state" 
+                                                    value={user?.state}
+                                                    onChange={(e) => {
+                                                        setUser({
+                                                            ...user,
+                                                            state: e.target.value
+                                                        });
+                                                    }} />
+                                            </InputGroup>
+                                        </Col>
+                                    </Form.Group>
+                                    <hr />
+                                    <Form.Group as={Row} className="mb-3">
+                                        <Form.Label column sm="2">Chave Pix:</Form.Label>
+                                        <Col sm="10">
+                                            <InputGroup>
+                                                <InputGroup.Text><FontAwesomeIcon icon={faDollar} fixedWidth /></InputGroup.Text>
+                                                <Form.Control type="text" size="lg" 
+                                                    placeholder="Your Pix key" 
+                                                    value={user?.pixkey}
+                                                    onChange={(e) => {
+                                                        setUser({
+                                                            ...user,
+                                                            pixkey: e.target.value
+                                                        });
+                                                    }} />
                                             </InputGroup>
                                         </Col>
                                     </Form.Group>
@@ -159,112 +315,55 @@ export default function SellerPage() {
                                             </InputGroup>
                                         </Col>
                                     </Form.Group>
-                                    <hr />
-                                    <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="2">ZIP Code:</Form.Label>
-                                        <Col sm="3">
-                                            <InputGroup>
-                                                <InputGroup.Text><FontAwesomeIcon icon={faIdCard} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg"
-                                                    placeholder="ZIP Code"
-                                                    value={userContext.user?.name}
-                                                    onChange={(e) => {
-                                                        userContext.setUser({
-                                                            ...userContext.user,
-                                                            name: e.target.value
-                                                        });
-                                                    }} />
-                                            </InputGroup>
-                                        </Col>
-                                        <Form.Label column sm="1">Address:</Form.Label>
-                                        <Col sm="6">
-                                            <InputGroup>
-                                                <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg" placeholder="Your address" />
-                                            </InputGroup>
-                                        </Col>
-                                    </Form.Group>
-                                    <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="2">Complement:</Form.Label>
-                                        <Col sm="4">
-                                            <InputGroup>
-                                                <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg" placeholder="Your Complement" />
-                                            </InputGroup>
-                                        </Col>
-                                        <Form.Label column sm="2">Neighborhood:</Form.Label>
-                                        <Col sm="4">
-                                            <InputGroup>
-                                                <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg" placeholder="Your Neighborhood" />
-                                            </InputGroup>
-                                        </Col>
-                                    </Form.Group>
-                                    <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="2">City:</Form.Label>
-                                        <Col sm="5">
-                                            <InputGroup>
-                                                <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg" placeholder="Your city" />
-                                            </InputGroup>
-                                        </Col>
-                                        <Form.Label column sm="1">State:</Form.Label>
-                                        <Col sm="4">
-                                            <InputGroup>
-                                                <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg" placeholder="Your state" />
-                                            </InputGroup>
-                                        </Col>
-                                    </Form.Group>
-                                    <hr />
-                                    <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="2">Chave Pix:</Form.Label>
-                                        <Col sm="10">
-                                            <InputGroup>
-                                                <InputGroup.Text><FontAwesomeIcon icon={faDollar} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg" placeholder="Your Pix key" />
-                                            </InputGroup>
-                                        </Col>
-                                    </Form.Group>
-                                    {!insertMode &&
-                                        <Form.Group as={Row} className="mb-3">
-                                            <Form.Label column sm="2">Create At:</Form.Label>
-                                            <Col sm="4">
-                                                <InputGroup>
-                                                    <InputGroup.Text><FontAwesomeIcon icon={faCalendarAlt} fixedWidth /></InputGroup.Text>
-                                                    <Form.Control type="text" size="lg" disabled={true} readOnly={true}
-                                                        value={Moment(userContext.user?.createAt).format("MMM DD YYYY")} />
-                                                </InputGroup>
-                                            </Col>
-                                            <Form.Label column sm="2">Update At:</Form.Label>
-                                            <Col sm="4">
-                                                <InputGroup>
-                                                    <InputGroup.Text><FontAwesomeIcon icon={faCalendarAlt} fixedWidth /></InputGroup.Text>
-                                                    <Form.Control type="text" size="lg" disabled={true} readOnly={true}
-                                                        value={Moment(userContext.user?.updateAt).format("MMM DD YYYY")} />
-                                                </InputGroup>
-                                            </Col>
-                                        </Form.Group>
-                                    }
                                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                                         <Button variant="danger" size="lg" onClick={() => {
-                                            navigate("/login");
-                                        }}><FontAwesomeIcon icon={faSignInAlt} fixedWidth /> Sign In</Button>
+                                            navigate("/");
+                                        }}><FontAwesomeIcon icon={faArrowLeft} fixedWidth /> Back</Button>
                                         <Button variant="success" size="lg" onClick={async (e) => {
+                                            e.preventDefault();
+
+                                            let userFull: UserInfo;
+                                            let userPhone: UserPhoneInfo;
+                                            let userAddr: UserAddressInfo;
+
+                                            userFull = {
+                                                ...userFull,
+                                                userId: user.userId,
+                                                name: user.name,
+                                                email: user.email,
+                                                idDocument: user.iddocument,
+                                                birthDate: user.birthDate,
+                                                pixKey: user.pixkey,
+                                                phones: [],
+                                                addresses: []
+                                            };
+                                            userFull.phones.push({
+                                                ...userPhone,
+                                                phone: user.phone,
+                                            });
+                                            userFull.addresses.push({
+                                                ...userAddr,
+                                                zipCode: user.zipCode,
+                                                address: user.address,
+                                                complement: user.complement,
+                                                neighborhood: user.neighborhood,
+                                                city: user.city,
+                                                state: user.state
+                                            });
+
+
                                             if (insertMode) {
-                                                let ret = await userContext.insert(userContext.user);
+                                                let ret = await userContext.insert(userFull);
                                                 if (ret.sucesso) {
                                                     showSuccessMessage(ret.mensagemSucesso);
-                                                    //alert(userContext.user?.id);
                                                 }
                                                 else {
                                                     throwError(ret.mensagemErro);
                                                 }
                                             }
                                             else {
-                                                let ret = await userContext.update(userContext.user);
+                                                let ret = await userContext.update(userFull);
                                                 if (ret.sucesso) {
-                                                    //alert(userContext.user?.id);
                                                     showSuccessMessage(ret.mensagemSucesso);
                                                 }
                                                 else {

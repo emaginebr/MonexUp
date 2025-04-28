@@ -2,6 +2,7 @@
 using exSales.Domain.Interfaces.Services;
 using exSales.DTO.Product;
 using exSales.DTO.Profile;
+using exSales.DTO.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -68,9 +69,9 @@ namespace exSales.API.Controllers
             }
         }
 
+        [HttpPost("search")]
         [Authorize]
-        [HttpGet("listByNetwork/{networkId}")]
-        public ActionResult<ProductListResult> ListByNetwork(long networkId)
+        public ActionResult<ProductListPagedResult> Search([FromBody] ProductSearchParam param)
         {
             try
             {
@@ -79,14 +80,7 @@ namespace exSales.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                return new ProductListResult
-                {
-                    Sucesso = true,
-                    Products = _productService.ListByNetwork(networkId)
-                    .ToList()
-                    .Select(x => _productService.GetProductInfo(x))
-                    .ToList()
-                };
+                return _productService.Search(param.NetworkId, param.Keyword, param.PageNum);
             }
             catch (Exception ex)
             {

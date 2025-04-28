@@ -141,6 +141,7 @@ public partial class ExSalesContext : DbContext
             entity.ToTable("products");
 
             entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Frequency)
                 .HasDefaultValue(0)
                 .HasColumnName("frequency");

@@ -11,20 +11,16 @@ namespace exSales.Domain.Interfaces.Models
     public interface IProductModel
     {
         long ProductId { get; set; }
-
         long NetworkId { get; set; }
         string Slug { get; set; }
         string Name { get; set; }
-
+        string Description { get; set; }
         double Price { get; set; }
-
         int Frequency { get; set; }
-
         int Limit { get; set; }
-
         ProductStatusEnum Status { get; set; }
 
-        IEnumerable<IProductModel> ListByNetwork(long networkId, IProductDomainFactory factory);
+        IEnumerable<IProductModel> Search(long networkId, string keyword, int pageNum, out int pageCount, IProductDomainFactory factory);
         IProductModel GetById(long id, IProductDomainFactory factory);
         IProductModel Insert(IProductDomainFactory factory);
         IProductModel Update(IProductDomainFactory factory);

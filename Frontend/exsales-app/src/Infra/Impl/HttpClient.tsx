@@ -9,7 +9,7 @@ let logoff : () => void;
 function getCatchValue<T>(error: any, path: string) : ApiResponse<T> {
   let ret : ApiResponse<T>;
   if (error.response) {
-    console.error("ops! ocorreu um erro na solicitação do endpoint: " + path  + "\nHttp Status:" + error.response.status + "\n Descrição: " + error.response.data);
+    console.error("ops! ocorreu um erro na solicitação do endpoint: " + path  + "\nHttp Status:" + error.response.status + "\n Descrição: " + JSON.stringify(error.response.data));
     if(error.response.status.toString() === "401") {
       logoff();
       window.location.href = "/login";

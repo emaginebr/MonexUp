@@ -21,12 +21,17 @@ namespace DB.Infra.Repository
 
         private IUserProfileModel DbToModel(IUserProfileDomainFactory factory, UserProfile row)
         {
+            if (row == null)
+            {
+                return null;
+            }
             var md = factory.BuildUserProfileModel();
             md.ProfileId = row.ProfileId;
             md.NetworkId = row.NetworkId;
             md.Name = row.Name;
             md.Commission = row.Commission;
             md.Level = row.Level;
+            md.Members = row.UserNetworks.Count();
             return md;
         }
 
@@ -60,9 +65,10 @@ namespace DB.Infra.Repository
 
         public IEnumerable<IUserProfileModel> ListByNetwork(long networkId, IUserProfileDomainFactory factory)
         {
-            return _ccsContext.UserProfiles
+            var rows = _ccsContext.UserProfiles
                 .Where(x => x.NetworkId == networkId)
-                .Select(x => DbToModel(factory, x));
+                .ToList();
+            return rows.Select(x => DbToModel(factory, x));
         }
 
         public IUserProfileModel GetById(long profileId, IUserProfileDomainFactory factory)

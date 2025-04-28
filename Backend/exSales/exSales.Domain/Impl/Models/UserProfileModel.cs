@@ -26,6 +26,7 @@ namespace exSales.Domain.Impl.Models
         public string Name { get; set; }
         public double Commission { get; set; }
         public int Level { get; set; }
+        public int Members { get; set; }
 
         public IEnumerable<IUserProfileModel> ListByNetwork(long networkId, IUserProfileDomainFactory factory)
         {

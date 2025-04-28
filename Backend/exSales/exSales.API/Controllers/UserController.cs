@@ -282,5 +282,24 @@ namespace exSales.API.Controllers
             }
         }
 
+        [HttpPost("search")]
+        [Authorize]
+        public ActionResult<UserListPagedResult> Search([FromBody] UserSearchParam param)
+        {
+            try
+            {
+                var userSession = _userService.GetUserInSession(HttpContext);
+                if (userSession == null)
+                {
+                    return StatusCode(401, "Not Authorized");
+                }
+                return _userService.Search(param.NetworkId, param.Keyword, param.ProfileId, param.PageNum);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 }

@@ -26,6 +26,7 @@ namespace exSales.Domain.Impl.Models
         public long NetworkId { get; set; }
         public string Slug { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
         public double Price { get; set; }
         public int Frequency { get; set; }
         public int Limit { get; set; }
@@ -36,10 +37,6 @@ namespace exSales.Domain.Impl.Models
             return _repositoryProduct.GetById(id, factory);
         }
 
-        public IEnumerable<IProductModel> ListByNetwork(long networkId, IProductDomainFactory factory)
-        {
-            return _repositoryProduct.ListByNetwork(networkId, factory);
-        }
         public IProductModel Insert(IProductDomainFactory factory)
         {
             return _repositoryProduct.Insert(this, factory);
@@ -48,6 +45,11 @@ namespace exSales.Domain.Impl.Models
         public IProductModel Update(IProductDomainFactory factory)
         {
             return _repositoryProduct.Update(this, factory);
+        }
+
+        public IEnumerable<IProductModel> Search(long networkId, string keyword, int pageNum, out int pageCount, IProductDomainFactory factory)
+        {
+            return _repositoryProduct.Search(networkId, keyword, pageNum, out pageCount, factory);
         }
     }
 }
