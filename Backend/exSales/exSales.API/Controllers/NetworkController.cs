@@ -1,6 +1,7 @@
 ﻿using DB.Infra.Context;
 using exSales.Domain.Impl.Services;
 using exSales.Domain.Interfaces.Factory;
+using exSales.Domain.Interfaces.Models;
 using exSales.Domain.Interfaces.Services;
 using exSales.DTO.Domain;
 using exSales.DTO.Network;
@@ -8,6 +9,8 @@ using exSales.DTO.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace exSales.API.Controllers
@@ -91,31 +94,48 @@ namespace exSales.API.Controllers
 
                 var mdUserNetwork = _userNetworkFactory.BuildUserNetworkModel();
 
-                var networks = _networkService
+                var userNetworks = _networkService
                     .ListByUser(userSession.UserId)
-                    .Select(x => _networkService.GetUserNetworkInfo(x))
                     .ToList();
-                foreach (var network in networks)
-                {
-                    var md = _networkFactory.BuildNetworkModel().GetById(network.NetworkId, _networkFactory);
-                    network.Network = _networkService.GetNetworkInfo(md);
-                    network.Network.QtdyUsers = mdUserNetwork.GetQtdyUserByNetwork(network.NetworkId);
-                    network.Network.MaxUsers = md.MaxQtdyUserByNetwork();
-                    if (network.ProfileId.HasValue)
-                    {
-                        var mdProfile = _profileService.GetById(network.ProfileId.Value);
-                        network.Profile = _profileService.GetUserProfileInfo(mdProfile);
-                    }
-                }
                 return new NetworkListResult()
                 {
-                    Networks = networks
+                    Networks = userNetworks.Select(x => UserNetworkModelToInfo(x)).ToList()
                 };
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        private NetworkInfo NetworkModelToInfo(INetworkModel model)
+        {
+            var networkInfo = _networkService.GetNetworkInfo(model);
+            if (networkInfo != null)
+            {
+                var mdUserNetwork = _userNetworkFactory.BuildUserNetworkModel();
+                networkInfo.QtdyUsers = mdUserNetwork.GetQtdyUserByNetwork(model.NetworkId);
+                networkInfo.MaxUsers = model.MaxQtdyUserByNetwork();
+            }
+            return networkInfo;
+        }
+
+        private UserNetworkInfo UserNetworkModelToInfo(IUserNetworkModel model)
+        {
+            var userNetwork = _networkService.GetUserNetworkInfo(model);
+            if (userNetwork != null)
+            {
+                var md = _networkFactory.BuildNetworkModel().GetById(userNetwork.NetworkId, _networkFactory);
+                userNetwork.Network = _networkService.GetNetworkInfo(md);
+                userNetwork.Network.QtdyUsers = model.GetQtdyUserByNetwork(userNetwork.NetworkId);
+                userNetwork.Network.MaxUsers = md.MaxQtdyUserByNetwork();
+                if (userNetwork.ProfileId.HasValue)
+                {
+                    var mdProfile = _profileService.GetById(userNetwork.ProfileId.Value);
+                    userNetwork.Profile = _profileService.GetUserProfileInfo(mdProfile);
+                }
+            }
+            return userNetwork;
         }
 
         [Authorize]
@@ -130,18 +150,80 @@ namespace exSales.API.Controllers
                     return StatusCode(401, "Not Authorized");
                 }
 
-                var mdUserNetwork = _userNetworkFactory.BuildUserNetworkModel();
-
                 var network = _networkService.GetById(networkId);
-                var networkInfo = _networkService.GetNetworkInfo(network);
-                if (networkInfo != null)
-                {
-                    networkInfo.QtdyUsers = mdUserNetwork.GetQtdyUserByNetwork(network.NetworkId);
-                    networkInfo.MaxUsers = network.MaxQtdyUserByNetwork();
-                }
                 return new NetworkResult()
                 {
-                    Network = networkInfo
+                    Network = NetworkModelToInfo(network)
+                };
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpGet("getUserNetwork/{networkId}")]
+        public ActionResult<UserNetworkResult> GetUserNetwork(long networkId)
+        {
+            try
+            {
+                var userSession = _userService.GetUserInSession(HttpContext);
+                if (userSession == null)
+                {
+                    return StatusCode(401, "Not Authorized");
+                }
+
+                var userNetwork = _networkService.GetUserNetwork(networkId, userSession.UserId);
+                return new UserNetworkResult()
+                {
+                    UserNetwork = UserNetworkModelToInfo(userNetwork)
+                };
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpGet("getUserNetworkBySlug/{networkSlug}")]
+        public ActionResult<UserNetworkResult> GetUserNetworkBySlug(string networkSlug)
+        {
+            try
+            {
+                var userSession = _userService.GetUserInSession(HttpContext);
+                if (userSession == null)
+                {
+                    return StatusCode(401, "Not Authorized");
+                }
+
+                var network = _networkService.GetBySlug(networkSlug);
+                if (network == null) {
+                    throw new Exception("Network not found");
+                }
+
+                var userNetwork = _networkService.GetUserNetwork(network.NetworkId, userSession.UserId);
+                return new UserNetworkResult()
+                {
+                    UserNetwork = UserNetworkModelToInfo(userNetwork)
+                };
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("getBySlug/{networkSlug}")]
+        public ActionResult<NetworkResult> GetBySlug(string networkSlug)
+        {
+            try
+            {
+                var network = _networkService.GetBySlug(networkSlug);
+                return new NetworkResult()
+                {
+                    Network = NetworkModelToInfo(network)
                 };
             }
             catch (Exception ex)

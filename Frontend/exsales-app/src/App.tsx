@@ -16,7 +16,6 @@ import NetworkEditPage from './Pages/NetworkEditPage';
 import NetworkListPage from './Pages/NetworkListPage';
 import OrderListPage from './Pages/OrderListPage';
 import InvoiceListPage from './Pages/InvoiceListPage';
-import ProductListPage from './Pages/ProductListPage';
 import ProductEditPage from './Pages/ProductEditPage';
 import ProductPage from './Pages/ProductPage';
 import NetworkInsertPage from './Pages/NetworkInsertPage';
@@ -25,14 +24,12 @@ import ProfileProvider from './Contexts/Profile/ProfileProvider';
 import ProfileListPage from './Pages/ProfileListPage';
 import ProfileEditPage from './Pages/ProfileEditPage';
 import UserSearchPage from './Pages/UserSearchPage';
-
-function Error404() {
-  return (
-    <div>
-      <h2>Error 404</h2>
-    </div>
-  );
-}
+import ProductProvider from './Contexts/Product/ProductProvider';
+import ProductSearchPage from './Pages/ProductSearchPage';
+import MenuNetwork from './Components/MenuNetwork';
+import RequestAccessPage from './Pages/RequestAccessPage';
+import OrderProvider from './Contexts/Order/OrderProvider';
+import Error404Page from './Pages/Error404Page';
 
 function Layout() {
   return (
@@ -43,12 +40,31 @@ function Layout() {
   );
 }
 
+function LayoutNetwork() {
+  return (
+    <div>
+      <MenuNetwork />
+      <Outlet />
+    </div>
+  );
+}
+
 function App() {
-  const ContextContainer = ContextBuilder([AuthProvider, UserProvider, NetworkProvider, ProfileProvider]);
+  const ContextContainer = ContextBuilder([
+    AuthProvider, UserProvider, NetworkProvider, ProfileProvider, ProductProvider, OrderProvider
+  ]);
 
   return (
     <ContextContainer>
       <Routes>
+        <Route path="/@" element={<LayoutNetwork />}>
+          <Route path=":networkSlug">
+            <Route index element={<NetworkPage />} />
+            <Route path="new-seller" element={<SellerPage />} />
+            <Route path="request-access" element={<RequestAccessPage />} />
+            <Route path=":productSlug" element={<ProductPage />} />
+          </Route>
+        </Route>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="new-seller" element={<SellerPage />} />
@@ -63,7 +79,7 @@ function App() {
           <Route path="recovery-password" element={<RecoveryPage />} />
           <Route path="change-password" element={<PasswordPage />} />
           <Route path="admin">
-            <Route index element={<NetworkPage />} />
+            <Route index element={<DashboardPage />} />
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="network" element={<NetworkEditPage />} />
             <Route path="teams" element={<UserSearchPage />} />
@@ -74,9 +90,9 @@ function App() {
             <Route path="orders" element={<OrderListPage />} />
             <Route path="invoices" element={<InvoiceListPage />} />
             <Route path="products">
-              <Route index element={<ProductListPage />} />
+              <Route index element={<ProductSearchPage />} />
               <Route path="new" element={<ProductEditPage />} />
-              <Route path=":id" element={<ProductEditPage />} />
+              <Route path=":productId" element={<ProductEditPage />} />
             </Route>
             <Route path="p">
               <Route path=":id" element={<ProductPage />} />
@@ -87,8 +103,8 @@ function App() {
               <Route path=":profileId" element={<ProfileEditPage />} />
             </Route>
           </Route>
-          <Route path="*" element={<Error404 />} />
         </Route>
+        <Route path="*" element={<Error404Page />} />
       </Routes>
     </ContextContainer>
   );

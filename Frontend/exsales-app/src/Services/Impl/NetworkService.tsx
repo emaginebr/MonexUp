@@ -3,6 +3,7 @@ import NetworkInsertInfo from "../../DTO/Domain/NetworkInsertInfo";
 import NetworkResult from "../../DTO/Services/NetworkResult";
 import StatusRequest from "../../DTO/Services/StatusRequest";
 import UserNetworkListResult from "../../DTO/Services/UserNetworkListResult";
+import UserNetworkResult from "../../DTO/Services/UserNetworkResult";
 import UserResult from "../../DTO/Services/UserResult";
 import UserTokenResult from "../../DTO/Services/UserTokenResult";
 import IHttpClient from "../../Infra/Interface/IHttpClient"; 
@@ -76,12 +77,61 @@ const NetworkService : INetworkService = {
         }
         return ret;
     },
-    requestAccess: async (networkId: number, referrerId?: number) => {
+    getBySlug: async (networkSlug: string) => {
+        let ret: NetworkResult;
+        let request = await _httpClient.doGet<NetworkResult>("/api/Network/getBySlug/" + networkSlug, {});
+        if (request.success) {
+            return request.data;
+        }
+        else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    },
+    getUserNetwork: async (networkId: number, token: string) => {
+        let ret: UserNetworkResult;
+        let request = await _httpClient.doGetAuth<UserNetworkResult>("/api/Network/getUserNetwork/" + networkId, token);
+        if (request.success) {
+            return request.data;
+        }
+        else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    },
+    getUserNetworkBySlug: async (networkSlug: string, token: string) => {
+        let ret: UserNetworkResult;
+        let request = await _httpClient.doGetAuth<UserNetworkResult>("/api/Network/getUserNetworkBySlug/" + networkSlug, token);
+        if (request.success) {
+            return request.data;
+        }
+        else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    },
+    requestAccess: async (networkId: number, token: string, referrerId?: number) => {
         let ret: StatusRequest;
-        let request = await _httpClient.doPost<StatusRequest>("api/Network/requestAccess", {
+        console.log(JSON.stringify({
             networkId: networkId,
             referrerId: referrerId
-        });
+        }));
+        let request = await _httpClient.doPostAuth<StatusRequest>("api/Network/requestAccess", {
+            networkId: networkId,
+            referrerId: referrerId
+        }, token);
         if (request.success) {
             return request.data;
         }
@@ -96,7 +146,7 @@ const NetworkService : INetworkService = {
     },
     changeStatus: async (networkId: number, userId: number, status: number, token: string) => {
         let ret: StatusRequest;
-        let request = await _httpClient.doPostAuth<StatusRequest>("api/Network/requestAccess", {
+        let request = await _httpClient.doPostAuth<StatusRequest>("api/Network/changeStatus", {
             networkId: networkId,
             userId: userId,
             status: status

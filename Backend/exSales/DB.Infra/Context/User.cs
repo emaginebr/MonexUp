@@ -33,6 +33,8 @@ public partial class User
 
     public string Slug { get; set; }
 
+    public string StripeId { get; set; }
+
     public virtual ICollection<Invoice> InvoiceSellers { get; set; } = new List<Invoice>();
 
     public virtual ICollection<Invoice> InvoiceUsers { get; set; } = new List<Invoice>();

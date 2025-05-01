@@ -131,10 +131,97 @@ const NetworkBusiness: INetworkBusiness = {
         throw new Error("Failed to get user by email");
       }
   },
+  getBySlug: async (networkSlug: string) => {
+    try {
+        let ret: BusinessResult<NetworkInfo>;
+        let retServ = await _networkService.getBySlug(networkSlug);
+        if (retServ.sucesso) {
+          return {
+            ...ret,
+            dataResult: retServ.network,
+            sucesso: true
+          };
+        } else {
+          return {
+            ...ret,
+            sucesso: false,
+            mensagem: retServ.mensagem
+          };
+        }
+      } catch {
+        throw new Error("Failed to get user by email");
+      }
+  },
+  getUserNetwork: async (networkId: number) => {
+    try {
+        let ret: BusinessResult<UserNetworkInfo>;
+        let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+        if (!session) {
+          return {
+            ...ret,
+            sucesso: false,
+            mensagem: "Not logged"
+          };
+        }
+        let retServ = await _networkService.getUserNetwork(networkId, session.token);
+        if (retServ.sucesso) {
+          return {
+            ...ret,
+            dataResult: retServ.userNetwork,
+            sucesso: true
+          };
+        } else {
+          return {
+            ...ret,
+            sucesso: false,
+            mensagem: retServ.mensagem
+          };
+        }
+      } catch {
+        throw new Error("Failed to get user by email");
+      }
+  },
+  getUserNetworkBySlug: async (networkSlug: string) => {
+    try {
+        let ret: BusinessResult<UserNetworkInfo>;
+        let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+        if (!session) {
+          return {
+            ...ret,
+            sucesso: false,
+            mensagem: "Not logged"
+          };
+        }
+        let retServ = await _networkService.getUserNetworkBySlug(networkSlug, session.token);
+        if (retServ.sucesso) {
+          return {
+            ...ret,
+            dataResult: retServ.userNetwork,
+            sucesso: true
+          };
+        } else {
+          return {
+            ...ret,
+            sucesso: false,
+            mensagem: retServ.mensagem
+          };
+        }
+      } catch {
+        throw new Error("Failed to get user by email");
+      }
+  },
   requestAccess: async (networkId: number, referrerId?: number) => {
     try {
         let ret: BusinessResult<boolean>;
-        let retServ = await _networkService.requestAccess(networkId, referrerId);
+        let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+        if (!session) {
+          return {
+            ...ret,
+            sucesso: false,
+            mensagem: "Not logged"
+          };
+        }
+        let retServ = await _networkService.requestAccess(networkId, session.token, referrerId);
         if (retServ.sucesso) {
           return {
             ...ret,

@@ -16,7 +16,10 @@ namespace exSales.Domain.Impl.Models
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOrderRepository<IOrderModel, IOrderDomainFactory> _repositoryOrder;
 
-        public OrderModel(IUnitOfWork unitOfWork, IOrderRepository<IOrderModel, IOrderDomainFactory> repositoryOrder)
+        public OrderModel(
+            IUnitOfWork unitOfWork, 
+            IOrderRepository<IOrderModel, IOrderDomainFactory> repositoryOrder
+        )
         {
             _unitOfWork = unitOfWork;
             _repositoryOrder = repositoryOrder;
@@ -26,6 +29,31 @@ namespace exSales.Domain.Impl.Models
         public long ProductId { get; set; }
         public long UserId { get; set; }
         public OrderStatusEnum Status { get; set; }
+        public string StripeId { get; set; }
+
+        public IUserModel GetUser(IUserDomainFactory factory)
+        {
+            if (UserId > 0)
+            {
+                return factory.BuildUserModel().GetById(UserId, factory);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public IProductModel GetProduct(IProductDomainFactory factory)
+        {
+            if (ProductId > 0)
+            {
+                return factory.BuildProductModel().GetById(ProductId, factory);
+            }
+            else
+            {
+                return null;
+            }
+        }
 
         public IOrderModel Insert(IOrderDomainFactory factory)
         {
@@ -45,6 +73,16 @@ namespace exSales.Domain.Impl.Models
         public IOrderModel GetById(long id, IOrderDomainFactory factory)
         {
             return _repositoryOrder.GetById(id, factory);
+        }
+
+        public IOrderModel Get(long productId, long userId, OrderStatusEnum status, IOrderDomainFactory factory)
+        {
+            return _repositoryOrder.Get(productId, userId, (int)status, factory);
+        }
+
+        public IOrderModel GetByStripeId(string stripeId, IOrderDomainFactory factory)
+        {
+            return _repositoryOrder.GetByStripeId(stripeId, factory);
         }
     }
 }

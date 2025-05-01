@@ -21,7 +21,7 @@ namespace exSales.DTO.Product
         public string Description { get; set; }
         [JsonPropertyName("price")]
         public double Price { get; set; }
-        [JsonPropertyName("frenquency")]
+        [JsonPropertyName("frequency")]
         public int Frequency { get; set; }
         [JsonPropertyName("limit")]
         public int Limit { get; set; }

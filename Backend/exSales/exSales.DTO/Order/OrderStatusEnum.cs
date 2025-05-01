@@ -8,9 +8,10 @@ namespace exSales.DTO.Order
 {
     public enum OrderStatusEnum
     {
-        Active = 1,
-        Suspended = 2,
-        Finished = 3,
-        Expired = 4
+        Incoming = 1,
+        Active = 2,
+        Suspended = 3,
+        Finished = 4,
+        Expired = 5
     }
 }

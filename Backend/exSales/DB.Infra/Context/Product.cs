@@ -23,6 +23,10 @@ public partial class Product
 
     public string Description { get; set; }
 
+    public string StripeProductId { get; set; }
+
+    public string StripePriceId { get; set; }
+
     public virtual Network Network { get; set; }
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();

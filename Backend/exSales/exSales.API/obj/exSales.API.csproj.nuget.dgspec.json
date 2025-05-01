@@ -57,7 +57,7 @@
             },
             "System.Drawing.Common": {
               "target": "Package",
-              "version": "[8.0.10, )"
+              "version": "[9.0.4, )"
             }
           },
           "imports": [
@@ -136,31 +136,31 @@
           "dependencies": {
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[8.0.10, )"
+              "version": "[9.0.4, )"
             },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[8.0.10, )"
+              "version": "[9.0.4, )"
             },
             "Microsoft.EntityFrameworkCore.Proxies": {
               "target": "Package",
-              "version": "[8.0.10, )"
+              "version": "[9.0.4, )"
             },
             "Microsoft.EntityFrameworkCore.Relational": {
               "target": "Package",
-              "version": "[8.0.10, )"
+              "version": "[9.0.4, )"
             },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[8.0.10, )"
+              "version": "[9.0.4, )"
             },
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
-              "version": "[8.0.10, )"
+              "version": "[9.0.4, )"
             }
           },
           "imports": [
@@ -245,15 +245,15 @@
           "dependencies": {
             "Microsoft.EntityFrameworkCore.Proxies": {
               "target": "Package",
-              "version": "[8.0.11, )"
+              "version": "[9.0.4, )"
             },
             "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
               "target": "Package",
-              "version": "[1.21.0, )"
+              "version": "[1.21.2, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[6.9.0, )"
+              "version": "[8.1.1, )"
             }
           },
           "imports": [
@@ -338,11 +338,11 @@
           "dependencies": {
             "Microsoft.AspNetCore.Authentication": {
               "target": "Package",
-              "version": "[2.2.0, )"
+              "version": "[2.3.0, )"
             },
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
-              "version": "[8.0.1, )"
+              "version": "[9.0.4, )"
             }
           },
           "imports": [
@@ -421,11 +421,11 @@
           "dependencies": {
             "Microsoft.AspNetCore.Authentication": {
               "target": "Package",
-              "version": "[2.2.0, )"
+              "version": "[2.3.0, )"
             },
             "Microsoft.Extensions.Logging": {
               "target": "Package",
-              "version": "[8.0.1, )"
+              "version": "[9.0.4, )"
             },
             "Newtonsoft.Json": {
               "target": "Package",
@@ -437,11 +437,15 @@
             },
             "SixLabors.ImageSharp": {
               "target": "Package",
-              "version": "[3.1.5, )"
+              "version": "[3.1.8, )"
+            },
+            "Stripe.net": {
+              "target": "Package",
+              "version": "[48.0.2, )"
             },
             "System.Drawing.Common": {
               "target": "Package",
-              "version": "[8.0.10, )"
+              "version": "[9.0.4, )"
             }
           },
           "imports": [

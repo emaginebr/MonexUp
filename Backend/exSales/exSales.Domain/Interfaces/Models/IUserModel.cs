@@ -18,12 +18,14 @@ namespace exSales.Domain.Interfaces.Models
         DateTime CreatedAt { get; set; }
         DateTime UpdatedAt { get; set; }
         bool IsAdmin { get; set; }
+        string StripeId { get; set; }
 
         IUserModel Insert(IUserDomainFactory factory);
         IUserModel Update(IUserDomainFactory factory);
         IUserModel GetByEmail(string email, IUserDomainFactory factory);
         IUserModel GetById(long userId, IUserDomainFactory factory);
         IUserModel GetByToken(string token, IUserDomainFactory factory);
+        IUserModel GetByStripeId(string stripeId, IUserDomainFactory factory);
         string GenerateNewToken(IUserDomainFactory factory);
         IUserModel GetByRecoveryHash(string recoveryHash, IUserDomainFactory factory);
         IEnumerable<IUserModel> ListAllUsers(IUserDomainFactory factory);

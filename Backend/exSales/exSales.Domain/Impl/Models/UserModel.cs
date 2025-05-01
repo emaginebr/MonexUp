@@ -31,6 +31,7 @@ namespace exSales.Domain.Impl.Models
         public bool IsAdmin { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public string StripeId { get; set; }
 
         private string CreateMD5(string input)
         {
@@ -142,6 +143,11 @@ namespace exSales.Domain.Impl.Models
 
         public bool ExistSlug(long userId, string slug) { 
             return _repositoryUser.ExistSlug(userId, slug);
+        }
+
+        public IUserModel GetByStripeId(string stripeId, IUserDomainFactory factory)
+        {
+            return _repositoryUser.GetByStripeId(stripeId, factory);
         }
     }
 }

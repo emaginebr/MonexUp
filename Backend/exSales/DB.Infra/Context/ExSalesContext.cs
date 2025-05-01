@@ -60,6 +60,9 @@ public partial class ExSalesContext : DbContext
             entity.Property(e => e.Status)
                 .HasDefaultValue(1)
                 .HasColumnName("status");
+            entity.Property(e => e.StripeId)
+                .HasMaxLength(120)
+                .HasColumnName("stripe_id");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
             entity.HasOne(d => d.Order).WithMany(p => p.Invoices)
@@ -121,6 +124,9 @@ public partial class ExSalesContext : DbContext
             entity.Property(e => e.Status)
                 .HasDefaultValue(1)
                 .HasColumnName("status");
+            entity.Property(e => e.StripeId)
+                .HasMaxLength(120)
+                .HasColumnName("stripe_id");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
             entity.HasOne(d => d.Product).WithMany(p => p.Orders)
@@ -161,6 +167,12 @@ public partial class ExSalesContext : DbContext
             entity.Property(e => e.Status)
                 .HasDefaultValue(1)
                 .HasColumnName("status");
+            entity.Property(e => e.StripePriceId)
+                .HasMaxLength(120)
+                .HasColumnName("stripe_price_id");
+            entity.Property(e => e.StripeProductId)
+                .HasMaxLength(120)
+                .HasColumnName("stripe_product_id");
 
             entity.HasOne(d => d.Network).WithMany(p => p.Products)
                 .HasForeignKey(d => d.NetworkId)
@@ -213,6 +225,9 @@ public partial class ExSalesContext : DbContext
                 .IsRequired()
                 .HasMaxLength(140)
                 .HasColumnName("slug");
+            entity.Property(e => e.StripeId)
+                .HasMaxLength(120)
+                .HasColumnName("stripe_id");
             entity.Property(e => e.Token)
                 .HasMaxLength(128)
                 .HasColumnName("token");

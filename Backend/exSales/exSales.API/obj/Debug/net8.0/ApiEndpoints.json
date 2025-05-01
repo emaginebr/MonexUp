@@ -53,6 +53,84 @@
   },
   {
     "ContainingType": "exSales.API.Controllers.NetworkController",
+    "Method": "GetBySlug",
+    "RelativePath": "api/Network/getBySlug/{networkSlug}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "networkSlug",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "exSales.DTO.Network.NetworkResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "exSales.API.Controllers.NetworkController",
+    "Method": "GetUserNetwork",
+    "RelativePath": "api/Network/getUserNetwork/{networkId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "networkId",
+        "Type": "System.Int64",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "exSales.DTO.Network.UserNetworkResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "exSales.API.Controllers.NetworkController",
+    "Method": "GetUserNetworkBySlug",
+    "RelativePath": "api/Network/getUserNetworkBySlug/{networkSlug}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "networkSlug",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "exSales.DTO.Network.UserNetworkResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "exSales.API.Controllers.NetworkController",
     "Method": "Insert",
     "RelativePath": "api/Network/insert",
     "HttpMethod": "POST",
@@ -151,21 +229,21 @@
   },
   {
     "ContainingType": "exSales.API.Controllers.OrderController",
-    "Method": "GetById",
-    "RelativePath": "api/Order/getById/{orderId}",
+    "Method": "CreateSubscription",
+    "RelativePath": "api/Order/createSubscription/{productSlug}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "orderId",
-        "Type": "System.Int64",
+        "Name": "productSlug",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "exSales.DTO.Order.OrderResult",
+        "Type": "exSales.DTO.Subscription.SubscriptionResult",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -177,15 +255,15 @@
   },
   {
     "ContainingType": "exSales.API.Controllers.OrderController",
-    "Method": "Insert",
-    "RelativePath": "api/Order/insert",
-    "HttpMethod": "POST",
+    "Method": "GetById",
+    "RelativePath": "api/Order/getById/{orderId}",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "order",
-        "Type": "exSales.DTO.Order.OrderInfo",
+        "Name": "orderId",
+        "Type": "System.Int64",
         "IsRequired": true
       }
     ],
@@ -281,6 +359,32 @@
   },
   {
     "ContainingType": "exSales.API.Controllers.ProductController",
+    "Method": "GetBySlug",
+    "RelativePath": "api/Product/getBySlug/{productSlug}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "productSlug",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "exSales.DTO.Product.ProductResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "exSales.API.Controllers.ProductController",
     "Method": "Insert",
     "RelativePath": "api/Product/insert",
     "HttpMethod": "POST",
@@ -296,6 +400,58 @@
     "ReturnTypes": [
       {
         "Type": "exSales.DTO.Product.ProductResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "exSales.API.Controllers.ProductController",
+    "Method": "ListByNetwork",
+    "RelativePath": "api/Product/listByNetwork/{networkId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "networkId",
+        "Type": "System.Int64",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "exSales.DTO.Product.ProductListResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "exSales.API.Controllers.ProductController",
+    "Method": "ListByNetworkSlug",
+    "RelativePath": "api/Product/listByNetworkSlug/{networkSlug}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "networkSlug",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "exSales.DTO.Product.ProductListResult",
         "MediaTypes": [
           "text/plain",
           "application/json",

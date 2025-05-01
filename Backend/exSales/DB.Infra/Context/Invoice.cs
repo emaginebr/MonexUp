@@ -21,6 +21,8 @@ public partial class Invoice
 
     public int Status { get; set; }
 
+    public string StripeId { get; set; }
+
     public virtual Order Order { get; set; }
 
     public virtual User Seller { get; set; }

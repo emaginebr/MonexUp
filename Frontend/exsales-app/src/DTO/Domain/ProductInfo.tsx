@@ -1,5 +1,7 @@
+import { ProductStatusEnum } from "../Enum/ProductStatusEnum";
+
 export default interface ProductInfo {
-    profileId: number;
+    productId: number;
     networkId: number;
     slug: string;
     name: string;
@@ -7,4 +9,5 @@ export default interface ProductInfo {
     price: number;
     frequency: number;
     limit: number;
+    status: ProductStatusEnum;
 }

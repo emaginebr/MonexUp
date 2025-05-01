@@ -28,6 +28,7 @@ namespace DB.Infra.Repository
             md.Slug = u.Slug;
             md.Email = u.Email;
             md.IsAdmin = u.IsAdmin;
+            md.StripeId = u.StripeId;
             md.CreatedAt = u.CreatedAt;
             md.UpdatedAt = u.UpdatedAt;
             return md;
@@ -41,6 +42,7 @@ namespace DB.Infra.Repository
             row.Slug = md.Slug;
             row.Email = md.Email;
             row.IsAdmin = md.IsAdmin;
+            row.StripeId = md.StripeId;
             row.CreatedAt = md.CreatedAt;
             row.UpdatedAt = md.UpdatedAt;
         }
@@ -95,6 +97,16 @@ namespace DB.Infra.Repository
         public IUserModel GetByToken(string token, IUserDomainFactory factory)
         {
             var row = _ccsContext.Users.Where(x => x.Token == token).FirstOrDefault();
+            if (row != null)
+            {
+                return DbToModel(factory, row);
+            }
+            return null;
+        }
+
+        public IUserModel GetByStripeId(string stripeId, IUserDomainFactory factory)
+        {
+            var row = _ccsContext.Users.Where(x => x.StripeId == stripeId).FirstOrDefault();
             if (row != null)
             {
                 return DbToModel(factory, row);

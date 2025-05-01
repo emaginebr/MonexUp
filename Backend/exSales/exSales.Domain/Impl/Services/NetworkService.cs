@@ -200,8 +200,22 @@ namespace exSales.Domain.Impl.Services
             return _networkFactory.BuildNetworkModel().GetById(networkId, _networkFactory);
         }
 
+        public INetworkModel GetBySlug(string slug)
+        {
+            return _networkFactory.BuildNetworkModel().GetBySlug(slug, _networkFactory);
+        }
+
+        public IUserNetworkModel GetUserNetwork(long networkId, long userId)
+        {
+            return _userNetworkFactory.BuildUserNetworkModel().Get(networkId, userId, _userNetworkFactory);
+        }
+
         public UserNetworkInfo GetUserNetworkInfo(IUserNetworkModel model)
         {
+            if (model == null)
+            {
+                return null;
+            }
             return new UserNetworkInfo
             {
                 NetworkId = model.NetworkId,
@@ -216,6 +230,10 @@ namespace exSales.Domain.Impl.Services
 
         public NetworkInfo GetNetworkInfo(INetworkModel model)
         {
+            if (model == null)
+            {
+                return null;
+            }
             return new NetworkInfo
             {
                 NetworkId = model.NetworkId,

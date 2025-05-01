@@ -9,7 +9,7 @@ import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAddressBook, faArrowLeft, faBitcoinSign, faCalendar, faCalendarAlt, faCancel, faClose, faDollar, faEnvelope, faEthernet, faIdCard, faLock, faPhone, faSave, faSignInAlt, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
 import Table from "react-bootstrap/esm/Table";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import InputGroup from 'react-bootstrap/InputGroup';
 import UserContext from "../../Contexts/User/UserContext";
 import MessageToast from "../../Components/MessageToast";
@@ -19,6 +19,8 @@ import UserEditInfo from "../../DTO/Domain/UserEditInfo";
 import UserInfo from "../../DTO/Domain/UserInfo";
 import UserPhoneInfo from "../../DTO/Domain/UserPhoneInfo";
 import UserAddressInfo from "../../DTO/Domain/UserAddressInfo";
+import NetworkFooter from "../NetworkPage/NetworkFooter";
+import Footer from "../HomePage/Footer";
 
 export default function SellerPage() {
 
@@ -33,8 +35,10 @@ export default function SellerPage() {
     const [showMessage, setShowMessage] = useState<boolean>(false);
     const [messageText, setMessageText] = useState<string>("");
 
+    let { networkSlug } = useParams();
+
     let navigate = useNavigate();
-    Moment.locale('en');
+    //Moment.locale('en');
 
     const throwError = (message: string) => {
         setDialog(MessageToastEnum.Error)
@@ -69,7 +73,7 @@ export default function SellerPage() {
                             city: ret.user.addresses[0]?.city,
                             state: ret.user.addresses[0]?.state
                         });
-                        
+
                         setInsertMode(false);
                     }
                     else {
@@ -127,7 +131,7 @@ export default function SellerPage() {
                                         </Col>
                                     </Form.Group>
                                     <Form.Group as={Row} className="mb-3">
-                                    <Form.Label column sm="2">CPF:</Form.Label>
+                                        <Form.Label column sm="2">CPF:</Form.Label>
                                         <Col sm="5">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faIdCard} fixedWidth /></InputGroup.Text>
@@ -211,8 +215,8 @@ export default function SellerPage() {
                                         <Col sm="6">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg" 
-                                                    placeholder="Your address" 
+                                                <Form.Control type="text" size="lg"
+                                                    placeholder="Your address"
                                                     value={user?.address}
                                                     onChange={(e) => {
                                                         setUser({
@@ -228,8 +232,8 @@ export default function SellerPage() {
                                         <Col sm="4">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg" 
-                                                    placeholder="Your Complement" 
+                                                <Form.Control type="text" size="lg"
+                                                    placeholder="Your Complement"
                                                     value={user?.complement}
                                                     onChange={(e) => {
                                                         setUser({
@@ -243,8 +247,8 @@ export default function SellerPage() {
                                         <Col sm="4">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg" 
-                                                    placeholder="Your Neighborhood" 
+                                                <Form.Control type="text" size="lg"
+                                                    placeholder="Your Neighborhood"
                                                     value={user?.neighborhood}
                                                     onChange={(e) => {
                                                         setUser({
@@ -260,8 +264,8 @@ export default function SellerPage() {
                                         <Col sm="5">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg" 
-                                                    placeholder="Your city" 
+                                                <Form.Control type="text" size="lg"
+                                                    placeholder="Your city"
                                                     value={user?.city}
                                                     onChange={(e) => {
                                                         setUser({
@@ -275,8 +279,8 @@ export default function SellerPage() {
                                         <Col sm="4">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg" 
-                                                    placeholder="Your state" 
+                                                <Form.Control type="text" size="lg"
+                                                    placeholder="Your state"
                                                     value={user?.state}
                                                     onChange={(e) => {
                                                         setUser({
@@ -293,8 +297,8 @@ export default function SellerPage() {
                                         <Col sm="10">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faDollar} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg" 
-                                                    placeholder="Your Pix key" 
+                                                <Form.Control type="text" size="lg"
+                                                    placeholder="Your Pix key"
                                                     value={user?.pixkey}
                                                     onChange={(e) => {
                                                         setUser({
@@ -305,6 +309,43 @@ export default function SellerPage() {
                                             </InputGroup>
                                         </Col>
                                     </Form.Group>
+                                    {insertMode &&
+                                        <>
+                                            <hr />
+                                            <Form.Group as={Row} className="mb-3">
+                                                <Form.Label column sm="2">Password:</Form.Label>
+                                                <Col sm="4">
+                                                    <InputGroup>
+                                                        <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
+                                                        <Form.Control type="password" size="lg"
+                                                            placeholder="Your password"
+                                                            value={user?.password}
+                                                            onChange={(e) => {
+                                                                setUser({
+                                                                    ...user,
+                                                                    password: e.target.value
+                                                                });
+                                                            }} />
+                                                    </InputGroup>
+                                                </Col>
+                                                <Form.Label column sm="2">Confirm password:</Form.Label>
+                                                <Col sm="4">
+                                                    <InputGroup>
+                                                        <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
+                                                        <Form.Control type="password" size="lg"
+                                                            placeholder="Confirm your password"
+                                                            value={user?.confirmPassword}
+                                                            onChange={(e) => {
+                                                                setUser({
+                                                                    ...user,
+                                                                    confirmPassword: e.target.value
+                                                                });
+                                                            }} />
+                                                    </InputGroup>
+                                                </Col>
+                                            </Form.Group>
+                                        </>
+                                    }
                                     <hr />
                                     <Form.Group as={Row} className="mb-3">
                                         <Form.Label column sm="2">Upload Document File:</Form.Label>
@@ -317,10 +358,23 @@ export default function SellerPage() {
                                     </Form.Group>
                                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                                         <Button variant="danger" size="lg" onClick={() => {
-                                            navigate("/");
+                                            navigate(networkSlug ? "/@/" + networkSlug : "/");
                                         }}><FontAwesomeIcon icon={faArrowLeft} fixedWidth /> Back</Button>
                                         <Button variant="success" size="lg" onClick={async (e) => {
                                             e.preventDefault();
+
+                                            if (!user.password) {
+                                                throwError("Password is empty");
+                                                return;
+                                            }
+                                            if (!user.confirmPassword) {
+                                                throwError("Password confirmation is empty");
+                                                return;
+                                            }
+                                            if (user.password != user.confirmPassword) {
+                                                throwError("Password and confirmation are not equal");
+                                                return;
+                                            }
 
                                             let userFull: UserInfo;
                                             let userPhone: UserPhoneInfo;
@@ -334,6 +388,7 @@ export default function SellerPage() {
                                                 idDocument: user.iddocument,
                                                 birthDate: user.birthDate,
                                                 pixKey: user.pixkey,
+                                                password: user.password,
                                                 phones: [],
                                                 addresses: []
                                             };
@@ -382,6 +437,7 @@ export default function SellerPage() {
                     </Col>
                 </Row>
             </Container>
+            {networkSlug ? <NetworkFooter /> : <Footer />}
         </>
     );
 }

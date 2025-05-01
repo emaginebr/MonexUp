@@ -57,7 +57,7 @@
             },
             "System.Drawing.Common": {
               "target": "Package",
-              "version": "[8.0.10, )"
+              "version": "[9.0.4, )"
             }
           },
           "imports": [

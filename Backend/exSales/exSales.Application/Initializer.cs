@@ -63,7 +63,10 @@ namespace exSales.Application
             injectDependency(typeof(INetworkService), typeof(NetworkService), services, scoped);
             injectDependency(typeof(IProfileService), typeof(ProfileService), services, scoped);
             injectDependency(typeof(IProductService), typeof(ProductService), services, scoped);
+            injectDependency(typeof(IOrderService), typeof(OrderService), services, scoped);
+            injectDependency(typeof(ISubscriptionService), typeof(SubscriptionService), services, scoped);
             injectDependency(typeof(IMailerSendService), typeof(MailerSendService), services, scoped);
+            injectDependency(typeof(IStripeService), typeof(StripeService), services, scoped);
             #endregion
 
             #region Factory

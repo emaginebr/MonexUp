@@ -13,6 +13,8 @@ namespace exSales.Domain.Interfaces.Services
     {
         IList<INetworkModel> ListByStatus(NetworkStatusEnum status);
         INetworkModel GetById(long networkId);
+        INetworkModel GetBySlug(string slug);
+        IUserNetworkModel GetUserNetwork(long networkId, long userId);
         UserNetworkInfo GetUserNetworkInfo(IUserNetworkModel model);
         NetworkInfo GetNetworkInfo(INetworkModel model);
         INetworkModel Insert(NetworkInsertInfo network, long userId);

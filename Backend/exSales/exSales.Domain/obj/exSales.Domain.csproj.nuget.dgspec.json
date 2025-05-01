@@ -57,7 +57,7 @@
             },
             "System.Drawing.Common": {
               "target": "Package",
-              "version": "[8.0.10, )"
+              "version": "[9.0.4, )"
             }
           },
           "imports": [
@@ -136,11 +136,11 @@
           "dependencies": {
             "Microsoft.AspNetCore.Authentication": {
               "target": "Package",
-              "version": "[2.2.0, )"
+              "version": "[2.3.0, )"
             },
             "Microsoft.Extensions.Logging": {
               "target": "Package",
-              "version": "[8.0.1, )"
+              "version": "[9.0.4, )"
             },
             "Newtonsoft.Json": {
               "target": "Package",
@@ -152,11 +152,15 @@
             },
             "SixLabors.ImageSharp": {
               "target": "Package",
-              "version": "[3.1.5, )"
+              "version": "[3.1.8, )"
+            },
+            "Stripe.net": {
+              "target": "Package",
+              "version": "[48.0.2, )"
             },
             "System.Drawing.Common": {
               "target": "Package",
-              "version": "[8.0.10, )"
+              "version": "[9.0.4, )"
             }
           },
           "imports": [

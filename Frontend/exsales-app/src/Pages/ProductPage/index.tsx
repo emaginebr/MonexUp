@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import ReactQuill from "react-quill";
 import {
     Editor,
@@ -13,19 +13,60 @@ import {
 } from "@craftjs/core";
 import "react-quill/dist/quill.snow.css";
 import { CustomToolbar } from "../../Components/CustomToolbar";
-import Nav from 'react-bootstrap/Nav';
-import Card from 'react-bootstrap/Card';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faCalendar, faCreditCard, faLock, faUser } from "@fortawesome/free-solid-svg-icons";
-import Button from "react-bootstrap/esm/Button";
+import ProductContext from "../../Contexts/Product/ProductContext";
+import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
+import MessageToast from "../../Components/MessageToast";
+import NetworkContext from "../../Contexts/Network/NetworkContext";
+import Skeleton from "react-loading-skeleton";
+import AuthContext from "../../Contexts/Auth/AuthContext";
+import { showFrequencyMax, showFrequencyMin } from "../../Components/Functions";
+import ProductPayment from "./ProductPayment";
 
 export default function ProductPage() {
 
     let navigate = useNavigate();
 
+    let { networkSlug, productSlug } = useParams();
 
+    const authContext = useContext(AuthContext);
+    const networkContext = useContext(NetworkContext);
+    const productContext = useContext(ProductContext);
+
+    const [dialog, setDialog] = useState<MessageToastEnum>(MessageToastEnum.Error);
+    const [showMessage, setShowMessage] = useState<boolean>(false);
+    const [messageText, setMessageText] = useState<string>("");
+
+    const throwError = (message: string) => {
+        setDialog(MessageToastEnum.Error);
+        setMessageText(message);
+        setShowMessage(true);
+    };
+    const showSuccessMessage = (message: string) => {
+        setDialog(MessageToastEnum.Success);
+        setMessageText(message);
+        setShowMessage(true);
+    };
+
+    useEffect(() => {
+        authContext.loadUserSession();
+        networkContext.getBySlug(networkSlug).then((ret) => {
+            if (!ret.sucesso) {
+                throwError(ret.mensagemErro);
+            }
+        });
+        productContext.getBySlug(productSlug).then((retProd) => {
+            if (!retProd.sucesso) {
+                throwError(retProd.mensagemErro);
+            }
+        });
+        /*
+        networkContext.getUserNetworkBySlug(networkSlug).then((retUserNetwork) => {
+            if (!retUserNetwork.sucesso) {
+                throwError(retUserNetwork.mensagemErro);
+            }
+        });
+        */
+    }, []);
 
     // Componente editável com Bootstrap
     const HeaderText = () => {
@@ -83,114 +124,66 @@ export default function ProductPage() {
 
     return (
         <>
+            <MessageToast
+                dialog={dialog}
+                showMessage={showMessage}
+                messageText={messageText}
+                onClose={() => setShowMessage(false)}
+            ></MessageToast>
             <Container>
-                <Row>
-                    <Col md="12">
-                        <Editor resolver={{ HeaderText }}>
-                            <Frame>
-                                <Element is="div" canvas>
-                                    <HeaderText />
-                                </Element>
-                            </Frame>
-                        </Editor>
-                    </Col>
-                </Row>
                 <Row>
                     <Col md="12" className="py-4">
                         <Row>
                             <Col md={8}>
-                                <h1>Doador Básico / Mensal</h1>
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
-                                </p>
-                                <h2>Forma de Pagamento</h2>
-                                <Nav variant="pills" defaultActiveKey="credito" className="py-4">
-                                    <Nav.Item>
-                                        <Nav.Link eventKey="credito">
-                                            Cartão de Crédito
-                                        </Nav.Link>
-                                    </Nav.Item>
-                                    <Nav.Item>
-                                        <Nav.Link eventKey="boleto">
-                                            Boleto Bancário
-                                        </Nav.Link>
-                                    </Nav.Item>
-                                    <Nav.Item>
-                                        <Nav.Link eventKey="pix">
-                                            PIX
-                                        </Nav.Link>
-                                    </Nav.Item>
-                                </Nav>
-                                <Card>
-                                    <Card.Header>
-                                        <h3 className="text-center">Credit Card</h3>
-                                    </Card.Header>
-                                    <Card.Body>
-                                        <Form>
-                                            <Form.Group className="mb-3">
-                                                <Form.Label>Credit Card Number:</Form.Label>
-                                                <InputGroup>
-                                                    <InputGroup.Text><FontAwesomeIcon icon={faCreditCard} fixedWidth /></InputGroup.Text>
-                                                    <Form.Control type="text" size="lg" placeholder="Your Credit Card Number" />
-                                                </InputGroup>
-                                            </Form.Group>
-                                            <Row>
-                                                <Col md={3}>
-                                                    <Form.Group className="mb-3">
-                                                        <Form.Label>Expire Date:</Form.Label>
-                                                        <InputGroup>
-                                                            <InputGroup.Text><FontAwesomeIcon icon={faCalendar} fixedWidth /></InputGroup.Text>
-                                                            <Form.Control type="text" size="lg" placeholder="MM/YYYY" />
-                                                        </InputGroup>
-                                                    </Form.Group>
-                                                </Col>
-                                                <Col md={3}>
-                                                    <Form.Group className="mb-3">
-                                                        <Form.Label>CCV:</Form.Label>
-                                                        <InputGroup>
-                                                            <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
-                                                            <Form.Control type="text" size="lg" placeholder="000" />
-                                                        </InputGroup>
-                                                    </Form.Group>
-                                                </Col>
-                                                <Col md={6}>
-                                                    <Form.Group className="mb-3">
-                                                        <Form.Label>Name on Card:</Form.Label>
-                                                        <InputGroup>
-                                                            <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
-                                                            <Form.Control type="text" size="lg" placeholder="Your Name exact on credit card" />
-                                                        </InputGroup>
-                                                    </Form.Group>
-                                                </Col>
-                                            </Row>
-
-                                            <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                                <Button variant="success" size="lg" onClick={() => {
-                                                    navigate("/recovery-password");
-                                                }}>Pay <FontAwesomeIcon icon={faArrowRight} fixedWidth /></Button>
+                                <Row>
+                                    <Col md="12">
+                                        <h2 className="display-2 mb-0 text-center">
+                                            {networkContext.loading ? <Skeleton /> : networkContext.network?.name}
+                                        </h2>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col md="12">
+                                        {networkContext.editMode ?
+                                            <Editor resolver={{ HeaderText }}>
+                                                <Frame>
+                                                    <Element is="div" canvas>
+                                                        <HeaderText />
+                                                    </Element>
+                                                </Frame>
+                                            </Editor>
+                                            :
+                                            <div>
+                                                <h2>Minha Rede Principal</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
                                             </div>
-                                        </Form>
-                                    </Card.Body>
-                                </Card>
+                                        }
+                                    </Col>
+                                </Row>
+                                <hr />
+                                <h1>{productContext.product?.name}</h1>
+                                <p dangerouslySetInnerHTML={{__html: productContext.product?.description}}></p>
                             </Col>
                             <Col md={4}>
                                 <div className="card">
                                     <div className="card-header">
-                                        <h4 className="my-0">Doação Suprema / Mensal</h4>
+                                        <h4 className="my-0">Credit Card Payment</h4>
                                     </div>
                                     <div className="card-body text-center">
+                                        <ProductPayment productSlug={productSlug} />
+                                        {/*
                                         <h5 className="card-title">
-                                            <span className="display-4"><b>R$199,90</b></span>
-                                            <span className="lead">/mês</span>
+                                            <span className="display-4"><b>$ {productContext.product?.price}</b></span>
+                                            <span className="lead">/{showFrequencyMin(productContext.product?.frequency)}</span>
                                         </h5>
 
                                         <div className="card-text my-4 lc-block">
                                             <div>
                                                 <ul className="list-unstyled">
-                                                    <li>Pagamento Mensal</li>
+                                                    <li>{showFrequencyMax(productContext.product?.frequency)}</li>
                                                 </ul>
                                             </div>
                                         </div>
+                                        */}
                                     </div>
                                 </div>
                             </Col>

@@ -44,5 +44,10 @@ namespace exSales.Domain.Impl.Services
         {
             throw new NotImplementedException();
         }
+
+        public IInvoiceModel GetByStripeId(string stripeId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

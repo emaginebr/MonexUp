@@ -31,10 +31,17 @@ namespace exSales.Domain.Impl.Models
         public int Frequency { get; set; }
         public int Limit { get; set; }
         public ProductStatusEnum Status { get; set; }
+        public string StripeProductId { get; set; }
+        public string StripePriceId { get; set; }
 
         public IProductModel GetById(long id, IProductDomainFactory factory)
         {
             return _repositoryProduct.GetById(id, factory);
+        }
+
+        public IProductModel GetBySlug(string slug, IProductDomainFactory factory)
+        {
+            return _repositoryProduct.GetBySlug(slug, factory);
         }
 
         public IProductModel Insert(IProductDomainFactory factory)
@@ -50,6 +57,26 @@ namespace exSales.Domain.Impl.Models
         public IEnumerable<IProductModel> Search(long networkId, string keyword, int pageNum, out int pageCount, IProductDomainFactory factory)
         {
             return _repositoryProduct.Search(networkId, keyword, pageNum, out pageCount, factory);
+        }
+
+        public IEnumerable<IProductModel> ListByNetwork(long networkId, IProductDomainFactory factory)
+        {
+            return _repositoryProduct.ListByNetwork(networkId, factory);
+        }
+
+        public bool ExistSlug(long productId, string slug)
+        {
+            return _repositoryProduct.ExistSlug(productId, slug);
+        }
+
+        public IProductModel GetByStripeProductId(string stripeProductId, IProductDomainFactory factory)
+        {
+            return _repositoryProduct.GetByStripeProductId(stripeProductId, factory);
+        }
+
+        public IProductModel GetByStripePriceId(string stripePriceId, IProductDomainFactory factory)
+        {
+            return _repositoryProduct.GetByStripeProductId(stripePriceId, factory);
         }
     }
 }

@@ -3,7 +3,7 @@ import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faCheck, faCheckCircle, faClose, faCross, faDollar, faEdit, faEnvelope, faPlus, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCalendar, faCancel, faCheck, faCheckCircle, faClose, faCross, faDollar, faEdit, faEnvelope, faPlus, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Table from "react-bootstrap/esm/Table";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
@@ -179,12 +179,100 @@ export default function UserSearchPage() {
                                             <td style={{ textAlign: "right" }}>{user.commission}%</td>
                                             <td>{showStatus(user.status)}</td>
                                             <td>
-                                                <a href="#" className="text-success">
-                                                    <FontAwesomeIcon icon={faCheck} fixedWidth /> Approve
-                                                </a>
-                                                <a href="#" className="text-danger">
-                                                    <FontAwesomeIcon icon={faClose} fixedWidth /> Reprove
-                                                </a>
+                                                {user.status == UserNetworkStatusEnum.Active &&
+                                                    <>
+                                                        <a href="#" className="text-danger" onClick={async (e) => {
+                                                            e.preventDefault();
+                                                            let ret = await networkContext.changeStatus(networkContext.network?.networkId, user.userId, UserNetworkStatusEnum.Inactive);
+                                                            if (ret.sucesso) {
+                                                                showSuccessMessage("User access removed");
+                                                                searchUsers(userContext.searchResult?.pageNum);
+                                                            }
+                                                            else {
+                                                                throwError(ret.mensagemErro);
+                                                            }
+                                                        }}>
+                                                            <FontAwesomeIcon icon={faTrash} fixedWidth /> Remove
+                                                        </a>
+                                                    </>
+                                                }
+                                                {user.status == UserNetworkStatusEnum.Inactive &&
+                                                    <>
+                                                        <a href="#" className="text-danger" onClick={async (e) => {
+                                                            e.preventDefault();
+                                                            let ret = await networkContext.changeStatus(networkContext.network?.networkId, user.userId, UserNetworkStatusEnum.Active);
+                                                            if (ret.sucesso) {
+                                                                showSuccessMessage("User reactivated");
+                                                                searchUsers(userContext.searchResult?.pageNum);
+                                                            }
+                                                            else {
+                                                                throwError(ret.mensagemErro);
+                                                            }
+                                                        }}>
+                                                            <FontAwesomeIcon icon={faCheck} fixedWidth /> Reativate
+                                                        </a>
+                                                        <a href="#" className="text-danger" onClick={async (e) => {
+                                                            e.preventDefault();
+                                                            let ret = await networkContext.changeStatus(networkContext.network?.networkId, user.userId, UserNetworkStatusEnum.Blocked);
+                                                            if (ret.sucesso) {
+                                                                showSuccessMessage("User blocked");
+                                                                searchUsers(userContext.searchResult?.pageNum);
+                                                            }
+                                                            else {
+                                                                throwError(ret.mensagemErro);
+                                                            }
+                                                        }}>
+                                                            <FontAwesomeIcon icon={faCancel} fixedWidth /> Block
+                                                        </a>
+                                                    </>
+                                                }
+                                                {user.status == UserNetworkStatusEnum.WaitForApproval &&
+                                                    <>
+                                                        <a href="#" className="text-success" onClick={async (e) => {
+                                                            e.preventDefault();
+                                                            let ret = await networkContext.changeStatus(networkContext.network?.networkId, user.userId, UserNetworkStatusEnum.Active);
+                                                            if (ret.sucesso) {
+                                                                showSuccessMessage("User approved");
+                                                                searchUsers(userContext.searchResult?.pageNum);
+                                                            }
+                                                            else {
+                                                                throwError(ret.mensagemErro);
+                                                            }
+                                                        }}>
+                                                            <FontAwesomeIcon icon={faCheck} fixedWidth /> Approve
+                                                        </a>
+                                                        <a href="#" className="text-danger" onClick={async (e) => {
+                                                            e.preventDefault();
+                                                            let ret = await networkContext.changeStatus(networkContext.network?.networkId, user.userId, UserNetworkStatusEnum.Inactive);
+                                                            if (ret.sucesso) {
+                                                                showSuccessMessage("User reproved");
+                                                                searchUsers(userContext.searchResult?.pageNum);
+                                                            }
+                                                            else {
+                                                                throwError(ret.mensagemErro);
+                                                            }
+                                                        }}>
+                                                            <FontAwesomeIcon icon={faClose} fixedWidth /> Reprove
+                                                        </a>
+                                                    </>
+                                                }
+                                                {user.status == UserNetworkStatusEnum.Blocked &&
+                                                    <>
+                                                        <a href="#" className="text-danger" onClick={async (e) => {
+                                                            e.preventDefault();
+                                                            let ret = await networkContext.changeStatus(networkContext.network?.networkId, user.userId, UserNetworkStatusEnum.Active);
+                                                            if (ret.sucesso) {
+                                                                showSuccessMessage("User reactivated");
+                                                                searchUsers(userContext.searchResult?.pageNum);
+                                                            }
+                                                            else {
+                                                                throwError(ret.mensagemErro);
+                                                            }
+                                                        }}>
+                                                            <FontAwesomeIcon icon={faCheck} fixedWidth /> Reativate
+                                                        </a>
+                                                    </>
+                                                }
                                             </td>
                                         </tr>
                                     );
@@ -208,23 +296,23 @@ export default function UserSearchPage() {
                                 {userContext.searchResult?.pageNum - 2 > 1 &&
                                     <Pagination.Item
                                         onClick={() => searchUsers(userContext.searchResult?.pageNum - 2)}
-                                        >{userContext.searchResult?.pageNum - 2}</Pagination.Item>
+                                    >{userContext.searchResult?.pageNum - 2}</Pagination.Item>
                                 }
                                 {userContext.searchResult?.pageNum - 1 > 1 &&
                                     <Pagination.Item
                                         onClick={() => searchUsers(userContext.searchResult?.pageNum - 1)}
-                                        >{userContext.searchResult?.pageNum - 1}</Pagination.Item>
+                                    >{userContext.searchResult?.pageNum - 1}</Pagination.Item>
                                 }
                                 <Pagination.Item active>{userContext.searchResult?.pageNum}</Pagination.Item>
                                 {userContext.searchResult?.pageNum + 1 <= userContext.searchResult?.pageCount &&
                                     <Pagination.Item
                                         onClick={() => searchUsers(userContext.searchResult?.pageNum + 1)}
-                                        >{userContext.searchResult?.pageNum + 1}</Pagination.Item>
+                                    >{userContext.searchResult?.pageNum + 1}</Pagination.Item>
                                 }
                                 {userContext.searchResult?.pageNum + 2 <= userContext.searchResult?.pageCount &&
                                     <Pagination.Item
                                         onClick={() => searchUsers(userContext.searchResult?.pageNum + 2)}
-                                        >{userContext.searchResult?.pageNum + 2}</Pagination.Item>
+                                    >{userContext.searchResult?.pageNum + 2}</Pagination.Item>
                                 }
 
                                 <Pagination.Ellipsis />

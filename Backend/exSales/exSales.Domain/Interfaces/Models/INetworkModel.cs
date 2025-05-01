@@ -27,6 +27,7 @@ namespace exSales.Domain.Interfaces.Models
 
         IEnumerable<INetworkModel> ListByStatus(NetworkStatusEnum status, INetworkDomainFactory factory);
         INetworkModel GetById(long id, INetworkDomainFactory factory);
+        INetworkModel GetBySlug(string slug, INetworkDomainFactory factory);
         INetworkModel Insert(INetworkDomainFactory factory);
         INetworkModel Update(INetworkDomainFactory factory);
         bool ExistSlug(long networkId, string slug);

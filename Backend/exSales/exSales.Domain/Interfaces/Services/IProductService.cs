@@ -13,7 +13,11 @@ namespace exSales.Domain.Interfaces.Services
     public interface IProductService
     {
         ProductListPagedResult Search(long networkId, string keyword, int pageNum);
+        IList<IProductModel> ListByNetwork(long networkId);
         IProductModel GetById(long productId);
+        IProductModel GetBySlug(string productSlug);
+        IProductModel GetByStripeProductId(string stripeProductId);
+        IProductModel GetByStripePriceId(string stripePriceId);
         ProductInfo GetProductInfo(IProductModel product);
         IProductModel Insert(ProductInfo product, long userId);
         IProductModel Update(ProductInfo product, long userId);

@@ -51,6 +51,10 @@ namespace exSales.Domain.Impl.Models
         {
             return _repositoryNetwork.GetById(id, factory);
         }
+        public INetworkModel GetBySlug(string slug, INetworkDomainFactory factory)
+        {
+            return _repositoryNetwork.GetBySlug(slug, factory);
+        }
 
         public bool ExistSlug(long networkId, string slug)
         {

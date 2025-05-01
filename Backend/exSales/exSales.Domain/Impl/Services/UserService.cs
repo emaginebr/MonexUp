@@ -554,5 +554,10 @@ namespace exSales.Domain.Impl.Services
                 return new string(result);
             }
         }
+
+        public IUserModel GetByStripeId(string stripeId)
+        {
+            return _userFactory.BuildUserModel().GetByStripeId(stripeId, _userFactory);
+        }
     }
 }

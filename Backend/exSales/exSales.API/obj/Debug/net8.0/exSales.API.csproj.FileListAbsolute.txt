@@ -32,7 +32,6 @@ C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\Swashbuckle
 C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\System.Drawing.Common.dll
-C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\System.Security.Permissions.dll
 C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\runtimes\win\lib\net8.0\Microsoft.Win32.SystemEvents.dll
 C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\Core.Domain.dll
 C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\DB.Infra.dll
@@ -49,7 +48,6 @@ C:\Git\Projetos\exsales\Backend\exSales\exSales.API\obj\Debug\net8.0\exSales.API
 C:\Git\Projetos\exsales\Backend\exSales\exSales.API\obj\Debug\net8.0\exSales.API.AssemblyInfoInputs.cache
 C:\Git\Projetos\exsales\Backend\exSales\exSales.API\obj\Debug\net8.0\exSales.API.AssemblyInfo.cs
 C:\Git\Projetos\exsales\Backend\exSales\exSales.API\obj\Debug\net8.0\exSales.API.csproj.CoreCompileInputs.cache
-C:\Git\Projetos\exsales\Backend\exSales\exSales.API\obj\Debug\net8.0\exSales.API.MvcApplicationPartsAssemblyInfo.cs
 C:\Git\Projetos\exsales\Backend\exSales\exSales.API\obj\Debug\net8.0\exSales.API.MvcApplicationPartsAssemblyInfo.cache
 C:\Git\Projetos\exsales\Backend\exSales\exSales.API\obj\Debug\net8.0\exSales.API.sourcelink.json
 C:\Git\Projetos\exsales\Backend\exSales\exSales.API\obj\Debug\net8.0\staticwebassets.build.json
@@ -66,3 +64,18 @@ C:\Git\Projetos\exsales\Backend\exSales\exSales.API\obj\Debug\net8.0\refint\exSa
 C:\Git\Projetos\exsales\Backend\exSales\exSales.API\obj\Debug\net8.0\exSales.API.pdb
 C:\Git\Projetos\exsales\Backend\exSales\exSales.API\obj\Debug\net8.0\exSales.API.genruntimeconfig.cache
 C:\Git\Projetos\exsales\Backend\exSales\exSales.API\obj\Debug\net8.0\ref\exSales.API.dll
+C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\Microsoft.Extensions.Caching.Abstractions.dll
+C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\Microsoft.Extensions.Configuration.Abstractions.dll
+C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\Microsoft.Extensions.Diagnostics.Abstractions.dll
+C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\Microsoft.Extensions.Hosting.Abstractions.dll
+C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\Microsoft.Extensions.ObjectPool.dll
+C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\Microsoft.Extensions.Primitives.dll
+C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\Microsoft.Extensions.WebEncoders.dll
+C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\Stripe.net.dll
+C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
+C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\System.Diagnostics.DiagnosticSource.dll
+C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\System.Private.Windows.Core.dll
+C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
+C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
+C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\System.Security.Cryptography.Xml.dll
+C:\Git\Projetos\exsales\Backend\exSales\exSales.API\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll

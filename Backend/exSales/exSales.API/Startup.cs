@@ -44,7 +44,10 @@ namespace exSales.API
             services.AddHealthChecks();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "exSales.API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { 
+                    Title = "exSales.API", 
+                    Version = "v1" 
+                });
             });
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
             {
@@ -64,8 +67,14 @@ namespace exSales.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "exSales.API v1"));
+                app.UseSwagger(c =>
+                {
+                    c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0;
+                });
+                app.UseSwaggerUI(c => {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "exSales.API v1");
+                    //c.RoutePrefix = string.Empty;
+                });
             }
             else
             {

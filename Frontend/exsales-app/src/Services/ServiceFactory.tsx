@@ -9,6 +9,8 @@ import IProfileService from './Interfaces/IProfileService';
 import ProfileService from './Impl/ProfileService';
 import IProductService from './Interfaces/IProductService';
 import ProductService from './Impl/ProductService';
+import IOrderService from './Interfaces/IOrderService';
+import OrderService from './Impl/OrderService';
 
 const httpClientAuth : IHttpClient = HttpClient();
 httpClientAuth.init(env.API_BASE_URL);
@@ -25,11 +27,15 @@ profileServiceImpl.init(httpClientAuth);
 const productServiceImpl : IProductService = ProductService;
 productServiceImpl.init(httpClientAuth);
 
+const orderServiceImpl : IOrderService = OrderService;
+orderServiceImpl.init(httpClientAuth);
+
 const ServiceFactory = {
   UserService: userServiceImpl,
   NetworkService: networkServiceImpl,
   ProfileService: profileServiceImpl,
   ProductService: productServiceImpl,
+  OrderService: orderServiceImpl,
   setLogoffCallback: (cb : () => void) => {
     httpClientAuth.setLogoff(cb);
   }

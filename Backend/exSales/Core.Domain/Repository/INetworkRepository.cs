@@ -10,6 +10,7 @@ namespace Core.Domain.Repository
     {
         IEnumerable<TModel> ListByStatus(int status, TFactory factory);
         TModel GetById(long id, TFactory factory);
+        TModel GetBySlug(string slug, TFactory factory);
         TModel GetByName(string name, TFactory factory);
         TModel GetByEmail(string email, TFactory factory);
         TModel Insert(TModel model, TFactory factory);

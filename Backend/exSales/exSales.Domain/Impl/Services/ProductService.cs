@@ -1,4 +1,5 @@
-﻿using exSales.Domain.Interfaces.Factory;
+﻿using Core.Domain;
+using exSales.Domain.Interfaces.Factory;
 using exSales.Domain.Interfaces.Models;
 using exSales.Domain.Interfaces.Services;
 using exSales.DTO.Product;
@@ -52,6 +53,11 @@ namespace exSales.Domain.Impl.Services
             return _productFactory.BuildProductModel().GetById(productId, _productFactory);
         }
 
+        public IProductModel GetBySlug(string productSlug)
+        {
+            return _productFactory.BuildProductModel().GetBySlug(productSlug, _productFactory);
+        }
+
         public ProductInfo GetProductInfo(IProductModel md)
         {
             return new ProductInfo { 
@@ -67,6 +73,22 @@ namespace exSales.Domain.Impl.Services
             };
         }
 
+        private string GenerateSlug(IProductModel md)
+        {
+            string newSlug;
+            int c = 0;
+            do
+            {
+                newSlug = SlugHelper.GerarSlug((!string.IsNullOrEmpty(md.Slug)) ? md.Slug : md.Name);
+                if (c > 0)
+                {
+                    newSlug += c.ToString();
+                }
+                c++;
+            } while (md.ExistSlug(md.ProductId, newSlug));
+            return newSlug;
+        }
+
         public IProductModel Insert(ProductInfo product, long userId)
         {
             ValidateAccess(product.NetworkId, userId);
@@ -75,6 +97,10 @@ namespace exSales.Domain.Impl.Services
             {
                 throw new Exception("Name is empty");
             }
+            if (!(product.Price > 0))
+            {
+                throw new Exception("Price cant be 0");
+            }
 
             var model = _productFactory.BuildProductModel();
 
@@ -82,11 +108,11 @@ namespace exSales.Domain.Impl.Services
             model.NetworkId = product.NetworkId;
             model.Name = product.Name;
             model.Description = product.Description;
-            model.Slug = product.Slug;
             model.Price = product.Price;
             model.Frequency = product.Frequency;
             model.Limit = product.Limit;
             model.Status = product.Status;
+            model.Slug = GenerateSlug(model);
 
             return model.Insert(_productFactory);
         }
@@ -99,6 +125,10 @@ namespace exSales.Domain.Impl.Services
             {
                 throw new Exception("Name is empty");
             }
+            if (!(product.Price > 0))
+            {
+                throw new Exception("Price cant be 0");
+            }
 
             var model = _productFactory.BuildProductModel();
 
@@ -106,11 +136,11 @@ namespace exSales.Domain.Impl.Services
             model.NetworkId = product.NetworkId;
             model.Name = product.Name;
             model.Description = product.Description;
-            model.Slug = product.Slug;
             model.Price = product.Price;
             model.Frequency = product.Frequency;
             model.Limit = product.Limit;
             model.Status = product.Status;
+            model.Slug = GenerateSlug(model);
 
             return model.Update(_productFactory);
         }
@@ -130,6 +160,25 @@ namespace exSales.Domain.Impl.Services
                 PageNum = pageNum,
                 PageCount = pageCount
             };
+        }
+
+        public IList<IProductModel> ListByNetwork(long networkId)
+        {
+            return _productFactory
+                .BuildProductModel()
+                .ListByNetwork(networkId, _productFactory)
+                .OrderBy(x => x.Price)
+                .ToList();
+        }
+
+        public IProductModel GetByStripeProductId(string stripeProductId)
+        {
+            return _productFactory.BuildProductModel().GetByStripeProductId(stripeProductId, _productFactory);
+        }
+
+        public IProductModel GetByStripePriceId(string stripePriceId)
+        {
+            return _productFactory.BuildProductModel().GetByStripePriceId(stripePriceId, _productFactory);
         }
     }
 }

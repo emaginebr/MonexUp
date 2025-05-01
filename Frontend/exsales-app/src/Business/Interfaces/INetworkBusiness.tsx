@@ -10,6 +10,9 @@ export default interface INetworkBusiness {
   update: (network: NetworkInfo) => Promise<BusinessResult<NetworkInfo>>;
   listByUser: () => Promise<BusinessResult<UserNetworkInfo[]>>;
   getById: (networkId: number) => Promise<BusinessResult<NetworkInfo>>;
+  getBySlug: (networkSlug: string) => Promise<BusinessResult<NetworkInfo>>;
+  getUserNetwork: (networkId: number) => Promise<BusinessResult<UserNetworkInfo>>;
+  getUserNetworkBySlug: (networkSlug: string) => Promise<BusinessResult<UserNetworkInfo>>;
   requestAccess: (networkId: number, referrerId?: number) => Promise<BusinessResult<boolean>>;
   changeStatus: (networkId: number, userId: number, status: number) => Promise<BusinessResult<boolean>>; 
 }

@@ -14,4 +14,7 @@ export default interface UserEditInfo {
     state: string;
 
     pixkey: string;
+
+    password: string;
+    confirmPassword: string;
 }

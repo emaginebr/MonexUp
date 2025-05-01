@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace DB.Infra.Repository
 {
@@ -79,6 +80,16 @@ namespace DB.Infra.Repository
             var row = _ccsContext.Networks.Find(id);
             if (row == null)
                 return null;
+            return DbToModel(factory, row);
+        }
+
+        public INetworkModel GetBySlug(string slug, INetworkDomainFactory factory)
+        {
+            var row = _ccsContext.Networks.Where(x => x.Slug.ToLower() == slug.ToLower()).FirstOrDefault();
+            if (row == null)
+            {
+                return null;
+            }
             return DbToModel(factory, row);
         }
 

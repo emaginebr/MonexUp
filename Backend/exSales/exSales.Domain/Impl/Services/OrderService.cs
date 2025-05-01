@@ -2,6 +2,7 @@
 using exSales.Domain.Interfaces.Models;
 using exSales.Domain.Interfaces.Services;
 using exSales.DTO.Order;
+using Stripe.Climate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace exSales.Domain.Impl.Services
         {
             _orderFactory = orderFactory;
         }
+
         public IOrderModel Insert(OrderInfo order)
         {
             if (!(order.ProductId > 0))
@@ -36,6 +38,7 @@ namespace exSales.Domain.Impl.Services
 
             return model.Insert(_orderFactory);
         }
+
         public IOrderModel Update(OrderInfo order)
         {
             if (!(order.OrderId > 0))
@@ -54,6 +57,11 @@ namespace exSales.Domain.Impl.Services
             return _orderFactory.BuildOrderModel().GetById(orderId, _orderFactory);
         }
 
+        public IOrderModel Get(long productId, long userId, OrderStatusEnum status)
+        {
+            return _orderFactory.BuildOrderModel().Get(productId, userId, status, _orderFactory);
+        }
+
         public OrderInfo GetOrderInfo(IOrderModel order)
         {
             return new OrderInfo
@@ -68,6 +76,11 @@ namespace exSales.Domain.Impl.Services
         public IList<IOrderModel> List(long networkId, long userId, OrderStatusEnum? status)
         {
             return _orderFactory.BuildOrderModel().List(networkId, userId, status, _orderFactory).ToList();
+        }
+
+        public IOrderModel GetByStripeId(string stripeId)
+        {
+            return _orderFactory.BuildOrderModel().GetByStripeId(stripeId, _orderFactory);
         }
     }
 }

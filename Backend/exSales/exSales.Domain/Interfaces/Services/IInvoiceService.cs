@@ -13,6 +13,7 @@ namespace exSales.Domain.Interfaces.Services
     {
         IList<IInvoiceModel> List(long networkId, long orderId, long userId, InvoiceStatusEnum? status);
         IInvoiceModel GetById(long invoiceId);
+        IInvoiceModel GetByStripeId(string stripeId);
         InvoiceInfo GetInvoiceInfo(IInvoiceModel invoice);
         IInvoiceModel Insert(InvoiceInfo invoice);
         IInvoiceModel Update(InvoiceInfo invoice);

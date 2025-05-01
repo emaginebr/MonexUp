@@ -4,6 +4,7 @@ using exSales.Domain.Interfaces.Factory;
 using exSales.Domain.Interfaces.Models;
 using exSales.DTO.Network;
 using exSales.DTO.Order;
+using NoobsMuc.Coinmarketcap.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,7 @@ namespace DB.Infra.Repository
             md.ProductId = row.ProductId;
             md.UserId = row.UserId;
             md.Status = (OrderStatusEnum) row.Status;
+            md.StripeId = row.StripeId;
             return md;
         }
 
@@ -37,6 +39,7 @@ namespace DB.Infra.Repository
             row.ProductId = md.ProductId;
             row.UserId = md.UserId;
             row.Status = (int)md.Status;
+            row.StripeId = md.StripeId;
         }
 
         public IOrderModel Insert(IOrderModel model, IOrderDomainFactory factory)
@@ -77,6 +80,26 @@ namespace DB.Infra.Repository
         public IOrderModel GetById(long id, IOrderDomainFactory factory)
         {
             var row = _ccsContext.Orders.Find(id);
+            if (row == null)
+                return null;
+            return DbToModel(factory, row);
+        }
+
+        public IOrderModel Get(long productId, long userId, int status, IOrderDomainFactory factory)
+        {
+            var row = _ccsContext.Orders
+                .Where(x => x.ProductId == productId && x.UserId == userId && x.Status == status)
+                .FirstOrDefault();
+            if (row == null)
+                return null;
+            return DbToModel(factory, row);
+        }
+
+        public IOrderModel GetByStripeId(string stripeId, IOrderDomainFactory factory)
+        {
+            var row = _ccsContext.Orders
+                .Where(x => x.StripeId == stripeId)
+                .FirstOrDefault();
             if (row == null)
                 return null;
             return DbToModel(factory, row);

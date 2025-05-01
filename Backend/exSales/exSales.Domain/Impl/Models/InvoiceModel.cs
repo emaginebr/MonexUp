@@ -30,6 +30,7 @@ namespace exSales.Domain.Impl.Models
         public DateTime DueDate { get; set; }
         public DateTime? PaymentDate { get; set; }
         public InvoiceStatusEnum Status { get; set; }
+        public string StripeId { get; set; }
 
         public IInvoiceModel Insert(IInvoiceDomainFactory factory)
         {
@@ -49,6 +50,11 @@ namespace exSales.Domain.Impl.Models
         public IInvoiceModel GetById(long id, IInvoiceDomainFactory factory)
         {
             return _repositoryInvoice.GetById(id, factory);
+        }
+
+        public IInvoiceModel GetByStripeId(string stripeId, IInvoiceDomainFactory factory)
+        {
+            return _repositoryInvoice.GetByStripeId(stripeId, factory);
         }
     }
 }

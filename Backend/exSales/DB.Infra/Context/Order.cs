@@ -13,6 +13,8 @@ public partial class Order
 
     public int Status { get; set; }
 
+    public string StripeId { get; set; }
+
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 
     public virtual Product Product { get; set; }

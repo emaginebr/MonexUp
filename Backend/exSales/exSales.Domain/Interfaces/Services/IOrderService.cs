@@ -13,6 +13,8 @@ namespace exSales.Domain.Interfaces.Services
     {
         IList<IOrderModel> List(long networkId, long userId, OrderStatusEnum? status);
         IOrderModel GetById(long orderId);
+        IOrderModel Get(long productId, long userId, OrderStatusEnum status);
+        IOrderModel GetByStripeId(string stripeId);
         OrderInfo GetOrderInfo(IOrderModel order);
         IOrderModel Insert(OrderInfo order);
         IOrderModel Update(OrderInfo order);

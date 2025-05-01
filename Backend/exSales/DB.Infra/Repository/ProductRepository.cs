@@ -30,11 +30,14 @@ namespace DB.Infra.Repository
             md.ProductId = row.ProductId;
             md.NetworkId = row.NetworkId;
             md.Name = row.Name;
+            md.Slug = row.Slug;
             md.Description = row.Description;
             md.Price = row.Price;
             md.Frequency = row.Frequency;
             md.Limit = row.Limit;
             md.Status = (ProductStatusEnum) row.Status;
+            md.StripeProductId = row.StripeProductId;
+            md.StripePriceId = row.StripePriceId;
             return md;
         }
 
@@ -43,11 +46,14 @@ namespace DB.Infra.Repository
             row.ProductId = md.ProductId;
             row.NetworkId = md.NetworkId;
             row.Name = md.Name;
+            row.Slug = md.Slug;
             row.Description = md.Description;
             row.Price = md.Price;
             row.Frequency = md.Frequency;
             row.Limit = md.Limit;
             row.Status = (int)md.Status;
+            row.StripeProductId = md.StripeProductId;
+            row.StripePriceId = md.StripePriceId;
         }
 
         public IProductModel Insert(IProductModel model, IProductDomainFactory factory)
@@ -77,6 +83,14 @@ namespace DB.Infra.Repository
             return DbToModel(factory, row);
         }
 
+        public IProductModel GetBySlug(string slug, IProductDomainFactory factory)
+        {
+            var row = _ccsContext.Products.Where(x => x.Slug == slug).FirstOrDefault();
+            if (row == null)
+                return null;
+            return DbToModel(factory, row);
+        }
+
         public IEnumerable<IProductModel> Search(long networkId, string keyword, int pageNum, out int pageCount, IProductDomainFactory factory)
         {
             var q = _ccsContext.Products
@@ -89,6 +103,35 @@ namespace DB.Infra.Repository
             pageCount = Convert.ToInt32(Math.Ceiling(pages));
             var rows = q.Skip((pageNum - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
             return rows.Select(x => DbToModel(factory, x));
+        }
+
+        public IEnumerable<IProductModel> ListByNetwork(long networkId, IProductDomainFactory factory)
+        {
+            var rows = _ccsContext.Products
+                .Where(x => x.NetworkId == networkId)
+                .ToList();
+            return rows.Select(x => DbToModel(factory, x));
+        }
+
+        public bool ExistSlug(long productId, string slug)
+        {
+            return _ccsContext.Products.Where(x => x.Slug == slug && (productId == 0 || x.ProductId != productId)).Any();
+        }
+
+        public IProductModel GetByStripeProductId(string stripeProductId, IProductDomainFactory factory)
+        {
+            var row = _ccsContext.Products.Where(x => x.StripeProductId == stripeProductId).FirstOrDefault();
+            if (row == null)
+                return null;
+            return DbToModel(factory, row);
+        }
+
+        public IProductModel GetByStripePriceId(string stripePriceId, IProductDomainFactory factory)
+        {
+            var row = _ccsContext.Products.Where(x => x.StripePriceId == stripePriceId).FirstOrDefault();
+            if (row == null)
+                return null;
+            return DbToModel(factory, row);
         }
     }
 }
