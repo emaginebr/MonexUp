@@ -3,20 +3,24 @@
   "WorkspaceRootPath": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|solutionrelative:monexup.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\db.infra\\context\\monexupcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|solutionrelative:db.infra\\context\\monexupcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DE107B9-14A2-4A93-ACF8-E6F6BE632AC6}|MonexUp.Application\\MonexUp.Application.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.application\\initializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5DE107B9-14A2-4A93-ACF8-E6F6BE632AC6}|MonexUp.Application\\MonexUp.Application.csproj|solutionrelative:monexup.application\\initializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.api\\startup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|solutionrelative:monexup.api\\startup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.api\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|solutionrelative:monexup.api\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|solutionrelative:monexup.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.api\\monexup.api.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
-      "RelativeMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|solutionrelative:monexup.api\\monexup.api.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+      "AbsoluteMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.api\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|solutionrelative:monexup.api\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.api\\appsettings.docker.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
@@ -25,6 +29,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.api\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|solutionrelative:monexup.api\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.api\\monexup.api.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
+      "RelativeMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|solutionrelative:monexup.api\\monexup.api.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
@@ -83,14 +91,6 @@
       "RelativeMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|solutionrelative:db.infra\\repository\\invoicefeerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{5DE107B9-14A2-4A93-ACF8-E6F6BE632AC6}|MonexUp.Application\\MonexUp.Application.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.application\\initializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5DE107B9-14A2-4A93-ACF8-E6F6BE632AC6}|MonexUp.Application\\MonexUp.Application.csproj|solutionrelative:monexup.application\\initializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\db.infra\\context\\monexupcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|solutionrelative:db.infra\\context\\monexupcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.api\\controllers\\invoicecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|solutionrelative:monexup.api\\controllers\\invoicecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -130,11 +130,102 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "appsettings.Docker.json",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\appsettings.Docker.json",
+              "RelativeDocumentMoniker": "MonexUp.API\\appsettings.Docker.json",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\appsettings.Docker.json",
+              "RelativeToolTip": "MonexUp.API\\appsettings.Docker.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAABsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-05-06T19:07:34.284Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "MonexUp.API\\appsettings.Development.json",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\appsettings.Development.json",
+              "RelativeToolTip": "MonexUp.API\\appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-05-06T19:07:32.277Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Dockerfile",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\Dockerfile",
+              "RelativeDocumentMoniker": "MonexUp.API\\Dockerfile",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\Dockerfile",
+              "RelativeToolTip": "MonexUp.API\\Dockerfile",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACcAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-05-06T19:07:19.769Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Startup.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\Startup.cs",
+              "RelativeDocumentMoniker": "MonexUp.API\\Startup.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\Startup.cs",
+              "RelativeToolTip": "MonexUp.API\\Startup.cs",
+              "ViewState": "AgIAABYAAAAAAAAAAAAhwCYAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-06T14:20:04.738Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\Program.cs",
+              "RelativeDocumentMoniker": "MonexUp.API\\Program.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\Program.cs",
+              "RelativeToolTip": "MonexUp.API\\Program.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAAB8AAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-06T14:19:58.82Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MonexUpContext.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Context\\MonexUpContext.cs",
+              "RelativeDocumentMoniker": "DB.Infra\\Context\\MonexUpContext.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Context\\MonexUpContext.cs",
+              "RelativeToolTip": "DB.Infra\\Context\\MonexUpContext.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAA/wCsAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-06T14:15:47.556Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Initializer.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Application\\Initializer.cs",
+              "RelativeDocumentMoniker": "MonexUp.Application\\Initializer.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Application\\Initializer.cs",
+              "RelativeToolTip": "MonexUp.Application\\Initializer.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAACcAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-06T14:12:50.61Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
               "Title": "MonexUp.API",
               "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\MonexUp.API.csproj",
               "RelativeDocumentMoniker": "MonexUp.API\\MonexUp.API.csproj",
@@ -146,33 +237,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "appsettings.Docker.json",
-              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\appsettings.Docker.json",
-              "RelativeDocumentMoniker": "MonexUp.API\\appsettings.Docker.json",
-              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\appsettings.Docker.json",
-              "RelativeToolTip": "MonexUp.API\\appsettings.Docker.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-05-06T19:07:34.284Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "appsettings.Development.json",
-              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\appsettings.Development.json",
-              "RelativeDocumentMoniker": "MonexUp.API\\appsettings.Development.json",
-              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\appsettings.Development.json",
-              "RelativeToolTip": "MonexUp.API\\appsettings.Development.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-05-06T19:07:32.277Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 8,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\appsettings.json",
               "RelativeDocumentMoniker": "MonexUp.API\\appsettings.json",
@@ -185,46 +250,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Dockerfile",
-              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\Dockerfile",
-              "RelativeDocumentMoniker": "MonexUp.API\\Dockerfile",
-              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\Dockerfile",
-              "RelativeToolTip": "MonexUp.API\\Dockerfile",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-05-06T19:07:19.769Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Startup.cs",
-              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\Startup.cs",
-              "RelativeDocumentMoniker": "MonexUp.API\\Startup.cs",
-              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\Startup.cs",
-              "RelativeToolTip": "MonexUp.API\\Startup.cs",
-              "ViewState": "AgIAAEwAAAAAAAAAAAAkwB0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-06T14:20:04.738Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\Program.cs",
-              "RelativeDocumentMoniker": "MonexUp.API\\Program.cs",
-              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\Program.cs",
-              "RelativeToolTip": "MonexUp.API\\Program.cs",
-              "ViewState": "AgIAABIAAAAAAAAAAAAAACMAAAAbAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-06T14:19:58.82Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 14,
               "Title": "UserDocumentRepository.cs",
               "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\UserDocumentRepository.cs",
               "RelativeDocumentMoniker": "DB.Infra\\Repository\\UserDocumentRepository.cs",
@@ -236,7 +262,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 13,
               "Title": "UserNetworkRepository.cs",
               "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\UserNetworkRepository.cs",
               "RelativeDocumentMoniker": "DB.Infra\\Repository\\UserNetworkRepository.cs",
@@ -248,7 +274,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 12,
               "Title": "UserPhoneRepository.cs",
               "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\UserPhoneRepository.cs",
               "RelativeDocumentMoniker": "DB.Infra\\Repository\\UserPhoneRepository.cs",
@@ -260,7 +286,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 11,
               "Title": "UserProfileRepository.cs",
               "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\UserProfileRepository.cs",
               "RelativeDocumentMoniker": "DB.Infra\\Repository\\UserProfileRepository.cs",
@@ -272,7 +298,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 10,
               "Title": "UserRepository.cs",
               "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\UserRepository.cs",
               "RelativeDocumentMoniker": "DB.Infra\\Repository\\UserRepository.cs",
@@ -284,7 +310,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "UnitOfWork.cs",
               "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\UnitOfWork.cs",
               "RelativeDocumentMoniker": "DB.Infra\\UnitOfWork.cs",
@@ -296,7 +322,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 15,
               "Title": "UserAddressRepository.cs",
               "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\UserAddressRepository.cs",
               "RelativeDocumentMoniker": "DB.Infra\\Repository\\UserAddressRepository.cs",
@@ -308,7 +334,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 16,
               "Title": "ProductRepository.cs",
               "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\ProductRepository.cs",
               "RelativeDocumentMoniker": "DB.Infra\\Repository\\ProductRepository.cs",
@@ -320,7 +346,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 17,
               "Title": "OrderRepository.cs",
               "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\OrderRepository.cs",
               "RelativeDocumentMoniker": "DB.Infra\\Repository\\OrderRepository.cs",
@@ -332,7 +358,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 18,
               "Title": "OrderItemRepository.cs",
               "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\OrderItemRepository.cs",
               "RelativeDocumentMoniker": "DB.Infra\\Repository\\OrderItemRepository.cs",
@@ -344,7 +370,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 19,
               "Title": "NetworkRepository.cs",
               "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\NetworkRepository.cs",
               "RelativeDocumentMoniker": "DB.Infra\\Repository\\NetworkRepository.cs",
@@ -356,7 +382,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 20,
               "Title": "InvoiceRepository.cs",
               "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\InvoiceRepository.cs",
               "RelativeDocumentMoniker": "DB.Infra\\Repository\\InvoiceRepository.cs",
@@ -368,7 +394,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 21,
               "Title": "InvoiceFeeRepository.cs",
               "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\InvoiceFeeRepository.cs",
               "RelativeDocumentMoniker": "DB.Infra\\Repository\\InvoiceFeeRepository.cs",
@@ -377,30 +403,6 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAyAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-06T14:10:10.13Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "Initializer.cs",
-              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Application\\Initializer.cs",
-              "RelativeDocumentMoniker": "MonexUp.Application\\Initializer.cs",
-              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Application\\Initializer.cs",
-              "RelativeToolTip": "MonexUp.Application\\Initializer.cs",
-              "ViewState": "AgIAABUAAAAAAAAAAAAAADwAAAAWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-06T14:12:50.61Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 21,
-              "Title": "MonexUpContext.cs",
-              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Context\\MonexUpContext.cs",
-              "RelativeDocumentMoniker": "DB.Infra\\Context\\MonexUpContext.cs",
-              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Context\\MonexUpContext.cs",
-              "RelativeToolTip": "DB.Infra\\Context\\MonexUpContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-06T14:15:47.556Z"
             },
             {
               "$type": "Document",

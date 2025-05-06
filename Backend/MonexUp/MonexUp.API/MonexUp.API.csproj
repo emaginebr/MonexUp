@@ -12,6 +12,7 @@
     <EmbeddedResource Remove="DTOs\**" />
     <None Remove="DTOs\**" />
     <None Remove="DTO\" />
+    <None Remove="monexup.com.pfx" />
     <None Remove="nochainswap.org.pfx" />
   </ItemGroup>
 
@@ -33,8 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="nochainswap.org.pfx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="monexup.com.pfx" />
   </ItemGroup>
 </Project>

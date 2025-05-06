@@ -32,7 +32,7 @@ namespace MonexUp.API
                     {
                         options.ConfigureHttpsDefaults(httpsOptions =>
                         {
-                            var s = Assembly.GetExecutingAssembly().GetManifestResourceStream("NoChainSwap.API.nochainswap.org.pfx");
+                            var s = Assembly.GetExecutingAssembly().GetManifestResourceStream("NoChainSwap.API.monexup.com.pfx");
                             using (MemoryStream ms = new MemoryStream())
                             {
                                 s.CopyTo(ms);

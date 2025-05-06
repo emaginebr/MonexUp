@@ -36,9 +36,6 @@ namespace MonexUp.Application
             else
                 services.AddDbContextFactory<MonexUpContext>(x => x.UseLazyLoadingProxies().UseNpgsql(config.ConnectionString));
 
-            //StxTxService.WALLET_API = config.WalletStxApi;
-            //StxTxService.STACKS_API = config.StacksApi;
-
             #region Infra
             injectDependency(typeof(MonexUpContext), typeof(MonexUpContext), services, scoped);
             injectDependency(typeof(IUnitOfWork), typeof(UnitOfWork), services, scoped);

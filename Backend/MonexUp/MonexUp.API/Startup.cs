@@ -35,9 +35,7 @@ namespace MonexUp.API
         {
             var config = new ConfigurationParam
             {
-                ConnectionString = Configuration.GetConnectionString("exSalesContext"),
-                WalletStxApi = Configuration.GetSection("Stacks:WalletApi").Value,
-                StacksApi = Configuration.GetSection("Stacks:StacksApi").Value
+                ConnectionString = Configuration.GetConnectionString("MonexUpContext")
             };
             Initializer.Configure(services, config);
             services.AddControllers();

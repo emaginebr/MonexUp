@@ -3,7 +3,6 @@ C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\bin\Debug\net8.0\appsettings
 C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\bin\Debug\net8.0\appsettings.json
 C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\bin\Debug\net8.0\libman.json
 C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\bin\Debug\net8.0\MonexUp.API.exe
-C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\bin\Debug\net8.0\nochainswap.org.pfx
 C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\bin\Debug\net8.0\MonexUp.API.deps.json
 C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\bin\Debug\net8.0\MonexUp.API.runtimeconfig.json
 C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\bin\Debug\net8.0\MonexUp.API.dll
