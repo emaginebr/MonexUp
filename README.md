@@ -1,11 +1,11 @@
-# ExSales  
+# MonexUp  
 Sistema de Vendas com Doações via Marketing de Rede e Marketing Multinível
 
 ---
 
 ## 📌 Visão Geral
 
-O **ExSales** é uma plataforma de doações com estrutura de marketing multinível (MLM), permitindo que representantes compartilhem links personalizados, recebam comissões por indicações e acompanhem toda a atividade de sua rede. Administradores têm controle total sobre usuários, planos, redes e comissões.
+O **MonexUp** é uma plataforma de doações com estrutura de marketing multinível (MLM), permitindo que representantes compartilhem links personalizados, recebam comissões por indicações e acompanhem toda a atividade de sua rede. Administradores têm controle total sobre usuários, planos, redes e comissões.
 
 ---
 

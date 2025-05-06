@@ -1,0 +1,147 @@
+# Projeto MonexUp
+---
+## Sistema de Vendas usando Marking de Redes e Marketing Multi Nível
+
+1. Tela de doação
+	- O representante terá um link personalizado para essa tela, onde ficará armazenado quem e o representante assim que o usuário entrar;
+	- O usuário poderá escolher entre uma quantidade de planos de doação preestabelecido ou poderá personalizar sua doação, escolhendo os valores e em quantas parcelas irá dividir. Esses planos de doação serão configurados no cadastro de rede;
+	- Existirão planos que não estarão visiveis para o usuário, apenas com um link personalizado do representante;
+	- Depois de selecionado o plano de doação, o usuário selecionará a forma de pagamento, que será cartão de crédito por padrão;
+	- Ao selecionar a forma de pagamento, caso o usuário não esteja logado irá para uma tela de cadastro, onde deverá estar vísivel a opção de logar caso já possua uma conta.
+	- Nessa tela de cadastro, o usuário deverá preencher os seguintes campos:
+		* Nome completo (obrigatório);
+		* Email (obrigatório);
+		* Telefone (Opcional);
+		* Cpf (obrigatório);
+	- Após o cadastro, o registro já deverá constar no banco de dados mesmo que a doação não seja finalizada;
+	- Um email será enviado para o usuário para validação do email, independente do pagamento;
+	- O usuário estará com o status "Não Validado", apenas após clicar no link do email que o usuário passará para o status "Ativo";
+	- Mesmo com status "Não validado" o usuário poderá fazer doações;
+	- Não é possível fazer mais de um cadastro por email;
+	- Caso o usuário já possua registro e decidir logar entrará na tela de pagamento;
+	- Na tela de pagamento, o usuário poderá alterar para outra forma se deseja. Por padrão aparecerá a forma de pagamento selecionada anteriormente;
+	- Caso o pagamento selecionado seja processado na hora, o sistema irá confirmar a doação a agradecer, enviando também um agradecimento por email;
+	- Caso o pagamento selecionado não seja processado na hora (PIX ou boleto) será exibida o meio de pagamento na tela e será enviado por email;
+	- Um sistema de background irá verificar os pagamentos em um tempo pré-determinado;
+	- Assim que o sistema confirmar o pagamento, o sistemas irá enviar um email confirmado;
+2. Cadastro de Representante
+	- O cadastro de representantes é compartilhado com o cadastro de usuário comum, o representante terá apenas um tipo diferente. Representantes também poderam fazer doações;
+	- O representante poderá cadastrar através de um link de outro representante, ficará registrada a indicação através desse link;
+	- Na tela de cadastro, o representante deverá preencher os seguintes campos:
+		* Nome completo (obrigatório);
+		* Email (obrigatório);
+		* Telefone (Obrigatório);
+		* Cpf (obrigatório);
+		* Data de Nascimento (obrigatório);
+		* Endereço completo (obrigatório);
+		* Upload de Documento (obrigatório);
+		* Dados Bancários para deposíto (obrigatório);
+	- Após o cadastro, o representante entrará com o status "Aguardando aprovação". Ele não poderá logar enquanto estiver nesse status;
+	- Um email será enviado confirmando o cadastrado e informando que está aguardando aprovação;
+	- Assim que o representante for aprovado, seu status irá mudar para "Ativo" e ele irá receber um email confirmado a aprovação;
+	- O administrador também poderá mudar o status para "Bloqueado", o representante bloqueado não poderá logar e não receberá comissão;
+3. Administração
+	- Todos os usuários terão acesso para alterar os seus dados;
+	- Usuários não podem ser excluídos do sistema, apenas ter a sua situação alterada;
+	- Usuários podem fazer parte de uma ou mais redes. Caso façam parte, terão a lista de todas as redes que fazem parte no menu. Poderam usar uma rede de cada vez. Apenas o Adminstrador Master terá acesso a todas as redes;
+  3.1. Papel Doador
+	- O usuário doador terá apenas acesso ao extrato de doações, que aparecerá na tela inicial, contendo os campos abaixo:
+		- Data de Vencimento;
+		- Nome da Rede;
+		- Valor (Valores sem Comissões);
+		- Situação (Aberto, Pago ou Pendente);
+		- Botão "Pagar" (para Situação "Aberto" ou "Pedente")
+	- Formulário de Cadastro:
+		* Nome completo (obrigatório);
+		* Email (obrigatório);
+		* Telefone (Opcional);
+		* Cpf (obrigatório);
+	- Para os pagamentos em situação Aberto ou Pendente, o doador poderá clicar em "Pagar" e seja direcionado para a página de pagamento;
+	- Caso o doador faça parte de mais de uma rede, ela aparecerá no menu do site para selecionar;
+  3.2. Papel Representante
+	- Links:
+		- O representante tem os links de doação e de indicação de representante, nesse local ele poderá copia-los;
+	- Opção de Saque:
+		- O representante visualizará o saldo disponível para saque, e a data no prôximo saque;
+		- Caso o saque esteja disponível, o botão "Sacar" estará ativo;
+		- Ao clicar no botão "Sacar", abrirá um botão com os dados bancários do representante e a opção de confirmar;
+		- Ao confirmar, o sistema irá enviar um email avisando da solicitação e irá iniciar o saque;
+		- Ao concluir o saque o sistema enviará um email confirmando;
+	- Lista de usuário
+		- O representante tem acesso a lista de usuários que ele indicou;
+		- Lista de todos os usuários com a possibilidade de filtro por nome, tipo de usuário e status. Os campos da lista são:
+			* Nome Completo;
+			* Email;
+			* Telefone;
+			* Tipo de Usuário;
+			* Plano de Rede;
+			* Status;
+			* Extrato;
+	- O usuário representante terá apenas acesso ao extrato de doações, apenas dos valores pagos, agrupado por rede, contendo os campos abaixo:
+		- Agrupado por Nome da Rede;
+			- Data de Vencimento;
+			- Valor;
+			- Valor da Comissão;
+			- Situação (Pago);
+	- Na tela de cadastro, o representante deverá preencher os seguintes campos:
+		* Nome completo (obrigatório);
+		* Email (obrigatório);
+		* Telefone (Obrigatório);
+		* Cpf (obrigatório);
+		* Data de Nascimento (obrigatório);
+		* Endereço completo (obrigatório);
+		* Upload de Documento (obrigatório);
+		* Dados Bancários para deposíto (obrigatório);
+  3.3. Papel Adminstrador da Rede
+    - Cadastro da Rede;
+		- O Administrador de rede poderá alterar apenas os da rede selecionada.
+		- No cadastro da rede existem os seguintes campos:
+			* Nome da Rede (obrigatório);
+			* Porcentagem da Rede (padrão 0);
+			* Templates dos emails da Rede;
+			* Email da Rede;
+			* Valor mínimo de saque;
+			* Periodo mínimo de saque em dias;
+	- Cadastro de níveis de usuário:
+		- Lista todos os níveis de usuário pelo nome;
+		- No cadastro de nível de usuário, o administrador de rede deverá preencher os seguintes campos:
+			- Nome do nível;
+			- Número do nível;
+			- Porcentagem de comissão;
+		- O nível 0 sempre será o usuário de perfil doador, os outros níveis são representantes;
+	- Cadastro dos Planos
+		- O adminstrador da Rede poderá cadastrar os planos possíveis, com os seguintes campos:
+			* Nome do Plano (obrigatório);
+			* Valor da parcela (obrigatório);
+			* Frequencia de pagamentos (Uma vez, limitado ou recorrente);
+			* Visibilidade (Visivel ou apenas com link);
+		- Os planos poderão ser excluídos caso não esteja ligados a nenhum usuário;
+	- Lista de usuário (igual ai do Papel do representante, mas com todos os usuários da rede);
+	- Na tela de cadastro (igual ai do Papel do representante, mas o administrador de rede pode mudar o nível do representante);
+	- Extrato da Rede:
+		- o adminstrador da Rede terá acesso a um extrato da rede, agrupado por representante, contendo os seguintes campos:
+		- Agrupado por Nome da Rede;
+			- Agrupado por Representante;
+				- Data de Vencimento;
+				- Plano de Rede;
+				- Valor;
+				- Valor da Comissão;
+				- Situação (Pago);		
+  3.4. Papel Adminstrador Master
+	- Lista de Redes;
+		- Lista de todas as redes cadastradas no sistema. Essa lista contem:
+			* Nome da Rede;
+			* Email;
+			* Situação (Ativo ou Inativo);
+    - Cadastro da Rede;
+		- O Administrador de rede poderá alterar apenas os da rede selecionada.
+		- No cadastro da rede existem os seguintes campos:
+			* Nome da Rede (obrigatório);
+			* Situação Ativa ou Inativa (obrigatório);
+			* Porcentagem da Rede (padrão 0);
+			* Templates dos emails da Rede;
+			* Email da Rede;
+			* Valor mínimo de saque;
+			* Periodo mínimo de saque em dias;
+		- Apenas o Adminstrador Master poderá incluir uma nova rede;
+	- Os adminstrador Master terá acesso a todos os recursos de Administrador de Rede, mas ele terá uma opção de selecionar a rede na qual estará mexendo no topo do menu. O Adminstrador de Rede só poderá ver os registros da propria rede.

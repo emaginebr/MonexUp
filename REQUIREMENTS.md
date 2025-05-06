@@ -1,4 +1,4 @@
-# 📋 Requisitos do Sistema ExSales
+# 📋 Requisitos do Sistema MonexUp
 
 ## 1. Requisitos Gerais
 1.1 O sistema deve permitir o funcionamento com múltiplas redes independentes.  

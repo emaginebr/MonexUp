@@ -1,0 +1,13 @@
+C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.DTO\bin\Debug\net8.0\MonexUp.DTO.deps.json
+C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.DTO\bin\Debug\net8.0\MonexUp.DTO.dll
+C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.DTO\bin\Debug\net8.0\MonexUp.DTO.pdb
+C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.DTO\obj\Debug\net8.0\MonexUp.DTO.csproj.AssemblyReference.cache
+C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.DTO\obj\Debug\net8.0\MonexUp.DTO.GeneratedMSBuildEditorConfig.editorconfig
+C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.DTO\obj\Debug\net8.0\MonexUp.DTO.AssemblyInfoInputs.cache
+C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.DTO\obj\Debug\net8.0\MonexUp.DTO.AssemblyInfo.cs
+C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.DTO\obj\Debug\net8.0\MonexUp.DTO.csproj.CoreCompileInputs.cache
+C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.DTO\obj\Debug\net8.0\MonexUp.DTO.sourcelink.json
+C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.DTO\obj\Debug\net8.0\MonexUp.DTO.dll
+C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.DTO\obj\Debug\net8.0\refint\MonexUp.DTO.dll
+C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.DTO\obj\Debug\net8.0\MonexUp.DTO.pdb
+C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.DTO\obj\Debug\net8.0\ref\MonexUp.DTO.dll
