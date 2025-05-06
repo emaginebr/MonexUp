@@ -73,6 +73,27 @@ const NetworkBusiness: INetworkBusiness = {
         throw new Error("Failed to update");
       }
   },
+  listAll: async () => {
+    try {
+        let ret: BusinessResult<NetworkInfo[]>;
+        let retServ = await _networkService.listAll();
+        if (retServ.sucesso) {
+          return {
+            ...ret,
+            dataResult: retServ.networks,
+            sucesso: true
+          };
+        } else {
+          return {
+            ...ret,
+            sucesso: false,
+            mensagem: retServ.mensagem
+          };
+        }
+      } catch {
+        throw new Error("Failed to get user by email");
+      }
+  },
   listByUser: async () => {
     try {
         let ret: BusinessResult<UserNetworkInfo[]>;
@@ -88,7 +109,28 @@ const NetworkBusiness: INetworkBusiness = {
         if (retServ.sucesso) {
           return {
             ...ret,
-            dataResult: retServ.networks,
+            dataResult: retServ.userNetworks,
+            sucesso: true
+          };
+        } else {
+          return {
+            ...ret,
+            sucesso: false,
+            mensagem: retServ.mensagem
+          };
+        }
+      } catch {
+        throw new Error("Failed to get user by email");
+      }
+  },
+  listByNetwork: async (networkSlug: string) => {
+    try {
+        let ret: BusinessResult<UserNetworkInfo[]>;
+        let retServ = await _networkService.listByNetwork(networkSlug);
+        if (retServ.sucesso) {
+          return {
+            ...ret,
+            dataResult: retServ.userNetworks,
             sucesso: true
           };
         } else {
@@ -193,6 +235,27 @@ const NetworkBusiness: INetworkBusiness = {
           };
         }
         let retServ = await _networkService.getUserNetworkBySlug(networkSlug, session.token);
+        if (retServ.sucesso) {
+          return {
+            ...ret,
+            dataResult: retServ.userNetwork,
+            sucesso: true
+          };
+        } else {
+          return {
+            ...ret,
+            sucesso: false,
+            mensagem: retServ.mensagem
+          };
+        }
+      } catch {
+        throw new Error("Failed to get user by email");
+      }
+  },
+  getSellerBySlug: async (networkSlug: string, userSlug: string) => {
+    try {
+        let ret: BusinessResult<UserNetworkInfo>;
+        let retServ = await _networkService.getSellerBySlug(networkSlug, userSlug);
         if (retServ.sucesso) {
           return {
             ...ret,

@@ -80,9 +80,30 @@ namespace exSales.API.Controllers
             }
         }
 
+        [HttpGet("listAll")]
+        public ActionResult<NetworkListResult> ListAll()
+        {
+            try
+            {
+                var mdUserNetwork = _userNetworkFactory.BuildUserNetworkModel();
+
+                var networks = _networkService
+                    .ListByStatus(NetworkStatusEnum.Active)
+                    .ToList();
+                return new NetworkListResult()
+                {
+                    Networks = networks.Select(x => _networkService.GetNetworkInfo(x)).ToList()
+                };
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [Authorize]
         [HttpGet("listByUser")]
-        public ActionResult<NetworkListResult> ListByUser()
+        public ActionResult<UserNetworkListResult> ListByUser()
         {
             try
             {
@@ -97,9 +118,9 @@ namespace exSales.API.Controllers
                 var userNetworks = _networkService
                     .ListByUser(userSession.UserId)
                     .ToList();
-                return new NetworkListResult()
+                return new UserNetworkListResult()
                 {
-                    Networks = userNetworks.Select(x => UserNetworkModelToInfo(x)).ToList()
+                    UserNetworks = userNetworks.Select(x => _networkService.GetUserNetworkInfo(x)).ToList()
                 };
             }
             catch (Exception ex)
@@ -108,6 +129,34 @@ namespace exSales.API.Controllers
             }
         }
 
+        [HttpGet("listByNetwork/{networkSlug}")]
+        public ActionResult<UserNetworkListResult> ListByNetwork(string networkSlug)
+        {
+            try
+            {
+                var network = _networkService.GetBySlug(networkSlug);
+                if (network == null)
+                {
+                    throw new Exception("Network not found");
+                }
+
+                var mdUserNetwork = _userNetworkFactory.BuildUserNetworkModel();
+
+                var userNetworks = _networkService
+                    .ListByNetwork(network.NetworkId)
+                    .ToList();
+                return new UserNetworkListResult()
+                {
+                    UserNetworks = userNetworks.Select(x => _networkService.GetUserNetworkInfo(x)).ToList()
+                };
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        /*
         private NetworkInfo NetworkModelToInfo(INetworkModel model)
         {
             var networkInfo = _networkService.GetNetworkInfo(model);
@@ -137,6 +186,7 @@ namespace exSales.API.Controllers
             }
             return userNetwork;
         }
+        */
 
         [Authorize]
         [HttpGet("getById/{networkId}")]
@@ -153,7 +203,7 @@ namespace exSales.API.Controllers
                 var network = _networkService.GetById(networkId);
                 return new NetworkResult()
                 {
-                    Network = NetworkModelToInfo(network)
+                    Network = _networkService.GetNetworkInfo(network)
                 };
             }
             catch (Exception ex)
@@ -177,7 +227,7 @@ namespace exSales.API.Controllers
                 var userNetwork = _networkService.GetUserNetwork(networkId, userSession.UserId);
                 return new UserNetworkResult()
                 {
-                    UserNetwork = UserNetworkModelToInfo(userNetwork)
+                    UserNetwork = _networkService.GetUserNetworkInfo(userNetwork)
                 };
             }
             catch (Exception ex)
@@ -206,7 +256,7 @@ namespace exSales.API.Controllers
                 var userNetwork = _networkService.GetUserNetwork(network.NetworkId, userSession.UserId);
                 return new UserNetworkResult()
                 {
-                    UserNetwork = UserNetworkModelToInfo(userNetwork)
+                    UserNetwork = _networkService.GetUserNetworkInfo(userNetwork)
                 };
             }
             catch (Exception ex)
@@ -223,7 +273,36 @@ namespace exSales.API.Controllers
                 var network = _networkService.GetBySlug(networkSlug);
                 return new NetworkResult()
                 {
-                    Network = NetworkModelToInfo(network)
+                    Network = _networkService.GetNetworkInfo(network)
+                };
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("getSellerBySlug/{networkSlug}/{sellerSlug}")]
+        public ActionResult<UserNetworkResult> GetSellerBySlug(string networkSlug, string sellerSlug)
+        {
+            try
+            {
+                var network = _networkService.GetBySlug(networkSlug);
+                if (network == null)
+                {
+                    throw new Exception("Network not found");
+                }
+                var user = _userService.GetBySlug(sellerSlug);
+                if (user == null)
+                {
+                    throw new Exception("User not found");
+                }
+
+                var userNetwork = _networkService.GetUserNetwork(network.NetworkId, user.UserId);
+
+                return new UserNetworkResult()
+                {
+                    UserNetwork = _networkService.GetUserNetworkInfo(userNetwork)
                 };
             }
             catch (Exception ex)

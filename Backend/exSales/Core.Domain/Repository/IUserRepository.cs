@@ -10,6 +10,7 @@ namespace Core.Domain.Repository
         IEnumerable<TModel> ListUsers(TFactory factory);
         TModel GetById(long userId, TFactory factory);
         TModel GetByEmail(string email, TFactory factory);
+        TModel GetBySlug(string slug, TFactory factory);
         TModel GetByToken(string token, TFactory factory);
         TModel GetByStripeId(string stripeId, TFactory factory);
         void UpdateToken(long userId, string token);

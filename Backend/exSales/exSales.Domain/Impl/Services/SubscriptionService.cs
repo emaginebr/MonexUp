@@ -17,34 +17,49 @@ namespace exSales.Domain.Impl.Services
         private readonly IStripeService _stripeService;
         private readonly IUserDomainFactory _userFactory;
         private readonly IProductDomainFactory _productFactory;
+        private readonly IOrderItemDomainFactory _orderItemFactory;
 
         public SubscriptionService(
             IOrderService orderService,
             IStripeService stripeService,
             IUserDomainFactory userFactory,
-            IProductDomainFactory productFactory
+            IProductDomainFactory productFactory,
+            IOrderItemDomainFactory orderItemFactory
         )
         {
             _orderService = orderService;
             _stripeService = stripeService;
             _userFactory = userFactory;
             _productFactory = productFactory;
+            _orderItemFactory = orderItemFactory;
         }
 
-        public async Task<SubscriptionInfo> Insert(long productId, long userId)
+        public async Task<SubscriptionInfo> CreateSubscription(long productId, long userId, long? sellerId)
         {
-            var order = _orderService.Get(productId, userId, OrderStatusEnum.Incoming);
+            var product = _productFactory.BuildProductModel().GetById(productId, _productFactory);
+            if (product == null)
+            {
+                throw new Exception("Product not found");
+            }
+            var order = _orderService.Get(productId, userId, sellerId, OrderStatusEnum.Incoming);
             if (order == null)
             {
                 order = _orderService.Insert(new OrderInfo
                 {
-                    ProductId = productId,
+                    NetworkId = product.NetworkId,
                     UserId = userId,
-                    Status = OrderStatusEnum.Incoming
+                    SellerId = sellerId,
+                    Status = OrderStatusEnum.Incoming,
+                    Items = new List<OrderItemInfo>
+                    {
+                        new OrderItemInfo {
+                            ProductId = productId,
+                            Quantity = 1
+                        }
+                    }
                 });
             }
             var user = order.GetUser(_userFactory);
-            var product = order.GetProduct(_productFactory);
             var clientSecret = await _stripeService.CreateSubscription(user, product);
             return new SubscriptionInfo()
             {
@@ -52,5 +67,40 @@ namespace exSales.Domain.Impl.Services
                 ClientSecret = clientSecret
             };
         }
+
+        /*
+        public async Task<SubscriptionInfo> CreateInvoice(long productId, long userId)
+        {
+            var product = _productFactory.BuildProductModel().GetById(productId, _productFactory);
+            if (product == null)
+            {
+                throw new Exception("Product not found");
+            }
+            var order = _orderService.Get(productId, userId, OrderStatusEnum.Incoming);
+            if (order == null)
+            {
+                order = _orderService.Insert(new OrderInfo
+                {
+                    NetworkId = product.NetworkId,
+                    UserId = userId,
+                    Status = OrderStatusEnum.Incoming,
+                    Items = new List<OrderItemInfo>
+                    {
+                        new OrderItemInfo {
+                            ProductId = productId,
+                            Quantity = 1
+                        }
+                    }
+                });
+            }
+            var user = order.GetUser(_userFactory);
+            var clientSecret = await _stripeService.CreateInvoice(user, product);
+            return new SubscriptionInfo()
+            {
+                Order = _orderService.GetOrderInfo(order),
+                ClientSecret = clientSecret
+            };
+        }
+        */
     }
 }

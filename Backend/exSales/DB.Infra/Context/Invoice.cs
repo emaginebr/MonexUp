@@ -23,6 +23,8 @@ public partial class Invoice
 
     public string StripeId { get; set; }
 
+    public virtual ICollection<InvoiceFee> InvoiceFees { get; set; } = new List<InvoiceFee>();
+
     public virtual Order Order { get; set; }
 
     public virtual User Seller { get; set; }

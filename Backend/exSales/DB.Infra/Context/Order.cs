@@ -7,17 +7,25 @@ public partial class Order
 {
     public long OrderId { get; set; }
 
-    public long ProductId { get; set; }
-
     public long UserId { get; set; }
 
     public int Status { get; set; }
 
     public string StripeId { get; set; }
 
+    public long? SellerId { get; set; }
+
+    public DateTime CreatedAt { get; set; }
+
+    public DateTime UpdatedAt { get; set; }
+
+    public long NetworkId { get; set; }
+
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 
-    public virtual Product Product { get; set; }
+    public virtual Network Network { get; set; }
+
+    public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
     public virtual User User { get; set; }
 }

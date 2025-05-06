@@ -21,18 +21,24 @@ namespace exSales.Domain.Impl.Services
         private readonly IUserDomainFactory _userFactory;
         private readonly IUserNetworkDomainFactory _userNetworkFactory;
         private readonly IUserProfileDomainFactory _userProfileFactory;
+        private readonly IUserService _userService;
+        private readonly IProfileService _profileService;
 
         public NetworkService(
             IUserDomainFactory userFactory,
             INetworkDomainFactory networkFactory, 
             IUserNetworkDomainFactory userNetworkFactory, 
-            IUserProfileDomainFactory userProfileFactory
+            IUserProfileDomainFactory userProfileFactory,
+            IUserService userService,
+            IProfileService profileService
         )
         {
             _userFactory = userFactory;
             _networkFactory = networkFactory;
             _userNetworkFactory = userNetworkFactory;
             _userProfileFactory = userProfileFactory;   
+            _userService = userService;
+            _profileService = profileService;
         }
 
         private string GenerateSlug(INetworkModel md)
@@ -195,6 +201,11 @@ namespace exSales.Domain.Impl.Services
             return _userNetworkFactory.BuildUserNetworkModel().ListByUser(userId, _userNetworkFactory).ToList();
         }
 
+        public IList<IUserNetworkModel> ListByNetwork(long networkId)
+        {
+            return _userNetworkFactory.BuildUserNetworkModel().ListByNetwork(networkId, _userNetworkFactory).ToList();
+        }
+
         public INetworkModel GetById(long networkId)
         {
             return _networkFactory.BuildNetworkModel().GetById(networkId, _networkFactory);
@@ -224,7 +235,13 @@ namespace exSales.Domain.Impl.Services
                 ReferrerId = model.ReferrerId,
                 Role = model.Role,
                 Status = model.Status,
-                
+                Network = GetNetworkInfo(model.GetNetwork(_networkFactory)),
+                User = _userService.GetUserInfoFromModel(_userFactory.BuildUserModel().GetById(model.UserId, _userFactory)),
+                Profile = _profileService.GetUserProfileInfo(
+                    _userProfileFactory.BuildUserProfileModel()
+                    .GetById(model.ProfileId.GetValueOrDefault(), _userProfileFactory)
+                )
+
             };
         }
 
@@ -244,6 +261,8 @@ namespace exSales.Domain.Impl.Services
                 Commission = model.Commission,
                 WithdrawalMin = model.WithdrawalMin,
                 WithdrawalPeriod = model.WithdrawalPeriod,
+                QtdyUsers = _userNetworkFactory.BuildUserNetworkModel().GetQtdyUserByNetwork(model.NetworkId),
+                MaxUsers = model.MaxQtdyUserByNetwork(),
                 Status = model.Status
             };
         }

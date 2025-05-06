@@ -44,7 +44,7 @@ export default function Header() {
                                             <ul className="list-unstyled">
                                                 <li>1 Rede</li>
                                                 <li>3 Produtos</li>
-                                                <li>5% sobre as trasações</li>
+                                                <li>2% sobre as transações</li>
                                                 <li>15 Vendedores</li>
                                             </ul>
                                         </div>
@@ -72,7 +72,7 @@ export default function Header() {
                                             <ul className="list-unstyled">
                                                 <li>3 Redes</li>
                                                 <li>100 produtos por rede</li>
-                                                <li>sem taxa sobre trasações</li>
+                                                <li>sem taxa sobre transações</li>
                                                 <li>Vendedores Ilimitados</li>
                                             </ul>
 
@@ -100,7 +100,7 @@ export default function Header() {
                                             <ul className="list-unstyled">
                                                 <li>10 Redes</li>
                                                 <li>1.000 produtos por rede</li>
-                                                <li>sem taxa sobre trasações</li>
+                                                <li>sem taxa sobre transações</li>
                                                 <li>Vendedores Ilimitados</li>
                                             </ul>
                                         </div>

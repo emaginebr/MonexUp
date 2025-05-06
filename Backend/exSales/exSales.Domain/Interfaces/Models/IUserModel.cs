@@ -23,6 +23,7 @@ namespace exSales.Domain.Interfaces.Models
         IUserModel Insert(IUserDomainFactory factory);
         IUserModel Update(IUserDomainFactory factory);
         IUserModel GetByEmail(string email, IUserDomainFactory factory);
+        IUserModel GetBySlug(string slug, IUserDomainFactory factory);
         IUserModel GetById(long userId, IUserDomainFactory factory);
         IUserModel GetByToken(string token, IUserDomainFactory factory);
         IUserModel GetByStripeId(string stripeId, IUserDomainFactory factory);

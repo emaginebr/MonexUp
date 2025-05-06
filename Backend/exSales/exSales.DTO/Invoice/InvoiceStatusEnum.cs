@@ -8,9 +8,10 @@ namespace exSales.DTO.Invoice
 {
     public enum InvoiceStatusEnum
     {
-        Open = 1,
-        Paid = 2,
-        Cancelled = 3,
-        Refunded = 4
+        Draft = 1,
+        Open = 2,
+        Paid = 3,
+        Cancelled = 4,
+        Lost = 5
     }
 }

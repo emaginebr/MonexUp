@@ -80,6 +80,10 @@ namespace exSales.Domain.Impl.Models
         {
             return _repositoryUser.GetByEmail(email, factory);
         }
+        public IUserModel GetBySlug(string slug, IUserDomainFactory factory)
+        {
+            return _repositoryUser.GetBySlug(slug, factory);
+        }
 
         public IUserModel GetByRecoveryHash(string recoveryHash, IUserDomainFactory factory)
         {

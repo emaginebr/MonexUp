@@ -45,7 +45,7 @@ namespace exSales.API.Controllers
 
         [Authorize]
         [HttpGet("createSubscription/{productSlug}")]
-        public async Task<ActionResult<SubscriptionResult>> CreateSubscription(string productSlug)
+        public async Task<ActionResult<SubscriptionResult>> CreateSubscription(string productSlug, [FromQuery] string sellerSlug)
         {
             try
             {
@@ -60,7 +60,16 @@ namespace exSales.API.Controllers
                 {
                     throw new Exception("Product not found");
                 }
-                var subscription = await _subscriptionService.Insert(product.ProductId, userSession.UserId);
+                long? sellerId = null;
+                if (!string.IsNullOrEmpty(sellerSlug))
+                {
+                    var seller = _userService.GetBySlug(sellerSlug);
+                    if (seller != null)
+                    {
+                        sellerId = seller.UserId;
+                    }
+                }
+                var subscription = await _subscriptionService.CreateSubscription(product.ProductId, userSession.UserId, sellerId);
 
                 return new SubscriptionResult()
                 {
@@ -73,6 +82,39 @@ namespace exSales.API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        /*
+        [Authorize]
+        [HttpGet("createInvoice/{productSlug}")]
+        public async Task<ActionResult<SubscriptionResult>> CreateInvoice(string productSlug)
+        {
+            try
+            {
+                var userSession = _userService.GetUserInSession(HttpContext);
+                if (userSession == null)
+                {
+                    return StatusCode(401, "Not Authorized");
+                }
+
+                var product = _productService.GetBySlug(productSlug);
+                if (product == null)
+                {
+                    throw new Exception("Product not found");
+                }
+                var subscription = await _subscriptionService.CreateInvoice(product.ProductId, userSession.UserId);
+
+                return new SubscriptionResult()
+                {
+                    Order = subscription.Order,
+                    ClientSecret = subscription.ClientSecret
+                };
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        */
 
         /*
         [Authorize]
@@ -121,6 +163,25 @@ namespace exSales.API.Controllers
                 {
                     Order = _orderService.GetOrderInfo(newOrder)
                 };
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("search")]
+        [Authorize]
+        public ActionResult<OrderListPagedResult> Search([FromBody] OrderSearchParam param)
+        {
+            try
+            {
+                var userSession = _userService.GetUserInSession(HttpContext);
+                if (userSession == null)
+                {
+                    return StatusCode(401, "Not Authorized");
+                }
+                return _orderService.Search(param.NetworkId, param.UserId, param.SellerId, param.PageNum);
             }
             catch (Exception ex)
             {

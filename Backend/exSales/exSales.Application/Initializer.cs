@@ -47,8 +47,10 @@ namespace exSales.Application
 
             #region Repository
             injectDependency(typeof(IInvoiceRepository<IInvoiceModel, IInvoiceDomainFactory>), typeof(InvoiceRepository), services, scoped);
+            injectDependency(typeof(IInvoiceFeeRepository<IInvoiceFeeModel, IInvoiceFeeDomainFactory>), typeof(InvoiceFeeRepository), services, scoped);
             injectDependency(typeof(INetworkRepository<INetworkModel, INetworkDomainFactory>), typeof(NetworkRepository), services, scoped);
             injectDependency(typeof(IOrderRepository<IOrderModel, IOrderDomainFactory>), typeof(OrderRepository), services, scoped);
+            injectDependency(typeof(IOrderItemRepository<IOrderItemModel, IOrderItemDomainFactory>), typeof(OrderItemRepository), services, scoped);
             injectDependency(typeof(IProductRepository<IProductModel, IProductDomainFactory>), typeof(ProductRepository), services, scoped);
             injectDependency(typeof(IUserAddressRepository<IUserAddressModel, IUserAddressDomainFactory>), typeof(UserAddressRepository), services, scoped);
             injectDependency(typeof(IUserDocumentRepository<IUserDocumentModel, IUserDocumentDomainFactory>), typeof(UserDocumentRepository), services, scoped);
@@ -67,12 +69,15 @@ namespace exSales.Application
             injectDependency(typeof(ISubscriptionService), typeof(SubscriptionService), services, scoped);
             injectDependency(typeof(IMailerSendService), typeof(MailerSendService), services, scoped);
             injectDependency(typeof(IStripeService), typeof(StripeService), services, scoped);
+            injectDependency(typeof(IInvoiceService), typeof(InvoiceService), services, scoped);
             #endregion
 
             #region Factory
             injectDependency(typeof(IInvoiceDomainFactory), typeof(InvoiceDomainFactory), services, scoped);
+            injectDependency(typeof(IInvoiceFeeDomainFactory), typeof(InvoiceFeeDomainFactory), services, scoped);
             injectDependency(typeof(INetworkDomainFactory), typeof(NetworkDomainFactory), services, scoped);
             injectDependency(typeof(IOrderDomainFactory), typeof(OrderDomainFactory), services, scoped);
+            injectDependency(typeof(IOrderItemDomainFactory), typeof(OrderItemDomainFactory), services, scoped);
             injectDependency(typeof(IProductDomainFactory), typeof(ProductDomainFactory), services, scoped);
             injectDependency(typeof(IUserAddressDomainFactory), typeof(UserAddressDomainFactory), services, scoped);
             injectDependency(typeof(IUserDocumentDomainFactory), typeof(UserDocumentDomainFactory), services, scoped);

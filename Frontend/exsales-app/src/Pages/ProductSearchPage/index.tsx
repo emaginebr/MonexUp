@@ -54,6 +54,9 @@ export default function ProductSearchPage() {
     const showFrequency = (frequency: number) => {
         let retorno: string;
         switch (frequency) {
+            case 0:
+                retorno = "Just one time";
+                break;
             case 7:
                 retorno = "Weekly";
                 break;
@@ -82,12 +85,12 @@ export default function ProductSearchPage() {
             case ProductStatusEnum.Active:
                 retorno = "Active";
                 break;
-                case ProductStatusEnum.Inactive:
-                    retorno = "Inactive";
-                    break;
-                    case ProductStatusEnum.Expired:
-                        retorno = "Expired";
-                        break;
+            case ProductStatusEnum.Inactive:
+                retorno = "Inactive";
+                break;
+            case ProductStatusEnum.Expired:
+                retorno = "Expired";
+                break;
         }
         return retorno;
     };

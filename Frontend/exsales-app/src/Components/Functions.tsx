@@ -1,3 +1,6 @@
+import UserNetworkInfo from "../DTO/Domain/UserNetworkInfo";
+import { UserRoleEnum } from "../DTO/Enum/UserRoleEnum";
+
 const showFrequencyMin = (frequency: number) => {
     let ret: string;
     switch (frequency) {
@@ -54,4 +57,27 @@ const showFrequencyMax = (frequency: number) => {
     return ret;
 };
 
-export {showFrequencyMin, showFrequencyMax};
+const showProfile = (user: UserNetworkInfo) => {
+    if (!user) {
+        return "";
+    }
+    if (user.profile) {
+        return user.profile?.name;
+    }
+    switch (user.role) {
+        case UserRoleEnum.Administrator:
+            return "Adminstrator";
+            break;
+        case UserRoleEnum.NetworkManager:
+            return "Network Manager";
+            break;
+        case UserRoleEnum.Seller:
+            return "Seller";
+            break;
+        case UserRoleEnum.User:
+            return "User";
+            break;
+    }
+};
+
+export {showFrequencyMin, showFrequencyMax, showProfile};

@@ -1,5 +1,6 @@
 import NetworkInfo from "../../DTO/Domain/NetworkInfo";
 import NetworkInsertInfo from "../../DTO/Domain/NetworkInsertInfo";
+import NetworkListResult from "../../DTO/Services/NetworkListResult";
 import NetworkResult from "../../DTO/Services/NetworkResult";
 import StatusRequest from "../../DTO/Services/StatusRequest";
 import UserNetworkListResult from "../../DTO/Services/UserNetworkListResult";
@@ -47,9 +48,39 @@ const NetworkService : INetworkService = {
         }
         return ret;
     },
+    listAll: async () => {
+        let ret: NetworkListResult;
+        let request = await _httpClient.doGet<NetworkListResult>("/api/Network/listAll", {});
+        if (request.success) {
+            return request.data;
+        }
+        else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    },
     listByUser: async (token: string) => {
         let ret: UserNetworkListResult;
         let request = await _httpClient.doGetAuth<UserNetworkListResult>("/api/Network/listByUser", token);
+        if (request.success) {
+            return request.data;
+        }
+        else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    },
+    listByNetwork: async (networkSlug: string) => {
+        let ret: UserNetworkListResult;
+        let request = await _httpClient.doGet<UserNetworkListResult>("/api/Network/listByNetwork/" + networkSlug, {});
         if (request.success) {
             return request.data;
         }
@@ -110,6 +141,21 @@ const NetworkService : INetworkService = {
     getUserNetworkBySlug: async (networkSlug: string, token: string) => {
         let ret: UserNetworkResult;
         let request = await _httpClient.doGetAuth<UserNetworkResult>("/api/Network/getUserNetworkBySlug/" + networkSlug, token);
+        if (request.success) {
+            return request.data;
+        }
+        else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    },
+    getSellerBySlug: async (networkSlug: string, userSlug: string) => {
+        let ret: UserNetworkResult;
+        let request = await _httpClient.doGet<UserNetworkResult>("/api/Network/getSellerBySlug/" + networkSlug + "/" + userSlug, {});
         if (request.success) {
             return request.data;
         }

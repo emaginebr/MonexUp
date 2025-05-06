@@ -1,8 +1,15 @@
 import { OrderStatusEnum } from "../Enum/OrderStatusEnum";
+import OrderItemInfo from "./OrderItemInfo";
+import UserInfo from "./UserInfo";
 
 export default interface OrderInfo {
     orderId: number;
-    productId: number;
     userId: number;
-    Status: OrderStatusEnum;
+    sellerId?: number;
+    createdAt: string;
+    updatedAt: string;
+    status: OrderStatusEnum;
+    user: UserInfo;
+    seller?: UserInfo;
+    items: OrderItemInfo[];
 }

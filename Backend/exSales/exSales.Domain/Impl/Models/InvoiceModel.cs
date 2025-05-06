@@ -32,6 +32,42 @@ namespace exSales.Domain.Impl.Models
         public InvoiceStatusEnum Status { get; set; }
         public string StripeId { get; set; }
 
+        public IOrderModel GetOrder(IOrderDomainFactory factory)
+        {
+            if (OrderId <= 0)
+            {
+                return null;
+            }
+            return factory.BuildOrderModel().GetById(OrderId, factory);
+        }
+
+        public IUserModel GetUser(IUserDomainFactory factory)
+        {
+            if (UserId <= 0)
+            {
+                return null;
+            }
+            return factory.BuildUserModel().GetById(UserId, factory);
+        }
+
+        public IUserModel GetSeller(IUserDomainFactory factory)
+        {
+            if (!SellerId.HasValue || SellerId.Value <= 0)
+            {
+                return null;
+            }
+            return factory.BuildUserModel().GetById(SellerId.Value, factory);
+        }
+
+        public IList<IInvoiceFeeModel> ListFees(IInvoiceFeeDomainFactory factory)
+        {
+            if (InvoiceId <= 0)
+            {
+                return new List<IInvoiceFeeModel>();
+            }
+            return factory.BuildInvoiceFeeModel().ListByInvoice(InvoiceId, factory);
+        }
+
         public IInvoiceModel Insert(IInvoiceDomainFactory factory)
         {
             return _repositoryInvoice.Insert(this, factory);
@@ -42,10 +78,16 @@ namespace exSales.Domain.Impl.Models
             return _repositoryInvoice.Update(this, factory);
         }
 
+        public IEnumerable<IInvoiceModel> Search(long networkId, long? userId, long? sellerId, int pageNum, out int pageCount, IInvoiceDomainFactory factory)
+        {
+            return _repositoryInvoice.Search(networkId, userId, sellerId, pageNum, out pageCount, factory);
+        }
+        /*
         public IEnumerable<IInvoiceModel> List(long networkId, long orderId, long userId, InvoiceStatusEnum? status, IInvoiceDomainFactory factory)
         {
             return _repositoryInvoice.List(networkId, orderId, userId, (status.HasValue ? 0 : (int)status), factory);
         }
+        */
 
         public IInvoiceModel GetById(long id, IInvoiceDomainFactory factory)
         {

@@ -26,33 +26,39 @@ namespace exSales.Domain.Impl.Models
         }
 
         public long OrderId { get; set; }
-        public long ProductId { get; set; }
+        public long NetworkId { get; set; }
         public long UserId { get; set; }
+        public long? SellerId { get; set; }
         public OrderStatusEnum Status { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
         public string StripeId { get; set; }
 
         public IUserModel GetUser(IUserDomainFactory factory)
         {
-            if (UserId > 0)
-            {
-                return factory.BuildUserModel().GetById(UserId, factory);
-            }
-            else
+            if (UserId <= 0)
             {
                 return null;
             }
+            return factory.BuildUserModel().GetById(UserId, factory);
         }
 
-        public IProductModel GetProduct(IProductDomainFactory factory)
+        public IUserModel GetSeller(IUserDomainFactory factory)
         {
-            if (ProductId > 0)
-            {
-                return factory.BuildProductModel().GetById(ProductId, factory);
-            }
-            else
+            if (!SellerId.HasValue || SellerId.Value <= 0)
             {
                 return null;
             }
+            return factory.BuildUserModel().GetById(SellerId.Value, factory);
+        }
+
+        public IList<IOrderItemModel> ListItems(IOrderItemDomainFactory factory)
+        {
+            if (OrderId <= 0)
+            {
+                return new List<IOrderItemModel>();
+            }
+            return factory.BuildOrderItemModel().ListItems(OrderId, factory);
         }
 
         public IOrderModel Insert(IOrderDomainFactory factory)
@@ -75,14 +81,19 @@ namespace exSales.Domain.Impl.Models
             return _repositoryOrder.GetById(id, factory);
         }
 
-        public IOrderModel Get(long productId, long userId, OrderStatusEnum status, IOrderDomainFactory factory)
+        public IOrderModel Get(long productId, long userId, long? sellerId, OrderStatusEnum status, IOrderDomainFactory factory)
         {
-            return _repositoryOrder.Get(productId, userId, (int)status, factory);
+            return _repositoryOrder.Get(productId, userId, sellerId, (int)status, factory);
         }
 
         public IOrderModel GetByStripeId(string stripeId, IOrderDomainFactory factory)
         {
             return _repositoryOrder.GetByStripeId(stripeId, factory);
+        }
+
+        public IEnumerable<IOrderModel> Search(long networkId, long? userId, long? sellerId, int pageNum, out int pageCount, IOrderDomainFactory factory)
+        {
+            return _repositoryOrder.Search(networkId, userId, sellerId, pageNum, out pageCount, factory);
         }
     }
 }

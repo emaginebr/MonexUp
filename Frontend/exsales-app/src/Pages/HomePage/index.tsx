@@ -18,6 +18,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import Features from "./Features";
 import Pricing from "./Pricing";
+import NetworkPart from "./NetworkPart";
 
 
 
@@ -31,77 +32,7 @@ export default function HomePage() {
         <>
             <Header />
             <Features />
-            <section id="how-it-works" className="bg-light py-5">
-                <Container fluid>
-                    <Row className="mb-4">
-                        <Col md={12} className="text-center">
-                            <h4 className="display-2 mb-0">TOP 3 Networks</h4>
-                        </Col>
-                    </Row>
-                    <div className="row row-cols-1 row-cols-lg-3 justify-content-center py-6">
-                        <div className="col lc_border_lg w-auto ">
-                            <div className="lc-block">
-                                <div className="lc-block card border-0 bg-transparent">
-                                    <div className="card-body">
-                                        <div className="d-flex px-1 px-lg-3 ">
-                                            <div className="lc-block">
-                                                <FontAwesomeIcon icon={faSearch} size="2x" />
-                                            </div>
-                                            <div className="ps-2 ps-md-3">
-                                                <div className="lc-block">
-                                                    <h3 className="rfs-6"><Link to="/minha-rede">Minha Rede Principal</Link></h3>
-                                                    <p className="text-muted rfs-4">3 products and 7 affiliate sellers</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col lc_border_lg w-auto">
-                            <div className="lc-block card border-0 bg-transparent">
-                                <div className="card-body">
-                                    <div className="d-flex px-1 px-lg-3 ">
-                                        <div className="lc-block">
-                                            <FontAwesomeIcon icon={faDollar} size="2x" />
-                                        </div>
-                                        <div className="ps-2 ps-md-3">
-                                            <div className="lc-block">
-
-                                                <h3 className="rfs-6"><Link to="/minha-rede">Minha Rede Secundária</Link></h3>
-                                                <p className="text-muted rfs-4">5 products and 3 affiliate sellers</p>
-
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col w-auto">
-
-                            <div className="lc-block  card border-0 bg-transparent">
-                                <div className="card-body">
-                                    <div className="d-flex px-1 px-lg-3 ">
-                                        <div className="lc-block">
-                                            <FontAwesomeIcon icon={faClock} size="2x" />
-                                        </div>
-                                        <div className="ps-2 ps-md-3">
-                                            <div className="lc-block">
-
-                                                <h3 className="rfs-6"><Link to="/minha-rede">Última Rede</Link></h3>
-                                                <p className="text-muted rfs-4">1 products and 2 affiliate sellers</p>
-
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </Container>
-            </section>
+            <NetworkPart />
             <Pricing />
             <section id="contact" className="bg-light py-5">
                 <div className="container-fluid py-5">

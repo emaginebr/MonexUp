@@ -77,7 +77,7 @@ export default function NetworkListPage() {
                                             <td>Unknow</td>
                                             <td style={{ textAlign: "right" }}>{network.network.qtdyUsers}/{network.network.maxUsers}</td>
                                             <td>
-                                                <Link to={"/@/" + network.network.slug}>
+                                                <Link to={"/" + network.network.slug}>
                                                     <FontAwesomeIcon icon={faSearch} fixedWidth />
                                                 </Link>
                                                 <Link to="/admin/dashboard">

@@ -29,10 +29,42 @@ namespace exSales.Domain.Impl.Models
         public UserNetworkStatusEnum Status { get; set; }
         public long? ReferrerId { get; set; }
 
+        public IUserModel GetUser(IUserDomainFactory factory)
+        {
+            if (UserId > 0)
+            {
+                return factory.BuildUserModel().GetById(UserId, factory);
+            }
+            return null;
+        }
+
+        public INetworkModel GetNetwork(INetworkDomainFactory factory)
+        {
+            if (NetworkId > 0)
+            {
+                return factory.BuildNetworkModel().GetById(NetworkId, factory);
+            }
+            return null;
+        }
+
+        public IUserProfileModel GetProfile(IUserProfileDomainFactory factory)
+        {
+            if (ProfileId.HasValue && ProfileId.Value > 0)
+            {
+                return factory.BuildUserProfileModel().GetById(ProfileId.Value, factory);
+            }
+            return null;
+        }
+
         public IEnumerable<IUserNetworkModel> ListByUser(long userId, IUserNetworkDomainFactory factory)
         {
             return _repositoryNetwork.ListByUser(userId, factory);
         }
+        public IEnumerable<IUserNetworkModel> ListByNetwork(long networkId, IUserNetworkDomainFactory factory)
+        {
+            return _repositoryNetwork.ListByNetwork(networkId, factory);
+        }
+
         public IEnumerable<IUserNetworkModel> Search(long networkId, string keyword, long? profileId, int pageNum, out int pageCount, IUserNetworkDomainFactory factory)
         {
             return _repositoryNetwork.Search(networkId, keyword, profileId, pageNum, out pageCount, factory);

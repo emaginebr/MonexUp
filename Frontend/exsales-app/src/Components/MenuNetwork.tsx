@@ -3,7 +3,7 @@ import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/esm/Button';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import AuthContext from '../Contexts/Auth/AuthContext';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Alert from 'react-bootstrap/Alert';
@@ -33,6 +33,8 @@ export default function MenuNetwork() {
 
   let navigate = useNavigate();
 
+  let { networkSlug, sellerSlug } = useParams();
+
   const authContext = useContext(AuthContext);
   const networkContext = useContext(NetworkContext);
 
@@ -47,18 +49,26 @@ export default function MenuNetwork() {
         messageText={messageText}
         onClose={() => setShowMessage(false)}
       ></MessageToast>
-      <Navbar expand="lg" className="navbar-dark bg-dark mb-3 border-bottom">
+      <Navbar expand="lg" className="navbar-dark bg-dark">
         <Container>
-          <Link className='navbar-brand' to="/">{networkContext.loading ? <Skeleton width={140} /> : networkContext.network?.name}</Link>
+          <Link className='navbar-brand' to={"/" + networkSlug}>
+            {networkContext.loading ? <Skeleton width={140} /> : networkContext.network?.name}
+          </Link>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Link className='nav-link' to={"/@/" + networkContext.network?.slug}><FontAwesomeIcon icon={faHome} fixedWidth /> Home</Link>
+              <Link className='nav-link' to={"/" + networkSlug}><FontAwesomeIcon icon={faHome} fixedWidth /> Home</Link>
               <Link className='nav-link' to={
                 authContext.sessionInfo ?
-                "/@/" + networkContext.network?.slug + "/request-access"
-                :
-                "/@/" + networkContext.network?.slug + "/new-seller"
+                  sellerSlug ?
+                    "/" + networkSlug + "/@/" + sellerSlug + "/request-access"
+                    :
+                    "/" + networkSlug + "/request-access"
+                  :
+                  sellerSlug ?
+                    "/" + networkSlug + "/@/" + sellerSlug + "/new-seller"
+                    :
+                    "/" + networkSlug + "/new-seller"
               }><FontAwesomeIcon icon={faUser} fixedWidth /> Seja um representante</Link>
             </Nav>
           </Navbar.Collapse>
@@ -69,10 +79,10 @@ export default function MenuNetwork() {
                 <>
                   <NavDropdown title={
                     <>
-                      {networkContext.editMode ? 
-                      <><FontAwesomeIcon icon={faCheckCircle} />&nbsp;Edit Mode (On)</>
-                      :
-                      <><FontAwesomeIcon icon={faCircle} />&nbsp;Edit Mode (Off)</>
+                      {networkContext.editMode ?
+                        <><FontAwesomeIcon icon={faCheckCircle} />&nbsp;Edit Mode (On)</>
+                        :
+                        <><FontAwesomeIcon icon={faCircle} />&nbsp;Edit Mode (Off)</>
                       }
                     </>
                   } id="basic-nav-dropdown">
@@ -96,10 +106,10 @@ export default function MenuNetwork() {
                     </>
                   } id="basic-nav-dropdown">
                     <NavDropdown.Item onClick={async () => {
-                      navigate("/edit-account");
+                      navigate("/" + networkSlug + "/account/edit-account");
                     }}><FontAwesomeIcon icon={faPencil} fixedWidth /> Edit Account</NavDropdown.Item>
                     <NavDropdown.Item onClick={async () => {
-                      navigate("/change-password");
+                      navigate("/" + networkSlug + "/account/change-password");
                     }}><FontAwesomeIcon icon={faLock} fixedWidth /> Change Password</NavDropdown.Item>
                     <NavDropdown.Divider />
                     <NavDropdown.Item onClick={async () => {
@@ -107,14 +117,14 @@ export default function MenuNetwork() {
                       if (!ret.sucesso) {
                         throwError(ret.mensagemErro);
                       }
-                      navigate(0);
+                      navigate("/" + networkSlug);
                     }}><FontAwesomeIcon icon={faClose} fixedWidth /> Logout</NavDropdown.Item>
                   </NavDropdown>
                   :
                   <>
                     <Nav.Item>
                       <Button variant="danger" onClick={async () => {
-                        navigate("/login");
+                        navigate("/" + networkSlug + "/account/login");
                       }}>
                         <FontAwesomeIcon icon={faSignInAlt} fixedWidth /> Sign In
                       </Button>
@@ -126,7 +136,7 @@ export default function MenuNetwork() {
         </Container>
       </Navbar>
       {showAlert &&
-        <Container>
+        <Container className="mt-3">
           <Alert key="danger" variant="danger" onClose={() => setShowAlert(false)} dismissible>
             <FontAwesomeIcon icon={faWarning} /> This is a <strong>trial version</strong>, do not make payments with your real data.
           </Alert>

@@ -5,6 +5,7 @@ using exSales.Domain.Interfaces.Models;
 using exSales.DTO.Invoice;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,8 @@ namespace DB.Infra.Repository
     public class InvoiceRepository : IInvoiceRepository<IInvoiceModel, IInvoiceDomainFactory>
     {
         private ExSalesContext _ccsContext;
+
+        private const int PAGE_SIZE = 15;
 
         public InvoiceRepository(ExSalesContext ccsContext)
         {
@@ -67,9 +70,27 @@ namespace DB.Infra.Repository
             return model;
         }
 
+        public IEnumerable<IInvoiceModel> Search(long networkId, long? userId, long? sellerId, int pageNum, out int pageCount, IInvoiceDomainFactory factory)
+        {
+            var q = _ccsContext.Invoices.Where(x => x.Order.NetworkId == networkId);
+            if (userId.HasValue && userId.Value > 0)
+            {
+                q = q.Where(x => x.UserId == userId.Value);
+            }
+            if (sellerId.HasValue && sellerId.Value > 0)
+            {
+                q = q.Where(x => x.SellerId == sellerId.Value);
+            }
+            var pages = (double)q.Count() / (double)PAGE_SIZE;
+            pageCount = Convert.ToInt32(Math.Ceiling(pages));
+            var rows = q.Skip((pageNum - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
+            return rows.Select(x => DbToModel(factory, x));
+        }
+
+        /*
         public IEnumerable<IInvoiceModel> List(long networkId, long orderId, long userId, int status, IInvoiceDomainFactory factory)
         {
-            var q = _ccsContext.Invoices.Where(x => x.Order.Product.NetworkId == networkId);
+            var q = _ccsContext.Invoices.Where(x => x.Order.NetworkId == networkId);
             if (orderId > 0)
             {
                 q = q.Where(x => x.OrderId == orderId);
@@ -84,6 +105,7 @@ namespace DB.Infra.Repository
             }
             return q.ToList().Select(x => DbToModel(factory, x));
         }
+        */
 
         public IInvoiceModel GetById(long id, IInvoiceDomainFactory factory)
         {

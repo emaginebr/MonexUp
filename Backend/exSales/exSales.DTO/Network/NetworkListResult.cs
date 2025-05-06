@@ -9,6 +9,6 @@ namespace exSales.DTO.Network
 {
     public class NetworkListResult: StatusResult
     {
-        public IList<UserNetworkInfo> Networks { get; set; }
+        public IList<NetworkInfo> Networks { get; set; }
     }
 }

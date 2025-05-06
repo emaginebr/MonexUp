@@ -13,25 +13,35 @@ import NetworkProviderResult from "../../DTO/Contexts/NetworkProviderResult";
 export default function NetworkProvider(props: any) {
 
     const [loading, setLoading] = useState<boolean>(false);
+    const [loadingTeam, setLoadingTeam] = useState<boolean>(false);
+    const [loadingSeller, setLoadingSeller] = useState<boolean>(false);
     const [loadingUpdate, setLoadingUpdate] = useState<boolean>(false);
     const [loadingRequestAccess, setLoadingRequestAccess] = useState<boolean>(false);
     const [loadingChangeStatus, setLoadingChangeStatus] = useState<boolean>(false);
 
     const [network, _setNetwork] = useState<NetworkInfo>(null);
+    const [networks, setNetworks] = useState<NetworkInfo[]>([]);
     const [userNetwork, _setUserNetwork] = useState<UserNetworkInfo>(null);
+    const [seller, setSeller] = useState<UserNetworkInfo>(null);
     const [userNetworks, setUserNetworks] = useState<UserNetworkInfo[]>([]);
+    const [teams, setTeams] = useState<UserNetworkInfo[]>([]);
     const [currentRole, _setCurrentRole] = useState<UserRoleEnum>(UserRoleEnum.User);
     const [editMode, _setEditMode] = useState<boolean>(false);
 
     const networkProviderValue: INetworkProvider = {
         loading: loading,
+        loadingTeam: loadingTeam,
+        loadingSeller: loadingSeller,
         loadingUpdate: loadingUpdate,
         loadingRequestAccess: loadingRequestAccess,
         loadingChangeStatus: loadingChangeStatus,
 
         network: network,
+        networks: networks,
         userNetwork: userNetwork,
+        seller: seller,
         userNetworks: userNetworks,
+        teams: teams,
         currentRole: currentRole,
         editMode: editMode,
 
@@ -41,7 +51,7 @@ export default function NetworkProvider(props: any) {
         setUserNetwork: (userNetwork: UserNetworkInfo) => {
             _setUserNetwork(userNetwork);
             _setNetwork(userNetwork?.network);
-            _setCurrentRole(UserRoleEnum.User);
+            _setCurrentRole(userNetwork.role);
         },
         setCurrentRole: (role: UserRoleEnum) => {
             _setCurrentRole(role);
@@ -119,6 +129,70 @@ export default function NetworkProvider(props: any) {
             }
             catch (err) {
                 setLoadingUpdate(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: JSON.stringify(err)
+                };
+            }
+        },
+        listAll: async () => {
+            let ret: Promise<ProviderResult>;
+            setLoading(true);
+            try {
+                let brt = await NetworkFactory.NetworkBusiness.listAll();
+                if (brt.sucesso) {
+                    setLoading(false);
+                    setNetworks(brt.dataResult);
+                    return {
+                        ...ret,
+                        sucesso: true,
+                        mensagemSucesso: "Network list"
+                    };
+                }
+                else {
+                    setLoading(false);
+                    return {
+                        ...ret,
+                        sucesso: false,
+                        mensagemErro: brt.mensagem
+                    };
+                }
+            }
+            catch (err) {
+                setLoading(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: JSON.stringify(err)
+                };
+            }
+        },
+        listByNetwork: async (networkSlug: string) => {
+            let ret: Promise<ProviderResult>;
+            setLoadingTeam(true);
+            try {
+                let brt = await NetworkFactory.NetworkBusiness.listByNetwork(networkSlug);
+                if (brt.sucesso) {
+                    setLoadingTeam(false);
+                    setTeams(brt.dataResult);
+                    return {
+                        ...ret,
+                        sucesso: true,
+                        mensagemSucesso: "Network list"
+                    };
+                }
+                else {
+                    setLoadingTeam(false);
+                    return {
+                        ...ret,
+                        sucesso: false,
+                        mensagemErro: brt.mensagem
+                    };
+                }
+            }
+            catch (err) {
+                setLoadingTeam(false);
                 return {
                     ...ret,
                     sucesso: false,
@@ -294,6 +368,38 @@ export default function NetworkProvider(props: any) {
             }
             catch (err) {
                 setLoading(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: JSON.stringify(err)
+                };
+            }
+        },
+        getSellerBySlug: async (networkSlug: string, userSlug: string) => {
+            let ret: Promise<ProviderResult>;
+            setLoadingSeller(true);
+            try {
+                let brt = await NetworkFactory.NetworkBusiness.getSellerBySlug(networkSlug, userSlug);
+                if (brt.sucesso) {
+                    setLoadingSeller(false);
+                    setSeller(brt.dataResult);
+                    return {
+                        ...ret,
+                        sucesso: true,
+                        mensagemSucesso: "Load Network"
+                    };
+                }
+                else {
+                    setLoadingSeller(false);
+                    return {
+                        ...ret,
+                        sucesso: false,
+                        mensagemErro: brt.mensagem
+                    };
+                }
+            }
+            catch (err) {
+                setLoadingSeller(false);
                 return {
                     ...ret,
                     sucesso: false,

@@ -94,6 +94,16 @@ namespace DB.Infra.Repository
             return null;
         }
 
+        public IUserModel GetBySlug(string slug, IUserDomainFactory factory)
+        {
+            var row = _ccsContext.Users.Where(x => x.Slug == slug).FirstOrDefault();
+            if (row != null)
+            {
+                return DbToModel(factory, row);
+            }
+            return null;
+        }
+
         public IUserModel GetByToken(string token, IUserDomainFactory factory)
         {
             var row = _ccsContext.Users.Where(x => x.Token == token).FirstOrDefault();

@@ -11,11 +11,12 @@ namespace exSales.Domain.Interfaces.Services
 {
     public interface IInvoiceService
     {
-        IList<IInvoiceModel> List(long networkId, long orderId, long userId, InvoiceStatusEnum? status);
-        IInvoiceModel GetById(long invoiceId);
-        IInvoiceModel GetByStripeId(string stripeId);
+        Task Syncronize();
+        void CalculateFee(IInvoiceModel invoice);
+        IInvoiceModel Insert(IInvoiceModel invoice);
+        IInvoiceModel Pay(IInvoiceModel invoice);
+        void ClearFees(IInvoiceModel invoice);
         InvoiceInfo GetInvoiceInfo(IInvoiceModel invoice);
-        IInvoiceModel Insert(InvoiceInfo invoice);
-        IInvoiceModel Update(InvoiceInfo invoice);
+        InvoiceListPagedResult Search(long networkId, long? userId, long? sellerId, int pageNum);
     }
 }

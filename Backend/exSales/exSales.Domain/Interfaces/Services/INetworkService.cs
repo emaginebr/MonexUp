@@ -22,6 +22,7 @@ namespace exSales.Domain.Interfaces.Services
         void RequestAccess(long networkId, long userId, long? referrerId);
         void ChangeStatus(long networkId, long userId, UserNetworkStatusEnum status, long managerId);
         IList<IUserNetworkModel> ListByUser(long userId);
+        IList<IUserNetworkModel> ListByNetwork(long networkId);
 
     }
 }

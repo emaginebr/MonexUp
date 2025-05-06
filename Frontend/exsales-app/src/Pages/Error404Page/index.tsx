@@ -3,11 +3,9 @@ import CardBody from "react-bootstrap/esm/CardBody";
 import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Error404Page() {
-
-    let navigate = useNavigate();
 
     return (
 

@@ -11,6 +11,8 @@ import IProductService from './Interfaces/IProductService';
 import ProductService from './Impl/ProductService';
 import IOrderService from './Interfaces/IOrderService';
 import OrderService from './Impl/OrderService';
+import IInvoiceService from './Interfaces/IInvoiceService';
+import InvoiceService from './Impl/InvoiceService';
 
 const httpClientAuth : IHttpClient = HttpClient();
 httpClientAuth.init(env.API_BASE_URL);
@@ -30,12 +32,16 @@ productServiceImpl.init(httpClientAuth);
 const orderServiceImpl : IOrderService = OrderService;
 orderServiceImpl.init(httpClientAuth);
 
+const invoiceServiceImpl : IInvoiceService = InvoiceService;
+invoiceServiceImpl.init(httpClientAuth);
+
 const ServiceFactory = {
   UserService: userServiceImpl,
   NetworkService: networkServiceImpl,
   ProfileService: profileServiceImpl,
   ProductService: productServiceImpl,
   OrderService: orderServiceImpl,
+  InvoiceService: invoiceServiceImpl,
   setLogoffCallback: (cb : () => void) => {
     httpClientAuth.setLogoff(cb);
   }

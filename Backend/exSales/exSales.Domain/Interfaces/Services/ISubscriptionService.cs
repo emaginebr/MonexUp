@@ -9,7 +9,8 @@ namespace exSales.Domain.Interfaces.Services
 {
     public interface ISubscriptionService
     {
-        Task<SubscriptionInfo> Insert(long productId, long userId);
+        Task<SubscriptionInfo> CreateSubscription(long productId, long userId, long? sellerId);
+        //Task<SubscriptionInfo> CreateInvoice(long productId, long userId);
 
     }
 }

@@ -74,6 +74,14 @@ namespace DB.Infra.Repository
             return rows.Select(x => DbToModel(factory, x));
         }
 
+        public IEnumerable<IUserNetworkModel> ListByNetwork(long networkId, IUserNetworkDomainFactory factory)
+        {
+            // Role >= Seller && Status = Active
+            var rows = _ccsContext.UserNetworks
+                .Where(x => x.NetworkId == networkId && x.Role >= 2 && x.Status == 1).ToList();
+            return rows.Select(x => DbToModel(factory, x));
+        }
+
         public IUserNetworkModel Get(long networkId, long userId, IUserNetworkDomainFactory factory)
         {
             var row = _ccsContext.UserNetworks

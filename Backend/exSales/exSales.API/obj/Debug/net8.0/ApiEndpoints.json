@@ -1,5 +1,51 @@
 [
   {
+    "ContainingType": "exSales.API.Controllers.InvoiceController",
+    "Method": "Search",
+    "RelativePath": "api/Invoice/search",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "param",
+        "Type": "exSales.DTO.Invoice.InvoiceSearchParam",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "exSales.DTO.Invoice.InvoiceListPagedResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "exSales.API.Controllers.InvoiceController",
+    "Method": "Syncronize",
+    "RelativePath": "api/Invoice/syncronize",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "exSales.DTO.Domain.StatusResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "exSales.API.Controllers.NetworkController",
     "Method": "ChangeStatus",
     "RelativePath": "api/Network/changeStatus",
@@ -68,6 +114,37 @@
     "ReturnTypes": [
       {
         "Type": "exSales.DTO.Network.NetworkResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "exSales.API.Controllers.NetworkController",
+    "Method": "GetSellerBySlug",
+    "RelativePath": "api/Network/getSellerBySlug/{networkSlug}/{sellerSlug}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "networkSlug",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "sellerSlug",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "exSales.DTO.Network.UserNetworkResult",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -157,6 +234,52 @@
   },
   {
     "ContainingType": "exSales.API.Controllers.NetworkController",
+    "Method": "ListAll",
+    "RelativePath": "api/Network/listAll",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "exSales.DTO.Network.NetworkListResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "exSales.API.Controllers.NetworkController",
+    "Method": "ListByNetwork",
+    "RelativePath": "api/Network/listByNetwork/{networkSlug}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "networkSlug",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "exSales.DTO.Network.UserNetworkListResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "exSales.API.Controllers.NetworkController",
     "Method": "ListByUser",
     "RelativePath": "api/Network/listByUser",
     "HttpMethod": "GET",
@@ -165,7 +288,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "exSales.DTO.Network.NetworkListResult",
+        "Type": "exSales.DTO.Network.UserNetworkListResult",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -239,6 +362,11 @@
         "Name": "productSlug",
         "Type": "System.String",
         "IsRequired": true
+      },
+      {
+        "Name": "sellerSlug",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -296,6 +424,32 @@
     "ReturnTypes": [
       {
         "Type": "exSales.DTO.Order.OrderListResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "exSales.API.Controllers.OrderController",
+    "Method": "Search",
+    "RelativePath": "api/Order/search",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "param",
+        "Type": "exSales.DTO.Order.OrderSearchParam",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "exSales.DTO.Order.OrderListPagedResult",
         "MediaTypes": [
           "text/plain",
           "application/json",

@@ -1,5 +1,6 @@
 ﻿using exSales.Domain.Interfaces.Models;
 using exSales.DTO.Order;
+using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,8 @@ namespace exSales.Domain.Interfaces.Services
     {
         Task<string> CreateSubscription(IUserModel user, IProductModel product);
 
+        Task<string> CreateInvoice(IUserModel user, IProductModel product);
 
+        Task<IList<IInvoiceModel>> ListInvoices();
     }
 }

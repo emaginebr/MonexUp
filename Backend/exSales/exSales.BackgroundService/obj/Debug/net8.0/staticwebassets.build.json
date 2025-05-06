@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "BW68KD/pnSqGDSsPDgjonAKTtfcU5ck9/D12gP0mVZ4=",
+  "Source": "exSales.BackgroundService",
+  "BasePath": "_content/exSales.BackgroundService",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

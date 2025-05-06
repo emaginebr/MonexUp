@@ -19,6 +19,7 @@ namespace exSales.Domain.Interfaces.Services
         IUserModel Insert(UserInfo user);
         IUserModel Update(UserInfo user);
         IUserModel GetUserByEmail(string email);
+        IUserModel GetBySlug(string slug);
         IUserModel GetUserByID(long userId);
         IUserModel GetUserByToken(string token);
         IUserModel GetByStripeId(string stripeId);

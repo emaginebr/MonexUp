@@ -17,9 +17,13 @@ public partial class ExSalesContext : DbContext
 
     public virtual DbSet<Invoice> Invoices { get; set; }
 
+    public virtual DbSet<InvoiceFee> InvoiceFees { get; set; }
+
     public virtual DbSet<Network> Networks { get; set; }
 
     public virtual DbSet<Order> Orders { get; set; }
+
+    public virtual DbSet<OrderItem> OrderItems { get; set; }
 
     public virtual DbSet<Product> Products { get; set; }
 
@@ -80,6 +84,37 @@ public partial class ExSalesContext : DbContext
                 .HasConstraintName("fk_invoice_user");
         });
 
+        modelBuilder.Entity<InvoiceFee>(entity =>
+        {
+            entity.HasKey(e => e.FeeId).HasName("pk_invoice_fee");
+
+            entity.ToTable("invoice_fees");
+
+            entity.Property(e => e.FeeId)
+                .HasDefaultValueSql("nextval('invoice_commission_commission_id_seq'::regclass)")
+                .HasColumnName("fee_id");
+            entity.Property(e => e.Amount).HasColumnName("amount");
+            entity.Property(e => e.InvoiceId).HasColumnName("invoice_id");
+            entity.Property(e => e.NetworkId).HasColumnName("network_id");
+            entity.Property(e => e.PaidAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("paid_at");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.Invoice).WithMany(p => p.InvoiceFees)
+                .HasForeignKey(d => d.InvoiceId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_fee_invoice");
+
+            entity.HasOne(d => d.Network).WithMany(p => p.InvoiceFees)
+                .HasForeignKey(d => d.NetworkId)
+                .HasConstraintName("fk_fee_network");
+
+            entity.HasOne(d => d.User).WithMany(p => p.InvoiceFees)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("fk_fee_user");
+        });
+
         modelBuilder.Entity<Network>(entity =>
         {
             entity.HasKey(e => e.NetworkId).HasName("networks_pkey");
@@ -120,24 +155,50 @@ public partial class ExSalesContext : DbContext
             entity.ToTable("orders");
 
             entity.Property(e => e.OrderId).HasColumnName("order_id");
-            entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("created_at");
+            entity.Property(e => e.NetworkId).HasColumnName("network_id");
+            entity.Property(e => e.SellerId).HasColumnName("seller_id");
             entity.Property(e => e.Status)
                 .HasDefaultValue(1)
                 .HasColumnName("status");
             entity.Property(e => e.StripeId)
                 .HasMaxLength(120)
                 .HasColumnName("stripe_id");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("updated_at");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.Orders)
-                .HasForeignKey(d => d.ProductId)
+            entity.HasOne(d => d.Network).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.NetworkId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_oder_product");
+                .HasConstraintName("fk_order_network");
 
             entity.HasOne(d => d.User).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_order_user");
+        });
+
+        modelBuilder.Entity<OrderItem>(entity =>
+        {
+            entity.HasKey(e => e.ItemId).HasName("order_items_pkey");
+
+            entity.ToTable("order_items");
+
+            entity.Property(e => e.ItemId).HasColumnName("item_id");
+            entity.Property(e => e.OrderId).HasColumnName("order_id");
+            entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.Quantity)
+                .HasDefaultValue(1)
+                .HasColumnName("quantity");
+
+            entity.HasOne(d => d.Order).WithMany(p => p.OrderItems)
+                .HasForeignKey(d => d.OrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_order_item");
         });
 
         modelBuilder.Entity<Product>(entity =>

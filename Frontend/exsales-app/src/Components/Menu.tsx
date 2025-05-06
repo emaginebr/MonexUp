@@ -147,34 +147,36 @@ export default function Menu() {
             <Nav className="ms-auto justify-content-end">
               {authContext.sessionInfo &&
                 <>
-                  <NavDropdown title={
-                    <>
-                      {networkContext.userNetwork ?
-                        <>
-                          <FontAwesomeIcon icon={faUserGroup} />&nbsp;{networkContext.userNetwork?.network.name}
-                        </>
-                        :
-                        <>
-                          <FontAwesomeIcon icon={faCancel} />&nbsp;No network selected
-                        </>
-                      }
-                    </>
-                  } id="basic-nav-dropdown">
-                    <NavDropdown.ItemText className='small'>Select network to connect</NavDropdown.ItemText>
-                    <NavDropdown.Divider />
-                    {networkContext.userNetworks && networkContext.userNetworks.map((network) => {
-                      return (
-                        <NavDropdown.Item onClick={() => {
-                          networkContext.setUserNetwork(network);
-                          navigate("/admin/dashboard");
-                        }}><FontAwesomeIcon icon={faUserGroup} />&nbsp;{network.network.name}</NavDropdown.Item>
-                      )
-                    })}
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item onClick={() => {
-                      navigate("/network/search");
-                    }}><FontAwesomeIcon icon={faSearch} />&nbsp;Buscar uma rede</NavDropdown.Item>
-                  </NavDropdown>
+                  {networkContext.userNetworks &&
+                    <NavDropdown title={
+                      <>
+                        {networkContext.userNetwork ?
+                          <>
+                            <FontAwesomeIcon icon={faUserGroup} />&nbsp;{networkContext.userNetwork?.network.name}
+                          </>
+                          :
+                          <>
+                            <FontAwesomeIcon icon={faCancel} />&nbsp;No network selected
+                          </>
+                        }
+                      </>
+                    } id="basic-nav-dropdown">
+                      <NavDropdown.ItemText className='small'>Select network to connect</NavDropdown.ItemText>
+                      <NavDropdown.Divider />
+                      {networkContext.userNetworks.map((network) => {
+                        return (
+                          <NavDropdown.Item onClick={() => {
+                            networkContext.setUserNetwork(network);
+                            navigate("/admin/dashboard");
+                          }}><FontAwesomeIcon icon={faUserGroup} />&nbsp;{network.network.name}</NavDropdown.Item>
+                        )
+                      })}
+                      <NavDropdown.Divider />
+                      <NavDropdown.Item onClick={() => {
+                        navigate("/network/search");
+                      }}><FontAwesomeIcon icon={faSearch} />&nbsp;Buscar uma rede</NavDropdown.Item>
+                    </NavDropdown>
+                  }
                   <NavDropdown title={showRoleText(networkContext.currentRole)} id="basic-nav-dropdown">
                     <NavDropdown.ItemText className='small'>Select the chain you will connect to</NavDropdown.ItemText>
                     <NavDropdown.Divider />
@@ -230,10 +232,10 @@ export default function Menu() {
                     </>
                   } id="basic-nav-dropdown">
                     <NavDropdown.Item onClick={async () => {
-                      navigate("/edit-account");
+                      navigate("/account/edit-account");
                     }}><FontAwesomeIcon icon={faPencil} fixedWidth /> Edit Account</NavDropdown.Item>
                     <NavDropdown.Item onClick={async () => {
-                      navigate("/change-password");
+                      navigate("/account/change-password");
                     }}><FontAwesomeIcon icon={faLock} fixedWidth /> Change Password</NavDropdown.Item>
                     <NavDropdown.Divider />
                     <NavDropdown.Item onClick={async () => {
@@ -248,7 +250,7 @@ export default function Menu() {
                   <>
                     <Nav.Item>
                       <Button variant="danger" onClick={async () => {
-                        navigate("/login");
+                        navigate("/account/login");
                       }}>
                         <FontAwesomeIcon icon={faSignInAlt} fixedWidth /> Sign In
                       </Button>

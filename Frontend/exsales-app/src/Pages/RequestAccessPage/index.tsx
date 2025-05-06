@@ -234,7 +234,7 @@ export default function RequestAccessPage() {
                                                 }</Button>
                                             <Button variant="danger" size="lg" onClick={(e) => {
                                                 e.preventDefault();
-                                                navigate("/@/" + networkContext.network?.slug);
+                                                navigate("/" + networkContext.network?.slug);
                                             }}><FontAwesomeIcon icon={faClose} fixedWidth /> No, go back</Button>
                                         </div>
                                     </Card.Body>

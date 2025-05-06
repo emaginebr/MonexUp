@@ -2,6 +2,7 @@
 using exSales.Domain.Interfaces.Models;
 using exSales.Domain.Interfaces.Services;
 using exSales.DTO.Order;
+using exSales.DTO.Product;
 using Stripe.Climate;
 using System;
 using System.Collections.Generic;
@@ -14,29 +15,61 @@ namespace exSales.Domain.Impl.Services
     public class OrderService : IOrderService
     {
         private readonly IOrderDomainFactory _orderFactory;
+        private readonly IOrderItemDomainFactory _itemFactory;
+        private readonly IProductService _productService;
+        private readonly IUserService _userService;
+        private readonly IProductDomainFactory _productFactory;
+        private readonly IUserDomainFactory _userFactory;
 
-        public OrderService(IOrderDomainFactory orderFactory)
+        public OrderService(
+            IOrderDomainFactory orderFactory, 
+            IOrderItemDomainFactory itemFactory,
+            IProductService productService,
+            IUserService userService,
+            IProductDomainFactory productFactory,
+            IUserDomainFactory userFactory)
         {
             _orderFactory = orderFactory;
+            _itemFactory = itemFactory;
+            _productService = productService;
+            _userService = userService;
+            _productFactory = productFactory;
+            _userFactory = userFactory;
         }
 
         public IOrderModel Insert(OrderInfo order)
         {
-            if (!(order.ProductId > 0))
+            if (!(order.NetworkId > 0))
             {
-                throw new Exception("Product is empty");
+                throw new Exception("Network is empty");
             }
             if (!(order.UserId > 0))
             {
                 throw new Exception("User is empty");
             }
+            if (order.Items == null || order.Items.Count() <= 0)
+            {
+                throw new Exception("Order is empty");
+            }
 
             var model = _orderFactory.BuildOrderModel();
-            model.ProductId = order.ProductId;
+            model.NetworkId = order.NetworkId;
             model.UserId = order.UserId;
+            model.SellerId = order.SellerId;
             model.Status = order.Status;
 
-            return model.Insert(_orderFactory);
+            var newOrder = model.Insert(_orderFactory);
+
+            foreach (var item in order.Items)
+            {
+                var mdItem = _itemFactory.BuildOrderItemModel();
+                mdItem.OrderId = newOrder.OrderId;
+                mdItem.ProductId = item.ProductId;
+                mdItem.Quantity = item.Quantity;
+
+                mdItem.Insert(_itemFactory);
+            }
+            return newOrder;
         }
 
         public IOrderModel Update(OrderInfo order)
@@ -57,9 +90,9 @@ namespace exSales.Domain.Impl.Services
             return _orderFactory.BuildOrderModel().GetById(orderId, _orderFactory);
         }
 
-        public IOrderModel Get(long productId, long userId, OrderStatusEnum status)
+        public IOrderModel Get(long productId, long userId, long? sellerId, OrderStatusEnum status)
         {
-            return _orderFactory.BuildOrderModel().Get(productId, userId, status, _orderFactory);
+            return _orderFactory.BuildOrderModel().Get(productId, userId, sellerId, status, _orderFactory);
         }
 
         public OrderInfo GetOrderInfo(IOrderModel order)
@@ -67,9 +100,22 @@ namespace exSales.Domain.Impl.Services
             return new OrderInfo
             {
                 OrderId = order.OrderId,
-                ProductId = order.ProductId,
+                NetworkId = order.NetworkId,
                 UserId = order.UserId,
-                Status = order.Status
+                SellerId = order.SellerId,
+                Status = order.Status,
+                CreatedAt = order.CreatedAt,
+                UpdatedAt = order.UpdatedAt,
+                User = _userService.GetUserInfoFromModel(order.GetUser(_userFactory)),
+                Seller = _userService.GetUserInfoFromModel(order.GetSeller(_userFactory)),
+                Items = order.ListItems(_itemFactory).Select(x => new OrderItemInfo
+                {
+                    ItemId = x.ItemId,
+                    OrderId = x.OrderId,
+                    ProductId = x.ProductId,
+                    Quantity = x.Quantity,
+                    Product = _productService.GetProductInfo(x.GetProduct(_productFactory))
+                }).ToList()
             };
         }
 
@@ -81,6 +127,22 @@ namespace exSales.Domain.Impl.Services
         public IOrderModel GetByStripeId(string stripeId)
         {
             return _orderFactory.BuildOrderModel().GetByStripeId(stripeId, _orderFactory);
+        }
+
+        public OrderListPagedResult Search(long networkId, long? userId, long? sellerId, int pageNum)
+        {
+            var model = _orderFactory.BuildOrderModel();
+            int pageCount = 0;
+            var orders = model.Search(networkId, userId, sellerId, pageNum, out pageCount, _orderFactory)
+                .Select(x => GetOrderInfo(x))
+                .ToList();
+            return new OrderListPagedResult
+            {
+                Sucesso = true,
+                Orders = orders,
+                PageNum = pageNum,
+                PageCount = pageCount
+            };
         }
     }
 }

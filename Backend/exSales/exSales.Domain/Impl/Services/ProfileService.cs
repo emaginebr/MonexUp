@@ -110,6 +110,9 @@ namespace exSales.Domain.Impl.Services
 
         public UserProfileInfo GetUserProfileInfo(IUserProfileModel profile)
         {
+            if (profile == null) {
+                return null;
+            }
             return new UserProfileInfo
             {
                 ProfileId = profile.ProfileId,

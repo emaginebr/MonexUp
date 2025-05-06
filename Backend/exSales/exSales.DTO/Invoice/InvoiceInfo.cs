@@ -1,4 +1,6 @@
-﻿using System;
+﻿using exSales.DTO.Order;
+using exSales.DTO.User;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,5 +27,13 @@ namespace exSales.DTO.Invoice
         public DateTime? PaymentDate { get; set; }
         [JsonPropertyName("status")]
         public InvoiceStatusEnum Status { get; set; }
+        [JsonPropertyName("order")]
+        public OrderInfo Order {  get; set; }
+        [JsonPropertyName("user")]
+        public UserInfo User { get; set; }
+        [JsonPropertyName("seller")]
+        public UserInfo Seller {  get; set; }
+        [JsonPropertyName("fees")]
+        public IList<InvoiceFeeInfo> Fees {  get; set; }
     }
 }

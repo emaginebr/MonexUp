@@ -559,5 +559,10 @@ namespace exSales.Domain.Impl.Services
         {
             return _userFactory.BuildUserModel().GetByStripeId(stripeId, _userFactory);
         }
+
+        public IUserModel GetBySlug(string slug)
+        {
+            return _userFactory.BuildUserModel().GetBySlug(slug, _userFactory);
+        }
     }
 }

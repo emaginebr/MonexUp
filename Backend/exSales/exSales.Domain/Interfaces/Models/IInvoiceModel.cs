@@ -27,10 +27,16 @@ namespace exSales.Domain.Interfaces.Models
         InvoiceStatusEnum Status { get; set; }
         string StripeId { get; set; }
 
+        IOrderModel GetOrder(IOrderDomainFactory factory);
+        IUserModel GetUser(IUserDomainFactory factory);
+        IUserModel GetSeller(IUserDomainFactory factory);
+        IList<IInvoiceFeeModel> ListFees(IInvoiceFeeDomainFactory factory);
+
         IInvoiceModel Insert(IInvoiceDomainFactory factory);
         IInvoiceModel Update(IInvoiceDomainFactory factory);
 
-        IEnumerable<IInvoiceModel> List(long networkId, long orderId, long userId, InvoiceStatusEnum? status, IInvoiceDomainFactory factory);
+        IEnumerable<IInvoiceModel> Search(long networkId, long? userId, long? sellerId, int pageNum, out int pageCount, IInvoiceDomainFactory factory);
+        //IEnumerable<IInvoiceModel> List(long networkId, long orderId, long userId, InvoiceStatusEnum? status, IInvoiceDomainFactory factory);
         IInvoiceModel GetById(long id, IInvoiceDomainFactory factory);
         IInvoiceModel GetByStripeId(string stripeId, IInvoiceDomainFactory factory);
     }
