@@ -1,8 +1,8 @@
 {
   "Version": 1,
-  "Hash": "rlwf3FWGnmvmcVAgpz+rIbkbwaR9BITGsW6MX0e6oYI=",
-  "Source": "NoChainSwap.API",
-  "BasePath": "_content/NoChainSwap.API",
+  "Hash": "0Ltxg/rQcJfkLBvlnKFWbcIB0TVwOoerYuP+B+1t03c=",
+  "Source": "MonexUp.API",
+  "BasePath": "_content/MonexUp.API",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],

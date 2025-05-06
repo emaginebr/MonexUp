@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DB.Infra")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+42588908e25283bfa3640b48982231e4ad308004")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+553c8c1d91d12ad8fd3b034ccef51c5ca98c964c")]
 [assembly: System.Reflection.AssemblyProductAttribute("DB.Infra")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DB.Infra")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

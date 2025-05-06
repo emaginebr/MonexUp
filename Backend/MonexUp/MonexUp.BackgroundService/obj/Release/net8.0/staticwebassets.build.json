@@ -1,8 +1,8 @@
 {
   "Version": 1,
-  "Hash": "hvfEdnxByTDUfdv1wUPzfwtsHfLyfDf/21EZpIcZLcs=",
-  "Source": "NoChainSwap.BackgroundService",
-  "BasePath": "_content/NoChainSwap.BackgroundService",
+  "Hash": "zVZ3bFhshNRsAFlqYFHzbNyqGgKDkGOiSVbzDMRq6DU=",
+  "Source": "MonexUp.BackgroundService",
+  "BasePath": "_content/MonexUp.BackgroundService",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],

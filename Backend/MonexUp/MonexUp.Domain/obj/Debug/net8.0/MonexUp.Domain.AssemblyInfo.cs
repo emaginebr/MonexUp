@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MonexUp.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d01851f9f34dbcf66edbc9f389dcee282d6898b6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+553c8c1d91d12ad8fd3b034ccef51c5ca98c964c")]
 [assembly: System.Reflection.AssemblyProductAttribute("MonexUp.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MonexUp.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

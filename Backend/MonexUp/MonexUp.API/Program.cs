@@ -27,7 +27,7 @@ namespace MonexUp.API
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    /*
+                    #if !DEBUG
                     webBuilder.UseKestrel(options =>
                     {
                         options.ConfigureHttpsDefaults(httpsOptions =>
@@ -40,7 +40,7 @@ namespace MonexUp.API
                             }
                         });
                     });
-                    */
+                    #endif
                     webBuilder.UseStartup<Startup>();
                 });
     }
