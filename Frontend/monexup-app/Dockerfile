@@ -1,19 +1,22 @@
 # Stage 1: Build the React Application
-FROM node:18
-FROM nginx:alpine 
+#FROM node:18
+FROM node:18-alpine as build
+#FROM nginx:alpine 
 
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+#RUN npm install
 
 COPY . .
 #COPY ./build /usr/share/nginx/html
+RUN npm install
 RUN npm run build
 
 # Stage 2: Setup the Nginx Server to serve the React Application
 FROM nginx:alpine 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/build /usr/share/nginx/html
+#COPY /app/build /usr/share/nginx/html
 
 EXPOSE 3001
 
