@@ -12,7 +12,6 @@ import { faWarning } from '@fortawesome/free-solid-svg-icons/faWarning'
 import { faBitcoinSign, faBoltLightning, faBox, faBrazilianRealSign, faBuilding, faCancel, faCheck, faCheckCircle, faCircle, faCircleUser, faClose, faCog, faCoins, faDollar, faEthernet, faFileWord, faHome, faLock, faPencil, faSearch, faSignInAlt, faUser, faUserAlt, faUserCircle, faUserCog, faUserFriends, faUserGear, faUserGraduate, faUserGroup, faUserMd } from '@fortawesome/free-solid-svg-icons';
 import MessageToast from './MessageToast';
 import { MessageToastEnum } from '../DTO/Enum/MessageToastEnum';
-import env from 'react-dotenv';
 import { UserRoleEnum } from '../DTO/Enum/UserRoleEnum';
 import NetworkContext from '../Contexts/Network/NetworkContext';
 
@@ -94,7 +93,7 @@ export default function Menu() {
       ></MessageToast>
       <Navbar expand="lg" className="navbar-dark bg-dark mb-3 border-bottom">
         <Container>
-          <Link className='navbar-brand' to="/">{env.PROJECT_NAME}</Link>
+          <Link className='navbar-brand' to="/">{process.env.REACT_APP_PROJECT_NAME}</Link>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">

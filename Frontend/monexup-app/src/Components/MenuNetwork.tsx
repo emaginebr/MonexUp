@@ -12,7 +12,6 @@ import { faWarning } from '@fortawesome/free-solid-svg-icons/faWarning'
 import { faBitcoinSign, faBoltLightning, faBox, faBrazilianRealSign, faBuilding, faCancel, faCheck, faCheckCircle, faCircle, faCircleUser, faClose, faCog, faCoins, faDollar, faEthernet, faFileWord, faHome, faLock, faPencil, faSearch, faSignInAlt, faUser, faUserAlt, faUserCircle, faUserCog, faUserFriends, faUserGear, faUserGraduate, faUserGroup, faUserMd } from '@fortawesome/free-solid-svg-icons';
 import MessageToast from './MessageToast';
 import { MessageToastEnum } from '../DTO/Enum/MessageToastEnum';
-import env from 'react-dotenv';
 import { UserRoleEnum } from '../DTO/Enum/UserRoleEnum';
 import NetworkContext from '../Contexts/Network/NetworkContext';
 import Skeleton from 'react-loading-skeleton';

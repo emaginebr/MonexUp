@@ -1,4 +1,3 @@
-import env from 'react-dotenv';
 import { HttpClient } from '../Infra/Impl/HttpClient';
 import IHttpClient from '../Infra/Interface/IHttpClient';
 import IUserService from './Interfaces/IUserService';
@@ -15,7 +14,7 @@ import IInvoiceService from './Interfaces/IInvoiceService';
 import InvoiceService from './Impl/InvoiceService';
 
 const httpClientAuth : IHttpClient = HttpClient();
-httpClientAuth.init(env.API_BASE_URL);
+httpClientAuth.init(process.env.REACT_APP_API_URL);
 
 const userServiceImpl : IUserService = UserService;
 userServiceImpl.init(httpClientAuth);

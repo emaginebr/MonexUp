@@ -1,7 +1,6 @@
 import IHttpClient from "../Interface/IHttpClient";
 import axios, { AxiosInstance } from 'axios';
 import ApiResponse from "../../DTO/Services/ApiResponse";
-import env from "react-dotenv";
 
 
 let logoff : () => void; 
@@ -53,7 +52,7 @@ const HttpClient  = () : IHttpClient => {
     },
     doPost: async function <T>(path: string, parameters: any): Promise<ApiResponse<T>> {
       let ret: ApiResponse<T>;
-      if(env.REACT_APP_RODUCTION == "0")
+      if(process.env.REACT_APP_PRODUCTION == "0")
         console.info("Requisição realizada: \n\tURL:" + path + "\n\tParâmetros: " + JSON.stringify(parameters));
       await axiosIntance.post(path, parameters)
         .then((response) => {
@@ -72,7 +71,7 @@ const HttpClient  = () : IHttpClient => {
     },
     doPostAuth: async function <T>(path: string, parameters: any, tokenAuth: string): Promise<ApiResponse<T>> {
       let ret: ApiResponse<T>;
-      if(env.REACT_APP_RODUCTION == "0")
+      if(process.env.REACT_APP_PRODUCTION == "0")
         console.info("Requisição com token realizada: \n\tURL:" + path + "\n\tParâmetros: " + JSON.stringify(parameters) + "\n\tToken: " + tokenAuth);
       await axiosIntance.post(path, parameters, {
         headers: {
@@ -95,7 +94,7 @@ const HttpClient  = () : IHttpClient => {
     },
     doGetAuth: async function <T>(path: string, tokenAuth: string): Promise<ApiResponse<T>> {
       let ret: ApiResponse<T>;
-      if(env.REACT_APP_RODUCTION == "0")
+      if(process.env.REACT_APP_PRODUCTION == "0")
         console.info("Requisição com token realizada: \n\tURL:" + path + "\n\tToken: " + tokenAuth);
       await axiosIntance.get(path, {
         headers: {
@@ -118,7 +117,7 @@ const HttpClient  = () : IHttpClient => {
     },
     doGet: async function <T>(path: string, parameters: any): Promise<ApiResponse<T>> {
       let ret: ApiResponse<T>;
-      if(env.REACT_APP_RODUCTION == "0")
+      if(process.env.REACT_APP_PRODUCTION == "0")
         console.info("Doing Http Request: \n\tURL:" + path + "\n\Parameters: " + JSON.stringify(parameters));
       await axiosIntance.get(path, parameters)
         .then((response) => {
@@ -137,7 +136,7 @@ const HttpClient  = () : IHttpClient => {
     },
     doPostFormData: async function <T>(path: string, parameters: FormData): Promise<ApiResponse<T>> {
       let ret: ApiResponse<T>;
-      if(env.REACT_APP_RODUCTION == "0")
+      if(process.env.REACT_APP_PRODUCTION == "0")
         console.info("Requisição com FormData: \n\tURL:" + path + "\n\tParâmetros: " + JSON.stringify(parameters));
 
       await axiosIntance.post(path, parameters, {
@@ -162,7 +161,7 @@ const HttpClient  = () : IHttpClient => {
     },
     doPostFormDataAuth: async function <T>(path: string, parameters: FormData, tokenAuth: string): Promise<ApiResponse<T>> {
       let ret: ApiResponse<T>;
-      if(env.REACT_APP_RODUCTION == "0")
+      if(process.env.REACT_APP_PRODUCTION == "0")
         console.info("Requisição com FormData: \n\tURL:" + path + "\n\tParâmetros: " + JSON.stringify(parameters));
 
       await axiosIntance.post(path, parameters, {
@@ -188,7 +187,7 @@ const HttpClient  = () : IHttpClient => {
     },
     doPutAuth: async function <T>(path: string, parameters: any, tokenAuth: string): Promise<ApiResponse<T>> {
       let ret: ApiResponse<T>;
-      if(env.REACT_APP_RODUCTION == "0")
+      if(process.env.REACT_APP_PRODUCTION == "0")
         console.info("Requisição com token realizada: \n\tURL:" + path + "\n\tParâmetros: " + JSON.stringify(parameters) + "\n\tToken: " + tokenAuth);
       await axiosIntance.put(path, parameters, {
         headers: {
