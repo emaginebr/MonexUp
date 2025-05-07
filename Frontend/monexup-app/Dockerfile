@@ -1,17 +1,14 @@
-# Stage 1: Build the React Application
+#FROM node:18
 FROM nginx:alpine 
 
-WORKDIR /app
+WORKDIR /var/www
 
-COPY . .
-
-# Stage 2: Setup the Nginx Server to serve the React Application
-#FROM nginx:alpine 
-
-COPY build /usr/share/nginx/html
+COPY monexup.com.chained.crt /etc/nginx/conf.d
+COPY monexup.com.key /etc/nginx/conf.d
+COPY build /var/www/monexup.com
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 3001
+EXPOSE 443
 
 CMD ["nginx", "-g", "daemon off;"]
