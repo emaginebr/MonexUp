@@ -19,6 +19,8 @@ namespace MonexUp.Domain.Impl.Services
         private readonly IUserDomainFactory _userFactory;
         private readonly IUserProfileDomainFactory _profileFactory;
         private readonly IOrderDomainFactory _orderFactory;
+        private readonly IOrderItemDomainFactory _orderItemFactory;
+        private readonly IProductDomainFactory _productFactory;
         private readonly IUserService _userService;
         private readonly IOrderService _orderService;
         private readonly INetworkService _networkService;
@@ -32,6 +34,8 @@ namespace MonexUp.Domain.Impl.Services
             IUserDomainFactory userFactory,
             IUserProfileDomainFactory profileFactory,
             IOrderDomainFactory orderFactory,
+            IOrderItemDomainFactory orderItemFactory,
+            IProductDomainFactory productFactory,
             IUserService userService,
             IOrderService orderService,
             INetworkService networkService,
@@ -43,6 +47,8 @@ namespace MonexUp.Domain.Impl.Services
             _userFactory = userFactory;
             _profileFactory = profileFactory;
             _orderFactory = orderFactory;
+            _orderItemFactory = orderItemFactory;
+            _productFactory = productFactory;
             _userService = userService;
             _orderService = orderService;
             _networkService = networkService;
@@ -203,6 +209,53 @@ namespace MonexUp.Domain.Impl.Services
                 PageNum = pageNum,
                 PageCount = pageCount
             };
+        }
+
+        private StatementInfo GetStatementInfo(IInvoiceFeeModel fee)
+        {
+            var invoice = _invoiceFactory.BuildInvoiceModel().GetById(fee.InvoiceId, _invoiceFactory);
+            var order = invoice.GetOrder(_orderFactory);
+            var network = _networkService.GetById(order.NetworkId);
+            return new StatementInfo {
+                InvoiceId = fee.InvoiceId,
+                FeeId = fee.FeeId,
+                NetworkId = order.NetworkId,
+                NetworkName = network.Name,
+                UserId = invoice.UserId,
+                BuyerName = invoice.GetUser(_userFactory).Name,
+                SellerId = invoice.SellerId,
+                SellerName = invoice.GetSeller(_userFactory)?.Name,
+                PaymentDate = invoice.PaymentDate,
+                Description = string.Join(", ", 
+                    order.ListItems(_orderItemFactory)
+                    .Select(x => x.GetProduct(_productFactory).Name + " (" + x.Quantity.ToString() + ")")
+                    .ToArray()
+                ),  
+                Amount = fee.Amount,
+                PaidAt = fee.PaidAt,
+            };
+        }
+
+        public StatementListPagedResult SearchStatement(StatementSearchParam param)
+        {
+            int pageCount = 0;
+            var fees = _feeFactory.BuildInvoiceFeeModel().Search(param.NetworkId, param.UserId, param.Ini, param.End, param.PageNum, out pageCount, _feeFactory);
+            return new StatementListPagedResult
+            {
+                PageNum = param.PageNum,
+                PageCount = pageCount,
+                Statements = fees.Select(x => GetStatementInfo(x)).ToList()
+            };
+        }
+
+        public double GetBalance(long? networkId, long? userId)
+        {
+            return _feeFactory.BuildInvoiceFeeModel().GetBalance(networkId, userId);
+        }
+
+        public double GetAvailableBalance(long userId)
+        {
+            return _feeFactory.BuildInvoiceFeeModel().GetAvailableBalance(userId);
         }
     }
 }

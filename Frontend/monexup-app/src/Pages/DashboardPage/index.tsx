@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import AuthContext from "../../Contexts/Auth/AuthContext";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
@@ -21,86 +21,136 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import NetworkContext from "../../Contexts/Network/NetworkContext";
 import { UserRoleEnum } from "../../DTO/Enum/UserRoleEnum";
-
-
+import CountPart from "./CountPart";
+import InvoiceContext from "../../Contexts/Invoice/InvoiceContext";
+import MessageToast from "../../Components/MessageToast";
+import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
+import Skeleton from "react-loading-skeleton";
+import StatementPart from "./StatementPart";
+import StatementSearchParam from "../../DTO/Domain/StatementSearchParam";
 
 export default function DashboardPage() {
 
     const authContext = useContext(AuthContext);
     const networkContext = useContext(NetworkContext);
+    const invoiceContext = useContext(InvoiceContext);
 
     let navigate = useNavigate();
 
+    const [dialog, setDialog] = useState<MessageToastEnum>(MessageToastEnum.Error);
+    const [showMessage, setShowMessage] = useState<boolean>(false);
+    const [messageText, setMessageText] = useState<string>("");
+
+    const throwError = (message: string) => {
+        setDialog(MessageToastEnum.Error);
+        setMessageText(message);
+        setShowMessage(true);
+    };
+    const showSuccessMessage = (message: string) => {
+        setDialog(MessageToastEnum.Success);
+        setMessageText(message);
+        setShowMessage(true);
+    };
+
+    const searchStatements = async (pageNum: number) => {
+        let param: StatementSearchParam;
+        switch (networkContext.currentRole) {
+            case UserRoleEnum.NetworkManager:
+                param = {
+                    ...param,
+                    networkId: networkContext.userNetwork.networkId,
+                    pageNum: 1
+                };
+                break;
+            case UserRoleEnum.Seller:
+                param = {
+                    ...param,
+                    userId: authContext.sessionInfo.userId,
+                    pageNum: 1
+                };
+                break;
+        }
+        if (networkContext.currentRole != UserRoleEnum.User) {
+            var ret = await invoiceContext.searchStatement(param);
+            if (!ret.sucesso) {
+                throwError(ret.mensagemErro);
+            }
+        }
+    };
+
+    useEffect(() => {
+        searchStatements(1);
+        switch (networkContext.currentRole) {
+            case UserRoleEnum.NetworkManager:
+                invoiceContext.getBalance(networkContext.userNetwork.networkId).then((ret) => {
+                    if (!ret.sucesso) {
+                        throwError(ret.mensagemErro);
+                    }
+                });
+                break;
+            case UserRoleEnum.Seller:
+                invoiceContext.getBalance().then((ret) => {
+                    if (!ret.sucesso) {
+                        throwError(ret.mensagemErro);
+                    }
+                });
+                invoiceContext.getAvailableBalance().then((ret) => {
+                    if (!ret.sucesso) {
+                        throwError(ret.mensagemErro);
+                    }
+                });
+                break;
+        }
+    }, []);
+
     return (
         <>
+            <MessageToast
+                dialog={dialog}
+                showMessage={showMessage}
+                messageText={messageText}
+                onClose={() => setShowMessage(false)}
+            ></MessageToast>
             <Container>
-                <Row>
-                    <Col md={8}>
-                        <div className="row row-cols-1 row-cols-md-2 justify-content-center row-cols-lg-3 py-4 g-4 counter-RANDOMID">
-                            <div className="col">
-                                <div className="card card-body shadow">
-                                    <div className="d-inline-flex align-items-center" style={{ minHeight: "128px" }}>
-                                        <div className="me-2">
-                                            <div className="bg-light p-3 rounded-circle">
-                                                <FontAwesomeIcon icon={faBox} fixedWidth size="2x" />
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <span className="fw-bold display-5 mb-5">7</span>
-                                            <p className="lead"><span><b>Sales</b></span> Done</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col">
-                                <div className="card card-body shadow">
-                                    <div className="d-inline-flex align-items-center" style={{ minHeight: "128px" }}>
-                                        <div className="me-2">
-                                            <div className="bg-light p-3 rounded-circle">
-                                                <FontAwesomeIcon icon={faUser} fixedWidth size="2x" />
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <span className="fw-bold display-5 mb-5">6</span>
-                                            <p className="lead"><b>Customers</b> Added</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col">
-                                <div className="card card-body shadow">
-                                    <div className="d-inline-flex align-items-center" style={{ minHeight: "128px" }}>
-                                        <div className="me-2">
-                                            <div className="bg-light p-3 rounded-circle">
-                                                <FontAwesomeIcon icon={faDollar} fixedWidth size="2x" />
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <span className="fw-bold display-5 mb-5">15</span>
-                                            <p className="lead"><b>Paid</b> invoices</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </Col>
-                    <Col md={4}>
-                        <Card bg="danger" text="light">
-                            <Card.Header>Current Balance</Card.Header>
-                            <Card.Body style={{ textAlign: "center" }}>
-                                <Card.Text>
-                                    <p className="fw-bold display-5 text-right"><small>R$</small>1.239,57</p>
-                                    <span>Next withdrawal avaliable in <strong>30/04/2025</strong></span>
-                                </Card.Text>
-                                <Button variant="danger">Sacar <FontAwesomeIcon icon={faArrowRight} fixedWidth /></Button>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                </Row>
+                {networkContext.currentRole != UserRoleEnum.User &&
+                    <Row>
+                        <Col md={8}>
+                            <CountPart />
+                        </Col>
+                        <Col md={4}>
+                            <Card bg="danger" text="light">
+                                <Card.Header>Current Balance</Card.Header>
+                                <Card.Body style={{ textAlign: "center" }}>
+                                    <Card.Text>
+                                        <p className="fw-bold display-5 text-right">
+                                            {invoiceContext.loadingBalance ?
+                                                <Skeleton />
+                                                :
+                                                <>
+                                                    <small>R$</small>{invoiceContext.balance}
+                                                </>
+                                            }
+                                        </p>
+                                        {networkContext.currentRole == UserRoleEnum.Seller &&
+                                            <>
+                                                {invoiceContext.loadingAvailableBalance ?
+                                                    <Skeleton />
+                                                    :
+                                                    <span>Amount released for withdrawal is <small>R$</small>{invoiceContext.availableBalance}</span>
+                                                }
+                                            </>
+                                        }
+                                    </Card.Text>
+                                    <Button variant="danger" disabled>Withdrawal <FontAwesomeIcon icon={faArrowRight} fixedWidth /></Button>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
+                }
             </Container>
             <Container>
                 <Row>
-                    <Col md={8}>
+                    <Col md={networkContext.currentRole != UserRoleEnum.User ? 8 : 12}>
                         <Tabs
                             defaultActiveKey="balance"
                             id="uncontrolled-tab-example"
@@ -108,73 +158,15 @@ export default function DashboardPage() {
                         >
                             <Tab eventKey="balance" title={
                                 <>
-                                    <FontAwesomeIcon icon={faDollar} fixedWidth />&nbsp;Balance
+                                    <FontAwesomeIcon icon={faDollar} fixedWidth />&nbsp;Statement
                                 </>
                             }>
-                                <Table striped bordered hover>
-                                    <thead>
-                                        <tr>
-                                            <th>-</th>
-                                            <th>Network</th>
-                                            <th>Product</th>
-                                            <th>Seller</th>
-                                            <th style={{ textAlign: "right" }}>Amount</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td><FontAwesomeIcon icon={faCalendar} fixedWidth /></td>
-                                            <td colSpan={4} style={{ textAlign: "center" }}><strong>10/04/2025 (Quinta-feira)</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td className="text-success"><FontAwesomeIcon icon={faDollar} fixedWidth /></td>
-                                            <td>Rede Principal</td>
-                                            <td>Doação 1 (10% de R$ 100,00)</td>
-                                            <td>Rogêrio P.</td>
-                                            <td style={{ textAlign: "right" }}>R$ 10,00</td>
-                                        </tr>
-                                        <tr>
-                                            <td><FontAwesomeIcon icon={faCalendar} fixedWidth /></td>
-                                            <td colSpan={4} style={{ textAlign: "center" }}><strong>11/04/2025 (Sexta-feira)</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td className="text-success"><FontAwesomeIcon icon={faDollar} fixedWidth /></td>
-                                            <td>Rede Principal</td>
-                                            <td>Doação 2 (10% de R$ 200,00)</td>
-                                            <td>Ana L. M. C.</td>
-                                            <td style={{ textAlign: "right" }}>R$ 20,00</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="text-success"><FontAwesomeIcon icon={faDollar} fixedWidth /></td>
-                                            <td>Rede Secundária</td>
-                                            <td>Doação 3 (15% de R$ 100,00)</td>
-                                            <td>Luiz H.</td>
-                                            <td style={{ textAlign: "right" }}>R$ 15,00</td>
-                                        </tr>
-                                        <tr>
-                                            <td><FontAwesomeIcon icon={faCalendar} fixedWidth /></td>
-                                            <td colSpan={4} style={{ textAlign: "center" }}><strong>14/04/2025 (Segunda-feira)</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td className="text-danger"><FontAwesomeIcon icon={faDollar} fixedWidth /></td>
-                                            <td className="text-danger">Rede Principal</td>
-                                            <td className="text-danger" colSpan={2}>-</td>
-                                            <td className="text-danger" style={{ textAlign: "right" }}>-R$ 580,00</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="text-success"><FontAwesomeIcon icon={faDollar} fixedWidth /></td>
-                                            <td>Rede Principal</td>
-                                            <td>Doação 2 (10% de R$ 200,00)</td>
-                                            <td>Ana L. M. C.</td>
-                                            <td style={{ textAlign: "right" }}>R$ 20,00</td>
-                                        </tr>
-                                        <tr>
-                                            <td><FontAwesomeIcon icon={faDollar} fixedWidth /></td>
-                                            <td colSpan={3} style={{ textAlign: "right" }}><strong>Current Balance:</strong></td>
-                                            <td style={{ textAlign: "right" }}><strong>R$ 1.239,57</strong></td>
-                                        </tr>
-                                    </tbody>
-                                </Table>
+                                <StatementPart
+                                    loading={invoiceContext.loadingSearch}
+                                    StatementResult={invoiceContext.statementResult}
+                                    onChangePage={(pagenum: number) => {
+                                        searchStatements(pagenum);
+                                    }} />
                             </Tab>
                             <Tab eventKey="order" title="Orders" disabled>
                                 Tab content for Profile
@@ -182,70 +174,72 @@ export default function DashboardPage() {
                         </Tabs>
 
                     </Col>
-                    <Col md={4} className="py-4">
-                        <ListGroup>
-                            {networkContext.currentRole >= UserRoleEnum.NetworkManager &&
-                                <>
-                                    <ListGroup.Item variant="primary">
-                                        <FontAwesomeIcon icon={faUserGroup} fixedWidth /> Networks
-                                    </ListGroup.Item>
-                                    <ListGroup.Item action onClick={() => {
-                                        navigate("/admin/network");
-                                    }}>
-                                        <div className="ms-2 me-auto">
-                                            <FontAwesomeIcon icon={faCog} fixedWidth /> Preferences
-                                        </div>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item action onClick={() => {
-                                        navigate("/admin/team-structure");
-                                    }}>
-                                        <div className="ms-2 me-auto">
-                                            <FontAwesomeIcon icon={faUserCog} fixedWidth /> Teams Structure
-                                        </div>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item action onClick={() => {
-                                        navigate("/admin/teams");
-                                    }}>
-                                        <Badge bg="primary" pill style={{ float: "right" }}>7</Badge>
-                                        <div className="ms-2 me-auto">
-                                            <FontAwesomeIcon icon={faUserGroup} fixedWidth /> Teams
-                                        </div>
-                                    </ListGroup.Item>
-                                </>
-                            }
-                            {networkContext.currentRole >= UserRoleEnum.Seller &&
-                                <>
-                                    <ListGroup.Item variant="primary">
-                                        <FontAwesomeIcon icon={faBox} fixedWidth /> Finances
-                                    </ListGroup.Item>
-                                    <ListGroup.Item action onClick={() => {
-                                        navigate("/admin/orders");
-                                    }}>
-                                        <Badge bg="primary" pill style={{ float: "right" }}>14</Badge>
-                                        <div className="ms-2 me-auto">
-                                            <FontAwesomeIcon icon={faList} fixedWidth /> List of Orders
-                                        </div>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item action onClick={() => {
-                                        navigate("/admin/invoices");
-                                    }}>
-                                        <Badge bg="primary" pill style={{ float: "right" }}>37</Badge>
-                                        <div className="ms-2 me-auto">
-                                            <FontAwesomeIcon icon={faDollar} fixedWidth /> List of Invoices
-                                        </div>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item action onClick={() => {
-                                        navigate("/admin/products");
-                                    }}>
-                                        <Badge bg="primary" pill style={{ float: "right" }}>14</Badge>
-                                        <div className="ms-2 me-auto">
-                                            <FontAwesomeIcon icon={faBox} fixedWidth /> List of Products
-                                        </div>
-                                    </ListGroup.Item>
-                                </>
-                            }
-                        </ListGroup>
-                    </Col>
+                    {networkContext.currentRole != UserRoleEnum.User &&
+                        <Col md={4} className="py-4">
+                            <ListGroup>
+                                {networkContext.currentRole >= UserRoleEnum.NetworkManager &&
+                                    <>
+                                        <ListGroup.Item variant="primary">
+                                            <FontAwesomeIcon icon={faUserGroup} fixedWidth /> Networks
+                                        </ListGroup.Item>
+                                        <ListGroup.Item action onClick={() => {
+                                            navigate("/admin/network");
+                                        }}>
+                                            <div className="ms-2 me-auto">
+                                                <FontAwesomeIcon icon={faCog} fixedWidth /> Preferences
+                                            </div>
+                                        </ListGroup.Item>
+                                        <ListGroup.Item action onClick={() => {
+                                            navigate("/admin/team-structure");
+                                        }}>
+                                            <div className="ms-2 me-auto">
+                                                <FontAwesomeIcon icon={faUserCog} fixedWidth /> Teams Structure
+                                            </div>
+                                        </ListGroup.Item>
+                                        <ListGroup.Item action onClick={() => {
+                                            navigate("/admin/teams");
+                                        }}>
+                                            {/*<Badge bg="primary" pill style={{ float: "right" }}>7</Badge>*/}
+                                            <div className="ms-2 me-auto">
+                                                <FontAwesomeIcon icon={faUserGroup} fixedWidth /> Teams
+                                            </div>
+                                        </ListGroup.Item>
+                                    </>
+                                }
+                                {networkContext.currentRole >= UserRoleEnum.Seller &&
+                                    <>
+                                        <ListGroup.Item variant="primary">
+                                            <FontAwesomeIcon icon={faBox} fixedWidth /> Finances
+                                        </ListGroup.Item>
+                                        <ListGroup.Item action onClick={() => {
+                                            navigate("/admin/orders");
+                                        }}>
+                                            {/*<Badge bg="primary" pill style={{ float: "right" }}>7</Badge>*/}
+                                            <div className="ms-2 me-auto">
+                                                <FontAwesomeIcon icon={faList} fixedWidth /> List of Orders
+                                            </div>
+                                        </ListGroup.Item>
+                                        <ListGroup.Item action onClick={() => {
+                                            navigate("/admin/invoices");
+                                        }}>
+                                            {/*<Badge bg="primary" pill style={{ float: "right" }}>7</Badge>*/}
+                                            <div className="ms-2 me-auto">
+                                                <FontAwesomeIcon icon={faDollar} fixedWidth /> List of Invoices
+                                            </div>
+                                        </ListGroup.Item>
+                                        <ListGroup.Item action onClick={() => {
+                                            navigate("/admin/products");
+                                        }}>
+                                            {/*<Badge bg="primary" pill style={{ float: "right" }}>7</Badge>*/}
+                                            <div className="ms-2 me-auto">
+                                                <FontAwesomeIcon icon={faBox} fixedWidth /> List of Products
+                                            </div>
+                                        </ListGroup.Item>
+                                    </>
+                                }
+                            </ListGroup>
+                        </Col>
+                    }
                 </Row>
             </Container>
         </>

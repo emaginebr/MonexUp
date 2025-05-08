@@ -180,7 +180,7 @@ namespace MonexUp.Domain.Impl.Services
                 },
                 UiMode = "embedded",
                 Customer = customer.Id,
-                ReturnUrl = "https://example.com/checkout/return?session_id={CHECKOUT_SESSION_ID}",
+                ReturnUrl = "https://monexup.com/checkout/{CHECKOUT_SESSION_ID}",
             };
             var service = new Stripe.Checkout.SessionService();
             var session = service.Create(options);

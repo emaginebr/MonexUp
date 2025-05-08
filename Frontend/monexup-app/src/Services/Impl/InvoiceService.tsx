@@ -1,4 +1,7 @@
+import StatementSearchParam from "../../DTO/Domain/StatementSearchParam";
 import InvoiceListPagedResult from "../../DTO/Services/InvoiceListPagedResult";
+import NumberResult from "../../DTO/Services/NumberResult";
+import StatementListPagedResult from "../../DTO/Services/StatementListPagedResult";
 import IHttpClient from "../../Infra/Interface/IHttpClient"; 
 import IInvoiceService from "../Interfaces/IInvoiceService";
 
@@ -16,6 +19,52 @@ const InvoiceService : IInvoiceService = {
             sellerId: sellerId,
             pageNum: pageNum
         }, token);
+        if (request.success) {
+            return request.data;
+        }
+        else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    },
+    searchStatement: async (param: StatementSearchParam, token: string) => {
+        let ret: StatementListPagedResult;
+        let request = await _httpClient.doPostAuth<StatementListPagedResult>("/api/Invoice/searchStatement", param, token);
+        if (request.success) {
+            return request.data;
+        }
+        else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    },
+    getBalance: async (token: string, networkId?: number) => {
+        let ret: NumberResult;
+        let url: string = "/api/Invoice/getBalance" + ((networkId) ? "?networkId=" + networkId : "");
+        let request = await _httpClient.doGetAuth<NumberResult>(url, token);
+        if (request.success) {
+            return request.data;
+        }
+        else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    },
+    getAvailableBalance: async (token: string) => {
+        let ret: NumberResult;
+        let request = await _httpClient.doGetAuth<NumberResult>("/api/Invoice/getAvailableBalance", token);
         if (request.success) {
             return request.data;
         }

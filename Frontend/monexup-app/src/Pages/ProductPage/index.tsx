@@ -11,6 +11,8 @@ import Skeleton from "react-loading-skeleton";
 import AuthContext from "../../Contexts/Auth/AuthContext";
 import SubscriptionForm from "./SubscriptionForm";
 import NetworkFooter from "../NetworkPage/NetworkFooter";
+import UserContext from "../../Contexts/User/UserContext";
+import UserForm from "./UserForm";
 
 export default function ProductPage() {
 
@@ -35,6 +37,10 @@ export default function ProductPage() {
         setDialog(MessageToastEnum.Success);
         setMessageText(message);
         setShowMessage(true);
+    };
+
+    const getUrl = () => {
+        return "/" + networkSlug + ((sellerSlug) ? "/@/" + sellerSlug : "") + "/" + productSlug;
     };
 
     useEffect(() => {
@@ -91,7 +97,15 @@ export default function ProductPage() {
                                 <p dangerouslySetInnerHTML={{ __html: productContext.product?.description }}></p>
                             </Col>
                             <Col md={4}>
-                                <SubscriptionForm productSlug={productSlug} sellerSlug={sellerSlug} />
+                                {authContext.sessionInfo ?
+                                    <SubscriptionForm productSlug={productSlug} sellerSlug={sellerSlug} />
+                                    :
+                                    <UserForm url={getUrl()} onSuccess={(msgSuccess) => {
+                                        showSuccessMessage(msgSuccess);
+                                    }} onThrowError={(msgError) =>
+                                        throwError(msgError)
+                                    } />
+                                }
                             </Col>
                         </Row>
 

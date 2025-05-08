@@ -1,6 +1,8 @@
 import BusinessResult from "../../DTO/Business/BusinessResult";
 import AuthSession from "../../DTO/Domain/AuthSession";
 import InvoiceListPagedInfo from "../../DTO/Domain/InvoiceListPagedInfo";
+import StatementListPagedInfo from "../../DTO/Domain/StatementListPagedInfo";
+import StatementSearchParam from "../../DTO/Domain/StatementSearchParam";
 import IInvoiceService from "../../Services/Interfaces/IInvoiceService";
 import AuthFactory from "../Factory/AuthFactory";
 import IInvoiceBusiness from "../Interfaces/IInvoiceBusiness";
@@ -34,6 +36,100 @@ const InvoiceBusiness: IInvoiceBusiness = {
         return {
           ...ret,
           dataResult: orderPaged,
+          sucesso: true
+        };
+      } else {
+        return {
+          ...ret,
+          sucesso: false,
+          mensagem: retServ.mensagem
+        };
+      }
+    } catch {
+      throw new Error("Failed to get user by email");
+    }
+  },
+  searchStatement: async (param: StatementSearchParam) => {
+    try {
+      let ret: BusinessResult<StatementListPagedInfo>;
+      let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+      if (!session) {
+        return {
+          ...ret,
+          sucesso: false,
+          mensagem: "Not logged"
+        };
+      }
+      let retServ = await _invoiceService.searchStatement(param, session.token);
+      if (retServ.sucesso) {
+        let orderPaged: StatementListPagedInfo;
+        orderPaged = {
+          ...orderPaged,
+          statements: retServ.statements,
+          pageNum: retServ.pageNum,
+          pageCount: retServ.pageCount
+        }
+        return {
+          ...ret,
+          dataResult: orderPaged,
+          sucesso: true
+        };
+      } else {
+        return {
+          ...ret,
+          sucesso: false,
+          mensagem: retServ.mensagem
+        };
+      }
+    } catch {
+      throw new Error("Failed to get user by email");
+    }
+  },
+  getBalance: async (networkId?: number) => {
+    try {
+      let ret: BusinessResult<number>;
+      let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+      if (!session) {
+        return {
+          ...ret,
+          sucesso: false,
+          mensagem: "Not logged"
+        };
+      }
+      let retServ = await _invoiceService.getBalance(session.token, networkId);
+      if (retServ.sucesso) {
+        return {
+          ...ret,
+          dataResult: retServ.value,
+          sucesso: true
+        };
+      } else {
+        return {
+          ...ret,
+          sucesso: false,
+          mensagem: retServ.mensagem
+        };
+      }
+    } catch {
+      throw new Error("Failed to get user by email");
+    }
+  },
+  getAvailableBalance: async () => {
+    try {
+      let ret: BusinessResult<number>;
+      let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+      if (!session) {
+        return {
+          ...ret,
+          sucesso: false,
+          mensagem: "Not logged"
+        };
+      }
+      let retServ = await _invoiceService.getAvailableBalance(session.token);
+      if (retServ.sucesso) {
+        return {
+          ...ret,
+          dataResult: retServ.value,
           sucesso: true
         };
       } else {

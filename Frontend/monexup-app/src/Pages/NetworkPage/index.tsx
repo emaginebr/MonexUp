@@ -45,11 +45,13 @@ export default function NetworkPage() {
                 throwError(ret.mensagemErro);
             }
         });
-        networkContext.getUserNetworkBySlug(networkSlug).then((retUserNetwork) => {
-            if (!retUserNetwork.sucesso) {
-                throwError(retUserNetwork.mensagemErro);
-            }
-        });
+        if (authContext.sessionInfo) {
+            networkContext.getUserNetworkBySlug(networkSlug).then((retUserNetwork) => {
+                if (!retUserNetwork.sucesso) {
+                    throwError(retUserNetwork.mensagemErro);
+                }
+            });
+        }
     }, []);
 
     return (

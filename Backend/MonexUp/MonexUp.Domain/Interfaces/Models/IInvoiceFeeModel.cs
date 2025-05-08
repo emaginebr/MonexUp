@@ -18,6 +18,9 @@ namespace MonexUp.Domain.Interfaces.Models
 
         IInvoiceFeeModel Insert(IInvoiceFeeDomainFactory factory);
         void DeleteByInvoice(long invoiceId);
-        List<IInvoiceFeeModel> ListByInvoice(long invoiceId, IInvoiceFeeDomainFactory factory);
+        IList<IInvoiceFeeModel> ListByInvoice(long invoiceId, IInvoiceFeeDomainFactory factory);
+        IList<IInvoiceFeeModel> Search(long? networkId, long? userId, DateTime? ini, DateTime? end, int pageNum, out int pageCount, IInvoiceFeeDomainFactory factory);
+        double GetBalance(long? networkId, long? userId);
+        double GetAvailableBalance(long userId);
     }
 }

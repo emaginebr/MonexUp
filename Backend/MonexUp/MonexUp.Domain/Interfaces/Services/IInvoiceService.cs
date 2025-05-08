@@ -18,5 +18,8 @@ namespace MonexUp.Domain.Interfaces.Services
         void ClearFees(IInvoiceModel invoice);
         InvoiceInfo GetInvoiceInfo(IInvoiceModel invoice);
         InvoiceListPagedResult Search(long networkId, long? userId, long? sellerId, int pageNum);
+        StatementListPagedResult SearchStatement(StatementSearchParam param);
+        double GetBalance(long? networkId, long? userId);
+        double GetAvailableBalance(long userId);
     }
 }

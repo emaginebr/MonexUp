@@ -75,7 +75,7 @@ export default function InvoiceSearchPage() {
     };
 
     const searchInvoices = (pageNum: number) => {
-        switch (networkContext.userNetwork.role) {
+        switch (networkContext.currentRole) {
             case UserRoleEnum.NetworkManager:
                 invoiceContext.search(
                     networkContext.userNetwork.networkId, 

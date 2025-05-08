@@ -33,14 +33,29 @@ namespace MonexUp.Domain.Impl.Models
             _repositoryFee.DeleteByInvoice(invoiceId);
         }
 
+        public double GetAvailableBalance(long userId)
+        {
+            return _repositoryFee.GetAvailableBalance(userId);
+        }
+
+        public double GetBalance(long? networkId, long? userId)
+        {
+            return _repositoryFee.GetBalance(networkId, userId);
+        }
+
         public IInvoiceFeeModel Insert(IInvoiceFeeDomainFactory factory)
         {
             return _repositoryFee.Insert(this, factory);
         }
 
-        public List<IInvoiceFeeModel> ListByInvoice(long invoiceId, IInvoiceFeeDomainFactory factory)
+        public IList<IInvoiceFeeModel> ListByInvoice(long invoiceId, IInvoiceFeeDomainFactory factory)
         {
             return _repositoryFee.ListByInvoice(invoiceId, factory).ToList();
+        }
+
+        public IList<IInvoiceFeeModel> Search(long? networkId, long? userId, DateTime? ini, DateTime? end, int pageNum, out int pageCount, IInvoiceFeeDomainFactory factory)
+        {
+            return _repositoryFee.Search(networkId, userId, ini, end, pageNum, out pageCount, factory).ToList();
         }
     }
 }

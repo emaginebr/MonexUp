@@ -17,6 +17,8 @@ import ProductContext from "../../Contexts/Product/ProductContext";
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 import MessageToast from "../../Components/MessageToast";
 import { ProductStatusEnum } from "../../DTO/Enum/ProductStatusEnum";
+import { UserRoleEnum } from "../../DTO/Enum/UserRoleEnum";
+import ProductInfo from "../../DTO/Domain/ProductInfo";
 
 export default function ProductSearchPage() {
 
@@ -158,7 +160,9 @@ export default function ProductSearchPage() {
                                     <th>Frequency</th>
                                     <th style={{ textAlign: "right" }}>Price</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
+                                    {networkContext.currentRole >= UserRoleEnum.NetworkManager &&
+                                        <th>Actions</th>
+                                    }
                                 </tr>
                             </thead>
                             <tbody>
@@ -174,13 +178,20 @@ export default function ProductSearchPage() {
                                         </td>
                                     </tr>
                                 }
-                                {!productContext.loadingSearch && productContext.searchResult?.products.map((product) => {
+                                {!productContext.loadingSearch && productContext.searchResult?.products.map((product: ProductInfo) => {
                                     return (
                                         <tr>
-                                            <td><Link to={"/admin/products/" + product.productId}>{product.name}</Link></td>
+                                            <td>
+                                                {networkContext.currentRole >= UserRoleEnum.NetworkManager ?
+                                                    <Link to={"/admin/products/" + product.productId}>{product.name}</Link>
+                                                    :
+                                                    product.name
+                                                }
+                                            </td>
                                             <td>{showFrequency(product.frequency)}</td>
                                             <td style={{ textAlign: "right" }}>R$ {product.price}</td>
                                             <td>{showStatus(product.status)}</td>
+                                            {networkContext.currentRole >= UserRoleEnum.NetworkManager &&
                                             <td>
                                                 <Link to={"/admin/products/" + product.productId}>
                                                     <FontAwesomeIcon icon={faEdit} fixedWidth />
@@ -189,6 +200,7 @@ export default function ProductSearchPage() {
                                                     <FontAwesomeIcon icon={faTrash} fixedWidth />
                                                 </Link>
                                             </td>
+                                }
                                         </tr>
                                     );
                                 })}

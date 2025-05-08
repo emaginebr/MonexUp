@@ -1,6 +1,52 @@
 [
   {
     "ContainingType": "MonexUp.API.Controllers.InvoiceController",
+    "Method": "GetAvailableBalance",
+    "RelativePath": "api/Invoice/getAvailableBalance",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "MonexUp.DTO.Domain.NumberResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MonexUp.API.Controllers.InvoiceController",
+    "Method": "GetBalance",
+    "RelativePath": "api/Invoice/getBalance",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "networkId",
+        "Type": "System.Int64",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MonexUp.DTO.Domain.NumberResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MonexUp.API.Controllers.InvoiceController",
     "Method": "Search",
     "RelativePath": "api/Invoice/search",
     "HttpMethod": "POST",
@@ -16,6 +62,32 @@
     "ReturnTypes": [
       {
         "Type": "MonexUp.DTO.Invoice.InvoiceListPagedResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MonexUp.API.Controllers.InvoiceController",
+    "Method": "searchStatement",
+    "RelativePath": "api/Invoice/searchStatement",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "param",
+        "Type": "MonexUp.DTO.Invoice.StatementSearchParam",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MonexUp.DTO.Invoice.StatementListPagedResult",
         "MediaTypes": [
           "text/plain",
           "application/json",

@@ -14,6 +14,8 @@ import MessageToast from './MessageToast';
 import { MessageToastEnum } from '../DTO/Enum/MessageToastEnum';
 import { UserRoleEnum } from '../DTO/Enum/UserRoleEnum';
 import NetworkContext from '../Contexts/Network/NetworkContext';
+import InvoiceContext from '../Contexts/Invoice/InvoiceContext';
+import StatementSearchParam from '../DTO/Domain/StatementSearchParam';
 
 
 export default function Menu() {
@@ -72,16 +74,17 @@ export default function Menu() {
 
   const authContext = useContext(AuthContext);
   const networkContext = useContext(NetworkContext);
+  const invoiceContext = useContext(InvoiceContext);
 
   useEffect(() => {
     authContext.loadUserSession();
-    //if (authContext.sessionInfo?.userId > 0) {
-    networkContext.listByUser().then((ret) => {
-      if (!ret.sucesso) {
-        throwError(ret.mensagemErro);
-      }
-    });
-    //}
+    if (authContext.sessionInfo) {
+      networkContext.listByUser().then((ret) => {
+        if (!ret.sucesso) {
+          throwError(ret.mensagemErro);
+        }
+      });
+    }
   }, []);
   return (
     <>
@@ -187,16 +190,50 @@ export default function Menu() {
                       }}>{showRoleText(UserRoleEnum.User)}</NavDropdown.Item>
                     }
                     {networkContext.userNetwork?.role >= UserRoleEnum.Seller &&
-                      <NavDropdown.Item onClick={(e) => {
+                      <NavDropdown.Item onClick={async (e) => {
                         e.preventDefault();
                         networkContext.setCurrentRole(UserRoleEnum.Seller);
+                        var retBal = await invoiceContext.getBalance();
+                        if (!retBal.sucesso) {
+                          throwError(retBal.mensagemErro);
+                        }
+                        var retABal = await invoiceContext.getAvailableBalance();
+                        if (!retABal.sucesso) {
+                          throwError(retBal.mensagemErro);
+                        }
+                        let param: StatementSearchParam;
+                        param = {
+                          ...param,
+                          userId: networkContext.userNetwork.userId,
+                          pageNum: 1
+                        };
+                        var ret = await invoiceContext.searchStatement(param);
+                        if (!ret.sucesso) {
+                          throwError(ret.mensagemErro);
+                        }
                         navigate("/admin/dashboard");
                       }}>{showRoleText(UserRoleEnum.Seller)}</NavDropdown.Item>
                     }
                     {networkContext.userNetwork?.role >= UserRoleEnum.NetworkManager &&
-                      <NavDropdown.Item onClick={(e) => {
+                      <NavDropdown.Item onClick={async (e) => {
                         e.preventDefault();
                         networkContext.setCurrentRole(UserRoleEnum.NetworkManager);
+                        var retBal = await invoiceContext.getBalance(networkContext.userNetwork.networkId);
+                        if (!retBal.sucesso) {
+                          throwError(retBal.mensagemErro);
+                        }
+
+                        let param: StatementSearchParam;
+                        param = {
+                          ...param,
+                          networkId: networkContext.userNetwork.networkId,
+                          pageNum: 1
+                        };
+                        var ret = await invoiceContext.searchStatement(param);
+                        if (!ret.sucesso) {
+                          throwError(ret.mensagemErro);
+                        }
+
                         navigate("/admin/dashboard");
                       }}>{showRoleText(UserRoleEnum.NetworkManager)}</NavDropdown.Item>
                     }

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MonexUp.DTO")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d67e6008fec06682835ae2c7eaef772090be08c6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5cbc94cd0cde85e18698b08ad3a314bb0ed70016")]
 [assembly: System.Reflection.AssemblyProductAttribute("MonexUp.DTO")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MonexUp.DTO")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
