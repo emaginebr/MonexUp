@@ -104,6 +104,27 @@ namespace MonexUp.API.Controllers
             }
         }
 
+        [HttpGet("getBySlug/{slug}")]
+        public ActionResult<UserResult> GetBySlug(string slug)
+        {
+            try
+            {
+                var user = _userService.GetBySlug(slug);
+                if (user == null)
+                {
+                    return new UserResult() { User = null, Sucesso = false, Mensagem = "User with email not found" };
+                }
+                return new UserResult()
+                {
+                    User = _userService.GetUserInfoFromModel(user)
+                };
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpPost("insert")]
         public ActionResult<UserResult> Insert([FromBody] UserInfo user)
         {

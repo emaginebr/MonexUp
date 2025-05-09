@@ -39,19 +39,20 @@ export default function NetworkPage() {
     };
 
     useEffect(() => {
-        authContext.loadUserSession();
         networkContext.getBySlug(networkSlug).then((ret) => {
             if (!ret.sucesso) {
                 throwError(ret.mensagemErro);
             }
         });
-        if (authContext.sessionInfo) {
-            networkContext.getUserNetworkBySlug(networkSlug).then((retUserNetwork) => {
-                if (!retUserNetwork.sucesso) {
-                    throwError(retUserNetwork.mensagemErro);
-                }
-            });
-        }
+        authContext.loadUserSession().then((authRet) => {
+            if (authRet.sucesso) {
+                networkContext.getUserNetworkBySlug(networkSlug).then((retUserNetwork) => {
+                    if (!retUserNetwork.sucesso) {
+                        throwError(retUserNetwork.mensagemErro);
+                    }
+                });
+            }
+        });
     }, []);
 
     return (
@@ -71,7 +72,6 @@ export default function NetworkPage() {
             <PlanPart />
             <hr />
             <TeamPart />
-            <NetworkFooter />
         </>
     );
 }

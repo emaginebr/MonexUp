@@ -148,8 +148,13 @@ export default function NetworkInsertPage() {
                                                     }
                                                     let ret = await authContext.loginWithEmail(email, password);
                                                     if (ret.sucesso) {
-                                                        //navigate("/");
-                                                        setStep(2);
+                                                        let netRet = await networkContext.listByUser();
+                                                        if (netRet.sucesso) {
+                                                            setStep(2);
+                                                        }
+                                                        else {
+                                                            throwError(netRet.mensagemErro);
+                                                        }
                                                     }
                                                     else {
                                                         throwError(ret.mensagemErro);
@@ -346,7 +351,7 @@ export default function NetworkInsertPage() {
                                                     setStep(4);
                                                     let retUsers = await networkContext.listByUser();
                                                     if (!retUsers.sucesso) {
-                                                        throwError(retUsers.mensagemErro);    
+                                                        throwError(retUsers.mensagemErro);
                                                     }
                                                     //alert(userContext.user?.id);
                                                 }
@@ -373,14 +378,14 @@ export default function NetworkInsertPage() {
                 <Container>
                     <Row>
                         <Col md="12">
-                        <Card>
-                        <Card.Body className="text-center">
-                            <h1>Sua rede foi criada com sucesso!</h1>
-                            <p>Parabéns! Você acaba de dar o primeiro passo para construir uma comunidade forte, colaborativa e pronta para alcançar resultados incríveis com o poder do marketing de rede.</p>
-                            <p>Agora você pode: Convidar novos representantes; Cadastrar produtos para doação e venda; Acompanhar o desempenho da sua rede; e Organizar eventos e campanhas;</p>
-                            <p className="text-center">Vamos começar?</p>
-                            <Button variant="primary" size="lg">Acessar minha rede <FontAwesomeIcon icon={faArrowRight} fixedWidth /></Button>
-                            </Card.Body>
+                            <Card>
+                                <Card.Body className="text-center">
+                                    <h1>Sua rede foi criada com sucesso!</h1>
+                                    <p>Parabéns! Você acaba de dar o primeiro passo para construir uma comunidade forte, colaborativa e pronta para alcançar resultados incríveis com o poder do marketing de rede.</p>
+                                    <p>Agora você pode: Convidar novos representantes; Cadastrar produtos para doação e venda; Acompanhar o desempenho da sua rede; e Organizar eventos e campanhas;</p>
+                                    <p className="text-center">Vamos começar?</p>
+                                    <Button variant="primary" size="lg">Acessar minha rede <FontAwesomeIcon icon={faArrowRight} fixedWidth /></Button>
+                                </Card.Body>
                             </Card>
                         </Col>
                     </Row>

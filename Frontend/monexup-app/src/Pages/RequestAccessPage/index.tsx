@@ -42,14 +42,16 @@ export default function RequestAccessPage() {
     };
 
     useEffect(() => {
-        authContext.loadUserSession();
+        //authContext.loadUserSession();
         networkContext.getBySlug(networkSlug).then((ret) => {
             if (ret.sucesso) {
-                networkContext.getUserNetwork(ret.network.networkId).then((retUserNetwork) => {
-                    if (!retUserNetwork.sucesso) {
-                        throwError(retUserNetwork.mensagemErro);
-                    }
-                });
+                if (authContext.sessionInfo) {
+                    networkContext.getUserNetwork(ret.network.networkId).then((retUserNetwork) => {
+                        if (!retUserNetwork.sucesso) {
+                            throwError(retUserNetwork.mensagemErro);
+                        }
+                    });
+                }
             }
             else {
                 throwError(ret.mensagemErro);

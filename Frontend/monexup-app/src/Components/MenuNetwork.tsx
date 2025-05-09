@@ -38,7 +38,15 @@ export default function MenuNetwork() {
   const networkContext = useContext(NetworkContext);
 
   useEffect(() => {
-    authContext.loadUserSession();
+    authContext.loadUserSession().then((authRet) => {
+      if (authRet.sucesso) {
+        networkContext.listByUser().then((ret) => {
+          if (!ret.sucesso) {
+            throwError(ret.mensagemErro);
+          }
+        });
+      }
+    });
   }, []);
   return (
     <>

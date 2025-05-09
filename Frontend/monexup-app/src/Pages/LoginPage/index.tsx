@@ -10,10 +10,12 @@ import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBitcoinSign, faClose, faEnvelope, faLock, faMailBulk, faSave, faSign, faSignIn, faSignInAlt, faTrash, faUser, faUserAlt } from '@fortawesome/free-solid-svg-icons';
 import Table from "react-bootstrap/esm/Table";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import UserContext from "../../Contexts/User/UserContext";
 import MessageToast from "../../Components/MessageToast";
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
+import { useLocation } from 'react-router-dom';
+import NetworkContext from "../../Contexts/Network/NetworkContext";
 
 export default function LoginPage() {
 
@@ -29,20 +31,31 @@ export default function LoginPage() {
     };
 
     const authContext = useContext(AuthContext);
+    const networkContext = useContext(NetworkContext);
 
     let navigate = useNavigate();
+    const [queryParams] = useSearchParams();
+
+    const getReturnUrl = () => {
+        //const location = useLocation();
+        console.log(JSON.stringify(queryParams));
+        if (queryParams.has("returnUrl")) {
+            return queryParams.get("returnUrl");
+        }
+        return "/";
+    };
 
     return (
         <>
               <MessageToast
-        dialog={MessageToastEnum.Error}
-        showMessage={showMessage}
-        messageText={messageText}
-        onClose={() => setShowMessage(false)}
-      ></MessageToast>
+                    dialog={MessageToastEnum.Error}
+                    showMessage={showMessage}
+                    messageText={messageText}
+                    onClose={() => setShowMessage(false)}
+                ></MessageToast>
         <Container>
             <Row>
-                <Col md="6" className='offset-md-3'>
+                <Col md="8" className='offset-md-2'>
                     <Card>
                         <Card.Header>
                             <h3 className="text-center">Login</h3>
@@ -80,13 +93,13 @@ export default function LoginPage() {
                                     </Col>
                                 </Form.Group>
                                 <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <Button variant="secondary" onClick={() => {
-                                        navigate("/recovery-password");
+                                    <Button variant="secondary" size="lg" onClick={() => {
+                                        navigate("/account/recovery-password");
                                     }}><FontAwesomeIcon icon={faEnvelope} fixedWidth /> Recovery Password?</Button>
-                                    <Button variant="danger" onClick={() => {
-                                        navigate("/new-account");
+                                    <Button variant="danger" size="lg" onClick={() => {
+                                        navigate("/account/new-account");
                                     }}><FontAwesomeIcon icon={faUserAlt} fixedWidth /> Create Account</Button>
-                                    <Button variant="success" disabled={authContext.loading} onClick={async (e) => {
+                                    <Button variant="success" size="lg" disabled={authContext.loading} onClick={async (e) => {
                                         e.preventDefault();
                                         if (!email) {
                                             throwError("Email is empty");
@@ -98,7 +111,13 @@ export default function LoginPage() {
                                         }
                                         let ret = await authContext.loginWithEmail(email, password);  
                                         if (ret.sucesso) {
-                                            navigate("/");
+                                            let netRet = await networkContext.listByUser();
+                                            if (netRet.sucesso) {
+                                                navigate(getReturnUrl());
+                                            }
+                                            else {
+                                                throwError(ret.mensagemErro);
+                                            }
                                         }  
                                         else {
                                             throwError(ret.mensagemErro);

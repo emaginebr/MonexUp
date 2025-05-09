@@ -90,11 +90,20 @@ export default function AuthProvider(props: any) {
       }
     },
     loadUserSession: async () => {
-      
-        let session = await AuthFactory.AuthBusiness.getSession();
-        if (session) {
-          authProviderValue.setSession(session);
-        }
+      let ret: Promise<ProviderResult>;
+      let session = await AuthFactory.AuthBusiness.getSession();
+      if (session) {
+        authProviderValue.setSession(session);
+        return {
+          ...ret,
+          sucesso: true
+        };
+      }
+      return {
+        ...ret,
+        sucesso: false,
+        mensagemErro: "Session not load"
+      };
     }
   };
 

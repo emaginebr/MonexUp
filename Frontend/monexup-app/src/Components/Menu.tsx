@@ -77,14 +77,15 @@ export default function Menu() {
   const invoiceContext = useContext(InvoiceContext);
 
   useEffect(() => {
-    authContext.loadUserSession();
-    if (authContext.sessionInfo) {
-      networkContext.listByUser().then((ret) => {
-        if (!ret.sucesso) {
-          throwError(ret.mensagemErro);
-        }
-      });
-    }
+    authContext.loadUserSession().then((authRet) => {
+      if (authRet.sucesso) {
+        networkContext.listByUser().then((ret) => {
+          if (!ret.sucesso) {
+            throwError(ret.mensagemErro);
+          }
+        });
+      }
+    });
   }, []);
   return (
     <>

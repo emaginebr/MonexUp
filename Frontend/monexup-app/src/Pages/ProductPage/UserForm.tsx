@@ -7,7 +7,7 @@ import Button from "react-bootstrap/esm/Button";
 import Card from 'react-bootstrap/Card';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faEnvelope, faLock, faUser, faUserAlt } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faEnvelope, faLock, faRightFromBracket, faUser, faUserAlt } from "@fortawesome/free-solid-svg-icons";
 import { useContext, useState } from "react";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import UserContext from "../../Contexts/User/UserContext";
@@ -38,70 +38,62 @@ export default function UserForm(param: IUserParam) {
                 </Card.Header>
                 <Card.Body>
                     <Form>
-                        <Form.Group as={Row} className="mb-3">
-                            <Form.Label column sm="2">Name:</Form.Label>
-                            <Col sm="10">
-                                <InputGroup>
-                                    <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
-                                    <Form.Control type="text"
-                                        placeholder="Your name"
-                                        value={userContext.user?.name}
-                                        onChange={(e) => {
-                                            userContext.setUser({
-                                                ...userContext.user,
-                                                name: e.target.value
-                                            });
-                                        }} />
-                                </InputGroup>
-                            </Col>
+                        <Form.Group className="mb-1">
+                            <Form.Label sm="2">Name:</Form.Label>
+                            <InputGroup>
+                                <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
+                                <Form.Control type="text"
+                                    placeholder="Your name"
+                                    value={userContext.user?.name}
+                                    onChange={(e) => {
+                                        userContext.setUser({
+                                            ...userContext.user,
+                                            name: e.target.value
+                                        });
+                                    }} />
+                            </InputGroup>
                         </Form.Group>
-                        <Form.Group as={Row} className="mb-3">
-                            <Form.Label column sm="2">Email:</Form.Label>
-                            <Col sm="10">
-                                <InputGroup>
-                                    <InputGroup.Text><FontAwesomeIcon icon={faEnvelope} fixedWidth /></InputGroup.Text>
-                                    <Form.Control type="text"
-                                        placeholder="Your email"
-                                        value={userContext.user?.email}
-                                        onChange={(e) => {
-                                            userContext.setUser({
-                                                ...userContext.user,
-                                                email: e.target.value
-                                            });
-                                        }} />
-                                </InputGroup>
-                            </Col>
+                        <Form.Group className="mb-1">
+                            <Form.Label sm="2">Email:</Form.Label>
+                            <InputGroup>
+                                <InputGroup.Text><FontAwesomeIcon icon={faEnvelope} fixedWidth /></InputGroup.Text>
+                                <Form.Control type="text"
+                                    placeholder="Your email"
+                                    value={userContext.user?.email}
+                                    onChange={(e) => {
+                                        userContext.setUser({
+                                            ...userContext.user,
+                                            email: e.target.value
+                                        });
+                                    }} />
+                            </InputGroup>
                         </Form.Group>
-                        <Form.Group as={Row} className="mb-3">
-                            <Form.Label column sm="2">Password:</Form.Label>
-                            <Col sm="10">
-                                <InputGroup>
-                                    <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
-                                    <Form.Control type="password"
-                                        placeholder="Your password"
-                                        value={userContext.user?.password}
-                                        onChange={(e) => {
-                                            userContext.setUser({
-                                                ...userContext.user,
-                                                password: e.target.value
-                                            });
-                                        }} />
-                                </InputGroup>
-                            </Col>
+                        <Form.Group className="mb-1">
+                            <Form.Label sm="2">Password:</Form.Label>
+                            <InputGroup>
+                                <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
+                                <Form.Control type="password"
+                                    placeholder="Your password"
+                                    value={userContext.user?.password}
+                                    onChange={(e) => {
+                                        userContext.setUser({
+                                            ...userContext.user,
+                                            password: e.target.value
+                                        });
+                                    }} />
+                            </InputGroup>
                         </Form.Group>
-                        <Form.Group as={Row} className="mb-3">
-                            <Form.Label column sm="2">Confirm:</Form.Label>
-                            <Col sm="10">
-                                <InputGroup>
-                                    <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
-                                    <Form.Control type="password"
-                                        placeholder="Confirm your password"
-                                        value={confirmPassword}
-                                        onChange={(e) => {
-                                            setConfirmPassword(e.target.value);
-                                        }} />
-                                </InputGroup>
-                            </Col>
+                        <Form.Group className="mb-3">
+                            <Form.Label sm="2">Confirm:</Form.Label>
+                            <InputGroup>
+                                <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
+                                <Form.Control type="password"
+                                    placeholder="Confirm your password"
+                                    value={confirmPassword}
+                                    onChange={(e) => {
+                                        setConfirmPassword(e.target.value);
+                                    }} />
+                            </InputGroup>
                         </Form.Group>
                         <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                             <Button variant="danger" onClick={() => {
@@ -111,7 +103,7 @@ export default function UserForm(param: IUserParam) {
                                         returnUrl: param.url
                                     }).toString()
                                 });
-                            }}><FontAwesomeIcon icon={faUserAlt} fixedWidth />SignIn</Button>
+                            }}><FontAwesomeIcon icon={faRightFromBracket} fixedWidth /> Sign In</Button>
                             <Button variant="success" onClick={async (e) => {
                                 if (!userContext.user?.name) {
                                     param.onThrowError("Name is empty");

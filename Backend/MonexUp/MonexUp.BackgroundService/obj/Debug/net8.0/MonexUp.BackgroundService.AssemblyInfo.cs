@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MonexUp.BackgroundService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d67e6008fec06682835ae2c7eaef772090be08c6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+69271f2c598df440fac7fa27b2c46c7192e1ff3d")]
 [assembly: System.Reflection.AssemblyProductAttribute("MonexUp.BackgroundService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MonexUp.BackgroundService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

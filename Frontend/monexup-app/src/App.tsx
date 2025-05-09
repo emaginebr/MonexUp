@@ -33,6 +33,7 @@ import SellerAddPage from './Pages/SellerAddPage';
 import SellerPage from './Pages/SellerPage';
 import InvoiceProvider from './Contexts/Invoice/InvoiceProvider';
 import InvoiceSearchPage from './Pages/InvoiceSearchPage';
+import NetworkFooter from './Pages/NetworkPage/NetworkFooter';
 
 function Layout() {
   return (
@@ -48,6 +49,7 @@ function LayoutNetwork() {
     <div>
       <MenuNetwork />
       <Outlet />
+      <NetworkFooter />
     </div>
   );
 }
@@ -101,6 +103,15 @@ function App() {
             </Route>
           </Route>
         </Route>
+        <Route path="@" element={<LayoutNetwork />}>
+          <Route path=":sellerSlug">
+            <Route index element={<SellerPage />} />
+            <Route path="new-seller" element={<SellerAddPage />} />
+            <Route path="request-access" element={<RequestAccessPage />} />
+            <Route path=":productSlug" element={<ProductPage />} />
+          </Route>
+          <Route index element={<Error404Page />} />
+        </Route>
         <Route path=":networkSlug" element={<LayoutNetwork />}>
           <Route index element={<NetworkPage />} />
           <Route path="new-seller" element={<SellerAddPage />} />
@@ -121,7 +132,7 @@ function App() {
               <Route path="request-access" element={<RequestAccessPage />} />
               <Route path=":productSlug" element={<ProductPage />} />
             </Route>
-            <Route index element={<LoginPage />} />
+            <Route index element={<Error404Page />} />
           </Route>
         </Route>
         <Route path="*" element={<Error404Page />} />

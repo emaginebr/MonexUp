@@ -44,7 +44,7 @@ export default function ProductPage() {
     };
 
     useEffect(() => {
-        authContext.loadUserSession();
+        //authContext.loadUserSession();
         networkContext.getBySlug(networkSlug).then((ret) => {
             if (!ret.sucesso) {
                 throwError(ret.mensagemErro);
@@ -112,7 +112,6 @@ export default function ProductPage() {
                     </Col>
                 </Row>
             </Container>
-            <NetworkFooter />
         </>
     );
 }

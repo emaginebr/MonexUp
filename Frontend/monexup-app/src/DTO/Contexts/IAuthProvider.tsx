@@ -10,7 +10,7 @@ interface IAuthProvider {
     setSession: (session: AuthSession) => void;
     loginWithEmail: (email: string, password: string) => Promise<ProviderResult>;
     logout: () => ProviderResult;
-    loadUserSession: () => void;
+    loadUserSession: () => Promise<ProviderResult>;
     //updateUser: (name: string, email: string) => Promise<ProviderResult>;
 }
 

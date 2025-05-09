@@ -437,7 +437,6 @@ export default function SellerAddPage() {
                     </Col>
                 </Row>
             </Container>
-            {networkSlug ? <NetworkFooter /> : <Footer />}
         </>
     );
 }

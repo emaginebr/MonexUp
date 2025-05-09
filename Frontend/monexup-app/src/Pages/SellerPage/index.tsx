@@ -15,12 +15,13 @@ import NetworkFooter from "../NetworkPage/NetworkFooter";
 
 export default function SellerPage() {
 
-    let navigate = useNavigate();
+    //let navigate = useNavigate();
 
     let { networkSlug, sellerSlug } = useParams();
 
     const authContext = useContext(AuthContext);
     const networkContext = useContext(NetworkContext);
+    const userContext = useContext(UserContext);
 
     const [dialog, setDialog] = useState<MessageToastEnum>(MessageToastEnum.Error);
     const [showMessage, setShowMessage] = useState<boolean>(false);
@@ -38,12 +39,24 @@ export default function SellerPage() {
     };
 
     useEffect(() => {
-        authContext.loadUserSession();
-        networkContext.getSellerBySlug(networkSlug, sellerSlug).then((ret) => {
-            if (!ret.sucesso) {
-                throwError(ret.mensagemErro);
+        /*
+        authContext.loadUserSession().then((authRet) => {
+            if (authRet.sucesso && networkSlug) {
+                networkContext.getSellerBySlug(networkSlug, sellerSlug).then((ret) => {
+                    if (!ret.sucesso) {
+                        throwError(ret.mensagemErro);
+                    }
+                });
             }
         });
+        */
+        if (networkSlug) {
+            networkContext.getSellerBySlug(networkSlug, sellerSlug).then((ret) => {
+                if (!ret.sucesso) {
+                    throwError(ret.mensagemErro);
+                }
+            });
+        }
     }, []);
 
     return (
@@ -54,10 +67,13 @@ export default function SellerPage() {
                 messageText={messageText}
                 onClose={() => setShowMessage(false)}
             ></MessageToast>
-            <ProfilePart />
+            <ProfilePart
+                loading={networkContext.loadingSeller}
+                user={networkContext.seller?.user}
+                userNetwork={networkContext.seller}
+            />
             <hr />
             <PlanPart />
-            <NetworkFooter />
         </>
     );
 }

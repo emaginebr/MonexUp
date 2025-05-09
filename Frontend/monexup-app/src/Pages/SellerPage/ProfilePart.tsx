@@ -17,14 +17,23 @@ import NetworkContext from "../../Contexts/Network/NetworkContext";
 import ProductContext from "../../Contexts/Product/ProductContext";
 import { showFrequencyMax, showFrequencyMin, showProfile } from "../../Components/Functions";
 import Skeleton from "react-loading-skeleton";
+import UserInfo from "../../DTO/Domain/UserInfo";
+import UserProfileInfo from "../../DTO/Domain/UserProfileInfo";
+import UserNetworkInfo from "../../DTO/Domain/UserNetworkInfo";
 
-export default function ProfilePart() {
+interface IProfilePartParam {
+    loading: boolean;
+    user?: UserInfo;
+    userNetwork?: UserNetworkInfo;
+};
 
-    let navigate = useNavigate();
+export default function ProfilePart(param: IProfilePartParam) {
 
-    const networkContext = useContext(NetworkContext);
+    //let navigate = useNavigate();
 
-    let { networkSlug } = useParams();
+    //const networkContext = useContext(NetworkContext);
+
+    //let { networkSlug } = useParams();
 
     return (
         <>
@@ -32,12 +41,12 @@ export default function ProfilePart() {
                 <div style={{ position: "absolute", top: "0px", width: "100%" }}>
                     <div className="container text-end">
                         <h1 className="mt-4 text-white" style={{ textShadow: "2px 2px 5px rgba(0, 0, 0, 0.7)" }}>
-                            {networkContext.loadingSeller ?
+                            {param.loading ?
                                 <Skeleton width={400} />
                                 :
-                                networkContext.seller?.user.phones &&
+                                param.user?.phones &&
                                 <>
-                                    <FontAwesomeIcon icon={faWhatsapp} /> &nbsp;{networkContext.seller?.user.phones[0].phone}
+                                    <FontAwesomeIcon icon={faWhatsapp} /> &nbsp;{param.user?.phones[0].phone}
                                 </>
                             }
                         </h1>
@@ -51,19 +60,21 @@ export default function ProfilePart() {
                         <div className="col col-md-8">
                             <FontAwesomeIcon icon={faUserCircle} size="10x" style={{ float: "left", paddingRight: "1rem", textShadow: "2px 2px 5px rgba(0, 0, 0, 0.7)" }} />
                             <h1 className="display-4 mt-4 text-white" style={{ textShadow: "2px 2px 5px rgba(0, 0, 0, 0.7)" }}>{
-                                networkContext.loadingSeller ? 
-                                <Skeleton width={400} /> 
-                                :
-                                networkContext.seller?.user?.name
+                                param.loading ?
+                                    <Skeleton width={400} />
+                                    :
+                                    param.user?.name
                             }</h1>
-                            <h3 className="mt-2">{
-                                networkContext.loadingSeller ? 
-                                <Skeleton width={400} />
-                                :
-                                <>
-                                &nbsp;{showProfile(networkContext.seller)}
-                                </>
-                            }</h3>
+                            {param.userNetwork &&
+                                <h3 className="mt-2">{
+                                    param.loading ?
+                                        <Skeleton width={400} />
+                                        :
+                                        <>
+                                            &nbsp;{showProfile(param.userNetwork)}
+                                        </>
+                                }</h3>
+                            }
                         </div>
                     </div>
                 </div>
