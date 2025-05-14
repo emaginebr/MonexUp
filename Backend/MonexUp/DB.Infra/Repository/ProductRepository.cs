@@ -18,6 +18,7 @@ namespace DB.Infra.Repository
         private MonexUpContext _ccsContext;
 
         private const int PAGE_SIZE = 15;
+        private const int STATUS_ACTIVE = 1;
 
         public ProductRepository(MonexUpContext ccsContext)
         {
@@ -31,6 +32,7 @@ namespace DB.Infra.Repository
             md.NetworkId = row.NetworkId;
             md.Name = row.Name;
             md.Slug = row.Slug;
+            md.Image = row.Image;
             md.Description = row.Description;
             md.Price = row.Price;
             md.Frequency = row.Frequency;
@@ -47,6 +49,7 @@ namespace DB.Infra.Repository
             row.NetworkId = md.NetworkId;
             row.Name = md.Name;
             row.Slug = md.Slug;
+            row.Image = md.Image;
             row.Description = md.Description;
             row.Price = md.Price;
             row.Frequency = md.Frequency;
@@ -91,17 +94,27 @@ namespace DB.Infra.Repository
             return DbToModel(factory, row);
         }
 
-        public IEnumerable<IProductModel> Search(long networkId, string keyword, int pageNum, out int pageCount, IProductDomainFactory factory)
+        public IEnumerable<IProductModel> Search(long? networkId, long? userId, string keyword, bool active, int pageNum, out int pageCount, IProductDomainFactory factory)
         {
-            var q = _ccsContext.Products
-                .Where(x => x.NetworkId == networkId);
+            var q = _ccsContext.Products.AsQueryable();
+            if (active) {
+                q = q.Where(x => x.Status == STATUS_ACTIVE);
+            }
+            if (userId.HasValue && userId.Value > 0)
+            {
+                q = q.Where(x => x.Network.UserNetworks.Where(y => y.UserId == userId.Value).Any());
+            }
+            if (networkId.HasValue && networkId.Value > 0)
+            {
+                q = q.Where(x => x.NetworkId == networkId);
+            }
             if (!string.IsNullOrEmpty(keyword))
             {
                 q = q.Where(x => x.Name.Contains(keyword, StringComparison.CurrentCultureIgnoreCase));
             }
             var pages = (double)q.Count() / (double)PAGE_SIZE;
             pageCount = Convert.ToInt32(Math.Ceiling(pages));
-            var rows = q.Skip((pageNum - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
+            var rows = q.OrderBy(x => x.Name).Skip((pageNum - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
             return rows.Select(x => DbToModel(factory, x));
         }
 

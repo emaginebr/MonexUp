@@ -8,7 +8,7 @@ namespace Core.Domain.Repository
 {
     public interface IProductRepository<TModel, TFactory>
     {
-        IEnumerable<TModel> Search(long networkId, string keyword, int pageNum, out int pageCount, TFactory factory);
+        IEnumerable<TModel> Search(long? networkId, long? userId, string keyword, bool active, int pageNum, out int pageCount, TFactory factory);
         IEnumerable<TModel> ListByNetwork(long networkId, TFactory factory);
         TModel GetById(long id, TFactory factory);
         TModel GetBySlug(string slug, TFactory factory);

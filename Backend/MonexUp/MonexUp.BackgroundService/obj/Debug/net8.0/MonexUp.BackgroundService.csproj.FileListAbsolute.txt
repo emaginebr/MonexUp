@@ -79,3 +79,5 @@ C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.BackgroundService\obj\Debug\net8
 C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.BackgroundService\obj\Debug\net8.0\MonexUp..E2629B58.Up2Date
 C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.BackgroundService\obj\Debug\net8.0\MonexUp.BackgroundService.genruntimeconfig.cache
 C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.BackgroundService\obj\Debug\net8.0\ref\MonexUp.BackgroundService.dll
+C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.BackgroundService\bin\Debug\net8.0\AWSSDK.Core.dll
+C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.BackgroundService\bin\Debug\net8.0\AWSSDK.S3.dll

@@ -35,6 +35,8 @@ public partial class User
 
     public string StripeId { get; set; }
 
+    public string Image { get; set; }
+
     public virtual ICollection<InvoiceFee> InvoiceFees { get; set; } = new List<InvoiceFee>();
 
     public virtual ICollection<Invoice> InvoiceSellers { get; set; } = new List<Invoice>();

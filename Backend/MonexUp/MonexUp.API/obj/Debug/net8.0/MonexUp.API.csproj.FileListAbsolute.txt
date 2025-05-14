@@ -62,7 +62,6 @@ C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\obj\Debug\net8.0\MonexUp.API
 C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\obj\Debug\net8.0\MonexUp.API.AssemblyInfoInputs.cache
 C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\obj\Debug\net8.0\MonexUp.API.AssemblyInfo.cs
 C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\obj\Debug\net8.0\MonexUp.API.csproj.CoreCompileInputs.cache
-C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\obj\Debug\net8.0\MonexUp.API.MvcApplicationPartsAssemblyInfo.cs
 C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\obj\Debug\net8.0\MonexUp.API.MvcApplicationPartsAssemblyInfo.cache
 C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\obj\Debug\net8.0\MonexUp.API.sourcelink.json
 C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\obj\Debug\net8.0\staticwebassets.build.json
@@ -79,3 +78,6 @@ C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\obj\Debug\net8.0\refint\Mone
 C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\obj\Debug\net8.0\MonexUp.API.pdb
 C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\obj\Debug\net8.0\MonexUp.API.genruntimeconfig.cache
 C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\obj\Debug\net8.0\ref\MonexUp.API.dll
+C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\obj\Debug\net8.0\MonexUp.API.MvcApplicationPartsAssemblyInfo.cs
+C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\bin\Debug\net8.0\AWSSDK.Core.dll
+C:\Git\Projetos\MonexUp\Backend\MonexUp\MonexUp.API\bin\Debug\net8.0\AWSSDK.S3.dll

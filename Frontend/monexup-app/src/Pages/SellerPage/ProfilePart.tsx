@@ -15,7 +15,7 @@ import { useContext, useEffect } from "react";
 import AuthContext from "../../Contexts/Auth/AuthContext";
 import NetworkContext from "../../Contexts/Network/NetworkContext";
 import ProductContext from "../../Contexts/Product/ProductContext";
-import { showFrequencyMax, showFrequencyMin, showProfile } from "../../Components/Functions";
+import { formatPhoneNumber, showFrequencyMax, showFrequencyMin, showProfile } from "../../Components/Functions";
 import Skeleton from "react-loading-skeleton";
 import UserInfo from "../../DTO/Domain/UserInfo";
 import UserProfileInfo from "../../DTO/Domain/UserProfileInfo";
@@ -46,7 +46,7 @@ export default function ProfilePart(param: IProfilePartParam) {
                                 :
                                 param.user?.phones &&
                                 <>
-                                    <FontAwesomeIcon icon={faWhatsapp} /> &nbsp;{param.user?.phones[0].phone}
+                                    <FontAwesomeIcon icon={faWhatsapp} /> &nbsp;{formatPhoneNumber(param.user?.phones[0].phone)}
                                 </>
                             }
                         </h1>
@@ -58,8 +58,43 @@ export default function ProfilePart(param: IProfilePartParam) {
                 <div className="container position-relative" style={{ marginTop: "-15rem", zIndex: 500 }}>
                     <div className="row">
                         <div className="col col-md-8">
-                            <FontAwesomeIcon icon={faUserCircle} size="10x" style={{ float: "left", paddingRight: "1rem", textShadow: "2px 2px 5px rgba(0, 0, 0, 0.7)" }} />
-                            <h1 className="display-4 mt-4 text-white" style={{ textShadow: "2px 2px 5px rgba(0, 0, 0, 0.7)" }}>{
+                            {param.loading ?
+                            <Skeleton circle={true} style={{
+                                float: "left", 
+                                marginRight: "1rem", 
+                                borderWidth: "5px", 
+                                borderColor: "#fff", 
+                                borderStyle: "solid", 
+                                width: "10rem", 
+                                height: "10rem" 
+                            }} />
+                            :
+                            <>
+                            {param.user?.imageUrl ?
+                            <img src={param.user.imageUrl}  className="rounded-circle mb-3" style={{ 
+                                float: "left", 
+                                marginRight: "1rem", 
+                                borderWidth: "5px", 
+                                borderColor: "#fff", 
+                                borderStyle: "solid", 
+                                width: "10rem", 
+                                height: "10rem" 
+                            }} />
+                            :
+                            <FontAwesomeIcon icon={faUserCircle} size="10x" style={{ 
+                                float: "left", 
+                                marginRight: "1rem",  
+                                width: "10rem", 
+                                height: "10rem",
+                                textShadow: "2px 2px 5px rgba(0, 0, 0, 0.7)"
+                            }} />
+                            }
+                            </>
+                            }
+                            <h1 className="display-4 text-white" style={{ 
+                                marginTop: "2.4rem",
+                                textShadow: "2px 2px 5px rgba(0, 0, 0, 0.7)" 
+                            }}>{
                                 param.loading ?
                                     <Skeleton width={400} />
                                     :

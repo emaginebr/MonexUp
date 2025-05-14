@@ -7,13 +7,9 @@ using System.Threading.Tasks;
 
 namespace MonexUp.DTO.Product
 {
-    public class ProductSearchParam
+    public class ProductSearchParam: ProductSearchInternalParam
     {
-        [JsonPropertyName("networkId")]
-        public long NetworkId { get; set; }
-        [JsonPropertyName("keyword")]
-        public string Keyword { get; set; }
-        [JsonPropertyName("pageNum")]
-        public int PageNum { get; set; }
+        [JsonPropertyName("userSlug")]
+        public string UserSlug { get; set; }
     }
 }

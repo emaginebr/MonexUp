@@ -55,7 +55,7 @@ export default function TeamPart() {
                                 return (
                                     <Col md={4} className="text-center py-4">
                                         <div className="lc-block">
-                                            <Skeleton circle={true} style={{ width: "10vh", height: "10vh" }} />
+                                            <Skeleton circle={true} className="mb-3" style={{ width: "10rem", height: "10rem" }} />
                                             <h5><Skeleton /></h5>
                                             <small className="text-secondary"><Skeleton /></small>
                                         </div>
@@ -78,9 +78,15 @@ export default function TeamPart() {
                                 return (
                                     <Col md={4} className="text-center py-4">
                                         <div className="lc-block">
-                                            <Link to={"/" + networkSlug + "/@/" + user.user?.slug}>
-                                                <FontAwesomeIcon icon={faUserCircle} size="5x" className="rounded-circle mb-3" style={{ height: "10vh" }} />
-                                            </Link>
+                                            {user.user?.imageUrl ?
+                                                <Link to={"/" + networkSlug + "/@/" + user.user?.slug}>
+                                                    <img src={user.user?.imageUrl}  className="rounded-circle mb-3" style={{ width: "10rem", height: "10rem" }} />
+                                                </Link>
+                                                :
+                                                <Link to={"/" + networkSlug + "/@/" + user.user?.slug}>
+                                                    <FontAwesomeIcon icon={faUserCircle} size="8x" className="rounded-circle mb-3" style={{ height: "10rem" }} />
+                                                </Link>
+                                            }
                                             <h5>
                                                 <Link to={"/" + networkSlug + "/@/" + user.user?.slug}>
                                                     <strong>{user.user?.name}</strong>

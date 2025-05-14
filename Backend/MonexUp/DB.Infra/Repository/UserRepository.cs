@@ -26,6 +26,7 @@ namespace DB.Infra.Repository
             md.Hash = u.Hash;
             md.Name = u.Name;
             md.Slug = u.Slug;
+            md.Image = u.Image;
             md.Email = u.Email;
             md.IsAdmin = u.IsAdmin;
             md.StripeId = u.StripeId;
@@ -40,6 +41,7 @@ namespace DB.Infra.Repository
             row.Hash = md.Hash;
             row.Name = md.Name;
             row.Slug = md.Slug;
+            row.Image = md.Image;
             row.Email = md.Email;
             row.IsAdmin = md.IsAdmin;
             row.StripeId = md.StripeId;
@@ -78,9 +80,9 @@ namespace DB.Infra.Repository
             return model;
         }
 
-        public IEnumerable<IUserModel> ListUsers(IUserDomainFactory factory)
+        public IEnumerable<IUserModel> ListUsers(int take, IUserDomainFactory factory)
         {
-            var rows = _ccsContext.Users.ToList();
+            var rows = _ccsContext.Users.OrderBy(x => x.Name).Take(take).ToList();
             return rows.Select(x => DbToModel(factory, x));
         }
 

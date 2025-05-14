@@ -34,6 +34,8 @@ import SellerPage from './Pages/SellerPage';
 import InvoiceProvider from './Contexts/Invoice/InvoiceProvider';
 import InvoiceSearchPage from './Pages/InvoiceSearchPage';
 import NetworkFooter from './Pages/NetworkPage/NetworkFooter';
+import MenuUser from './Components/MenuUser';
+import ImageProvider from './Contexts/Image/ImageProvider';
 
 function Layout() {
   return (
@@ -54,9 +56,20 @@ function LayoutNetwork() {
   );
 }
 
+function LayoutUser() {
+  return (
+    <div>
+      <MenuUser />
+      <Outlet />
+      <NetworkFooter />
+    </div>
+  );
+}
+
 function App() {
   const ContextContainer = ContextBuilder([
-    AuthProvider, UserProvider, NetworkProvider, ProfileProvider, ProductProvider, OrderProvider, InvoiceProvider
+    AuthProvider, UserProvider, NetworkProvider, ProfileProvider, ProductProvider, 
+    OrderProvider, InvoiceProvider, ImageProvider
   ]);
 
   return (
@@ -103,11 +116,17 @@ function App() {
             </Route>
           </Route>
         </Route>
-        <Route path="@" element={<LayoutNetwork />}>
+        <Route path="@" element={<LayoutUser />}>
           <Route path=":sellerSlug">
             <Route index element={<SellerPage />} />
-            <Route path="new-seller" element={<SellerAddPage />} />
-            <Route path="request-access" element={<RequestAccessPage />} />
+            <Route path="account">
+              <Route index element={<LoginPage />} />
+              <Route path="login" element={<LoginPage />} />
+              <Route path="edit-account" element={<UserPage />} />
+              <Route path="new-account" element={<UserPage />} />
+              <Route path="recovery-password" element={<RecoveryPage />} />
+              <Route path="change-password" element={<PasswordPage />} />
+            </Route>
             <Route path=":productSlug" element={<ProductPage />} />
           </Route>
           <Route index element={<Error404Page />} />

@@ -10,6 +10,7 @@ namespace MonexUp.Domain.Interfaces.Models
         long UserId { get; set; }
         string Hash { get; set; }
         string Slug { get; set; }
+        string Image {  get; set; }
         string Name { get; set; }
         string Email { get; set; }
         string IdDocument { get; set; }
@@ -29,7 +30,7 @@ namespace MonexUp.Domain.Interfaces.Models
         IUserModel GetByStripeId(string stripeId, IUserDomainFactory factory);
         string GenerateNewToken(IUserDomainFactory factory);
         IUserModel GetByRecoveryHash(string recoveryHash, IUserDomainFactory factory);
-        IEnumerable<IUserModel> ListAllUsers(IUserDomainFactory factory);
+        IEnumerable<IUserModel> ListUsers(int take, IUserDomainFactory factory);
         IUserModel LoginWithEmail(string email, string password, IUserDomainFactory factory);
         bool HasPassword(long userId, IUserDomainFactory factory);
         void ChangePassword(long userId, string password, IUserDomainFactory factory);

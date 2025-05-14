@@ -1,5 +1,6 @@
 import ProductInfo from "../Domain/ProductInfo";
 import ProductListPagedInfo from "../Domain/ProductListPagedInfo";
+import ProductSearchParam from "../Domain/ProductSearchParam";
 import UserProfileInfo from "../Domain/UserProfileInfo";
 import ProductResult from "../Services/ProductResult";
 import ProductProviderResult from "./ProductProviderResult";
@@ -21,7 +22,7 @@ interface IProductProvider {
     
     insert: (product: ProductInfo) => Promise<ProviderResult>;
     update: (product: ProductInfo) => Promise<ProviderResult>;
-    search: (networkId: number, keyword: string, pageNum: number) => Promise<ProviderResult>;
+    search: (param: ProductSearchParam) => Promise<ProviderResult>;
     listByNetwork: (networkId: number) => Promise<ProviderResult>; 
     listByNetworkSlug: (networkSlug: string) => Promise<ProviderResult>; 
     getById: (productId: number) => Promise<ProductProviderResult>;

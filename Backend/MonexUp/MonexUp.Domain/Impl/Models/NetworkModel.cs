@@ -24,6 +24,7 @@ namespace MonexUp.Domain.Impl.Models
 
         public long NetworkId { get; set; }
         public string Slug { get; set; }
+        public string Image {  get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public double Commission { get; set; }

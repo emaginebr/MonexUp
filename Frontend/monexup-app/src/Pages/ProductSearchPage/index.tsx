@@ -19,6 +19,7 @@ import MessageToast from "../../Components/MessageToast";
 import { ProductStatusEnum } from "../../DTO/Enum/ProductStatusEnum";
 import { UserRoleEnum } from "../../DTO/Enum/UserRoleEnum";
 import ProductInfo from "../../DTO/Domain/ProductInfo";
+import ProductSearchParam from "../../DTO/Domain/ProductSearchParam";
 
 export default function ProductSearchPage() {
 
@@ -46,7 +47,16 @@ export default function ProductSearchPage() {
     };
 
     const searchProducts = (pageNum: number) => {
-        productContext.search(networkContext.userNetwork.networkId, "", pageNum).then((ret) => {
+        let param: ProductSearchParam;
+        param = {
+            ...param,
+            networkId: networkContext.userNetwork.networkId,
+            userId: 0,
+            keyword: "",
+            onlyActive: false,
+            pageNum: pageNum
+        };
+        productContext.search(param).then((ret) => {
             if (!ret.sucesso) {
                 throwError(ret.mensagemErro);
             }

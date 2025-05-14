@@ -11,6 +11,8 @@ namespace MonexUp.DTO.User
         public long UserId { get; set; }
         [JsonPropertyName("slug")]
         public string Slug { get; set; }
+        [JsonPropertyName("imageUrl")]
+        public string ImageUrl { get; set; }
         [JsonPropertyName("name")]
         public string Name { get; set; }
         [JsonPropertyName("email")]

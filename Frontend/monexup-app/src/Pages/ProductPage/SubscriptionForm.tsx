@@ -29,7 +29,7 @@ export default function SubscriptionForm(param: ProductPaymentParam) {
         <>
             <div className="card">
                 <div className="card-header">
-                    <h4 className="my-0">Credit Card Payment</h4>
+                    <h4 className="my-0">Payment</h4>
                 </div>
                 <div className="card-body text-center">
                     <EmbeddedCheckoutProvider stripe={stripePromise} options={{ fetchClientSecret }}>

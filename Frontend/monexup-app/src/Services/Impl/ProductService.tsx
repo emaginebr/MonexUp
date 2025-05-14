@@ -42,15 +42,8 @@ const ProductService : IProductService = {
         }
         return ret;
     },
-    search: async (networkId: number, keyword: string, pageNum: number, token: string) => {
+    search: async (param: ProductSearchParam, token: string) => {
         let ret: ProductListPagedResult;
-        let param: ProductSearchParam;
-        param = {
-            ...param,
-            networkId: networkId,
-            keyword: keyword,
-            pageNum: pageNum
-        };
         let request = await _httpClient.doPostAuth<ProductListPagedResult>("/api/Product/search", param, token);
         if (request.success) {
             return request.data;

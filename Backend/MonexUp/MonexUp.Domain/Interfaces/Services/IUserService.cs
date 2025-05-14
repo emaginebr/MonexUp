@@ -26,6 +26,7 @@ namespace MonexUp.Domain.Interfaces.Services
         //IUserModel GetUserHash(ChainEnum chain, string address);
         UserInfo GetUserInSession(HttpContext httpContext);
         UserInfo GetUserInfoFromModel(IUserModel md);
+        IList<IUserModel> ListUsers(int take);
         UserListPagedResult Search(long networkId, string keyword, long? profileId, int pageNum);
     }
 }

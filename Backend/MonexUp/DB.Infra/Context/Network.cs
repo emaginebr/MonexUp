@@ -23,6 +23,8 @@ public partial class Network
 
     public int Plan { get; set; }
 
+    public string Image { get; set; }
+
     public virtual ICollection<InvoiceFee> InvoiceFees { get; set; } = new List<InvoiceFee>();
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();

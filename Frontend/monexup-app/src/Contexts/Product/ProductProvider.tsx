@@ -8,6 +8,7 @@ import ProductListPagedInfo from "../../DTO/Domain/ProductListPagedInfo";
 import ProductFactory from "../../Business/Factory/ProductFactory";
 import ProductContext from "./ProductContext";
 import ProductProviderResult from "../../DTO/Contexts/ProductProviderResult";
+import ProductSearchParam from "../../DTO/Domain/ProductSearchParam";
 
 export default function ProductProvider(props: any) {
 
@@ -100,12 +101,12 @@ export default function ProductProvider(props: any) {
                 };
             }
         },
-        search: async (networkId: number, keyword: string, pageNum: number) => {
+        search: async (param: ProductSearchParam) => {
             let ret: Promise<ProviderResult>;
             setLoadingSearch(true);
             setSearchResult(null);
             //try {
-                let brt = await ProductFactory.ProductBusiness.search(networkId, keyword, pageNum);
+                let brt = await ProductFactory.ProductBusiness.search(param);
                 if (brt.sucesso) {
                     setLoadingSearch(false);
                     setSearchResult(brt.dataResult);

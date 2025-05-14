@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "9KHUlfR4PqQ=",
+  "dgSpecHash": "YVaSm9BqNwg=",
   "success": true,
   "projectFilePath": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.BackgroundService\\MonexUp.BackgroundService.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\rodrigo.carneiro\\.nuget\\packages\\awssdk.core\\4.0.0.3\\awssdk.core.4.0.0.3.nupkg.sha512",
+    "C:\\Users\\rodrigo.carneiro\\.nuget\\packages\\awssdk.s3\\4.0.0.3\\awssdk.s3.4.0.0.3.nupkg.sha512",
     "C:\\Users\\rodrigo.carneiro\\.nuget\\packages\\castle.core\\5.1.1\\castle.core.5.1.1.nupkg.sha512",
     "C:\\Users\\rodrigo.carneiro\\.nuget\\packages\\fubarcoder.restsharp.portable.core\\4.0.8\\fubarcoder.restsharp.portable.core.4.0.8.nupkg.sha512",
     "C:\\Users\\rodrigo.carneiro\\.nuget\\packages\\fubarcoder.restsharp.portable.httpclient\\4.0.8\\fubarcoder.restsharp.portable.httpclient.4.0.8.nupkg.sha512",

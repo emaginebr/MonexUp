@@ -4,6 +4,7 @@ export default interface ProductInfo {
     productId: number;
     networkId: number;
     slug: string;
+    imageUrl: string;
     name: string;
     description: string;
     price: number;

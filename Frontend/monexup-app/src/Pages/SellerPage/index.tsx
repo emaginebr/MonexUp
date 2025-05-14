@@ -12,6 +12,9 @@ import MessageToast from "../../Components/MessageToast";
 import PlanPart from "../NetworkPage/PlanPart";
 import ProfilePart from "./ProfilePart";
 import NetworkFooter from "../NetworkPage/NetworkFooter";
+import ProductListPart from "./ProductListPart";
+import ProductContext from "../../Contexts/Product/ProductContext";
+import ProductSearchParam from "../../DTO/Domain/ProductSearchParam";
 
 export default function SellerPage() {
 
@@ -22,6 +25,7 @@ export default function SellerPage() {
     const authContext = useContext(AuthContext);
     const networkContext = useContext(NetworkContext);
     const userContext = useContext(UserContext);
+    const productContext = useContext(ProductContext);
 
     const [dialog, setDialog] = useState<MessageToastEnum>(MessageToastEnum.Error);
     const [showMessage, setShowMessage] = useState<boolean>(false);
@@ -36,6 +40,24 @@ export default function SellerPage() {
         setDialog(MessageToastEnum.Success);
         setMessageText(message);
         setShowMessage(true);
+    };
+
+    const searchProducts = (pageNum: number) => {
+        let param: ProductSearchParam;
+        param = {
+            ...param,
+            networkId: 0,
+            userId: 0,
+            userSlug: sellerSlug,
+            keyword: "",
+            onlyActive: true,
+            pageNum: pageNum
+        };
+        productContext.search(param).then((ret) => {
+            if (!ret.sucesso) {
+                throwError(ret.mensagemErro);
+            }
+        });
     };
 
     useEffect(() => {
@@ -57,6 +79,14 @@ export default function SellerPage() {
                 }
             });
         }
+        else {
+            userContext.getBySlug(sellerSlug).then((ret) => {
+                if (!ret.sucesso) {
+                    throwError(ret.mensagemErro);
+                }
+            });
+            searchProducts(1);
+        }
     }, []);
 
     return (
@@ -69,11 +99,20 @@ export default function SellerPage() {
             ></MessageToast>
             <ProfilePart
                 loading={networkContext.loadingSeller}
-                user={networkContext.seller?.user}
+                user={networkSlug ? networkContext.seller?.user : userContext.user}
                 userNetwork={networkContext.seller}
             />
             <hr />
-            <PlanPart />
+            {networkSlug ?
+                <PlanPart />
+                :
+                <ProductListPart
+                    loading={productContext.loadingSearch}
+                    sellerSlug={sellerSlug}
+                    ProductResult={productContext.searchResult}
+                    onChangePage={(pageNum) => searchProducts(pageNum)}
+                />
+            }
         </>
     );
 }

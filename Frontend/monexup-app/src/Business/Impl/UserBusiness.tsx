@@ -64,6 +64,27 @@ const UserBusiness: IUserBusiness = {
       throw new Error("Failed to get user by email");
     }
   },
+  getBySlug: async (slug: string) => {
+    try {
+      let ret: BusinessResult<UserInfo>;
+      let retServ = await _userService.getBySlug(slug);
+      if (retServ.sucesso) {
+        return {
+          ...ret,
+          dataResult: retServ.user,
+          sucesso: true
+        };
+      } else {
+        return {
+          ...ret,
+          sucesso: false,
+          mensagem: retServ.mensagem
+        };
+      }
+    } catch {
+      throw new Error("Failed to get user by email");
+    }
+  },
   getTokenAuthorized: async (email: string, password: string) => {
     let ret: BusinessResult<string>;
     let retServ = await _userService.getTokenAuthorized(email, password);
@@ -247,6 +268,27 @@ const UserBusiness: IUserBusiness = {
       }
     } catch {
       throw new Error("Failed to change password using hash");
+    }
+  },
+  list: async (take: number) => {
+    try {
+      let ret: BusinessResult<UserInfo[]>;
+      let retServ = await _userService.list(take);
+      if (retServ.sucesso) {
+        return {
+          ...ret,
+          dataResult: retServ.users,
+          sucesso: true
+        };
+      } else {
+        return {
+          ...ret,
+          sucesso: false,
+          mensagem: retServ.mensagem
+        };
+      }
+    } catch {
+      throw new Error("Failed to get user by email");
     }
   },
   search: async (networkId: number, keyword: string, pageNum: number, profileId?: number) => {

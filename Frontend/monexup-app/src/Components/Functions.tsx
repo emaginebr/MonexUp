@@ -1,5 +1,6 @@
 import UserNetworkInfo from "../DTO/Domain/UserNetworkInfo";
 import { UserRoleEnum } from "../DTO/Enum/UserRoleEnum";
+import NavDropdown from 'react-bootstrap/NavDropdown';
 
 const showFrequencyMin = (frequency: number) => {
     let ret: string;
@@ -80,4 +81,48 @@ const showProfile = (user: UserNetworkInfo) => {
     }
 };
 
-export {showFrequencyMin, showFrequencyMax, showProfile};
+function formatPhoneNumber(phone: string) {
+    // Remove qualquer caractere que não seja número
+    const digits = phone.replace(/\D/g, '');
+
+    if (digits.length !== 11) return phone; // Retorna original se não tiver 11 dígitos
+
+    const ddd = digits.slice(0, 2);
+    const firstDigit = digits.slice(2, 3);
+    const firstPart = digits.slice(3, 7);
+    const secondPart = digits.slice(7);
+
+    return (
+        <><small>({ddd})</small> {firstDigit} {firstPart}-{secondPart}</>
+    );
+}
+
+const MenuLanguage = () => {
+    return (
+        <NavDropdown title={
+            <>
+                <img src={process.env.PUBLIC_URL + "/flags/br.svg"} style={{ width: "21px", height: "21px" }} />
+                &nbsp;Português
+            </>
+        } id="basic-nav-dropdown">
+            <NavDropdown.Item>
+                <img src={process.env.PUBLIC_URL + "/flags/gb.svg"} style={{ width: "21px", height: "21px" }} />
+                &nbsp;Inglês
+            </NavDropdown.Item>
+            <NavDropdown.Item>
+                <img src={process.env.PUBLIC_URL + "/flags/es.svg"} style={{ width: "21px", height: "21px" }} />
+                &nbsp;Espanhol
+            </NavDropdown.Item>
+            <NavDropdown.Item>
+                <img src={process.env.PUBLIC_URL + "/flags/fr.svg"} style={{ width: "21px", height: "21px" }} />
+                &nbsp;Francês
+            </NavDropdown.Item>
+            <NavDropdown.Item>
+                <img src={process.env.PUBLIC_URL + "/flags/cn.svg"} style={{ width: "21px", height: "21px" }} />
+                &nbsp;Chinês
+            </NavDropdown.Item>
+        </NavDropdown>
+    );
+};
+
+export { showFrequencyMin, showFrequencyMax, showProfile, formatPhoneNumber, MenuLanguage };

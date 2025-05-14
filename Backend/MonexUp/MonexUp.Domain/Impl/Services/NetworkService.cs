@@ -23,6 +23,7 @@ namespace MonexUp.Domain.Impl.Services
         private readonly IUserProfileDomainFactory _userProfileFactory;
         private readonly IUserService _userService;
         private readonly IProfileService _profileService;
+        private readonly IImageService _imageService;
 
         public NetworkService(
             IUserDomainFactory userFactory,
@@ -30,7 +31,8 @@ namespace MonexUp.Domain.Impl.Services
             IUserNetworkDomainFactory userNetworkFactory, 
             IUserProfileDomainFactory userProfileFactory,
             IUserService userService,
-            IProfileService profileService
+            IProfileService profileService,
+            IImageService imageService
         )
         {
             _userFactory = userFactory;
@@ -39,6 +41,7 @@ namespace MonexUp.Domain.Impl.Services
             _userProfileFactory = userProfileFactory;   
             _userService = userService;
             _profileService = profileService;
+            _imageService = imageService;
         }
 
         private string GenerateSlug(INetworkModel md)
@@ -256,6 +259,7 @@ namespace MonexUp.Domain.Impl.Services
                 NetworkId = model.NetworkId,
                 Name = model.Name,
                 Slug = model.Slug,
+                ImageUrl = _imageService.GetImageUrl(model.Image),
                 Email = model.Email,
                 Plan = model.Plan,
                 Commission = model.Commission,

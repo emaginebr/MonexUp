@@ -18,12 +18,19 @@ namespace MonexUp.Domain.Impl.Services
         private readonly IUserDomainFactory _userFactory;
         private readonly IUserNetworkDomainFactory _userNetworkFactory;
         private readonly IProductDomainFactory _productFactory;
+        private readonly IImageService _imageService;
 
-        public ProductService(IUserDomainFactory userFactory, IUserNetworkDomainFactory userNetworkFactory, IProductDomainFactory productFactory)
+        public ProductService(
+            IUserDomainFactory userFactory, 
+            IUserNetworkDomainFactory userNetworkFactory, 
+            IProductDomainFactory productFactory,
+            IImageService imageService
+        )
         {
             _userFactory = userFactory;
             _userNetworkFactory = userNetworkFactory;
             _productFactory = productFactory;
+            _imageService = imageService;
         }
 
         private void ValidateAccess(long networkId, long userId)
@@ -64,8 +71,9 @@ namespace MonexUp.Domain.Impl.Services
                 ProductId = md.ProductId,
                 NetworkId = md.NetworkId,
                 Name = md.Name,
-                Description = md.Description,
                 Slug = md.Slug,
+                ImageUrl = _imageService.GetImageUrl(md.Image),
+                Description = md.Description,
                 Price = md.Price,
                 Frequency = md.Frequency,
                 Limit = md.Limit,
@@ -145,19 +153,25 @@ namespace MonexUp.Domain.Impl.Services
             return model.Update(_productFactory);
         }
 
-        public ProductListPagedResult Search(long networkId, string keyword, int pageNum)
+        public ProductListPagedResult Search(ProductSearchInternalParam param)
         {
            
             var model = _productFactory.BuildProductModel();
             int pageCount = 0;
-            var products = model.Search(networkId, keyword, pageNum, out pageCount, _productFactory)
+            var products = model.Search(
+                param.NetworkId <= 0 ? null : param.NetworkId, 
+                param.UserId <= 0 ? null: param.UserId, 
+                param.Keyword, 
+                param.OnlyActive, param.PageNum, 
+                out pageCount, _productFactory
+                )
                 .Select(x => GetProductInfo(x))
                 .ToList();
             return new ProductListPagedResult
             {
                 Sucesso = true,
                 Products = products,
-                PageNum = pageNum,
+                PageNum = param.PageNum,
                 PageCount = pageCount
             };
         }

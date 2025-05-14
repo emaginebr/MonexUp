@@ -18,6 +18,25 @@
           "MonexUp.BackgroundService.dll": {}
         }
       },
+      "AWSSDK.Core/4.0.0.3": {
+        "runtime": {
+          "lib/net8.0/AWSSDK.Core.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.0.0.3"
+          }
+        }
+      },
+      "AWSSDK.S3/4.0.0.3": {
+        "dependencies": {
+          "AWSSDK.Core": "4.0.0.3"
+        },
+        "runtime": {
+          "lib/net8.0/AWSSDK.S3.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.0.0.3"
+          }
+        }
+      },
       "Castle.Core/5.1.1": {
         "dependencies": {
           "System.Diagnostics.EventLog": "8.0.0"
@@ -1351,6 +1370,7 @@
       },
       "MonexUp.Domain/1.0.0": {
         "dependencies": {
+          "AWSSDK.S3": "4.0.0.3",
           "Core.Domain": "1.0.0",
           "Microsoft.AspNetCore.Authentication": "2.3.0",
           "Microsoft.Extensions.Logging": "9.0.4",
@@ -1386,6 +1406,20 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "AWSSDK.Core/4.0.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-pqHRxwcL35Pq2BTkG2ebFBqP4MXNIv2lSV4LGDohYwqdZRYTy50ZIyRoi4psbbDfX98PbcndXAuhkt5USWExcQ==",
+      "path": "awssdk.core/4.0.0.3",
+      "hashPath": "awssdk.core.4.0.0.3.nupkg.sha512"
+    },
+    "AWSSDK.S3/4.0.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-88ynMipuY2t4vlaKX+ubHt9gkHT5zEH0sVlJ7sHh7wTmI07qUJTA2QwzcqnFTuji8xn9iRT3WYLKbTgSyv9HWA==",
+      "path": "awssdk.s3/4.0.0.3",
+      "hashPath": "awssdk.s3.4.0.0.3.nupkg.sha512"
     },
     "Castle.Core/5.1.1": {
       "type": "package",

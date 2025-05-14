@@ -72,17 +72,26 @@ namespace MonexUp.API.Controllers
         }
 
         [HttpPost("search")]
-        [Authorize]
         public ActionResult<ProductListPagedResult> Search([FromBody] ProductSearchParam param)
         {
             try
             {
+                /*
                 var userSession = _userService.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                return _productService.Search(param.NetworkId, param.Keyword, param.PageNum);
+                */
+                if (!string.IsNullOrEmpty(param.UserSlug) && !(param.UserId.HasValue && param.UserId.Value > 0))
+                {
+                    var user = _userService.GetBySlug(param.UserSlug);
+                    if (user != null)
+                    {
+                        param.UserId = user.UserId;
+                    }
+                }
+                return _productService.Search(param);
             }
             catch (Exception ex)
             {

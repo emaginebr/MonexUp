@@ -9,18 +9,21 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import Alert from 'react-bootstrap/Alert';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWarning } from '@fortawesome/free-solid-svg-icons/faWarning'
-import { faBitcoinSign, faBoltLightning, faBox, faBrazilianRealSign, faBuilding, faCancel, faCheck, faCheckCircle, faCircle, faCircleUser, faClose, faCog, faCoins, faDollar, faEthernet, faFileWord, faHome, faLock, faPencil, faSearch, faSignInAlt, faUser, faUserAlt, faUserCircle, faUserCog, faUserFriends, faUserGear, faUserGraduate, faUserGroup, faUserMd } from '@fortawesome/free-solid-svg-icons';
+import { faBitcoinSign, faBoltLightning, faBox, faBrazilianRealSign, faBuilding, faCancel, faCheck, faCheckCircle, faCircle, faCircleUser, faClose, faCog, faCoins, faDollar, faEthernet, faFileWord, faHome, faImage, faLock, faPencil, faPhoneAlt, faPhotoVideo, faSearch, faSignInAlt, faUser, faUserAlt, faUserCircle, faUserCog, faUserFriends, faUserGear, faUserGraduate, faUserGroup, faUserMd } from '@fortawesome/free-solid-svg-icons';
 import MessageToast from './MessageToast';
 import { MessageToastEnum } from '../DTO/Enum/MessageToastEnum';
 import { UserRoleEnum } from '../DTO/Enum/UserRoleEnum';
 import NetworkContext from '../Contexts/Network/NetworkContext';
 import InvoiceContext from '../Contexts/Invoice/InvoiceContext';
 import StatementSearchParam from '../DTO/Domain/StatementSearchParam';
+import { ImageModal, ImageTypeEnum } from './ImageModal';
+import { MenuLanguage } from './Functions';
 
 
 export default function Menu() {
 
   const [showAlert, setShowAlert] = useState<boolean>(true);
+  const [showImageModal, setShowImageModal] = useState<boolean>(false);
 
   const [showMessage, setShowMessage] = useState<boolean>(false);
   const [messageText, setMessageText] = useState<string>("");
@@ -95,6 +98,11 @@ export default function Menu() {
         messageText={messageText}
         onClose={() => setShowMessage(false)}
       ></MessageToast>
+      <ImageModal
+        Image={ImageTypeEnum.User}
+        show={showImageModal}
+        onClose={() => setShowImageModal(false)}
+      />
       <Navbar expand="lg" className="navbar-dark bg-dark mb-3 border-bottom">
         <Container>
           <Link className='navbar-brand' to="/">{process.env.REACT_APP_PROJECT_NAME}</Link>
@@ -268,6 +276,9 @@ export default function Menu() {
                       <span>{authContext.sessionInfo.name}</span>
                     </>
                   } id="basic-nav-dropdown">
+                    <NavDropdown.Item onClick={() => setShowImageModal(true)}>
+                      <FontAwesomeIcon icon={faImage} fixedWidth /> Change Picture
+                    </NavDropdown.Item>
                     <NavDropdown.Item onClick={async () => {
                       navigate("/account/edit-account");
                     }}><FontAwesomeIcon icon={faPencil} fixedWidth /> Edit Account</NavDropdown.Item>
@@ -294,6 +305,7 @@ export default function Menu() {
                     </Nav.Item>
                   </>
               }
+              <MenuLanguage />
             </Nav>
           </Navbar.Collapse>
         </Container>

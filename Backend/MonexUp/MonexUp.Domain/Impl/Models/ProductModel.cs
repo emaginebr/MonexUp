@@ -25,6 +25,7 @@ namespace MonexUp.Domain.Impl.Models
         public long ProductId { get; set; }
         public long NetworkId { get; set; }
         public string Slug { get; set; }
+        public string Image { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public double Price { get; set; }
@@ -54,9 +55,9 @@ namespace MonexUp.Domain.Impl.Models
             return _repositoryProduct.Update(this, factory);
         }
 
-        public IEnumerable<IProductModel> Search(long networkId, string keyword, int pageNum, out int pageCount, IProductDomainFactory factory)
+        public IEnumerable<IProductModel> Search(long? networkId, long? userId, string keyword, bool active, int pageNum, out int pageCount, IProductDomainFactory factory)
         {
-            return _repositoryProduct.Search(networkId, keyword, pageNum, out pageCount, factory);
+            return _repositoryProduct.Search(networkId, userId, keyword, active, pageNum, out pageCount, factory);
         }
 
         public IEnumerable<IProductModel> ListByNetwork(long networkId, IProductDomainFactory factory)

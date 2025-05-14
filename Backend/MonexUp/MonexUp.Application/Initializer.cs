@@ -58,6 +58,7 @@ namespace MonexUp.Application
             #endregion
 
             #region Service
+            injectDependency(typeof(IImageService), typeof(ImageService), services, scoped);
             injectDependency(typeof(IUserService), typeof(UserService), services, scoped);
             injectDependency(typeof(INetworkService), typeof(NetworkService), services, scoped);
             injectDependency(typeof(IProfileService), typeof(ProfileService), services, scoped);

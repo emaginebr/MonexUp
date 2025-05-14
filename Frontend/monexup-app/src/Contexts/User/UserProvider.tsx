@@ -10,6 +10,7 @@ import UserProviderResult from "../../DTO/Contexts/UserProviderResult";
 export default function UserProvider(props: any) {
 
     const [loading, setLoading] = useState<boolean>(false);
+    const [loadingList, setLoadingList] = useState<boolean>(false);
     const [loadingPassword, setLoadingPassword] = useState<boolean>(false);
     const [loadingUpdate, setLoadingUpdate] = useState<boolean>(false);
     const [loadingSearch, setLoadingSearch] = useState<boolean>(false);
@@ -17,15 +18,18 @@ export default function UserProvider(props: any) {
     const [userHasPassword, setUserHasPassword] = useState<boolean>(false);
 
     const [user, _setUser] = useState<UserInfo>(null);
+    const [users, setUsers] = useState<UserInfo[]>([]);
     const [searchResult, setSearchResult] = useState<UserListPagedInfo>(null);
 
     const userProviderValue: IUserProvider = {
         loading: loading,
+        loadingList: loadingList,
         loadingPassword: loadingPassword,
         loadingUpdate: loadingUpdate,
         loadingSearch: loadingSearch,
         userHasPassword: userHasPassword,
         user: user,
+        users: users,
         searchResult: searchResult,
         setUser: (user: UserInfo) => {
             _setUser(user);
@@ -70,6 +74,38 @@ export default function UserProvider(props: any) {
             setLoading(true);
             try {
                 let brt = await UserFactory.UserBusiness.getUserByEmail(email);
+                if (brt.sucesso) {
+                    setLoading(false);
+                    _setUser(brt.dataResult);
+                    return {
+                        ...ret,
+                        sucesso: true,
+                        mensagemSucesso: "User load"
+                    };
+                }
+                else {
+                    setLoading(false);
+                    return {
+                        ...ret,
+                        sucesso: false,
+                        mensagemErro: brt.mensagem
+                    };
+                }
+            }
+            catch (err) {
+                setLoading(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: JSON.stringify(err)
+                };
+            }
+        },
+        getBySlug: async (slug: string) => {
+            let ret: Promise<ProviderResult>;
+            setLoading(true);
+            try {
+                let brt = await UserFactory.UserBusiness.getBySlug(slug);
                 if (brt.sucesso) {
                     setLoading(false);
                     _setUser(brt.dataResult);
@@ -314,6 +350,37 @@ export default function UserProvider(props: any) {
             }
             catch (err) {
                 setLoadingUpdate(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: JSON.stringify(err)
+                };
+            }
+        },
+        list: async (take: number) => {
+            let ret: Promise<ProviderResult>;
+            setLoadingList(true);
+            try {
+                let brt = await UserFactory.UserBusiness.list(take);
+                if (brt.sucesso) {
+                    setLoadingList(false);
+                    setUsers(brt.dataResult);
+                    return {
+                        ...ret,
+                        sucesso: true
+                    };
+                }
+                else {
+                    setLoadingList(false);
+                    return {
+                        ...ret,
+                        sucesso: false,
+                        mensagemErro: brt.mensagem
+                    };
+                }
+            }
+            catch (err) {
+                setLoadingList(false);
                 return {
                     ...ret,
                     sucesso: false,

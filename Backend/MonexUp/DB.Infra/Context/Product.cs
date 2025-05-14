@@ -27,5 +27,7 @@ public partial class Product
 
     public string StripePriceId { get; set; }
 
+    public string Image { get; set; }
+
     public virtual Network Network { get; set; }
 }

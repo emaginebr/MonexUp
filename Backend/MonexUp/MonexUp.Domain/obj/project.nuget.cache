@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "z/hUEh20x04=",
+  "dgSpecHash": "pQE9gPHwzWs=",
   "success": true,
   "projectFilePath": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\MonexUp.Domain.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\rodrigo.carneiro\\.nuget\\packages\\awssdk.core\\4.0.0.3\\awssdk.core.4.0.0.3.nupkg.sha512",
+    "C:\\Users\\rodrigo.carneiro\\.nuget\\packages\\awssdk.s3\\4.0.0.3\\awssdk.s3.4.0.0.3.nupkg.sha512",
     "C:\\Users\\rodrigo.carneiro\\.nuget\\packages\\fubarcoder.restsharp.portable.core\\4.0.8\\fubarcoder.restsharp.portable.core.4.0.8.nupkg.sha512",
     "C:\\Users\\rodrigo.carneiro\\.nuget\\packages\\fubarcoder.restsharp.portable.httpclient\\4.0.8\\fubarcoder.restsharp.portable.httpclient.4.0.8.nupkg.sha512",
     "C:\\Users\\rodrigo.carneiro\\.nuget\\packages\\microsoft.aspnetcore.authentication\\2.3.0\\microsoft.aspnetcore.authentication.2.3.0.nupkg.sha512",

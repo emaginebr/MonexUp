@@ -13,6 +13,7 @@ namespace MonexUp.Domain.Interfaces.Models
         long ProductId { get; set; }
         long NetworkId { get; set; }
         string Slug { get; set; }
+        string Image {  get; set; }
         string Name { get; set; }
         string Description { get; set; }
         double Price { get; set; }
@@ -22,7 +23,7 @@ namespace MonexUp.Domain.Interfaces.Models
         string StripeProductId { get; set; }
         string StripePriceId { get; set; }
 
-        IEnumerable<IProductModel> Search(long networkId, string keyword, int pageNum, out int pageCount, IProductDomainFactory factory);
+        IEnumerable<IProductModel> Search(long? networkId, long? userId, string keyword, bool active, int pageNum, out int pageCount, IProductDomainFactory factory);
         IEnumerable<IProductModel> ListByNetwork(long networkId, IProductDomainFactory factory);
         IProductModel GetById(long id, IProductDomainFactory factory);
         IProductModel GetByStripeProductId(string stripeProductId, IProductDomainFactory factory);

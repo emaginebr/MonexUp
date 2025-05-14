@@ -23,6 +23,7 @@ namespace MonexUp.Domain.Impl.Models
         public string Hash { get; set; }
         public string Token { get; set; }
         public string Slug { get; set; }
+        public string Image {  get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string IdDocument { get; set; }
@@ -71,9 +72,9 @@ namespace MonexUp.Domain.Impl.Models
             return _repositoryUser.Update(this, factory);
         }
 
-        public IEnumerable<IUserModel> ListUsers(IUserDomainFactory factory)
+        public IEnumerable<IUserModel> ListUsers(int take, IUserDomainFactory factory)
         {
-            return _repositoryUser.ListUsers(factory);
+            return _repositoryUser.ListUsers(take, factory);
         }
 
         public IUserModel GetByEmail(string email, IUserDomainFactory factory)
@@ -88,11 +89,6 @@ namespace MonexUp.Domain.Impl.Models
         public IUserModel GetByRecoveryHash(string recoveryHash, IUserDomainFactory factory)
         {
             return _repositoryUser.GetUserByRecoveryHash(recoveryHash, factory);
-        }
-
-        public IEnumerable<IUserModel> ListAllUsers(IUserDomainFactory factory)
-        {
-            return _repositoryUser.ListUsers(factory);
         }
 
         public IUserModel LoginWithEmail(string email, string password, IUserDomainFactory factory)

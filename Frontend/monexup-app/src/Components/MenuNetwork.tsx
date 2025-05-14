@@ -16,6 +16,7 @@ import { UserRoleEnum } from '../DTO/Enum/UserRoleEnum';
 import NetworkContext from '../Contexts/Network/NetworkContext';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { MenuLanguage } from './Functions';
 
 
 export default function MenuNetwork() {
@@ -40,11 +41,13 @@ export default function MenuNetwork() {
   useEffect(() => {
     authContext.loadUserSession().then((authRet) => {
       if (authRet.sucesso) {
+        /*
         networkContext.listByUser().then((ret) => {
           if (!ret.sucesso) {
             throwError(ret.mensagemErro);
           }
         });
+        */
       }
     });
   }, []);
@@ -138,6 +141,7 @@ export default function MenuNetwork() {
                     </Nav.Item>
                   </>
               }
+              <MenuLanguage />
             </Nav>
           </Navbar.Collapse>
         </Container>

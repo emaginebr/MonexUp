@@ -17,12 +17,20 @@ import NetworkContext from "../../Contexts/Network/NetworkContext";
 import ProductContext from "../../Contexts/Product/ProductContext";
 import { showFrequencyMax, showFrequencyMin } from "../../Components/Functions";
 import Skeleton from "react-loading-skeleton";
+import NetworkInfo from "../../DTO/Domain/NetworkInfo";
+import EditMode from "../../Components/EditMode";
 
-export default function HeroPart() {
+interface IHeroParam {
+    loading: boolean,
+    network: NetworkInfo,
+    isEditing: boolean
+};
+
+export default function HeroPart(param: IHeroParam) {
 
     let navigate = useNavigate();
 
-    const networkContext = useContext(NetworkContext);
+    const authContext = useContext(AuthContext);
 
     let { networkSlug } = useParams();
 
@@ -32,11 +40,11 @@ export default function HeroPart() {
                 <div className="lc-block mb-4">
                     <div>
                         <h2 className="display-2 fw-bold">
-                            {networkContext.loading ?
+                            {param.loading ?
                                 <Skeleton />
                                 :
                                 <>
-                                    Welcome to <span className="text-primary">{networkContext.network?.name}</span>
+                                    <EditMode.Text name="HERO_TITLE" isEditing={param.isEditing} />
                                 </>
                             }
 
@@ -45,19 +53,53 @@ export default function HeroPart() {
                 </div>
                 <div className="lc-block col-lg-6 mx-auto mb-5">
                     <div>
-                        <p className="lead">Aqui fica um pequeno slogan dessa rede</p>
+                        <p className="lead">
+                            {param.loading ?
+                                <Skeleton />
+                                :
+                                <>
+                                    <EditMode.Text name="HERO_SLOGAN" isEditing={param.isEditing} />
+                                </>
+                            }
+                        </p>
                     </div>
                 </div>
 
                 <div className="lc-block d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
-                    <a className="btn btn-primary btn-lg px-4 gap-3" href="#plans" role="button">Conheça nossos Planos</a>
-                    <a className="btn btn-outline-secondary btn-lg px-4" href="#" role="button" onClick={(e) => {
-                        e.preventDefault();
-                        navigate("/" + networkSlug + "/request-access");
-                    }}>Seja um representante</a>
+                    <EditMode.Btn
+                        name="HERO_LINK_TO_PLANS"
+                        className="btn btn-primary btn-lg px-4 gap-3"
+                        isEditing={param.isEditing}
+                        href="#plans"
+                    />
+                    <EditMode.Btn
+                        name="HERO_BECOME_A_SELLER"
+                        variant="outline-secondary"
+                        size="lg"
+                        className="px-4"
+                        isEditing={param.isEditing}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            if (authContext.sessionInfo) {
+                                navigate("/" + networkSlug + "/request-access");
+                            }
+                            else {
+                                navigate("/" + networkSlug + "/new-seller");
+                            }
+                        }}
+                    />
                 </div>
                 <div className="lc-block d-grid gap-2 d-sm-flex justify-content-sm-center">
+                    <EditMode.Img
+                        name="HERO_IMAGE"
+                        className="img-fluid"
+                        defaultSrc="https://lclibrary.b-cdn.net/starters/wp-content/uploads/sites/15/2021/10/undraw_going_up_ttm5.svg"
+                        style={{width: "auto", height: "783px"}}
+                        isEditing={param.isEditing}
+                    />
+                    {/*
                     <img className="img-fluid" src="https://lclibrary.b-cdn.net/starters/wp-content/uploads/sites/15/2021/10/undraw_going_up_ttm5.svg" width="" height="783" />
+                    */}
                 </div>
             </div>
         </>

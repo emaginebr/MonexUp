@@ -7,7 +7,7 @@ import AuthContext from "../../Contexts/Auth/AuthContext";
 import Button from "react-bootstrap/esm/Button";
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAddressBook, faArrowLeft, faArrowRight, faBitcoinSign, faCalendar, faCalendarAlt, faCancel, faClose, faDollar, faEnvelope, faEthernet, faIdCard, faLock, faPercent, faPhone, faSave, faSignInAlt, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faAddressBook, faArrowLeft, faArrowRight, faBitcoinSign, faCalendar, faCalendarAlt, faCancel, faClose, faDollar, faEnvelope, faEthernet, faIdCard, faLock, faPercent, faPhone, faSave, faSignInAlt, faTrash, faUpload, faUser } from '@fortawesome/free-solid-svg-icons';
 import Table from "react-bootstrap/esm/Table";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -21,16 +21,21 @@ import NetworkContext from "../../Contexts/Network/NetworkContext";
 import ProductContext from "../../Contexts/Product/ProductContext";
 import ProductInfo from "../../DTO/Domain/ProductInfo";
 import { ProductStatusEnum } from "../../DTO/Enum/ProductStatusEnum";
+import 'react-quill/dist/quill.snow.css';
+import { ImageModal, ImageTypeEnum } from "../../Components/ImageModal";
+import ImageContext from "../../Contexts/Image/ImageContext";
 
 export default function ProductEditPage() {
 
     const authContext = useContext(AuthContext);
     const networkContext = useContext(NetworkContext);
     const productContext = useContext(ProductContext);
+    const imageContext = useContext(ImageContext);
 
     let { productId } = useParams();
 
     const [insertMode, setInsertMode] = useState<boolean>(false);
+    const [showImageModal, setShowImageModal] = useState<boolean>(false);
 
     const [dialog, setDialog] = useState<MessageToastEnum>(MessageToastEnum.Error);
     const [showMessage, setShowMessage] = useState<boolean>(false);
@@ -55,7 +60,7 @@ export default function ProductEditPage() {
 
     //const handleSave = () => {};
 
-useEffect(() => {
+    useEffect(() => {
         let product: ProductInfo = null;
         product = {
             ...product,
@@ -103,21 +108,61 @@ useEffect(() => {
                 messageText={messageText}
                 onClose={() => setShowMessage(false)}
             ></MessageToast>
+            <ImageModal
+                Image={ImageTypeEnum.Product}
+                productId={productContext.product?.productId}
+                show={showImageModal}
+                onClose={() => setShowImageModal(false)}
+                onSuccess={(url: string) => {
+                    navigate("/admin/products/" + productId);
+                    productContext.setProduct({
+                        ...productContext.product,
+                        imageUrl: url
+                    });
+                }}
+            />
             <Container>
                 <Row>
-                    <Col md="12">
-                        <Card>
-                            <Card.Header>
-                                <h3 className="text-center">Edit Product</h3>
-                            </Card.Header>
-                            <Card.Body>
+                    <Col md={12}>
+                        <h3>
+                            <nav aria-label="breadcrumb">
+                                <ol className="breadcrumb">
+                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">My Network</Link></li>
+                                    <li className="breadcrumb-item"><Link to="/admin/products">Products List</Link></li>
+                                    <li className="breadcrumb-item active" aria-current="page">My Product</li>
+                                </ol>
+                            </nav>
+                        </h3>
+                    </Col>
+                </Row>
+                <Card>
+                    <Card.Body>
+                        <Row>
+                            <Col md="4" className="text-center">
+                                <div className="mb-2">
+                                    {productContext.product?.imageUrl &&
+                                        <img src={productContext.product?.imageUrl} style={{ width: "100%", height: "auto" }} />
+                                    }
+                                </div>
+                                <div className="lc-block d-grid gap-3 d-md-block">
+                                    {productContext.product?.productId > 0 &&
+                                        <Button variant="primary" className="me-md-2" size="lg" onClick={async (e) => {
+                                            e.preventDefault();
+                                            setShowImageModal(true);
+                                        }}>
+                                            <FontAwesomeIcon icon={faUpload} fixedWidth />&nbsp;Change Image
+                                        </Button>
+                                    }
+                                </div>
+                            </Col>
+                            <Col md="8">
                                 <Form>
                                     <div className="text-center mb-3">
                                         Registration is not required to make swaps, but you can do so anyway to access your transaction history.
                                     </div>
                                     <Form.Group as={Row} className="mb-3">
                                         <Form.Label column sm="2">Name:</Form.Label>
-                                        <Col sm="5">
+                                        <Col sm="10">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
@@ -129,6 +174,32 @@ useEffect(() => {
                                                             name: e.target.value
                                                         });
                                                     }} />
+                                            </InputGroup>
+                                        </Col>
+                                    </Form.Group>
+                                    <Form.Group as={Row} className="mb-3">
+                                        <Form.Label column sm="2">Frequency:</Form.Label>
+                                        <Col sm="5">
+                                            <InputGroup>
+                                                <InputGroup.Text><FontAwesomeIcon icon={faCalendar} fixedWidth /></InputGroup.Text>
+                                                <Form.Select size="lg"
+                                                    value={productContext.product?.frequency}
+                                                    onChange={(e) => {
+                                                        //alert(e.target.value);
+                                                        productContext.setProduct({
+                                                            ...productContext.product,
+                                                            frequency: parseInt(e.target.value)
+                                                        });
+                                                    }}
+                                                >
+                                                    <option value={0}>Just only one time</option>
+                                                    <option value={7}>Weekly</option>
+                                                    <option value={30}>Monthly</option>
+                                                    <option value={60}>Bimonthly</option>
+                                                    <option value={90}>Quarterly</option>
+                                                    <option value={180}>Half-yearly</option>
+                                                    <option value={365}>Annually</option>
+                                                </Form.Select>
                                             </InputGroup>
                                         </Col>
                                         <Form.Label column sm="1">Price:</Form.Label>
@@ -148,35 +219,11 @@ useEffect(() => {
                                         </Col>
                                     </Form.Group>
                                     <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="2">Frequency:</Form.Label>
-                                        <Col sm="5">
-                                            <InputGroup>
-                                                <InputGroup.Text><FontAwesomeIcon icon={faCalendar} fixedWidth /></InputGroup.Text>
-                                                <Form.Select size="lg" 
-                                                    value={productContext.product?.frequency}
-                                                    onChange={(e) => {
-                                                        //alert(e.target.value);
-                                                        productContext.setProduct({
-                                                            ...productContext.product,
-                                                            frequency: parseInt(e.target.value)
-                                                        });
-                                                    }} 
-                                                >
-                                                    <option value={0}>Just only one time</option>
-                                                    <option value={7}>Weekly</option>
-                                                    <option value={30}>Monthly</option>
-                                                    <option value={60}>Bimonthly</option>
-                                                    <option value={90}>Quarterly</option>
-                                                    <option value={180}>Half-yearly</option>
-                                                    <option value={365}>Annually</option>
-                                                </Form.Select>
-                                            </InputGroup>
-                                        </Col>
-                                        <Form.Label column sm="1">Status:</Form.Label>
-                                        <Col sm="4">
+                                        <Form.Label column sm="2">Status:</Form.Label>
+                                        <Col sm="10">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faPercent} fixedWidth /></InputGroup.Text>
-                                                <Form.Select size="lg" 
+                                                <Form.Select size="lg"
                                                     value={productContext.product?.status}
                                                     onChange={(e) => {
                                                         productContext.setProduct({
@@ -192,32 +239,32 @@ useEffect(() => {
                                         </Col>
                                     </Form.Group>
                                     <div className="py-3">
-                                    <CustomToolbar />
-                                    <ReactQuill
-                                        theme="snow"
-                                        value={productContext.product?.description}
-                                        placeholder="Inform your product description"
-                                        onChange={(value) => {
-                                            productContext.setProduct({
-                                                ...productContext.product,
-                                                description: value
-                                            });
-                                        }}
-                                        modules={{
-                                            toolbar: {
-                                                container: "#custom-toolbar",
-                                            },
-                                        }}
-                                        formats={[
-                                            "header",
-                                            "bold",
-                                            "italic",
-                                            "underline",
-                                            "size",
-                                            "link",
-                                            "clean",
-                                        ]}
-                                    />
+                                        <CustomToolbar />
+                                        <ReactQuill
+                                            theme="snow"
+                                            value={productContext.product?.description}
+                                            placeholder="Inform your product description"
+                                            onChange={(value) => {
+                                                productContext.setProduct({
+                                                    ...productContext.product,
+                                                    description: value
+                                                });
+                                            }}
+                                            modules={{
+                                                toolbar: {
+                                                    container: "#custom-toolbar",
+                                                },
+                                            }}
+                                            formats={[
+                                                "header",
+                                                "bold",
+                                                "italic",
+                                                "underline",
+                                                "size",
+                                                "link",
+                                                "clean",
+                                            ]}
+                                        />
                                     </div>
                                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                                         <Button variant="danger" size="lg" onClick={() => {
@@ -259,10 +306,10 @@ useEffect(() => {
                                         </Button>
                                     </div>
                                 </Form>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                </Row>
+                            </Col>
+                        </Row>
+                    </Card.Body>
+                </Card>
             </Container>
         </>
     );

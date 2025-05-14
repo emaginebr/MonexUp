@@ -322,5 +322,22 @@ namespace MonexUp.API.Controllers
             }
         }
 
+        [HttpGet("list/{take}")]
+        public ActionResult<UserListResult> list(int take)
+        {
+            try
+            {
+                return new UserListResult
+                {
+                    Sucesso = true,
+                    Users = _userService.ListUsers(take).Select(x => _userService.GetUserInfoFromModel(x)).ToList()
+                };
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 }

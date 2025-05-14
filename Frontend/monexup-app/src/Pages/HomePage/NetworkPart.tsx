@@ -3,72 +3,65 @@ import { Link, useNavigate } from "react-router-dom";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
-import { faBoltLightning, faLock, faFileUpload, faCalendarAlt, faFileWord, faBoxOpen, faLockOpen, faUserDoctor, faBuilding } from '@fortawesome/free-solid-svg-icons';
-import { faBitcoin } from "@fortawesome/free-brands-svg-icons";
+import Card from "react-bootstrap/esm/Card";
+import { faBuilding } from '@fortawesome/free-solid-svg-icons';
 import { useContext, useEffect } from "react";
 import NetworkContext from "../../Contexts/Network/NetworkContext";
 import Skeleton from "react-loading-skeleton";
+import NetworkInfo from "../../DTO/Domain/NetworkInfo";
 
-export default function NetworkPart() {
+interface INetworkParam {
+    loading: boolean,
+    networks: NetworkInfo[]
+}
 
-    let navigate = useNavigate();
-
-    const networkContext = useContext(NetworkContext);
-
-    useEffect(() => {
-        networkContext.listAll().then((ret) => {
-            if (!ret.sucesso) {
-                alert(ret.mensagemErro);
-            }
-        });
-    }, []);
+export default function NetworkPart(param: INetworkParam) {
 
     return (
         <>
-            <section id="how-it-works" className="bg-light py-5">
+            <section className="py-4 py-lg-6 bg-light">
                 <Container>
                     <Row className="mb-4">
                         <Col md={12} className="text-center">
                             <h4 className="display-2 mb-0">TOP 4 Networks</h4>
                         </Col>
                     </Row>
-                    <Row>
-                        {networkContext.loading ?
-                            [1,2,3,4].map((index) => {
-                                return (
-                                    <Col lg={3} sm={6} className="mb-4">
-                                        <div className="lc-block">
-                                            <h3 className="my-sm-3 mb-2">
-                                                <FontAwesomeIcon icon={faBuilding} />
-                                                <span className="ms-2"><Skeleton /></span>
-                                            </h3>
-                                            <div>
-                                                <p><Skeleton /></p>
+                    {param.loading &&
+                        <Row>
+                            <Col lg={4}>
+                                <div className="d-flex justify-content-center">
+                                    <div className="spinner-border" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </Col>
+                        </Row>
+                    }
+                    <Row className="mb-5">
+                        {!param.loading && param.networks?.map((network) => {
+                            return (
+                                <Col lg={3}>
+                                    <Card className="shadow-lg p-3">
+                                        {network.imageUrl &&
+                                            <Link to={"/" + network.slug}>
+                                            <Card.Img src={network.imageUrl} style={{ width: "100%", height: "7rem", objectFit: "cover" }} />
+                                            </Link>
+                                        }
+                                        <Card.Body>
+                                            <div className="lc-block text-center mb-3">
+                                                <div>
+                                                    <h3><Link to={"/" + network.slug}>{network.name}</Link></h3>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </Col>
-                                )
-                            })
-                            :
-                            networkContext.networks.map((network) => {
-                                return (
-                                    <Col lg={3} sm={6} className="mb-4">
-                                        <div className="lc-block">
-                                            <h3 className="my-sm-3 mb-2">
-                                                <FontAwesomeIcon icon={faBuilding} />
-                                                <span className="ms-2"><Link to={"/" + network.slug}>{network.name}</Link></span>
-                                            </h3>
-                                            <div>
-                                                <p>
-                                                    {network.qtdyUsers} affiliate sellers and&nbsp;
-                                                    {network.maxUsers - network.qtdyUsers} open positions
-                                                </p>
+                                            <div className="lc-block text-center">
+                                                {network.qtdyUsers} affiliate sellers and&nbsp;
+                                                {network.maxUsers - network.qtdyUsers} open positions
                                             </div>
-                                        </div>
-                                    </Col>
-                                )
-                            })
-                        }
+                                        </Card.Body>
+                                    </Card>
+                                </Col>
+                            );
+                        })}
                     </Row>
                 </Container>
             </section>

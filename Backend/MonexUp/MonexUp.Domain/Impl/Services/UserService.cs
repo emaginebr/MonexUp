@@ -24,6 +24,7 @@ namespace MonexUp.Domain.Impl.Services
         private readonly IUserAddressDomainFactory _addrFactory;
         private readonly IUserProfileDomainFactory _profileFactory;
         private readonly IMailerSendService _mailerSendService;
+        private readonly IImageService _imageService;
 
         public UserService(
             IUserDomainFactory userFactory, 
@@ -31,7 +32,8 @@ namespace MonexUp.Domain.Impl.Services
             IUserPhoneDomainFactory phoneFactory, 
             IUserAddressDomainFactory addrFactory,
             IUserProfileDomainFactory profileFactory,
-            IMailerSendService mailerSendService
+            IMailerSendService mailerSendService,
+            IImageService imageService
         )
         {
             _userFactory = userFactory;
@@ -40,6 +42,7 @@ namespace MonexUp.Domain.Impl.Services
             _addrFactory = addrFactory;
             _profileFactory = profileFactory;
             _mailerSendService = mailerSendService;
+            _imageService = imageService;
         }
 
         public IUserModel LoginWithEmail(string email, string password)
@@ -446,6 +449,7 @@ namespace MonexUp.Domain.Impl.Services
                 UserId = md.UserId,
                 Hash = md.Hash,
                 Slug = md.Slug,
+                ImageUrl = _imageService.GetImageUrl(md.Image),
                 Name = md.Name,
                 Email = md.Email,
                 IdDocument = md.IdDocument,
@@ -563,6 +567,11 @@ namespace MonexUp.Domain.Impl.Services
         public IUserModel GetBySlug(string slug)
         {
             return _userFactory.BuildUserModel().GetBySlug(slug, _userFactory);
+        }
+
+        public IList<IUserModel> ListUsers(int take)
+        {
+            return _userFactory.BuildUserModel().ListUsers(take, _userFactory).ToList();
         }
     }
 }

@@ -28,6 +28,7 @@ namespace DB.Infra.Repository
             md.NetworkId = row.NetworkId;
             md.Name = row.Name;
             md.Slug = row.Slug;
+            md.Image = row.Image;
             md.Email = row.Email?.ToLower();
             md.Commission = row.Commission;
             md.WithdrawalMin = row.WithdrawalMin;
@@ -42,6 +43,7 @@ namespace DB.Infra.Repository
             row.NetworkId = md.NetworkId;
             row.Name = md.Name;
             row.Slug = md.Slug;
+            row.Image = md.Image;
             row.Email = md.Email;
             row.Commission = md.Commission;
             row.WithdrawalMin = md.WithdrawalMin;

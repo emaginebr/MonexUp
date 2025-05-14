@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
+import Nav from 'react-bootstrap/Nav';
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AuthContext from "../../Contexts/Auth/AuthContext";
 import NetworkContext from "../../Contexts/Network/NetworkContext";
@@ -13,6 +14,9 @@ import MessageToast from "../../Components/MessageToast";
 import PlanPart from "./PlanPart";
 import TeamPart from "./TeamPart";
 import HeroPart from "./HeroPart";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowDown, faArrowUp, faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import EditMode from "../../Components/EditMode";
 
 export default function NetworkPage() {
 
@@ -63,13 +67,19 @@ export default function NetworkPage() {
                 messageText={messageText}
                 onClose={() => setShowMessage(false)}
             ></MessageToast>
-            {networkContext.editMode ?
-                <HeroPart />
-                :
-                <HeroPart />
-            }
+            <EditMode.New isEditing={networkContext.editMode} />
             <hr />
-            <PlanPart />
+            <EditMode isEditing={networkContext.editMode}>
+                <HeroPart 
+                    loading={networkContext.loading}
+                    network={networkContext.network}
+                    isEditing={networkContext.editMode}
+                />
+            </EditMode>
+            <hr />
+            <EditMode isEditing={networkContext.editMode}>
+                <PlanPart />
+            </EditMode>
             <hr />
             <TeamPart />
         </>

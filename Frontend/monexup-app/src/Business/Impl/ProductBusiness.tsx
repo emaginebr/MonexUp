@@ -2,6 +2,7 @@ import BusinessResult from "../../DTO/Business/BusinessResult";
 import AuthSession from "../../DTO/Domain/AuthSession";
 import ProductInfo from "../../DTO/Domain/ProductInfo";
 import ProductListPagedInfo from "../../DTO/Domain/ProductListPagedInfo";
+import ProductSearchParam from "../../DTO/Domain/ProductSearchParam";
 import IProductService from "../../Services/Interfaces/IProductService";
 import AuthFactory from "../Factory/AuthFactory";
 import IProductBusiness from "../Interfaces/IProductBusiness";
@@ -72,7 +73,7 @@ const ProductBusiness: IProductBusiness = {
         throw new Error("Failed to update");
       }
   },
-  search: async (networkId: number, keyword: string, pageNum: number) => {
+  search: async (param: ProductSearchParam) => {
     try {
         let ret: BusinessResult<ProductListPagedInfo>;
         let session: AuthSession = AuthFactory.AuthBusiness.getSession();
@@ -83,7 +84,7 @@ const ProductBusiness: IProductBusiness = {
             mensagem: "Not logged"
           };
         }
-        let retServ = await _productService.search(networkId, keyword, pageNum, session.token);
+        let retServ = await _productService.search(param, session.token);
         if (retServ.sucesso) {
           let search: ProductListPagedInfo;
           search = {

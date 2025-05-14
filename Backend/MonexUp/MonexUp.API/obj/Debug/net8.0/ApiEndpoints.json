@@ -1,5 +1,93 @@
 [
   {
+    "ContainingType": "MonexUp.API.Controllers.ImageController",
+    "Method": "UploadImageNetwork",
+    "RelativePath": "api/Image/uploadImageNetwork",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "networkId",
+        "Type": "System.Int64",
+        "IsRequired": false
+      },
+      {
+        "Name": "file",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MonexUp.DTO.Domain.StringResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MonexUp.API.Controllers.ImageController",
+    "Method": "UploadImageProduct",
+    "RelativePath": "api/Image/uploadImageProduct",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "productId",
+        "Type": "System.Int64",
+        "IsRequired": false
+      },
+      {
+        "Name": "file",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MonexUp.DTO.Domain.StringResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MonexUp.API.Controllers.ImageController",
+    "Method": "UploadImageUser",
+    "RelativePath": "api/Image/uploadImageUser",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "file",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MonexUp.DTO.Domain.StringResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "MonexUp.API.Controllers.InvoiceController",
     "Method": "GetAvailableBalance",
     "RelativePath": "api/Invoice/getAvailableBalance",
@@ -949,6 +1037,32 @@
   },
   {
     "ContainingType": "MonexUp.API.Controllers.UserController",
+    "Method": "GetBySlug",
+    "RelativePath": "api/User/getBySlug/{slug}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "slug",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MonexUp.DTO.User.UserResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MonexUp.API.Controllers.UserController",
     "Method": "GetMe",
     "RelativePath": "api/User/getme",
     "HttpMethod": "GET",
@@ -1030,6 +1144,32 @@
     "ReturnTypes": [
       {
         "Type": "MonexUp.DTO.User.UserResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MonexUp.API.Controllers.UserController",
+    "Method": "list",
+    "RelativePath": "api/User/list/{take}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "take",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MonexUp.DTO.User.UserListResult",
         "MediaTypes": [
           "text/plain",
           "application/json",

@@ -12,7 +12,7 @@ namespace MonexUp.Domain.Interfaces.Services
 {
     public interface IProductService
     {
-        ProductListPagedResult Search(long networkId, string keyword, int pageNum);
+        ProductListPagedResult Search(ProductSearchInternalParam param);
         IList<IProductModel> ListByNetwork(long networkId);
         IProductModel GetById(long productId);
         IProductModel GetBySlug(string productSlug);

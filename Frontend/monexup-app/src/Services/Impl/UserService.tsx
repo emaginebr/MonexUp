@@ -2,6 +2,7 @@ import UserInfo from "../../DTO/Domain/UserInfo";
 import UserSearchParam from "../../DTO/Domain/UserSearchParam";
 import StatusRequest from "../../DTO/Services/StatusRequest";
 import UserListPagedResult from "../../DTO/Services/UserListPagedResult";
+import UserListResult from "../../DTO/Services/UserListResult";
 import UserNetworkListResult from "../../DTO/Services/UserNetworkListResult";
 import UserResult from "../../DTO/Services/UserResult";
 import UserTokenResult from "../../DTO/Services/UserTokenResult";
@@ -33,6 +34,22 @@ const UserService : IUserService = {
     getUserByEmail: async (email: string) => {
         let ret: UserResult;
         let url = "/api/User/getbyemail/" + email;
+        let request = await _httpClient.doGet<UserResult>(url, {});
+        if (request.success) {
+            return request.data;
+        }
+        else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    },
+    getBySlug: async (slug: string) => {
+        let ret: UserResult;
+        let url = "/api/User/getBySlug/" + slug;
         let request = await _httpClient.doGet<UserResult>(url, {});
         if (request.success) {
             return request.data;
@@ -169,6 +186,21 @@ const UserService : IUserService = {
             recoveryHash: recoveryHash,
             newPassword: newPassword
         });
+        if (request.success) {
+            return request.data;
+        }
+        else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    },
+    list: async (take: number) => {
+        let ret: UserListResult;
+        let request = await _httpClient.doGet<UserResult>("/api/User/list/" + take, {});
         if (request.success) {
             return request.data;
         }

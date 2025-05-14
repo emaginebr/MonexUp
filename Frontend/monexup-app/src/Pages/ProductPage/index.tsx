@@ -72,29 +72,41 @@ export default function ProductPage() {
                     <Col md="12" className="py-4">
                         <Row>
                             <Col md={8}>
-                                <Row>
-                                    <Col md="12">
-                                        <h2 className="display-2 mb-5 text-center">
-                                            {networkContext.loading ? <Skeleton /> : networkContext.network?.name}
-                                        </h2>
-                                    </Col>
-                                </Row>
+                                {productContext.product?.imageUrl &&
+                                    <>
+                                        <Row>
+                                            <Col md="12">
+                                                <div style={{
+                                                    width: "100%",
+                                                    height: "15rem",
+                                                    backgroundImage: "url(" + productContext.product?.imageUrl + ")",
+                                                    backgroundPosition: "center center",
+                                                    backgroundRepeat: "no-repeat",
+                                                    backgroundSize: "cover"
+                                                }} />
+                                            </Col>
+                                        </Row>
+                                        <hr />
+                                    </>
+                                }
+                                <h1>{productContext.product?.name}</h1>
+                                <p dangerouslySetInnerHTML={{ __html: productContext.product?.description }}></p>
+                                <hr />
                                 <Row>
                                     <Col md="12">
                                         {networkContext.editMode ?
                                             <div>
-                                                <h2>Minha Rede Principal</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+                                                <h2>{networkContext.network?.name}</h2>
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
                                             </div>
                                             :
                                             <div>
-                                                <h2>Minha Rede Principal</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+                                                <h2>{networkContext.loading ? <Skeleton /> : networkContext.network?.name}</h2>
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
                                             </div>
                                         }
                                     </Col>
                                 </Row>
-                                <hr />
-                                <h1>{productContext.product?.name}</h1>
-                                <p dangerouslySetInnerHTML={{ __html: productContext.product?.description }}></p>
                             </Col>
                             <Col md={4}>
                                 {authContext.sessionInfo ?

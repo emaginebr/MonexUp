@@ -7,7 +7,7 @@ import AuthContext from "../../Contexts/Auth/AuthContext";
 import Button from "react-bootstrap/esm/Button";
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBitcoinSign, faCalendar, faCalendarAlt, faCancel, faClose, faEnvelope, faEthernet, faLock, faSave, faSignInAlt, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faBitcoinSign, faCalendar, faCalendarAlt, faCancel, faClose, faEnvelope, faEthernet, faLock, faSave, faSignInAlt, faTrash, faUpload, faUser } from '@fortawesome/free-solid-svg-icons';
 import Table from "react-bootstrap/esm/Table";
 import { Link, useNavigate } from "react-router-dom";
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -15,6 +15,7 @@ import UserContext from "../../Contexts/User/UserContext";
 import MessageToast from "../../Components/MessageToast";
 import Moment from 'moment';
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
+import { ImageModal, ImageTypeEnum } from "../../Components/ImageModal";
 
 export default function UserPage() {
 
@@ -22,6 +23,7 @@ export default function UserPage() {
     const userContext = useContext(UserContext);
 
     const [insertMode, setInsertMode] = useState<boolean>(false);
+    const [showImageModal, setShowImageModal] = useState<boolean>(false);
 
     const [dialog, setDialog] = useState<MessageToastEnum>(MessageToastEnum.Error);
     const [showMessage, setShowMessage] = useState<boolean>(false);
@@ -73,14 +75,42 @@ export default function UserPage() {
                 messageText={messageText}
                 onClose={() => setShowMessage(false)}
             ></MessageToast>
+            <ImageModal
+                Image={ImageTypeEnum.User}
+                show={showImageModal}
+                onClose={() => setShowImageModal(false)}
+                onSuccess={(url: string) => {
+                    userContext.setUser({
+                        ...userContext.user,
+                        imageUrl: url
+                    });
+                }}
+            />
             <Container>
-                <Row>
-                    <Col md="8" className='offset-md-2'>
-                        <Card>
-                            <Card.Header>
-                                <h3 className="text-center">User registration</h3>
-                            </Card.Header>
-                            <Card.Body>
+                <Card>
+                    <Card.Body>
+                        <Row>
+                            <Col md="3" className="text-center">
+                                <div className="mb-2">
+                                    {userContext.user?.imageUrl &&
+                                        <img src={userContext.user?.imageUrl}
+                                            className="rounded-circle"
+                                            style={{ width: "12rem", height: "12rem" }}
+                                        />
+                                    }
+                                </div>
+                                <div className="lc-block d-grid gap-3 d-md-block">
+                                    {userContext.user?.userId > 0 &&
+                                        <Button variant="primary" className="me-md-2" size="lg" onClick={async (e) => {
+                                            e.preventDefault();
+                                            setShowImageModal(true);
+                                        }}>
+                                            <FontAwesomeIcon icon={faUpload} fixedWidth />&nbsp;Change Image
+                                        </Button>
+                                    }
+                                </div>
+                            </Col>
+                            <Col md="9">
                                 <Form>
                                     <div className="text-center mb-3">
                                         Registration is not required to make swaps, but you can do so anyway to access your transaction history.
@@ -134,38 +164,38 @@ export default function UserPage() {
                                         </Col>
                                     </Form.Group>
                                     {insertMode &&
-                                    <>
-                                        <Form.Group as={Row} className="mb-3">
-                                            <Form.Label column sm="2">Password:</Form.Label>
-                                            <Col sm="10">
-                                                <InputGroup>
-                                                    <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
-                                                    <Form.Control type="password" size="lg"
-                                                        placeholder="Your password"
-                                                        value={userContext.user?.password}
-                                                        onChange={(e) => {
-                                                            userContext.setUser({
-                                                                ...userContext.user,
-                                                                password: e.target.value
-                                                            });
-                                                        }} />
-                                                </InputGroup>
-                                            </Col>
-                                        </Form.Group>
-                                        <Form.Group as={Row} className="mb-3">
-                                            <Form.Label column sm="2">Confirm:</Form.Label>
-                                            <Col sm="10">
-                                                <InputGroup>
-                                                    <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
-                                                    <Form.Control type="password" size="lg"
-                                                        placeholder="Confirm your password"
-                                                        value={confirmPassword}
-                                                        onChange={(e) => {
-                                                            setConfirmPassword(e.target.value);
-                                                        }} />
-                                                </InputGroup>
-                                            </Col>
-                                        </Form.Group>
+                                        <>
+                                            <Form.Group as={Row} className="mb-3">
+                                                <Form.Label column sm="2">Password:</Form.Label>
+                                                <Col sm="10">
+                                                    <InputGroup>
+                                                        <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
+                                                        <Form.Control type="password" size="lg"
+                                                            placeholder="Your password"
+                                                            value={userContext.user?.password}
+                                                            onChange={(e) => {
+                                                                userContext.setUser({
+                                                                    ...userContext.user,
+                                                                    password: e.target.value
+                                                                });
+                                                            }} />
+                                                    </InputGroup>
+                                                </Col>
+                                            </Form.Group>
+                                            <Form.Group as={Row} className="mb-3">
+                                                <Form.Label column sm="2">Confirm:</Form.Label>
+                                                <Col sm="10">
+                                                    <InputGroup>
+                                                        <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
+                                                        <Form.Control type="password" size="lg"
+                                                            placeholder="Confirm your password"
+                                                            value={confirmPassword}
+                                                            onChange={(e) => {
+                                                                setConfirmPassword(e.target.value);
+                                                            }} />
+                                                    </InputGroup>
+                                                </Col>
+                                            </Form.Group>
                                         </>
                                     }
                                     {!insertMode &&
@@ -175,7 +205,7 @@ export default function UserPage() {
                                                 <InputGroup>
                                                     <InputGroup.Text><FontAwesomeIcon icon={faCalendarAlt} fixedWidth /></InputGroup.Text>
                                                     <Form.Control type="text" size="lg" disabled={true} readOnly={true}
-                                                        value={Moment(userContext.user?.createAt).format("MMM DD YYYY")} />
+                                                        value={Moment(userContext.user?.createAt).format("DD/MM/YYYY")} />
                                                 </InputGroup>
                                             </Col>
                                             <Form.Label column sm="2">Update At:</Form.Label>
@@ -183,14 +213,14 @@ export default function UserPage() {
                                                 <InputGroup>
                                                     <InputGroup.Text><FontAwesomeIcon icon={faCalendarAlt} fixedWidth /></InputGroup.Text>
                                                     <Form.Control type="text" size="lg" disabled={true} readOnly={true}
-                                                        value={Moment(userContext.user?.updateAt).format("MMM DD YYYY")} />
+                                                        value={Moment(userContext.user?.updateAt).format("DD/MM/YYYY")} />
                                                 </InputGroup>
                                             </Col>
                                         </Form.Group>
                                     }
                                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                                         <Button variant="danger" size="lg" onClick={() => {
-                                            navigate("/login");
+                                            navigate("/account/login");
                                         }}><FontAwesomeIcon icon={faSignInAlt} fixedWidth /> Sign In</Button>
                                         <Button variant="success" size="lg" onClick={async (e) => {
                                             if (insertMode) {
@@ -224,10 +254,10 @@ export default function UserPage() {
                                         </Button>
                                     </div>
                                 </Form>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                </Row>
+                            </Col>
+                        </Row>
+                    </Card.Body>
+                </Card>
             </Container>
         </>
     );
