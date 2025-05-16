@@ -12,22 +12,19 @@ import { UserRoleEnum } from "../../DTO/Enum/UserRoleEnum";
 import UserNetworkInfo from "../../DTO/Domain/UserNetworkInfo";
 import UserAddressInfo from "../../DTO/Domain/UserAddressInfo";
 import { showProfile } from "../../Components/Functions";
+import { StringDictionary } from "../../Components/StringDictionary";
+import EditMode from "../../Components/EditMode";
 
-export default function TeamPart() {
+interface ITeamParam {
+    loading: boolean,
+    teams?: UserNetworkInfo[],
+    isEditing: boolean,
+    variables: StringDictionary
+};
 
-    let navigate = useNavigate();
+export default function TeamPart(param: ITeamParam) {
 
     let { networkSlug } = useParams();
-
-    const networkContext = useContext(NetworkContext);
-
-    useEffect(() => {
-        networkContext.listByNetwork(networkSlug).then((ret) => {
-            if (!ret.sucesso) {
-                alert(ret.mensagemErro);
-            }
-        });
-    }, []);
 
     const showDescription = (user: UserNetworkInfo) => {
         if (user.user?.addresses && user.user?.addresses.length > 0) {
@@ -43,17 +40,39 @@ export default function TeamPart() {
                 <Row>
                     <Col md={12} className="text-center">
                         <div className="lc-block mb-1">
-                            <h2 className="display-2 mb-0"><b>Team</b></h2>
-                            <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et metus id<br /> ligula malesuada placerat sit amet quis enim.</p>
+                            <h2 className="display-2 mb-0">
+                                <b>{param.loading ?
+                                    <Skeleton />
+                                    :
+                                    <>
+                                        <EditMode.Text
+                                            name="TEAM_TITLE"
+                                            value={param.variables["TEAM_TITLE"]}
+                                            isEditing={param.isEditing}
+                                        />
+                                    </>
+                                }</b>
+                            </h2>
+                            <p>{param.loading ?
+                                    <Skeleton />
+                                    :
+                                    <>
+                                        <EditMode.Text
+                                            name="TEAM_DESCRIPTION"
+                                            value={param.variables["TEAM_DESCRIPTION"]}
+                                            isEditing={param.isEditing}
+                                        />
+                                    </>
+                                }</p>
                         </div>
                     </Col>
                 </Row>
                 <Row className="pt-4">
-                    {networkContext.loadingTeam ?
+                    {param.loading ?
                         <>
-                            {[1, 2, 3]?.map((index) => {
+                            {[1, 2, 3, 4]?.map((index) => {
                                 return (
-                                    <Col md={4} className="text-center py-4">
+                                    <Col md={3} className="text-center py-4">
                                         <div className="lc-block">
                                             <Skeleton circle={true} className="mb-3" style={{ width: "10rem", height: "10rem" }} />
                                             <h5><Skeleton /></h5>
@@ -74,13 +93,13 @@ export default function TeamPart() {
                         </>
                         :
                         <>
-                            {networkContext.teams?.map((user) => {
+                            {param.teams?.map((user) => {
                                 return (
-                                    <Col md={4} className="text-center py-4">
+                                    <Col md={3} className="text-center py-4">
                                         <div className="lc-block">
                                             {user.user?.imageUrl ?
                                                 <Link to={"/" + networkSlug + "/@/" + user.user?.slug}>
-                                                    <img src={user.user?.imageUrl}  className="rounded-circle mb-3" style={{ width: "10rem", height: "10rem" }} />
+                                                    <img src={user.user?.imageUrl} className="rounded-circle mb-3" style={{ width: "10rem", height: "10rem" }} />
                                                 </Link>
                                                 :
                                                 <Link to={"/" + networkSlug + "/@/" + user.user?.slug}>

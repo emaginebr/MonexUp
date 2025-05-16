@@ -31,6 +31,8 @@ public partial class Network
 
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 
+    public virtual ICollection<Template> Templates { get; set; } = new List<Template>();
+
     public virtual ICollection<UserNetwork> UserNetworks { get; set; } = new List<UserNetwork>();
 
     public virtual ICollection<UserProfile> UserProfiles { get; set; } = new List<UserProfile>();

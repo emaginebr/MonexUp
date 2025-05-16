@@ -3,8 +3,204 @@
   "WorkspaceRootPath": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\db.infra\\repository\\networkrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|solutionrelative:db.infra\\repository\\networkrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\impl\\services\\templateservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\impl\\services\\templateservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.api\\controllers\\templatecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|solutionrelative:monexup.api\\controllers\\templatecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\interfaces\\services\\itemplateservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\interfaces\\services\\itemplateservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.api\\controllers\\productcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|solutionrelative:monexup.api\\controllers\\productcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.dto\\product\\productsearchparam.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|solutionrelative:monexup.dto\\product\\productsearchparam.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\db.infra\\repository\\templatepartrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|solutionrelative:db.infra\\repository\\templatepartrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\impl\\models\\templatepartmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\impl\\models\\templatepartmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.dto\\template\\templatevarinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|solutionrelative:monexup.dto\\template\\templatevarinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.dto\\template\\templatepageinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|solutionrelative:monexup.dto\\template\\templatepageinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.dto\\template\\templatepartinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|solutionrelative:monexup.dto\\template\\templatepartinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\impl\\models\\templatepagemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\impl\\models\\templatepagemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\interfaces\\models\\itemplatepartmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\interfaces\\models\\itemplatepartmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\interfaces\\models\\itemplatepagemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\interfaces\\models\\itemplatepagemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\interfaces\\models\\itemplatemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\interfaces\\models\\itemplatemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\languageutils.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\languageutils.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\impl\\factory\\templatepagedomainfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\impl\\factory\\templatepagedomainfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\impl\\factory\\templatepartdomainfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\impl\\factory\\templatepartdomainfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\impl\\factory\\templatevardomainfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\impl\\factory\\templatevardomainfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DE107B9-14A2-4A93-ACF8-E6F6BE632AC6}|MonexUp.Application\\MonexUp.Application.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.application\\initializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5DE107B9-14A2-4A93-ACF8-E6F6BE632AC6}|MonexUp.Application\\MonexUp.Application.csproj|solutionrelative:monexup.application\\initializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\db.infra\\repository\\templatevarrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|solutionrelative:db.infra\\repository\\templatevarrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.dto\\template\\templatevarresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|solutionrelative:monexup.dto\\template\\templatevarresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.dto\\template\\templatepartresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|solutionrelative:monexup.dto\\template\\templatepartresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.dto\\template\\templatepageresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|solutionrelative:monexup.dto\\template\\templatepageresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.dto\\product\\productresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|solutionrelative:monexup.dto\\product\\productresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.api\\controllers\\imagecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3B88C798-479A-4EB0-8F68-23B3EF1AFAE8}|MonexUp.API\\MonexUp.API.csproj|solutionrelative:monexup.api\\controllers\\imagecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\impl\\models\\templatevarmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\impl\\models\\templatevarmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.dto\\subscription\\subscriptioninfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|solutionrelative:monexup.dto\\subscription\\subscriptioninfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.dto\\subscription\\subscriptionresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|solutionrelative:monexup.dto\\subscription\\subscriptionresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\db.infra\\context\\templatepart.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|solutionrelative:db.infra\\context\\templatepart.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E149BFCB-5FFB-44D5-8FA0-BE1480D2D8CA}|Core.Domain\\Core.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\core.domain\\repository\\itemplaterepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E149BFCB-5FFB-44D5-8FA0-BE1480D2D8CA}|Core.Domain\\Core.Domain.csproj|solutionrelative:core.domain\\repository\\itemplaterepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\interfaces\\models\\itemplatevarmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\interfaces\\models\\itemplatevarmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E149BFCB-5FFB-44D5-8FA0-BE1480D2D8CA}|Core.Domain\\Core.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\core.domain\\repository\\itemplatevarrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E149BFCB-5FFB-44D5-8FA0-BE1480D2D8CA}|Core.Domain\\Core.Domain.csproj|solutionrelative:core.domain\\repository\\itemplatevarrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.dto\\template\\languageenum.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}|MonexUp.DTO\\MonexUp.DTO.csproj|solutionrelative:monexup.dto\\template\\languageenum.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\impl\\services\\imageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\impl\\services\\imageservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\impl\\factory\\templatedomainfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\impl\\factory\\templatedomainfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\impl\\factory\\invoicedomainfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\impl\\factory\\invoicedomainfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\impl\\models\\templatemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\impl\\models\\templatemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\impl\\models\\invoicefeemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\impl\\models\\invoicefeemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\db.infra\\context\\templatevar.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|solutionrelative:db.infra\\context\\templatevar.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\db.infra\\repository\\templatepagerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|solutionrelative:db.infra\\repository\\templatepagerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E149BFCB-5FFB-44D5-8FA0-BE1480D2D8CA}|Core.Domain\\Core.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\core.domain\\repository\\itemplatepartrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E149BFCB-5FFB-44D5-8FA0-BE1480D2D8CA}|Core.Domain\\Core.Domain.csproj|solutionrelative:core.domain\\repository\\itemplatepartrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E149BFCB-5FFB-44D5-8FA0-BE1480D2D8CA}|Core.Domain\\Core.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\core.domain\\repository\\itemplatepagerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E149BFCB-5FFB-44D5-8FA0-BE1480D2D8CA}|Core.Domain\\Core.Domain.csproj|solutionrelative:core.domain\\repository\\itemplatepagerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\db.infra\\repository\\templaterepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|solutionrelative:db.infra\\repository\\templaterepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\db.infra\\context\\templatepage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|solutionrelative:db.infra\\context\\templatepage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\db.infra\\context\\template.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}|DB.Infra\\DB.Infra.csproj|solutionrelative:db.infra\\context\\template.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\interfaces\\factory\\itemplatevardomainfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\interfaces\\factory\\itemplatevardomainfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\interfaces\\factory\\itemplatepartdomainfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\interfaces\\factory\\itemplatepartdomainfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\interfaces\\factory\\itemplatepagedomainfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\interfaces\\factory\\itemplatepagedomainfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\interfaces\\factory\\itemplatedomainfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\interfaces\\factory\\itemplatedomainfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|c:\\git\\projetos\\monexup\\backend\\monexup\\monexup.domain\\interfaces\\factory\\iinvoicedomainfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A1075D98-F8C9-4101-A9BD-D86B2AECA385}|MonexUp.Domain\\MonexUp.Domain.csproj|solutionrelative:monexup.domain\\interfaces\\factory\\iinvoicedomainfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,20 +210,614 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ProductController.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\Controllers\\ProductController.cs",
+              "RelativeDocumentMoniker": "MonexUp.API\\Controllers\\ProductController.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\Controllers\\ProductController.cs",
+              "RelativeToolTip": "MonexUp.API\\Controllers\\ProductController.cs",
+              "ViewState": "AgIAAE8AAAAAAAAAAAAkwGMAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-16T12:11:28.831Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "TemplateController.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\Controllers\\TemplateController.cs",
+              "RelativeDocumentMoniker": "MonexUp.API\\Controllers\\TemplateController.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\Controllers\\TemplateController.cs",
+              "RelativeToolTip": "MonexUp.API\\Controllers\\TemplateController.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAgwCEAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T09:36:17.713Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "NetworkRepository.cs",
-              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\NetworkRepository.cs",
-              "RelativeDocumentMoniker": "DB.Infra\\Repository\\NetworkRepository.cs",
-              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\NetworkRepository.cs",
-              "RelativeToolTip": "DB.Infra\\Repository\\NetworkRepository.cs",
+              "Title": "TemplateService.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Services\\TemplateService.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Impl\\Services\\TemplateService.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Services\\TemplateService.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Impl\\Services\\TemplateService.cs",
+              "ViewState": "AgIAACUBAAAAAAAAAAAswB0BAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T00:13:15.01Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "TemplatePartInfo.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Template\\TemplatePartInfo.cs",
+              "RelativeDocumentMoniker": "MonexUp.DTO\\Template\\TemplatePartInfo.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Template\\TemplatePartInfo.cs",
+              "RelativeToolTip": "MonexUp.DTO\\Template\\TemplatePartInfo.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T03:11:06.498Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "TemplatePageInfo.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Template\\TemplatePageInfo.cs",
+              "RelativeDocumentMoniker": "MonexUp.DTO\\Template\\TemplatePageInfo.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Template\\TemplatePageInfo.cs",
+              "RelativeToolTip": "MonexUp.DTO\\Template\\TemplatePageInfo.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T03:00:42.436Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ITemplateService.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Interfaces\\Services\\ITemplateService.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Interfaces\\Services\\ITemplateService.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Interfaces\\Services\\ITemplateService.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Interfaces\\Services\\ITemplateService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwA0AAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T21:39:33.875Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ProductSearchParam.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Product\\ProductSearchParam.cs",
+              "RelativeDocumentMoniker": "MonexUp.DTO\\Product\\ProductSearchParam.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Product\\ProductSearchParam.cs",
+              "RelativeToolTip": "MonexUp.DTO\\Product\\ProductSearchParam.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-16T12:11:39.413Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "TemplatePartRepository.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\TemplatePartRepository.cs",
+              "RelativeDocumentMoniker": "DB.Infra\\Repository\\TemplatePartRepository.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\TemplatePartRepository.cs",
+              "RelativeToolTip": "DB.Infra\\Repository\\TemplatePartRepository.cs",
+              "ViewState": "AgIAAEoAAAAAAAAAAAAawHsAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T19:37:54.938Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "TemplatePartModel.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Models\\TemplatePartModel.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Impl\\Models\\TemplatePartModel.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Models\\TemplatePartModel.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Impl\\Models\\TemplatePartModel.cs",
+              "ViewState": "AgIAACIAAAAAAAAAAAAtwDIAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T20:48:04.328Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "Initializer.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Application\\Initializer.cs",
+              "RelativeDocumentMoniker": "MonexUp.Application\\Initializer.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Application\\Initializer.cs",
+              "RelativeToolTip": "MonexUp.Application\\Initializer.cs",
+              "ViewState": "AgIAADsAAAAAAAAAAAAwwFMAAABBAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T00:16:28.416Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "TemplateVarInfo.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Template\\TemplateVarInfo.cs",
+              "RelativeDocumentMoniker": "MonexUp.DTO\\Template\\TemplateVarInfo.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Template\\TemplateVarInfo.cs",
+              "RelativeToolTip": "MonexUp.DTO\\Template\\TemplateVarInfo.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T11:33:49.496Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "ITemplatePartModel.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Interfaces\\Models\\ITemplatePartModel.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Interfaces\\Models\\ITemplatePartModel.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Interfaces\\Models\\ITemplatePartModel.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Interfaces\\Models\\ITemplatePartModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T14:56:47.29Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "TemplatePageModel.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Models\\TemplatePageModel.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Impl\\Models\\TemplatePageModel.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Models\\TemplatePageModel.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Impl\\Models\\TemplatePageModel.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAAB8AAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T20:40:47.59Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "ITemplatePageModel.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Interfaces\\Models\\ITemplatePageModel.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Interfaces\\Models\\ITemplatePageModel.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Interfaces\\Models\\ITemplatePageModel.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Interfaces\\Models\\ITemplatePageModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T14:55:30.687Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "ITemplateModel.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Interfaces\\Models\\ITemplateModel.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Interfaces\\Models\\ITemplateModel.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Interfaces\\Models\\ITemplateModel.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Interfaces\\Models\\ITemplateModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T14:51:41.38Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "LanguageUtils.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\LanguageUtils.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\LanguageUtils.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\LanguageUtils.cs",
+              "RelativeToolTip": "MonexUp.Domain\\LanguageUtils.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwBoAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T09:41:49.847Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "TemplatePageDomainFactory.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Factory\\TemplatePageDomainFactory.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Impl\\Factory\\TemplatePageDomainFactory.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Factory\\TemplatePageDomainFactory.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Impl\\Factory\\TemplatePageDomainFactory.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T21:32:48.274Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "TemplatePartDomainFactory.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Factory\\TemplatePartDomainFactory.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Impl\\Factory\\TemplatePartDomainFactory.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Factory\\TemplatePartDomainFactory.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Impl\\Factory\\TemplatePartDomainFactory.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T21:35:47.957Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "TemplateVarDomainFactory.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Factory\\TemplateVarDomainFactory.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Impl\\Factory\\TemplateVarDomainFactory.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Factory\\TemplateVarDomainFactory.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Impl\\Factory\\TemplateVarDomainFactory.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABgAAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T21:37:38.21Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "TemplateVarRepository.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\TemplateVarRepository.cs",
+              "RelativeDocumentMoniker": "DB.Infra\\Repository\\TemplateVarRepository.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\TemplateVarRepository.cs",
+              "RelativeToolTip": "DB.Infra\\Repository\\TemplateVarRepository.cs",
+              "ViewState": "AgIAAD4AAAAAAAAAAAAWwEoAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T20:22:27.131Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "TemplatePartResult.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Template\\TemplatePartResult.cs",
+              "RelativeDocumentMoniker": "MonexUp.DTO\\Template\\TemplatePartResult.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Template\\TemplatePartResult.cs",
+              "RelativeToolTip": "MonexUp.DTO\\Template\\TemplatePartResult.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T10:01:33.116Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "TemplateVarResult.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Template\\TemplateVarResult.cs",
+              "RelativeDocumentMoniker": "MonexUp.DTO\\Template\\TemplateVarResult.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Template\\TemplateVarResult.cs",
+              "RelativeToolTip": "MonexUp.DTO\\Template\\TemplateVarResult.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T12:00:26.892Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "TemplatePageResult.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Template\\TemplatePageResult.cs",
+              "RelativeDocumentMoniker": "MonexUp.DTO\\Template\\TemplatePageResult.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Template\\TemplatePageResult.cs",
+              "RelativeToolTip": "MonexUp.DTO\\Template\\TemplatePageResult.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T09:47:05.461Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "ProductResult.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Product\\ProductResult.cs",
+              "RelativeDocumentMoniker": "MonexUp.DTO\\Product\\ProductResult.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Product\\ProductResult.cs",
+              "RelativeToolTip": "MonexUp.DTO\\Product\\ProductResult.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-14T12:58:49.332Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-15T09:46:47.224Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "ImageController.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\Controllers\\ImageController.cs",
+              "RelativeDocumentMoniker": "MonexUp.API\\Controllers\\ImageController.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.API\\Controllers\\ImageController.cs",
+              "RelativeToolTip": "MonexUp.API\\Controllers\\ImageController.cs",
+              "ViewState": "AgIAADEAAAAAAAAAAAAQwBQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T09:35:08.671Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "TemplateVarModel.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Models\\TemplateVarModel.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Impl\\Models\\TemplateVarModel.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Models\\TemplateVarModel.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Impl\\Models\\TemplateVarModel.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAwBkAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T21:25:42.912Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "SubscriptionInfo.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Subscription\\SubscriptionInfo.cs",
+              "RelativeDocumentMoniker": "MonexUp.DTO\\Subscription\\SubscriptionInfo.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Subscription\\SubscriptionInfo.cs",
+              "RelativeToolTip": "MonexUp.DTO\\Subscription\\SubscriptionInfo.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T03:01:22.73Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "SubscriptionResult.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Subscription\\SubscriptionResult.cs",
+              "RelativeDocumentMoniker": "MonexUp.DTO\\Subscription\\SubscriptionResult.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Subscription\\SubscriptionResult.cs",
+              "RelativeToolTip": "MonexUp.DTO\\Subscription\\SubscriptionResult.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T03:01:24.855Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "TemplatePart.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Context\\TemplatePart.cs",
+              "RelativeDocumentMoniker": "DB.Infra\\Context\\TemplatePart.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Context\\TemplatePart.cs",
+              "RelativeToolTip": "DB.Infra\\Context\\TemplatePart.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T14:56:19.18Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "ITemplateRepository.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\Core.Domain\\Repository\\ITemplateRepository.cs",
+              "RelativeDocumentMoniker": "Core.Domain\\Repository\\ITemplateRepository.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\Core.Domain\\Repository\\ITemplateRepository.cs",
+              "RelativeToolTip": "Core.Domain\\Repository\\ITemplateRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T14:09:05.629Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "ITemplateVarModel.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Interfaces\\Models\\ITemplateVarModel.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Interfaces\\Models\\ITemplateVarModel.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Interfaces\\Models\\ITemplateVarModel.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Interfaces\\Models\\ITemplateVarModel.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAAABYAAABLAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T14:57:58.474Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "ITemplateVarRepository.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\Core.Domain\\Repository\\ITemplateVarRepository.cs",
+              "RelativeDocumentMoniker": "Core.Domain\\Repository\\ITemplateVarRepository.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\Core.Domain\\Repository\\ITemplateVarRepository.cs",
+              "RelativeToolTip": "Core.Domain\\Repository\\ITemplateVarRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T14:37:19.693Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "LanguageEnum.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Template\\LanguageEnum.cs",
+              "RelativeDocumentMoniker": "MonexUp.DTO\\Template\\LanguageEnum.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\Template\\LanguageEnum.cs",
+              "RelativeToolTip": "MonexUp.DTO\\Template\\LanguageEnum.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T00:20:54.542Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "ImageService.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Services\\ImageService.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Impl\\Services\\ImageService.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Services\\ImageService.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Impl\\Services\\ImageService.cs",
+              "ViewState": "AgIAABQAAAAAAAAAAAAAwBsAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-15T00:13:37.755Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "InvoiceDomainFactory.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Factory\\InvoiceDomainFactory.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Impl\\Factory\\InvoiceDomainFactory.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Factory\\InvoiceDomainFactory.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Impl\\Factory\\InvoiceDomainFactory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T21:30:56.209Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "TemplateDomainFactory.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Factory\\TemplateDomainFactory.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Impl\\Factory\\TemplateDomainFactory.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Factory\\TemplateDomainFactory.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Impl\\Factory\\TemplateDomainFactory.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T21:30:27.539Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "TemplateModel.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Models\\TemplateModel.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Impl\\Models\\TemplateModel.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Models\\TemplateModel.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Impl\\Models\\TemplateModel.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAACEAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T20:36:37.696Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "InvoiceFeeModel.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Models\\InvoiceFeeModel.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Impl\\Models\\InvoiceFeeModel.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Impl\\Models\\InvoiceFeeModel.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Impl\\Models\\InvoiceFeeModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T20:36:15.843Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "TemplatePageRepository.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\TemplatePageRepository.cs",
+              "RelativeDocumentMoniker": "DB.Infra\\Repository\\TemplatePageRepository.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\TemplatePageRepository.cs",
+              "RelativeToolTip": "DB.Infra\\Repository\\TemplatePageRepository.cs",
+              "ViewState": "AgIAADQAAAAAAAAAAAAuwE8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T19:24:42.748Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "TemplateVar.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Context\\TemplateVar.cs",
+              "RelativeDocumentMoniker": "DB.Infra\\Context\\TemplateVar.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Context\\TemplateVar.cs",
+              "RelativeToolTip": "DB.Infra\\Context\\TemplateVar.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T14:57:33.168Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "ITemplatePartRepository.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\Core.Domain\\Repository\\ITemplatePartRepository.cs",
+              "RelativeDocumentMoniker": "Core.Domain\\Repository\\ITemplatePartRepository.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\Core.Domain\\Repository\\ITemplatePartRepository.cs",
+              "RelativeToolTip": "Core.Domain\\Repository\\ITemplatePartRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T14:29:36.144Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "ITemplatePageRepository.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\Core.Domain\\Repository\\ITemplatePageRepository.cs",
+              "RelativeDocumentMoniker": "Core.Domain\\Repository\\ITemplatePageRepository.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\Core.Domain\\Repository\\ITemplatePageRepository.cs",
+              "RelativeToolTip": "Core.Domain\\Repository\\ITemplatePageRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T14:19:09.228Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
+              "Title": "TemplateRepository.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\TemplateRepository.cs",
+              "RelativeDocumentMoniker": "DB.Infra\\Repository\\TemplateRepository.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Repository\\TemplateRepository.cs",
+              "RelativeToolTip": "DB.Infra\\Repository\\TemplateRepository.cs",
+              "ViewState": "AgIAACYAAAAAAAAAAAAgwDcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T15:08:26.37Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 44,
+              "Title": "Template.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Context\\Template.cs",
+              "RelativeDocumentMoniker": "DB.Infra\\Context\\Template.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Context\\Template.cs",
+              "RelativeToolTip": "DB.Infra\\Context\\Template.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T14:51:08.529Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 43,
+              "Title": "TemplatePage.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Context\\TemplatePage.cs",
+              "RelativeDocumentMoniker": "DB.Infra\\Context\\TemplatePage.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\Context\\TemplatePage.cs",
+              "RelativeToolTip": "DB.Infra\\Context\\TemplatePage.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T14:55:07.458Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 45,
+              "Title": "ITemplateVarDomainFactory.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Interfaces\\Factory\\ITemplateVarDomainFactory.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Interfaces\\Factory\\ITemplateVarDomainFactory.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Interfaces\\Factory\\ITemplateVarDomainFactory.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Interfaces\\Factory\\ITemplateVarDomainFactory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T15:01:31.305Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 46,
+              "Title": "ITemplatePartDomainFactory.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Interfaces\\Factory\\ITemplatePartDomainFactory.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Interfaces\\Factory\\ITemplatePartDomainFactory.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Interfaces\\Factory\\ITemplatePartDomainFactory.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Interfaces\\Factory\\ITemplatePartDomainFactory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T15:00:38.286Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 47,
+              "Title": "ITemplatePageDomainFactory.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Interfaces\\Factory\\ITemplatePageDomainFactory.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Interfaces\\Factory\\ITemplatePageDomainFactory.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Interfaces\\Factory\\ITemplatePageDomainFactory.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Interfaces\\Factory\\ITemplatePageDomainFactory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T14:59:44.685Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 48,
+              "Title": "ITemplateDomainFactory.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Interfaces\\Factory\\ITemplateDomainFactory.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Interfaces\\Factory\\ITemplateDomainFactory.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Interfaces\\Factory\\ITemplateDomainFactory.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Interfaces\\Factory\\ITemplateDomainFactory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T14:59:02.985Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 49,
+              "Title": "IInvoiceDomainFactory.cs",
+              "DocumentMoniker": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Interfaces\\Factory\\IInvoiceDomainFactory.cs",
+              "RelativeDocumentMoniker": "MonexUp.Domain\\Interfaces\\Factory\\IInvoiceDomainFactory.cs",
+              "ToolTip": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\Interfaces\\Factory\\IInvoiceDomainFactory.cs",
+              "RelativeToolTip": "MonexUp.Domain\\Interfaces\\Factory\\IInvoiceDomainFactory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T14:54:49.227Z"
             }
           ]
         }

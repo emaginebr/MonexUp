@@ -83,6 +83,14 @@ namespace MonexUp.API.Controllers
                     return StatusCode(401, "Not Authorized");
                 }
                 */
+                if (!string.IsNullOrEmpty(param.NetworkSlug) && !(param.NetworkId.HasValue && param.NetworkId.Value > 0))
+                {
+                    var network = _networkService.GetBySlug(param.NetworkSlug);
+                    if (network != null)
+                    {
+                        param.NetworkId = network.NetworkId;
+                    }
+                }
                 if (!string.IsNullOrEmpty(param.UserSlug) && !(param.UserId.HasValue && param.UserId.Value > 0))
                 {
                     var user = _userService.GetBySlug(param.UserSlug);

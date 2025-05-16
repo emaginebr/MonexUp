@@ -17,6 +17,7 @@ import NetworkContext from '../Contexts/Network/NetworkContext';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import UserContext from '../Contexts/User/UserContext';
+import TemplateContext from '../Contexts/Template/TemplateContext';
 
 
 export default function MenuUser() {
@@ -38,6 +39,7 @@ export default function MenuUser() {
   const authContext = useContext(AuthContext);
   const userContext = useContext(UserContext);
   const networkContext = useContext(NetworkContext);
+  const templateContext = useContext(TemplateContext);
 
   useEffect(() => {
     authContext.loadUserSession();
@@ -89,7 +91,7 @@ export default function MenuUser() {
                 <>
                   <NavDropdown title={
                     <>
-                      {networkContext.editMode ?
+                      {templateContext.editMode ?
                         <><FontAwesomeIcon icon={faCheckCircle} />&nbsp;Edit Mode (On)</>
                         :
                         <><FontAwesomeIcon icon={faCircle} />&nbsp;Edit Mode (Off)</>
@@ -99,10 +101,10 @@ export default function MenuUser() {
                     <NavDropdown.ItemText className='small'>Activate edit mode to change network pages</NavDropdown.ItemText>
                     <NavDropdown.Divider />
                     <NavDropdown.Item onClick={(e) => {
-                      networkContext.setEditMode(true);
+                      templateContext.setEditMode(true);
                     }}><FontAwesomeIcon icon={faCheckCircle} />&nbsp;Edit Mode (On)</NavDropdown.Item>
                     <NavDropdown.Item onClick={(e) => {
-                      networkContext.setEditMode(false);
+                      templateContext.setEditMode(false);
                     }}><FontAwesomeIcon icon={faCircle} />&nbsp;Edit Mode (Off)</NavDropdown.Item>
                   </NavDropdown>
                 </>

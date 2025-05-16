@@ -26,7 +26,6 @@ export default function NetworkProvider(props: any) {
     const [userNetworks, setUserNetworks] = useState<UserNetworkInfo[]>([]);
     const [teams, setTeams] = useState<UserNetworkInfo[]>([]);
     const [currentRole, _setCurrentRole] = useState<UserRoleEnum>(UserRoleEnum.User);
-    const [editMode, _setEditMode] = useState<boolean>(false);
 
     const networkProviderValue: INetworkProvider = {
         loading: loading,
@@ -43,7 +42,6 @@ export default function NetworkProvider(props: any) {
         userNetworks: userNetworks,
         teams: teams,
         currentRole: currentRole,
-        editMode: editMode,
 
         setNetwork: (network: NetworkInfo) => {
             _setNetwork(network);
@@ -56,6 +54,7 @@ export default function NetworkProvider(props: any) {
         setCurrentRole: (role: UserRoleEnum) => {
             _setCurrentRole(role);
         },
+        /*
         setEditMode: (edit: boolean) => {
             if (edit) {
                 if (currentRole >= UserRoleEnum.NetworkManager) {
@@ -69,6 +68,7 @@ export default function NetworkProvider(props: any) {
                 _setEditMode(false);
             }
         },
+        */
 
         insert: async (network: NetworkInsertInfo) => {
             let ret: Promise<ProviderResult>;

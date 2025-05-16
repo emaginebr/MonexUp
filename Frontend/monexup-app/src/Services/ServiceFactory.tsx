@@ -14,6 +14,8 @@ import IInvoiceService from './Interfaces/IInvoiceService';
 import InvoiceService from './Impl/InvoiceService';
 import IImageService from './Interfaces/IImageService';
 import ImageService from './Impl/ImageService';
+import ITemplateService from './Interfaces/ITemplateService';
+import TemplateService from './Impl/TemplateService';
 
 const httpClientAuth : IHttpClient = HttpClient();
 httpClientAuth.init(process.env.REACT_APP_API_URL);
@@ -39,6 +41,9 @@ invoiceServiceImpl.init(httpClientAuth);
 const imageServiceImpl : IImageService = ImageService;
 imageServiceImpl.init(httpClientAuth);
 
+const templateServiceImpl : ITemplateService = TemplateService;
+templateServiceImpl.init(httpClientAuth);
+
 const ServiceFactory = {
   UserService: userServiceImpl,
   NetworkService: networkServiceImpl,
@@ -47,6 +52,7 @@ const ServiceFactory = {
   OrderService: orderServiceImpl,
   InvoiceService: invoiceServiceImpl,
   ImageService: imageServiceImpl,
+  TemplateService: templateServiceImpl,
   setLogoffCallback: (cb : () => void) => {
     httpClientAuth.setLogoff(cb);
   }

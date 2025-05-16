@@ -11,5 +11,7 @@ namespace MonexUp.DTO.Product
     {
         [JsonPropertyName("userSlug")]
         public string UserSlug { get; set; }
+        [JsonPropertyName("networkSlug")]
+        public string NetworkSlug { get; set; }
     }
 }

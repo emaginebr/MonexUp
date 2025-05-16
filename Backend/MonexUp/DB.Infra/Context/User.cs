@@ -45,6 +45,8 @@ public partial class User
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
+    public virtual ICollection<Template> Templates { get; set; } = new List<Template>();
+
     public virtual ICollection<UserAddress> UserAddresses { get; set; } = new List<UserAddress>();
 
     public virtual ICollection<UserDocument> UserDocuments { get; set; } = new List<UserDocument>();

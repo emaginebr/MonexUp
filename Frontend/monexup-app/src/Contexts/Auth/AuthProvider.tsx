@@ -6,20 +6,26 @@ import AuthFactory from '../../Business/Factory/AuthFactory';
 import AuthSession from '../../DTO/Domain/AuthSession';
 import UserFactory from '../../Business/Factory/UserFactory';
 import UserInfo from '../../DTO/Domain/UserInfo';
+import { LanguageEnum } from '../../DTO/Enum/LanguageEnum';
 
 export default function AuthProvider(props: any) {
 
   const [loading, setLoading] = useState(false);
+  const [language, setLanguage] = useState<LanguageEnum>(LanguageEnum.English);
   const [sessionInfo, _setSessionInfo] = useState<AuthSession>(null);
 
   const authProviderValue: IAuthProvider = {
     loading: loading,
+    language: language,
     sessionInfo: sessionInfo,
 
     setSession: (session: AuthSession) => {
       console.log(JSON.stringify(session));
       _setSessionInfo(session);
       AuthFactory.AuthBusiness.setSession(session);
+    },
+    setLanguage: (value: LanguageEnum) => {
+      setLanguage(value);
     },
     loginWithEmail: async (email: string, password: string) => {
       let ret: Promise<ProviderResult>;
@@ -37,6 +43,7 @@ export default function AuthProvider(props: any) {
               isAdmin: retLog.dataResult.isAdmin,
               name: retLog.dataResult.name,
               email: retLog.dataResult.email,
+              language: language
             });
             setLoading(false);
             return {

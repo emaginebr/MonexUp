@@ -1,38 +1,31 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate, useParams } from "react-router-dom";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
-import { faBoltLightning, faLock, faFileUpload, faCalendarAlt, faFileWord, faBoxOpen, faLockOpen, faUserDoctor } from '@fortawesome/free-solid-svg-icons';
-import { faBitcoin } from "@fortawesome/free-brands-svg-icons";
 import Card from "react-bootstrap/esm/Card";
 import CardHeader from "react-bootstrap/esm/CardHeader";
 import CardTitle from "react-bootstrap/esm/CardTitle";
 import CardBody from "react-bootstrap/esm/CardBody";
 import CardText from "react-bootstrap/esm/CardText";
 import Button from "react-bootstrap/esm/Button";
-import { useContext, useEffect } from "react";
-import AuthContext from "../../Contexts/Auth/AuthContext";
-import NetworkContext from "../../Contexts/Network/NetworkContext";
-import ProductContext from "../../Contexts/Product/ProductContext";
 import { showFrequencyMax, showFrequencyMin } from "../../Components/Functions";
 import Skeleton from "react-loading-skeleton";
+import { StringDictionary } from "../../Components/StringDictionary";
+import ProductInfo from "../../DTO/Domain/ProductInfo";
+import EditMode from "../../Components/EditMode";
 
-export default function PlanPart() {
+interface IPlan3Colsaram {
+    loading: boolean,
+    products?: ProductInfo[],
+    isEditing: boolean,
+    variables: StringDictionary
+};
+
+export default function Plan3ColsPart(param: IPlan3Colsaram) {
 
     let navigate = useNavigate();
 
     let { networkSlug, sellerSlug } = useParams();
-
-    const productContext = useContext(ProductContext);
-
-    useEffect(() => {
-        productContext.listByNetworkSlug(networkSlug).then((ret) => {
-            if (!ret.sucesso) {
-                alert(ret.mensagemErro);
-            }
-        });
-    }, []);
 
     return (
         <>
@@ -41,13 +34,35 @@ export default function PlanPart() {
                     <Row>
                         <Col md={12} className="text-center">
                             <div className="lc-block mb-4">
-                                <h2 className="display-2 mb-0"><b>Plans</b></h2>
-                                <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc et metus id<br /> ligula malesuada placerat sit amet quis enim.</p>
+                                <h2 className="display-2 mb-0">
+                                    <b>{param.loading ?
+                                        <Skeleton />
+                                        :
+                                        <>
+                                            <EditMode.Text
+                                                name="PLAN_TITLE"
+                                                value={param.variables["PLAN_TITLE"]}
+                                                isEditing={param.isEditing}
+                                            />
+                                        </>
+                                    }</b>
+                                </h2>
+                                <p>{param.loading ?
+                                        <Skeleton />
+                                        :
+                                        <>
+                                            <EditMode.Text
+                                                name="PLAN_DESCRIPTION"
+                                                value={param.variables["PLAN_DESCRIPTION"]}
+                                                isEditing={param.isEditing}
+                                            />
+                                        </>
+                                    }</p>
                             </div>
                         </Col>
                     </Row>
                     <Row md={4} className="text-center">
-                        {productContext.loadingList ?
+                        {param.loading ?
                             <>
                                 {[1, 2, 3].map((index) => {
                                     return (
@@ -78,7 +93,7 @@ export default function PlanPart() {
                                 })}
                             </>
                             :
-                            productContext.products.map((product) => {
+                            param.products?.map((product) => {
                                 return (
                                     <Col lg={4} md={6} className="text-dark my-2">
                                         <Card>
@@ -99,7 +114,7 @@ export default function PlanPart() {
                                                 </CardText>
                                                 <div className="d-grid lc-block">
                                                     <Button variant="primary" size="lg" className="btn-outline-primary" onClick={(e) => {
-                                                        navigate(sellerSlug ? 
+                                                        navigate(sellerSlug ?
                                                             "/" + networkSlug + "/@/" + sellerSlug + "/" + product.slug
                                                             :
                                                             "/" + networkSlug + "/" + product.slug

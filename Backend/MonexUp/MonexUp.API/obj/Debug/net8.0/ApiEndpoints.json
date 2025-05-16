@@ -958,6 +958,260 @@
     ]
   },
   {
+    "ContainingType": "MonexUp.API.Controllers.TemplateController",
+    "Method": "DeletePart",
+    "RelativePath": "api/Template/deletePart/{partId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "partId",
+        "Type": "System.Int64",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MonexUp.DTO.Domain.StatusResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MonexUp.API.Controllers.TemplateController",
+    "Method": "GetNetworkPage",
+    "RelativePath": "api/Template/getNetworkPage/{networkSlug}/{pageSlug}/{lang}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "networkSlug",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "pageSlug",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "lang",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MonexUp.DTO.Template.TemplatePageResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MonexUp.API.Controllers.TemplateController",
+    "Method": "GetPageById",
+    "RelativePath": "api/Template/getPageById/{pageId}/{lang}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pageId",
+        "Type": "System.Int64",
+        "IsRequired": true
+      },
+      {
+        "Name": "lang",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MonexUp.DTO.Template.TemplatePageResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MonexUp.API.Controllers.TemplateController",
+    "Method": "GetVariable",
+    "RelativePath": "api/Template/getVariable/{pageId}/{key}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pageId",
+        "Type": "System.Int64",
+        "IsRequired": true
+      },
+      {
+        "Name": "key",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MonexUp.DTO.Template.TemplateVarResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MonexUp.API.Controllers.TemplateController",
+    "Method": "InsertPart",
+    "RelativePath": "api/Template/insertPart",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "part",
+        "Type": "MonexUp.DTO.Template.TemplatePartInfo",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MonexUp.DTO.Domain.StatusResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MonexUp.API.Controllers.TemplateController",
+    "Method": "MovePartDown",
+    "RelativePath": "api/Template/movePartDown/{partId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "partId",
+        "Type": "System.Int64",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MonexUp.DTO.Domain.StatusResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MonexUp.API.Controllers.TemplateController",
+    "Method": "MovePartUp",
+    "RelativePath": "api/Template/movePartUp/{partId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "partId",
+        "Type": "System.Int64",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MonexUp.DTO.Domain.StatusResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MonexUp.API.Controllers.TemplateController",
+    "Method": "SaveVariable",
+    "RelativePath": "api/Template/saveVariable",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "variable",
+        "Type": "MonexUp.DTO.Template.TemplateVarInfo",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MonexUp.DTO.Template.TemplateVarResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MonexUp.API.Controllers.TemplateController",
+    "Method": "UpdatePart",
+    "RelativePath": "api/Template/updatePart",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "part",
+        "Type": "MonexUp.DTO.Template.TemplatePartInfo",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MonexUp.DTO.Domain.StatusResult",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "MonexUp.API.Controllers.UserController",
     "Method": "ChangePassword",
     "RelativePath": "api/User/changepassword",

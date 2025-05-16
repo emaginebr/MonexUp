@@ -1,4 +1,5 @@
 import UserNetworkInfo from "../DTO/Domain/UserNetworkInfo";
+import { LanguageEnum } from "../DTO/Enum/LanguageEnum";
 import { UserRoleEnum } from "../DTO/Enum/UserRoleEnum";
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
@@ -117,12 +118,30 @@ const MenuLanguage = () => {
                 <img src={process.env.PUBLIC_URL + "/flags/fr.svg"} style={{ width: "21px", height: "21px" }} />
                 &nbsp;Francês
             </NavDropdown.Item>
-            <NavDropdown.Item>
-                <img src={process.env.PUBLIC_URL + "/flags/cn.svg"} style={{ width: "21px", height: "21px" }} />
-                &nbsp;Chinês
-            </NavDropdown.Item>
         </NavDropdown>
     );
 };
 
-export { showFrequencyMin, showFrequencyMax, showProfile, formatPhoneNumber, MenuLanguage };
+const langToStr = (lang: LanguageEnum) => {
+    let ret: string;
+    switch (lang) {
+        case LanguageEnum.English:
+            ret = "en";
+            break;
+        case LanguageEnum.Spanish:
+            ret = "es";
+            break;
+        case LanguageEnum.French:
+            ret = "fr";
+            break;
+        case LanguageEnum.Portuguese:
+            ret = "br";
+            break;
+        default:
+            ret = "en";
+            break;
+    }
+    return ret;
+};
+
+export { showFrequencyMin, showFrequencyMax, showProfile, formatPhoneNumber, MenuLanguage, langToStr };

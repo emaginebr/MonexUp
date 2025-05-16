@@ -187,7 +187,7 @@ export default function RequestAccessPage() {
                 messageText={messageText}
                 onClose={() => setShowMessage(false)}
             ></MessageToast>
-            <Container>
+            <Container className="py-4">
                 <Row>
                     <Col md="6" className='offset-md-3'>
                         {networkContext.userNetwork ?

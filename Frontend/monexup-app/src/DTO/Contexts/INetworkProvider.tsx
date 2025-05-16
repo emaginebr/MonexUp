@@ -21,12 +21,10 @@ interface INetworkProvider {
     userNetworks: UserNetworkInfo[];
     teams: UserNetworkInfo[];
     currentRole: UserRoleEnum;
-    editMode: boolean;
 
     setNetwork: (network: NetworkInfo) => void;
     setUserNetwork: (userNetwork: UserNetworkInfo) => void;
     setCurrentRole: (role: UserRoleEnum) => void;
-    setEditMode: (edit: boolean) => void;
 
     insert: (network: NetworkInsertInfo) => Promise<ProviderResult>;
     update: (network: NetworkInfo) => Promise<ProviderResult>;

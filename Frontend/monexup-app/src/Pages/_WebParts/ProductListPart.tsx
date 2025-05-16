@@ -6,11 +6,17 @@ import Pagination from 'react-bootstrap/Pagination';
 import ProductListPagedInfo from "../../DTO/Domain/ProductListPagedInfo";
 import { Link } from "react-router-dom";
 import { showFrequencyMin } from "../../Components/Functions";
+import Skeleton from "react-loading-skeleton";
+import EditMode from "../../Components/EditMode";
+import { StringDictionary } from "../../Components/StringDictionary";
 
 interface IProductListParam {
     loading: boolean;
-    sellerSlug: string;
+    networkSlug: string;
+    sellerSlug?: string;
     ProductResult: ProductListPagedInfo;
+    isEditing: boolean,
+    variables: StringDictionary,
     onChangePage: (pageNum: number) => void;
 }
 
@@ -18,6 +24,36 @@ export default function ProductListPart(param: IProductListParam) {
     return (
 
         <Container className="py-4 py-lg-6">
+            <Row>
+                <Col md={12} className="text-center">
+                    <div className="lc-block mb-1">
+                        <h2 className="display-2 mb-0">
+                            <b>{param.loading ?
+                                <Skeleton />
+                                :
+                                <>
+                                    <EditMode.Text
+                                        name="PRODUCT_TITLE"
+                                        value={param.variables["PRODUCT_TITLE"]}
+                                        isEditing={param.isEditing}
+                                    />
+                                </>
+                            }</b>
+                        </h2>
+                        <p>{param.loading ?
+                            <Skeleton />
+                            :
+                            <>
+                                <EditMode.Text
+                                    name="PRODUCT_DESCRIPTION"
+                                    value={param.variables["PRODUCT_DESCRIPTION"]}
+                                    isEditing={param.isEditing}
+                                />
+                            </>
+                        }</p>
+                    </div>
+                </Col>
+            </Row>
             {param.loading &&
                 <Row>
                     <Col lg={4}>

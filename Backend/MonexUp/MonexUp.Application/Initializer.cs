@@ -55,6 +55,10 @@ namespace MonexUp.Application
             injectDependency(typeof(IUserPhoneRepository<IUserPhoneModel, IUserPhoneDomainFactory>), typeof(UserPhoneRepository), services, scoped);
             injectDependency(typeof(IUserProfileRepository<IUserProfileModel, IUserProfileDomainFactory>), typeof(UserProfileRepository), services, scoped);
             injectDependency(typeof(IUserRepository<IUserModel, IUserDomainFactory>), typeof(UserRepository), services, scoped);
+            injectDependency(typeof(ITemplateRepository<ITemplateModel, ITemplateDomainFactory>), typeof(TemplateRepository), services, scoped);
+            injectDependency(typeof(ITemplatePageRepository<ITemplatePageModel, ITemplatePageDomainFactory>), typeof(TemplatePageRepository), services, scoped);
+            injectDependency(typeof(ITemplatePartRepository<ITemplatePartModel, ITemplatePartDomainFactory>), typeof(TemplatePartRepository), services, scoped);
+            injectDependency(typeof(ITemplateVarRepository<ITemplateVarModel, ITemplateVarDomainFactory>), typeof(TemplateVarRepository), services, scoped);
             #endregion
 
             #region Service
@@ -68,6 +72,7 @@ namespace MonexUp.Application
             injectDependency(typeof(IMailerSendService), typeof(MailerSendService), services, scoped);
             injectDependency(typeof(IStripeService), typeof(StripeService), services, scoped);
             injectDependency(typeof(IInvoiceService), typeof(InvoiceService), services, scoped);
+            injectDependency(typeof(ITemplateService), typeof(TemplateService), services, scoped);
             #endregion
 
             #region Factory
@@ -83,6 +88,10 @@ namespace MonexUp.Application
             injectDependency(typeof(IUserPhoneDomainFactory), typeof(UserPhoneDomainFactory), services, scoped);
             injectDependency(typeof(IUserProfileDomainFactory), typeof(UserProfileDomainFactory), services, scoped);
             injectDependency(typeof(IUserDomainFactory), typeof(UserDomainFactory), services, scoped);
+            injectDependency(typeof(ITemplateDomainFactory), typeof(TemplateDomainFactory), services, scoped);
+            injectDependency(typeof(ITemplatePageDomainFactory), typeof(TemplatePageDomainFactory), services, scoped);
+            injectDependency(typeof(ITemplatePartDomainFactory), typeof(TemplatePartDomainFactory), services, scoped);
+            injectDependency(typeof(ITemplateVarDomainFactory), typeof(TemplateVarDomainFactory), services, scoped);
             #endregion
 
 
