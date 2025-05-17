@@ -18,9 +18,7 @@ const NetworkService : INetworkService = {
     },
     insert: async (network: NetworkInsertInfo, token: string) => {
         let ret: NetworkResult;
-        alert(JSON.stringify(network));
         let request = await _httpClient.doPostAuth<NetworkResult>("api/Network/insert", network, token);
-        alert(JSON.stringify(request));
         if (request.success) {
             return request.data;
         }

@@ -17,7 +17,7 @@ export default function ProductProvider(props: any) {
     const [loadingUpdate, setLoadingUpdate] = useState<boolean>(false);
     const [loadingSearch, setLoadingSearch] = useState<boolean>(false);
 
-    const [product, setProduct] = useState<ProductInfo>(null);
+    const [product, _setProduct] = useState<ProductInfo>(null);
     const [products, setProducts] = useState<ProductInfo[]>([]);
     const [searchResult, setSearchResult] = useState<ProductListPagedInfo>(null);
 
@@ -32,7 +32,7 @@ export default function ProductProvider(props: any) {
         searchResult: searchResult,
 
         setProduct: (product: ProductInfo) => {
-            setProduct(product);
+            _setProduct(product);
         },
 
         insert: async (product: ProductInfo) => {
@@ -42,7 +42,7 @@ export default function ProductProvider(props: any) {
             let brt = await ProductFactory.ProductBusiness.insert(product);
             if (brt.sucesso) {
                 setLoadingUpdate(false);
-                setProduct(brt.dataResult);
+                _setProduct(brt.dataResult);
                 return {
                     ...ret,
                     sucesso: true,
@@ -76,7 +76,7 @@ export default function ProductProvider(props: any) {
                 let brt = await ProductFactory.ProductBusiness.update(product);
                 if (brt.sucesso) {
                     setLoadingUpdate(false);
-                    setProduct(brt.dataResult);
+                    _setProduct(brt.dataResult);
                     return {
                         ...ret,
                         sucesso: true,
@@ -203,11 +203,12 @@ export default function ProductProvider(props: any) {
         getById: async (productId: number) => {
             let ret: Promise<ProductProviderResult>;
             setLoading(true);
+            _setProduct(null);
             try {
                 let brt = await ProductFactory.ProductBusiness.getById(productId);
                 if (brt.sucesso) {
                     setLoading(false);
-                    setProduct(brt.dataResult);
+                    _setProduct(brt.dataResult);
                     return {
                         ...ret,
                         product: brt.dataResult,
@@ -236,11 +237,12 @@ export default function ProductProvider(props: any) {
         getBySlug: async (productSlug: string) => {
             let ret: Promise<ProductProviderResult>;
             setLoading(true);
+            _setProduct(null);
             try {
                 let brt = await ProductFactory.ProductBusiness.getBySlug(productSlug);
                 if (brt.sucesso) {
                     setLoading(false);
-                    setProduct(brt.dataResult);
+                    _setProduct(brt.dataResult);
                     return {
                         ...ret,
                         product: brt.dataResult,

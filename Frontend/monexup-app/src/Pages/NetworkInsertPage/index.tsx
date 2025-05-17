@@ -384,7 +384,10 @@ export default function NetworkInsertPage() {
                                     <p>Parabéns! Você acaba de dar o primeiro passo para construir uma comunidade forte, colaborativa e pronta para alcançar resultados incríveis com o poder do marketing de rede.</p>
                                     <p>Agora você pode: Convidar novos representantes; Cadastrar produtos para doação e venda; Acompanhar o desempenho da sua rede; e Organizar eventos e campanhas;</p>
                                     <p className="text-center">Vamos começar?</p>
-                                    <Button variant="primary" size="lg">Acessar minha rede <FontAwesomeIcon icon={faArrowRight} fixedWidth /></Button>
+                                    <Button variant="primary" size="lg" onClick={(e) => {
+                                        e.preventDefault();
+                                        navigate("/admin/dashboard");
+                                    }}>Acessar minha rede <FontAwesomeIcon icon={faArrowRight} fixedWidth /></Button>
                                 </Card.Body>
                             </Card>
                         </Col>

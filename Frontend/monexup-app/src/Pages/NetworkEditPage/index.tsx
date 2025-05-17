@@ -126,7 +126,7 @@ export default function NetworkEditPage() {
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faCode} fixedWidth /></InputGroup.Text>
                                                         <Form.Control type="text" size="lg"
-                                                            placeholder="Ex: https://monexup.io/{my-network-slug}"
+                                                            placeholder="Ex: https://monexup.com/{my-network-slug}"
                                                             value={networkContext.network?.slug}
                                                             onChange={(e) => {
                                                                 networkContext.setNetwork({
@@ -211,7 +211,7 @@ export default function NetworkEditPage() {
                                                     let ret = await networkContext.update(networkContext.network);
                                                     if (ret.sucesso) {
                                                         //alert(userContext.user?.id);
-                                                        showSuccessMessage(ret.mensagemSucesso);
+                                                        showSuccessMessage("Network updated successfully!");
                                                     }
                                                     else {
                                                         throwError(ret.mensagemErro);

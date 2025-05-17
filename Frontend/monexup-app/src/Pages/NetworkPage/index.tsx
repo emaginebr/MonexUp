@@ -16,6 +16,7 @@ import SkeletonPage from "../../Components/SkeletonPage";
 import ProductContext from "../../Contexts/Product/ProductContext";
 import ProductListPart from "../_WebParts/ProductListPart";
 import ProductSearchParam from "../../DTO/Domain/ProductSearchParam";
+import Plan4ColsPart from "../_WebParts/Plan4ColsPart";
 
 export default function NetworkPage() {
 
@@ -61,7 +62,7 @@ export default function NetworkPage() {
 
     const ACCEPTABLE_PARTS: WebsitePartEnum[] = [
         WebsitePartEnum.HERO01, WebsitePartEnum.HERO02, WebsitePartEnum.PLAN_3_COLS,
-        WebsitePartEnum.TEAM_3_COLS, WebsitePartEnum.PRODUCT_LIST_WITH_3_COLS
+        WebsitePartEnum.PLAN_4_COLS, WebsitePartEnum.TEAM_3_COLS, WebsitePartEnum.PRODUCT_LIST_WITH_3_COLS
     ];
 
     const TemplatePart = (part: TemplatePartInfo) => {
@@ -99,6 +100,21 @@ export default function NetworkPage() {
                     <>
                         <EditMode part={part} isEditing={templateContext.editMode} acceptableParts={ACCEPTABLE_PARTS}>
                             <Plan3ColsPart
+                                loading={productContext.loadingList}
+                                products={productContext.searchResult?.products}
+                                isEditing={templateContext.editMode}
+                                variables={templateContext.page?.variables}
+                            />
+                        </EditMode>
+                        <hr />
+                    </>
+                );
+                break;
+            case WebsitePartEnum.PLAN_4_COLS:
+                return (
+                    <>
+                        <EditMode part={part} isEditing={templateContext.editMode} acceptableParts={ACCEPTABLE_PARTS}>
+                            <Plan4ColsPart
                                 loading={productContext.loadingList}
                                 products={productContext.searchResult?.products}
                                 isEditing={templateContext.editMode}

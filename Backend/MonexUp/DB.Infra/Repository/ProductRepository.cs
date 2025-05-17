@@ -114,7 +114,11 @@ namespace DB.Infra.Repository
             }
             var pages = (double)q.Count() / (double)PAGE_SIZE;
             pageCount = Convert.ToInt32(Math.Ceiling(pages));
-            var rows = q.OrderBy(x => x.Name).Skip((pageNum - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
+            var rows = q.OrderBy(x => x.Frequency)
+                .ThenBy(x => x.Price)
+                .Skip((pageNum - 1) * PAGE_SIZE)
+                .Take(PAGE_SIZE)
+                .ToList();
             return rows.Select(x => DbToModel(factory, x));
         }
 

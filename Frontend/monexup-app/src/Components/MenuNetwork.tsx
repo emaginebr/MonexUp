@@ -109,6 +109,7 @@ export default function MenuNetwork() {
                   </NavDropdown>
                 </>
               }
+              <MenuLanguage />
               {
                 authContext.sessionInfo ?
                   <NavDropdown title={
@@ -143,7 +144,6 @@ export default function MenuNetwork() {
                     </Nav.Item>
                   </>
               }
-              <MenuLanguage />
             </Nav>
           </Navbar.Collapse>
         </Container>

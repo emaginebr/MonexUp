@@ -72,6 +72,7 @@ namespace MonexUp.Domain.Impl.Services
                 NetworkId = md.NetworkId,
                 Name = md.Name,
                 Slug = md.Slug,
+                Image = md.Image,
                 ImageUrl = _imageService.GetImageUrl(md.Image),
                 Description = md.Description,
                 Price = md.Price,
@@ -143,6 +144,7 @@ namespace MonexUp.Domain.Impl.Services
             model.ProductId = product.ProductId;
             model.NetworkId = product.NetworkId;
             model.Name = product.Name;
+            model.Image = product.Image;
             model.Description = product.Description;
             model.Price = product.Price;
             model.Frequency = product.Frequency;

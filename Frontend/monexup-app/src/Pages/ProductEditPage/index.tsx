@@ -7,7 +7,7 @@ import AuthContext from "../../Contexts/Auth/AuthContext";
 import Button from "react-bootstrap/esm/Button";
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAddressBook, faArrowLeft, faArrowRight, faBitcoinSign, faCalendar, faCalendarAlt, faCancel, faClose, faDollar, faEnvelope, faEthernet, faIdCard, faLock, faPercent, faPhone, faSave, faSignInAlt, faTrash, faUpload, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faAddressBook, faArrowLeft, faArrowRight, faBitcoinSign, faCalendar, faCalendarAlt, faCancel, faClose, faCode, faDollar, faEnvelope, faEthernet, faIdCard, faLock, faPercent, faPhone, faSave, faSignInAlt, faTrash, faUpload, faUser } from '@fortawesome/free-solid-svg-icons';
 import Table from "react-bootstrap/esm/Table";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -27,10 +27,8 @@ import ImageContext from "../../Contexts/Image/ImageContext";
 
 export default function ProductEditPage() {
 
-    const authContext = useContext(AuthContext);
     const networkContext = useContext(NetworkContext);
     const productContext = useContext(ProductContext);
-    const imageContext = useContext(ImageContext);
 
     let { productId } = useParams();
 
@@ -55,49 +53,25 @@ export default function ProductEditPage() {
         setShowMessage(true);
     };
 
-
-    //const [editorContent, setEditorContent] = useState("");
-
-    //const handleSave = () => {};
-
     useEffect(() => {
+        let productIdNum: number = parseInt(productId);
+        if (productIdNum > 0) {
+            productContext.getById(productIdNum).then((ret) => {
+                if (!ret.sucesso) {
+                    throwError(ret.mensagemErro);
+                    return;
+                }
+                setInsertMode(false);
+            });
+            return;
+        }
+        setInsertMode(true);
         let product: ProductInfo = null;
-        product = {
+        productContext.setProduct({
             ...product,
-            productId: 0,
             networkId: networkContext.userNetwork?.networkId,
-            name: "",
-            slug: "",
-            description: "",
-            frequency: 0,
-            limit: 0,
-            price: 0,
             status: ProductStatusEnum.Active
-        };
-        productContext.setProduct(product);
-        if (authContext.sessionInfo) {
-            let productIdNum: number = parseInt(productId);
-            if (productIdNum > 0) {
-                productContext.getById(productIdNum).then((ret) => {
-                    if (ret.sucesso) {
-                        setInsertMode(false);
-                        productContext.setProduct(ret.product);
-                    }
-                    else {
-                        setInsertMode(true);
-                        //productContext.setProduct(product);
-                    }
-                });
-            }
-            else {
-                setInsertMode(true);
-                //productContext.setProduct(product);
-            }
-        }
-        else {
-            setInsertMode(true);
-            //productContext.setProduct(product);
-        }
+        });
     }, []);
 
     return (
@@ -114,7 +88,7 @@ export default function ProductEditPage() {
                 show={showImageModal}
                 onClose={() => setShowImageModal(false)}
                 onSuccess={(url: string) => {
-                    navigate("/admin/products/" + productId);
+                    //navigate("/admin/products/" + productId);
                     productContext.setProduct({
                         ...productContext.product,
                         imageUrl: url
@@ -177,6 +151,25 @@ export default function ProductEditPage() {
                                             </InputGroup>
                                         </Col>
                                     </Form.Group>
+                                    {productContext.product?.productId > 0 &&
+                                        <Form.Group as={Row} className="mb-3">
+                                            <Form.Label column sm="2">Slug:</Form.Label>
+                                            <Col sm="10">
+                                                <InputGroup>
+                                                    <InputGroup.Text><FontAwesomeIcon icon={faCode} fixedWidth /></InputGroup.Text>
+                                                    <Form.Control type="text" size="lg"
+                                                        placeholder="Ex: https://monexup.com/{my-network-slug}/{my-product-slug}"
+                                                        value={productContext.product?.slug}
+                                                        onChange={(e) => {
+                                                            productContext.setProduct({
+                                                                ...productContext.product,
+                                                                slug: e.target.value
+                                                            });
+                                                        }} />
+                                                </InputGroup>
+                                            </Col>
+                                        </Form.Group>
+                                    }
                                     <Form.Group as={Row} className="mb-3">
                                         <Form.Label column sm="2">Frequency:</Form.Label>
                                         <Col sm="5">
@@ -193,11 +186,7 @@ export default function ProductEditPage() {
                                                     }}
                                                 >
                                                     <option value={0}>Just only one time</option>
-                                                    <option value={7}>Weekly</option>
                                                     <option value={30}>Monthly</option>
-                                                    <option value={60}>Bimonthly</option>
-                                                    <option value={90}>Quarterly</option>
-                                                    <option value={180}>Half-yearly</option>
                                                     <option value={365}>Annually</option>
                                                 </Form.Select>
                                             </InputGroup>

@@ -103,7 +103,6 @@ const MenuLanguage = () => {
         <NavDropdown title={
             <>
                 <img src={process.env.PUBLIC_URL + "/flags/br.svg"} style={{ width: "21px", height: "21px" }} />
-                &nbsp;Português
             </>
         } id="basic-nav-dropdown">
             <NavDropdown.Item>

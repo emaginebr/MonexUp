@@ -14,6 +14,7 @@ import ProfileContext from "../../Contexts/Profile/ProfileContext";
 import NetworkContext from "../../Contexts/Network/NetworkContext";
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 import MessageToast from "../../Components/MessageToast";
+import ProductContext from "../../Contexts/Product/ProductContext";
 
 export default function ProfileListPage() {
 
@@ -84,7 +85,7 @@ export default function ProfileListPage() {
                         <h3>
                             <nav aria-label="breadcrumb">
                                 <ol className="breadcrumb">
-                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">Minha Rede</Link></li>
+                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">My Network</Link></li>
                                     <li className="breadcrumb-item active" aria-current="page">Network Team Structure</li>
                                 </ol>
                             </nav>

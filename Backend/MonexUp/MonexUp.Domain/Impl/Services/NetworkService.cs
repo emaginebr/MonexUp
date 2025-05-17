@@ -183,6 +183,7 @@ namespace MonexUp.Domain.Impl.Services
             model.NetworkId = network.NetworkId;
             model.Name = network.Name;
             model.Slug = network.Slug;
+            model.Image = network.ImageUrl;
             model.Email = network.Email;
             model.Commission = network.Commission;
             model.Plan = network.Plan;

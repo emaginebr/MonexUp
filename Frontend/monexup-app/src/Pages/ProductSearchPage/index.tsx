@@ -156,6 +156,7 @@ export default function ProductSearchPage() {
                                 </Dropdown.Menu>
                             </Dropdown>
                             <Button variant="success" onClick={() => {
+                                productContext.setProduct(null);
                                 navigate("/admin/products/new");
                             }}><FontAwesomeIcon icon={faPlus} fixedWidth />&nbsp;New Product</Button>
                         </InputGroup>

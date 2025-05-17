@@ -7,7 +7,7 @@ import AuthContext from "../../Contexts/Auth/AuthContext";
 import Button from "react-bootstrap/esm/Button";
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faCalendar, faDollar, faPercent, faSave, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faCalendar, faDollar, faLevelUp, faPercent, faSave, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate, useParams } from "react-router-dom";
 import InputGroup from 'react-bootstrap/InputGroup';
 import MessageToast from "../../Components/MessageToast";
@@ -93,7 +93,7 @@ export default function ProfileEditPage() {
                         <h3>
                             <nav aria-label="breadcrumb">
                                 <ol className="breadcrumb">
-                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">Minha Rede</Link></li>
+                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">My Network</Link></li>
                                     <li className="breadcrumb-item"><Link to="/admin/team-structure">Network Team Structure</Link></li>
                                     <li className="breadcrumb-item active" aria-current="page">New Team Structure</li>
                                 </ol>
@@ -130,7 +130,7 @@ export default function ProfileEditPage() {
                                         <Form.Label column sm="2">Commission (%):</Form.Label>
                                         <Col sm="5">
                                             <InputGroup>
-                                                <InputGroup.Text><FontAwesomeIcon icon={faCalendar} fixedWidth /></InputGroup.Text>
+                                                <InputGroup.Text><FontAwesomeIcon icon={faPercent} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
                                                     placeholder="Commission in percents"
                                                     value={profileContext.profile?.commission}
@@ -145,7 +145,7 @@ export default function ProfileEditPage() {
                                         <Form.Label column sm="1">Level:</Form.Label>
                                         <Col sm="4">
                                             <InputGroup>
-                                                <InputGroup.Text><FontAwesomeIcon icon={faDollar} fixedWidth /></InputGroup.Text>
+                                                <InputGroup.Text><FontAwesomeIcon icon={faLevelUp} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="number" size="lg"
                                                     placeholder="Network level number"
                                                     value={profileContext.profile?.level}

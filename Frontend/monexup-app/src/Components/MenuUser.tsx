@@ -18,6 +18,7 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import UserContext from '../Contexts/User/UserContext';
 import TemplateContext from '../Contexts/Template/TemplateContext';
+import { MenuLanguage } from './Functions';
 
 
 export default function MenuUser() {
@@ -109,6 +110,7 @@ export default function MenuUser() {
                   </NavDropdown>
                 </>
               }
+              <MenuLanguage />
               {
                 authContext.sessionInfo ?
                   <NavDropdown title={

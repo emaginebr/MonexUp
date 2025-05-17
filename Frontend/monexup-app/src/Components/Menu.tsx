@@ -158,7 +158,7 @@ export default function Menu() {
             <Nav className="ms-auto justify-content-end">
               {authContext.sessionInfo &&
                 <>
-                  {networkContext.userNetworks &&
+                  {networkContext.userNetworks && networkContext.userNetworks.length > 0 &&
                     <NavDropdown title={
                       <>
                         {networkContext.userNetwork ?
@@ -268,6 +268,7 @@ export default function Menu() {
                   */}
                 </>
               }
+              <MenuLanguage />
               {
                 authContext.sessionInfo ?
                   <NavDropdown title={
@@ -305,7 +306,6 @@ export default function Menu() {
                     </Nav.Item>
                   </>
               }
-              <MenuLanguage />
             </Nav>
           </Navbar.Collapse>
         </Container>
