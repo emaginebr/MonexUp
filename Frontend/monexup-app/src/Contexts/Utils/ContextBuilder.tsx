@@ -1,15 +1,15 @@
-import React from 'react';
+import React, { FC, PropsWithChildren } from 'react';
 
-const ContextBuilder = (providers: ((props: any) => JSX.Element)[]) => {
-  try{
+type ProviderComponent = FC<PropsWithChildren>;
 
-    return providers.reduce((Acc, Current): React.FunctionComponent => {
-      return props => <Current><Acc {...props} /></Current>
-    });
-    
-  } catch (e) {
-    throw e;
-  }
-}
+const ContextBuilder = (providers: ProviderComponent[]): FC<PropsWithChildren> => {
+  return providers.reduce((Accumulated, Current): FC<PropsWithChildren> => {
+    return ({ children }) => (
+      <Current>
+        <Accumulated>{children}</Accumulated>
+      </Current>
+    );
+  });
+};
 
 export default ContextBuilder;

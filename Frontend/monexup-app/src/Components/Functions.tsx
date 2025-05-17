@@ -2,64 +2,52 @@ import UserNetworkInfo from "../DTO/Domain/UserNetworkInfo";
 import { LanguageEnum } from "../DTO/Enum/LanguageEnum";
 import { UserRoleEnum } from "../DTO/Enum/UserRoleEnum";
 import NavDropdown from 'react-bootstrap/NavDropdown';
+import { useTranslation } from 'react-i18next';
+import { getLangInfo } from "../i18n";
 
-const showFrequencyMin = (frequency: number) => {
-    let ret: string;
+const showFrequencyMin = (frequency: number, t: (key: string) => string) => {
     switch (frequency) {
         case 0:
-            ret = "Unique";
-            break;
+            return t("frequency_unique");
         case 7:
-            ret = "Week";
-            break;
+            return t("frequency_week");
         case 30:
-            ret = "Month";
-            break;
+            return t("frequency_month");
         case 60:
-            ret = "Bimonthly";
-            break;
+            return t("frequency_bimonthly");
         case 90:
-            ret = "Quarter";
-            break;
+            return t("frequency_quarter");
         case 180:
-            ret = "Half";
-            break;
+            return t("frequency_half");
         case 365:
-            ret = "Year";
-            break;
+            return t("frequency_year");
+        default:
+            return String(frequency);
     }
-    return ret;
 };
 
-const showFrequencyMax = (frequency: number) => {
-    let ret: string;
+const showFrequencyMax = (frequency: number, t: (key: string) => string) => {
     switch (frequency) {
         case 0:
-            ret = "Unique payment";
-            break;
+            return t("frequency_unique_payment");
         case 7:
-            ret = "Weekly payment";
-            break;
+            return t("frequency_weekly_payment");
         case 30:
-            ret = "Monthly Payment";
-            break;
+            return t("frequency_monthly_payment");
         case 60:
-            ret = "Bimonthly Payment";
-            break;
+            return t("frequency_bimonthly_payment");
         case 90:
-            ret = "Quarterly Payment";
-            break;
+            return t("frequency_quarterly_payment");
         case 180:
-            ret = "Semiannual Payment";
-            break;
+            return t("frequency_semiannual_payment");
         case 365:
-            ret = "Annual Payment";
-            break;
+            return t("frequency_annual_payment");
+        default:
+            return String(frequency);
     }
-    return ret;
 };
 
-const showProfile = (user: UserNetworkInfo) => {
+const showProfile = (user: UserNetworkInfo, t: (key: string) => string) => {
     if (!user) {
         return "";
     }
@@ -68,17 +56,15 @@ const showProfile = (user: UserNetworkInfo) => {
     }
     switch (user.role) {
         case UserRoleEnum.Administrator:
-            return "Adminstrator";
-            break;
+            return t("profile_administrator");
         case UserRoleEnum.NetworkManager:
-            return "Network Manager";
-            break;
+            return t("profile_network_manager");
         case UserRoleEnum.Seller:
-            return "Seller";
-            break;
+            return t("profile_seller");
         case UserRoleEnum.User:
-            return "User";
-            break;
+            return t("profile_user");
+        default:
+            return "";
     }
 };
 
@@ -99,48 +85,53 @@ function formatPhoneNumber(phone: string) {
 }
 
 const MenuLanguage = () => {
+    const { i18n, t } = useTranslation();
+    const currentLangInfo = getLangInfo(i18n.language);
+
+    const changeLanguage = (lng: string) => {
+        i18n.changeLanguage(lng);
+    };
+
+    const supportedLanguages = [
+        getLangInfo(LanguageEnum.Portuguese), // Default/BR
+        getLangInfo(LanguageEnum.English),
+        getLangInfo(LanguageEnum.Spanish),
+        getLangInfo(LanguageEnum.French),
+    ];
+
     return (
         <NavDropdown title={
             <>
-                <img src={process.env.PUBLIC_URL + "/flags/br.svg"} style={{ width: "21px", height: "21px" }} />
+                <img 
+                    src={`${process.env.PUBLIC_URL}/flags/${currentLangInfo.flag}`} 
+                    alt={t(currentLangInfo.nameKey)}
+                    style={{ width: "21px", height: "21px" }} 
+                />
             </>
         } id="basic-nav-dropdown">
-            <NavDropdown.Item>
-                <img src={process.env.PUBLIC_URL + "/flags/gb.svg"} style={{ width: "21px", height: "21px" }} />
-                &nbsp;Inglês
-            </NavDropdown.Item>
-            <NavDropdown.Item>
-                <img src={process.env.PUBLIC_URL + "/flags/es.svg"} style={{ width: "21px", height: "21px" }} />
-                &nbsp;Espanhol
-            </NavDropdown.Item>
-            <NavDropdown.Item>
-                <img src={process.env.PUBLIC_URL + "/flags/fr.svg"} style={{ width: "21px", height: "21px" }} />
-                &nbsp;Francês
-            </NavDropdown.Item>
+            {supportedLanguages.map(lang => (
+                <NavDropdown.Item key={lang.code} onClick={() => changeLanguage(lang.code)}>
+                    <img 
+                        src={`${process.env.PUBLIC_URL}/flags/${lang.flag}`} 
+                        alt={t(lang.nameKey)}
+                        style={{ width: "21px", height: "21px" }} 
+                    />
+                    &nbsp;{t(lang.nameKey)}
+                </NavDropdown.Item>
+            ))}
         </NavDropdown>
     );
 };
 
 const langToStr = (lang: LanguageEnum) => {
-    let ret: string;
-    switch (lang) {
-        case LanguageEnum.English:
-            ret = "en";
-            break;
-        case LanguageEnum.Spanish:
-            ret = "es";
-            break;
-        case LanguageEnum.French:
-            ret = "fr";
-            break;
-        case LanguageEnum.Portuguese:
-            ret = "br";
-            break;
-        default:
-            ret = "en";
-            break;
-    }
-    return ret;
+    // Use the centralized getLangInfo from i18n.ts
+    return getLangInfo(lang).code;
 };
 
 export { showFrequencyMin, showFrequencyMax, showProfile, formatPhoneNumber, MenuLanguage, langToStr };
+
+// Note: Functions like showFrequencyMin, showFrequencyMax, showProfile now expect 't' as an argument.
+// You'll need to call them like this from your components:
+// import { useTranslation } from 'react-i18next';
+// const { t } = useTranslation();
+// const freqText = showFrequencyMin(frequencyValue, t);

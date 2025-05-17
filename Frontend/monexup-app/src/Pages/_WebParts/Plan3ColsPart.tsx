@@ -13,6 +13,7 @@ import Skeleton from "react-loading-skeleton";
 import { StringDictionary } from "../../Components/StringDictionary";
 import ProductInfo from "../../DTO/Domain/ProductInfo";
 import EditMode from "../../Components/EditMode";
+import { useTranslation } from "react-i18next";
 
 interface IPlan3Colsaram {
     loading: boolean,
@@ -24,6 +25,8 @@ interface IPlan3Colsaram {
 export default function Plan3ColsPart(param: IPlan3Colsaram) {
 
     let navigate = useNavigate();
+
+    const { t } = useTranslation();
 
     let { networkSlug, sellerSlug } = useParams();
 
@@ -48,16 +51,16 @@ export default function Plan3ColsPart(param: IPlan3Colsaram) {
                                     }</b>
                                 </h2>
                                 <p>{param.loading ?
-                                        <Skeleton />
-                                        :
-                                        <>
-                                            <EditMode.Text
-                                                name="PLAN_DESCRIPTION"
-                                                value={param.variables["PLAN_DESCRIPTION"]}
-                                                isEditing={param.isEditing}
-                                            />
-                                        </>
-                                    }</p>
+                                    <Skeleton />
+                                    :
+                                    <>
+                                        <EditMode.Text
+                                            name="PLAN_DESCRIPTION"
+                                            value={param.variables["PLAN_DESCRIPTION"]}
+                                            isEditing={param.isEditing}
+                                        />
+                                    </>
+                                }</p>
                             </div>
                         </Col>
                     </Row>
@@ -103,12 +106,12 @@ export default function Plan3ColsPart(param: IPlan3Colsaram) {
                                             <CardBody>
                                                 <CardTitle>
                                                     <span className="display-4"><b>${product.price}</b></span>
-                                                    <span className="lead">/{showFrequencyMin(product.frequency)}</span>
+                                                    <span className="lead">/{showFrequencyMin(product.frequency, t)}</span>
                                                 </CardTitle>
                                                 <CardText className="my-4 lc-block">
                                                     <div>
                                                         <ul className="list-unstyled">
-                                                            <li>{showFrequencyMax(product.frequency)}</li>
+                                                            <li>{showFrequencyMax(product.frequency, t)}</li>
                                                         </ul>
                                                     </div>
                                                 </CardText>

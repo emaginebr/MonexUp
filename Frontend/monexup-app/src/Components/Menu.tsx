@@ -17,6 +17,7 @@ import NetworkContext from '../Contexts/Network/NetworkContext';
 import InvoiceContext from '../Contexts/Invoice/InvoiceContext';
 import StatementSearchParam from '../DTO/Domain/StatementSearchParam';
 import { ImageModal, ImageTypeEnum } from './ImageModal';
+import { useTranslation } from 'react-i18next';
 import { MenuLanguage } from './Functions';
 
 
@@ -24,6 +25,8 @@ export default function Menu() {
 
   const [showAlert, setShowAlert] = useState<boolean>(true);
   const [showImageModal, setShowImageModal] = useState<boolean>(false);
+
+  const { t } = useTranslation();
 
   const [showMessage, setShowMessage] = useState<boolean>(false);
   const [messageText, setMessageText] = useState<string>("");
@@ -37,39 +40,36 @@ export default function Menu() {
     switch (role) {
       case UserRoleEnum.NoRole:
         return (
-          <>
+          <span>
             <FontAwesomeIcon icon={faCancel} fixedWidth />&nbsp;No role
-          </>
+          </span>
         );
-        break;
       case UserRoleEnum.User:
         return (
-          <>
+          <span>
             <FontAwesomeIcon icon={faUser} fixedWidth />&nbsp;User
-          </>
+          </span>
         );
-        break;
       case UserRoleEnum.Seller:
         return (
-          <>
+          <span>
             <FontAwesomeIcon icon={faUserMd} fixedWidth />&nbsp;Seller
-          </>
+          </span>
         );
-        break;
       case UserRoleEnum.NetworkManager:
         return (
-          <>
+          <span>
             <FontAwesomeIcon icon={faUserGroup} fixedWidth />&nbsp;Network Manager
-          </>
+          </span>
         );
-        break;
       case UserRoleEnum.Administrator:
         return (
-          <>
+          <span>
             <FontAwesomeIcon icon={faUserGear} fixedWidth />&nbsp;Adminstrator
-          </>
+          </span>
         );
-        break;
+      default:
+        return null;
     }
   };
 
@@ -108,45 +108,45 @@ export default function Menu() {
           <Link className='navbar-brand' to="/">{process.env.REACT_APP_PROJECT_NAME}</Link>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
-              <Link className='nav-link' to="/"><FontAwesomeIcon icon={faHome} fixedWidth /> Home</Link>
+            <Nav className="me-auto"> {/* Apply t() to link texts */}
+              <Link className='nav-link' to="/"><FontAwesomeIcon icon={faHome} fixedWidth /> {t('home')}</Link>
               {!authContext.sessionInfo &&
-                <Link className='nav-link' to="/new-seller"><FontAwesomeIcon icon={faUser} fixedWidth /> Seja um representante</Link>
+                <Link className='nav-link' to="/new-seller"><FontAwesomeIcon icon={faUser} fixedWidth /> {t('be_a_representative')}</Link>
               }
-              <Link className='nav-link' to="/network"><FontAwesomeIcon icon={faBuilding} fixedWidth /> Crie sua rede</Link>
+              <Link className='nav-link' to="/network"><FontAwesomeIcon icon={faBuilding} fixedWidth /> {t('create_your_network')}</Link>
               {authContext.sessionInfo && networkContext.currentRole >= UserRoleEnum.Seller &&
                 <NavDropdown title={
                   <>
-                    <FontAwesomeIcon icon={faUserGroup} />&nbsp;My Network
+                    <FontAwesomeIcon icon={faUserGroup} />&nbsp;{t('my_network')}
                   </>
                 } id="basic-nav-dropdown">
                   {networkContext.currentRole == UserRoleEnum.NetworkManager &&
                     <>
-                      <NavDropdown.ItemText className='small text-center'>Network</NavDropdown.ItemText>
+                      <NavDropdown.ItemText className='small text-center'>{t('network_manager')}</NavDropdown.ItemText> {/* Or a more generic "Network" key */}
                       <NavDropdown.Item onClick={() => {
                         navigate("/admin/network");
-                      }}><FontAwesomeIcon icon={faCog} fixedWidth />&nbsp;Preferences</NavDropdown.Item>
+                      }}><FontAwesomeIcon icon={faCog} fixedWidth />&nbsp;{t('preferences')}</NavDropdown.Item>
                       <NavDropdown.Item onClick={() => {
                         navigate("/admin/team-structure");
-                      }}><FontAwesomeIcon icon={faUserCog} fixedWidth />&nbsp;Team Structure</NavDropdown.Item>
+                      }}><FontAwesomeIcon icon={faUserCog} fixedWidth />&nbsp;{t('team_structure')}</NavDropdown.Item>
                       <NavDropdown.Item onClick={() => {
                         navigate("/admin/teams");
-                      }}><FontAwesomeIcon icon={faUserGroup} fixedWidth />&nbsp;Teams</NavDropdown.Item>
+                      }}><FontAwesomeIcon icon={faUserGroup} fixedWidth />&nbsp;{t('teams')}</NavDropdown.Item>
                       <NavDropdown.Divider />
                     </>
                   }
                   {networkContext.currentRole >= UserRoleEnum.Seller &&
                     <>
-                      <NavDropdown.ItemText className='small text-center'>Finances</NavDropdown.ItemText>
+                      <NavDropdown.ItemText className='small text-center'>{t('finances')}</NavDropdown.ItemText>
                       <NavDropdown.Item onClick={() => {
                         navigate("/admin/orders");
-                      }}><FontAwesomeIcon icon={faFileWord} fixedWidth />&nbsp;Orders</NavDropdown.Item>
+                      }}><FontAwesomeIcon icon={faFileWord} fixedWidth />&nbsp;{t('orders')}</NavDropdown.Item>
                       <NavDropdown.Item onClick={() => {
                         navigate("/admin/invoices");
-                      }}><FontAwesomeIcon icon={faDollar} fixedWidth />&nbsp;Invoices</NavDropdown.Item>
+                      }}><FontAwesomeIcon icon={faDollar} fixedWidth />&nbsp;{t('invoices')}</NavDropdown.Item>
                       <NavDropdown.Item onClick={() => {
                         navigate("/admin/products");
-                      }}><FontAwesomeIcon icon={faBox} fixedWidth />&nbsp;Products</NavDropdown.Item>
+                      }}><FontAwesomeIcon icon={faBox} fixedWidth />&nbsp;{t('products')}</NavDropdown.Item>
                     </>
                   }
                 </NavDropdown>
@@ -167,12 +167,12 @@ export default function Menu() {
                           </>
                           :
                           <>
-                            <FontAwesomeIcon icon={faCancel} />&nbsp;No network selected
+                            <FontAwesomeIcon icon={faCancel} />&nbsp;{t('no_network_selected')}
                           </>
                         }
                       </>
-                    } id="basic-nav-dropdown">
-                      <NavDropdown.ItemText className='small'>Select network to connect</NavDropdown.ItemText>
+                    } id="basic-nav-dropdown"> {/* Use t() for texts */}
+                      <NavDropdown.ItemText className='small'>{t('select_network_to_connect')}</NavDropdown.ItemText>
                       <NavDropdown.Divider />
                       {networkContext.userNetworks.map((network) => {
                         return (
@@ -184,12 +184,12 @@ export default function Menu() {
                       })}
                       <NavDropdown.Divider />
                       <NavDropdown.Item onClick={() => {
-                        navigate("/network/search");
-                      }}><FontAwesomeIcon icon={faSearch} />&nbsp;Buscar uma rede</NavDropdown.Item>
+                        navigate("/network/search"); // This text also needs translation
+                      }}><FontAwesomeIcon icon={faSearch} />&nbsp;{t('search_for_a_network')}</NavDropdown.Item>
                     </NavDropdown>
                   }
-                  <NavDropdown title={showRoleText(networkContext.currentRole)} id="basic-nav-dropdown">
-                    <NavDropdown.ItemText className='small'>Select the chain you will connect to</NavDropdown.ItemText>
+                  <NavDropdown title={t(showRoleText(networkContext.currentRole)?.props.children[1].trim().toLowerCase().replace(' ', '_') || 'no_role')} id="basic-nav-dropdown">
+                    <NavDropdown.ItemText className='small'>{t('select_chain_to_connect')}</NavDropdown.ItemText>
                     <NavDropdown.Divider />
                     {networkContext.userNetwork?.role >= UserRoleEnum.User &&
                       <NavDropdown.Item onClick={(e) => {
@@ -278,14 +278,14 @@ export default function Menu() {
                     </>
                   } id="basic-nav-dropdown">
                     <NavDropdown.Item onClick={() => setShowImageModal(true)}>
-                      <FontAwesomeIcon icon={faImage} fixedWidth /> Change Picture
+                      <FontAwesomeIcon icon={faImage} fixedWidth /> {t('change_picture')}
                     </NavDropdown.Item>
                     <NavDropdown.Item onClick={async () => {
                       navigate("/account/edit-account");
-                    }}><FontAwesomeIcon icon={faPencil} fixedWidth /> Edit Account</NavDropdown.Item>
+                    }}><FontAwesomeIcon icon={faPencil} fixedWidth /> {t('edit_account')}</NavDropdown.Item>
                     <NavDropdown.Item onClick={async () => {
                       navigate("/account/change-password");
-                    }}><FontAwesomeIcon icon={faLock} fixedWidth /> Change Password</NavDropdown.Item>
+                    }}><FontAwesomeIcon icon={faLock} fixedWidth /> {t('change_password')}</NavDropdown.Item>
                     <NavDropdown.Divider />
                     <NavDropdown.Item onClick={async () => {
                       let ret = authContext.logout();
@@ -293,15 +293,15 @@ export default function Menu() {
                         throwError(ret.mensagemErro);
                       }
                       navigate(0);
-                    }}><FontAwesomeIcon icon={faClose} fixedWidth /> Logout</NavDropdown.Item>
+                    }}><FontAwesomeIcon icon={faClose} fixedWidth /> {t('logout')}</NavDropdown.Item>
                   </NavDropdown>
                   :
                   <>
                     <Nav.Item>
                       <Button variant="danger" onClick={async () => {
                         navigate("/account/login");
-                      }}>
-                        <FontAwesomeIcon icon={faSignInAlt} fixedWidth /> Sign In
+                      }}> {/* Use t() for button text */}
+                        <FontAwesomeIcon icon={faSignInAlt} fixedWidth /> {t('sign_in')}
                       </Button>
                     </Nav.Item>
                   </>
@@ -313,7 +313,7 @@ export default function Menu() {
       {showAlert &&
         <Container>
           <Alert key="danger" variant="danger" onClose={() => setShowAlert(false)} dismissible>
-            <FontAwesomeIcon icon={faWarning} /> This is a <strong>trial version</strong>, do not make payments with your real data.
+            <FontAwesomeIcon icon={faWarning} /> {t('trial_version_warning')}
           </Alert>
         </Container>
       }

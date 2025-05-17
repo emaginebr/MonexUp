@@ -7,6 +7,7 @@ import UserInfo from "../../DTO/Domain/UserInfo";
 import UserNetworkInfo from "../../DTO/Domain/UserNetworkInfo";
 import EditMode from "../../Components/EditMode";
 import { StringDictionary } from "../../Components/StringDictionary";
+import { useTranslation } from "react-i18next";
 
 interface IProfilePartParam {
     loading: boolean;
@@ -17,6 +18,8 @@ interface IProfilePartParam {
 };
 
 export default function ProfilePart(param: IProfilePartParam) {
+
+  const { t } = useTranslation();
 
     return (
         <>
@@ -89,7 +92,7 @@ export default function ProfilePart(param: IProfilePartParam) {
                                         <Skeleton width={400} />
                                         :
                                         <>
-                                            &nbsp;{showProfile(param.userNetwork)}
+                                            &nbsp;{showProfile(param.userNetwork, t)}
                                         </>
                                 }</h3>
                             }

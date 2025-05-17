@@ -14,6 +14,7 @@ import UserAddressInfo from "../../DTO/Domain/UserAddressInfo";
 import { showProfile } from "../../Components/Functions";
 import { StringDictionary } from "../../Components/StringDictionary";
 import EditMode from "../../Components/EditMode";
+import { useTranslation } from "react-i18next";
 
 interface ITeamParam {
     loading: boolean,
@@ -25,6 +26,8 @@ interface ITeamParam {
 export default function TeamPart(param: ITeamParam) {
 
     let { networkSlug } = useParams();
+
+    const { t } = useTranslation();
 
     const showDescription = (user: UserNetworkInfo) => {
         if (user.user?.addresses && user.user?.addresses.length > 0) {
@@ -54,16 +57,16 @@ export default function TeamPart(param: ITeamParam) {
                                 }</b>
                             </h2>
                             <p>{param.loading ?
-                                    <Skeleton />
-                                    :
-                                    <>
-                                        <EditMode.Text
-                                            name="TEAM_DESCRIPTION"
-                                            value={param.variables["TEAM_DESCRIPTION"]}
-                                            isEditing={param.isEditing}
-                                        />
-                                    </>
-                                }</p>
+                                <Skeleton />
+                                :
+                                <>
+                                    <EditMode.Text
+                                        name="TEAM_DESCRIPTION"
+                                        value={param.variables["TEAM_DESCRIPTION"]}
+                                        isEditing={param.isEditing}
+                                    />
+                                </>
+                            }</p>
                         </div>
                     </Col>
                 </Row>
@@ -111,7 +114,7 @@ export default function TeamPart(param: ITeamParam) {
                                                     <strong>{user.user?.name}</strong>
                                                 </Link>
                                             </h5>
-                                            <small className="text-secondary" style={{ letterSpacing: "1px" }}>{showProfile(user)}</small>
+                                            <small className="text-secondary" style={{ letterSpacing: "1px" }}>{showProfile(user, t)}</small>
                                         </div>
                                         <div className="lc-block mt-2 border-top">
                                             <a className="text-dark text-decoration-none" href="#">

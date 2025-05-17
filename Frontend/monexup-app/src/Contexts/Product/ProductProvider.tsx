@@ -46,7 +46,7 @@ export default function ProductProvider(props: any) {
                 return {
                     ...ret,
                     sucesso: true,
-                    mensagemSucesso: "Product added"
+                    mensagemSucesso: "product_added_successfully" // Use translation key
                 };
             }
             else {
@@ -80,7 +80,7 @@ export default function ProductProvider(props: any) {
                     return {
                         ...ret,
                         sucesso: true,
-                        mensagemSucesso: "Product updated"
+                        mensagemSucesso: "product_updated_successfully" // Use translation key
                     };
                 }
                 else {
@@ -113,7 +113,7 @@ export default function ProductProvider(props: any) {
                     return {
                         ...ret,
                         sucesso: true,
-                        mensagemSucesso: "Search executed"
+                        mensagemSucesso: "search_executed_successfully" // Use translation key
                     };
                 }
                 else {
@@ -147,7 +147,7 @@ export default function ProductProvider(props: any) {
                     return {
                         ...ret,
                         sucesso: true,
-                        mensagemSucesso: "Load Profile"
+                        mensagemSucesso: "profile_loaded_successfully" // Use translation key (or a more specific one)
                     };
                 }
                 else {
@@ -179,7 +179,7 @@ export default function ProductProvider(props: any) {
                     return {
                         ...ret,
                         sucesso: true,
-                        mensagemSucesso: "Load Profile"
+                        mensagemSucesso: "profile_loaded_successfully" // Use translation key
                     };
                 }
                 else {
@@ -213,7 +213,7 @@ export default function ProductProvider(props: any) {
                         ...ret,
                         product: brt.dataResult,
                         sucesso: true,
-                        mensagemSucesso: "Load Profile"
+                        mensagemSucesso: "profile_loaded_successfully" // Use translation key
                     };
                 }
                 else {
@@ -247,7 +247,7 @@ export default function ProductProvider(props: any) {
                         ...ret,
                         product: brt.dataResult,
                         sucesso: true,
-                        mensagemSucesso: "Load Profile"
+                        mensagemSucesso: "profile_loaded_successfully" // Use translation key
                     };
                 }
                 else {

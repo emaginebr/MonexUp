@@ -9,6 +9,7 @@ import { showFrequencyMin } from "../../Components/Functions";
 import Skeleton from "react-loading-skeleton";
 import EditMode from "../../Components/EditMode";
 import { StringDictionary } from "../../Components/StringDictionary";
+import { useTranslation } from "react-i18next";
 
 interface IProductListParam {
     loading: boolean;
@@ -21,6 +22,9 @@ interface IProductListParam {
 }
 
 export default function ProductListPart(param: IProductListParam) {
+
+    const { t } = useTranslation();
+
     return (
 
         <Container className="py-4 py-lg-6">
@@ -78,7 +82,7 @@ export default function ProductListPart(param: IProductListParam) {
                                         </div>
                                     </div>
                                     <div className="lc-block text-center">
-                                        ${product.price} / {showFrequencyMin(product.frequency)}
+                                        ${product.price} / {showFrequencyMin(product.frequency, t)}
                                     </div>
                                 </Card.Body>
                             </Card>
