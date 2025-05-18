@@ -8,6 +8,7 @@ import { faBuilding } from '@fortawesome/free-solid-svg-icons';
 import { useContext, useEffect } from "react";
 import NetworkContext from "../../Contexts/Network/NetworkContext";
 import Skeleton from "react-loading-skeleton";
+import { useTranslation } from "react-i18next";
 import NetworkInfo from "../../DTO/Domain/NetworkInfo";
 
 interface INetworkParam {
@@ -17,13 +18,15 @@ interface INetworkParam {
 
 export default function NetworkPart(param: INetworkParam) {
 
+    const { t } = useTranslation();
+
     return (
         <>
             <section className="py-4 py-lg-6 bg-light">
                 <Container>
                     <Row className="mb-4">
                         <Col md={12} className="text-center">
-                            <h4 className="display-2 mb-0">TOP 4 Networks</h4>
+                            <h4 className="display-2 mb-0">{t('home_networkpart_title')}</h4>
                         </Col>
                     </Row>
                     {param.loading &&
@@ -31,7 +34,7 @@ export default function NetworkPart(param: INetworkParam) {
                             <Col lg={4}>
                                 <div className="d-flex justify-content-center">
                                     <div className="spinner-border" role="status">
-                                        <span className="visually-hidden">Loading...</span>
+                                        <span className="visually-hidden">{t('home_networkpart_loading')}</span>
                                     </div>
                                 </div>
                             </Col>
@@ -54,8 +57,8 @@ export default function NetworkPart(param: INetworkParam) {
                                                 </div>
                                             </div>
                                             <div className="lc-block text-center">
-                                                {network.qtdyUsers} affiliate sellers and&nbsp;
-                                                {network.maxUsers - network.qtdyUsers} open positions
+                                                {t('home_networkpart_affiliate_sellers', { count: network.qtdyUsers })}&nbsp;
+                                                {t('home_networkpart_open_positions', { count: (network.maxUsers - network.qtdyUsers) })}
                                             </div>
                                         </Card.Body>
                                     </Card>

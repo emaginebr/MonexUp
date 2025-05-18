@@ -5,9 +5,11 @@ import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import { faBoltLightning, faLock, faFileUpload, faCalendarAlt, faFileWord, faBoxOpen, faLockOpen, faUserDoctor } from '@fortawesome/free-solid-svg-icons';
 import { faBitcoin } from "@fortawesome/free-brands-svg-icons";
+import { useTranslation } from "react-i18next";
 
-export default function Header() {
+export default function Features() { // Renamed component to Features to match filename, assuming Header was a typo
 
+    const { t } = useTranslation();
     let navigate = useNavigate();
 
     return (
@@ -16,8 +18,8 @@ export default function Header() {
                 <Container>
                     <Row>
                         <Col md={12} className="text-center">
-                            <h4 className="display-2 mb-0">Features</h4>
-                            <p>EHR offers a comprehensive set of features designed to meet the needs of patients, healthcare providers, and organizations:</p>
+                            <h4 className="display-2 mb-0">{t('home_features_title')}</h4>
+                            <p>{t('home_features_subtitle')}</p>
                         </Col>
                     </Row>
 
@@ -26,8 +28,8 @@ export default function Header() {
                             <div className="lc-block border p-4" style={{minHeight: "263px"}}>
                                 <div className="text-center">
                                     <FontAwesomeIcon icon={faBitcoin} fixedWidth size="4x" />
-                                    <h4 className="my-3">Catálogo de<br />Produtos</h4>
-                                    <p>Acesso fácil aos produtos das redes que você participa.</p>
+                                    <h4 className="my-3" dangerouslySetInnerHTML={{ __html: t('home_feature_product_catalog_title') }} />
+                                    <p>{t('home_feature_product_catalog_desc')}</p>
                                 </div>
                             </div>
                         </Col>
@@ -35,8 +37,8 @@ export default function Header() {
                             <div className="lc-block border p-4" style={{minHeight: "263px"}}>
                                 <div className="text-center">
                                     <FontAwesomeIcon icon={faLock} fixedWidth size="4x" />
-                                    <h4 className="my-3">Múltiplas Redes<br />de Venda</h4>
-                                    <p>Participe de diversas redes afiliadas. Gerencie cada rede de forma separada e organizada.</p>
+                                    <h4 className="my-3" dangerouslySetInnerHTML={{ __html: t('home_feature_multiple_networks_title') }} />
+                                    <p>{t('home_feature_multiple_networks_desc')}</p>
                                 </div>
                             </div>
                         </Col>
@@ -44,8 +46,8 @@ export default function Header() {
                             <div className="lc-block border p-4" style={{minHeight: "263px"}}>
                                 <div className="text-center">
                                     <FontAwesomeIcon icon={faBoltLightning} fixedWidth size="4x" />
-                                    <h4 className="my-3">Produtos &<br />Serviços</h4>
-                                    <p>Pagamentos via Cartão de Crédito, Boleto e PIX.</p>
+                                    <h4 className="my-3" dangerouslySetInnerHTML={{ __html: t('home_feature_products_services_title') }} />
+                                    <p>{t('home_feature_products_services_desc')}</p>
                                 </div>
                             </div>
                         </Col>
@@ -55,8 +57,8 @@ export default function Header() {
                             <div className="lc-block border p-4" style={{minHeight: "263px"}}>
                                 <div className="text-center">
                                     <FontAwesomeIcon icon={faFileUpload} fixedWidth size="4x" />
-                                    <h4 className="my-3">Gestão de<br />Equipe</h4>
-                                    <p>Recrute novos vendedores. Acompanhe o desempenho e crescimento da sua equipe</p>
+                                    <h4 className="my-3" dangerouslySetInnerHTML={{ __html: t('home_feature_team_management_title') }} />
+                                    <p>{t('home_feature_team_management_desc')}</p>
                                 </div>
                             </div>
                         </Col>
@@ -64,8 +66,8 @@ export default function Header() {
                             <div className="lc-block border p-4" style={{minHeight: "263px"}}>
                                 <div className="text-center">
                                     <FontAwesomeIcon icon={faCalendarAlt} fixedWidth size="4x" />
-                                    <h4 className="my-3">Painel do Administrador</h4>
-                                    <p>Gerencie produtos, redes, usuários e pagamentos. Controle total sobre o funcionamento da sua rede.</p>
+                                    <h4 className="my-3">{t('home_feature_admin_panel_title')}</h4>
+                                    <p>{t('home_feature_admin_panel_desc')}</p>
                                 </div>
                             </div>
                         </Col>
@@ -73,8 +75,8 @@ export default function Header() {
                             <div className="lc-block border p-4" style={{minHeight: "263px"}}>
                                 <div className="text-center">
                                     <FontAwesomeIcon icon={faFileWord} fixedWidth size="4x" />
-                                    <h4 className="my-3">Relatórios e Comissões</h4>
-                                    <p>Visualização de vendas, comissões e progresso da rede. Relatórios detalhados para tomada de decisões.</p>
+                                    <h4 className="my-3">{t('home_feature_reports_commissions_title')}</h4>
+                                    <p>{t('home_feature_reports_commissions_desc')}</p>
                                 </div>
                             </div>
                         </Col>
@@ -84,8 +86,8 @@ export default function Header() {
                             <div className="lc-block border p-4" style={{minHeight: "263px"}}>
                                 <div className="text-center">
                                     <FontAwesomeIcon icon={faLockOpen} fixedWidth size="4x" />
-                                    <h4 className="my-3">Interface Responsiva</h4>
-                                    <p>Totalmente adaptado para dispositivos móveis. Experiência fluida e rápida, onde quer que você esteja.</p>
+                                    <h4 className="my-3">{t('home_feature_responsive_interface_title')}</h4>
+                                    <p>{t('home_feature_responsive_interface_desc')}</p>
                                 </div>
                             </div>
                         </Col>
@@ -93,8 +95,8 @@ export default function Header() {
                             <div className="lc-block border p-4" style={{minHeight: "263px"}}>
                                 <div className="text-center">
                                     <FontAwesomeIcon icon={faUserDoctor} fixedWidth size="4x" />
-                                    <h4 className="my-3">Árvore de Rede Interativa</h4>
-                                    <p>Visualize sua rede de forma gráfica e intuitiva. Acompanhe o crescimento da sua equipe em tempo real.</p>
+                                    <h4 className="my-3">{t('home_feature_interactive_network_tree_title')}</h4>
+                                    <p>{t('home_feature_interactive_network_tree_desc')}</p>
                                 </div>
                             </div>
                         </Col>
@@ -102,8 +104,8 @@ export default function Header() {
                             <div className="lc-block border p-4" style={{minHeight: "263px"}}>
                                 <div className="text-center">
                                     <FontAwesomeIcon icon={faBoxOpen} fixedWidth size="4x" />
-                                    <h4 className="my-3">Segurança e Transparência</h4>
-                                    <p>Dados protegidos com criptografia. Histórico completo de transações e movimentações.</p>
+                                    <h4 className="my-3">{t('home_feature_security_transparency_title')}</h4>
+                                    <p>{t('home_feature_security_transparency_desc')}</p>
                                 </div>
                             </div>
                         </Col>

@@ -3,13 +3,9 @@ using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Product;
-using MonexUp.DTO.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MonexUp.Domain.Impl.Services
 {
@@ -21,8 +17,8 @@ namespace MonexUp.Domain.Impl.Services
         private readonly IImageService _imageService;
 
         public ProductService(
-            IUserDomainFactory userFactory, 
-            IUserNetworkDomainFactory userNetworkFactory, 
+            IUserDomainFactory userFactory,
+            IUserNetworkDomainFactory userNetworkFactory,
             IProductDomainFactory productFactory,
             IImageService imageService
         )
@@ -67,7 +63,8 @@ namespace MonexUp.Domain.Impl.Services
 
         public ProductInfo GetProductInfo(IProductModel md)
         {
-            return new ProductInfo { 
+            return new ProductInfo
+            {
                 ProductId = md.ProductId,
                 NetworkId = md.NetworkId,
                 Name = md.Name,
@@ -157,14 +154,14 @@ namespace MonexUp.Domain.Impl.Services
 
         public ProductListPagedResult Search(ProductSearchInternalParam param)
         {
-           
+
             var model = _productFactory.BuildProductModel();
             int pageCount = 0;
             var products = model.Search(
-                param.NetworkId <= 0 ? null : param.NetworkId, 
-                param.UserId <= 0 ? null: param.UserId, 
-                param.Keyword, 
-                param.OnlyActive, param.PageNum, 
+                param.NetworkId <= 0 ? null : param.NetworkId,
+                param.UserId <= 0 ? null : param.UserId,
+                param.Keyword,
+                param.OnlyActive, param.PageNum,
                 out pageCount, _productFactory
                 )
                 .Select(x => GetProductInfo(x))

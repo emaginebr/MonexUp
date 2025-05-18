@@ -26,10 +26,10 @@ export default function Menu() {
   const [showAlert, setShowAlert] = useState<boolean>(true);
   const [showImageModal, setShowImageModal] = useState<boolean>(false);
 
-  const { t } = useTranslation();
-
   const [showMessage, setShowMessage] = useState<boolean>(false);
   const [messageText, setMessageText] = useState<string>("");
+
+  const { t } = useTranslation();
 
   const throwError = (message: string) => {
     setMessageText(message);
@@ -41,31 +41,31 @@ export default function Menu() {
       case UserRoleEnum.NoRole:
         return (
           <span>
-            <FontAwesomeIcon icon={faCancel} fixedWidth />&nbsp;No role
+            <FontAwesomeIcon icon={faCancel} fixedWidth />&nbsp;{t("no_role")}
           </span>
         );
       case UserRoleEnum.User:
         return (
           <span>
-            <FontAwesomeIcon icon={faUser} fixedWidth />&nbsp;User
+            <FontAwesomeIcon icon={faUser} fixedWidth />&nbsp;{t("user")}
           </span>
         );
       case UserRoleEnum.Seller:
         return (
           <span>
-            <FontAwesomeIcon icon={faUserMd} fixedWidth />&nbsp;Seller
+            <FontAwesomeIcon icon={faUserMd} fixedWidth />&nbsp;{t("seller")}
           </span>
         );
       case UserRoleEnum.NetworkManager:
         return (
           <span>
-            <FontAwesomeIcon icon={faUserGroup} fixedWidth />&nbsp;Network Manager
+            <FontAwesomeIcon icon={faUserGroup} fixedWidth />&nbsp;{t("network_manager")}
           </span>
         );
       case UserRoleEnum.Administrator:
         return (
           <span>
-            <FontAwesomeIcon icon={faUserGear} fixedWidth />&nbsp;Adminstrator
+            <FontAwesomeIcon icon={faUserGear} fixedWidth />&nbsp;{t("administrator")}
           </span>
         );
       default:
@@ -188,7 +188,7 @@ export default function Menu() {
                       }}><FontAwesomeIcon icon={faSearch} />&nbsp;{t('search_for_a_network')}</NavDropdown.Item>
                     </NavDropdown>
                   }
-                  <NavDropdown title={t(showRoleText(networkContext.currentRole)?.props.children[1].trim().toLowerCase().replace(' ', '_') || 'no_role')} id="basic-nav-dropdown">
+                  <NavDropdown title={showRoleText(networkContext.currentRole)} id="basic-nav-dropdown">
                     <NavDropdown.ItemText className='small'>{t('select_chain_to_connect')}</NavDropdown.ItemText>
                     <NavDropdown.Divider />
                     {networkContext.userNetwork?.role >= UserRoleEnum.User &&

@@ -399,3 +399,5 @@
 
 # JetBrains Rider
 /Backend/MonexUp/*.sln.iml
+/Backend/MonexUp/MonexUp.API/bin
+/Backend/MonexUp/MonexUp.API/obj
