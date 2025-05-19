@@ -92,6 +92,7 @@ export default function ProfileListPage() {
                         </h3>
                     </Col>
                     <Col md="4" style={{ textAlign: "right" }}>
+                        {/*
                         <InputGroup className="pull-right">
                             <Dropdown>
                                 <Dropdown.Toggle variant="danger" id="dropdown-basic">
@@ -109,6 +110,7 @@ export default function ProfileListPage() {
                                 navigate("/admin/team-structure/new");
                             }}><FontAwesomeIcon icon={faPlus} fixedWidth /> New</Button>
                         </InputGroup>
+                        */}
                     </Col>
                 </Row>
                 <Row className="py-4">

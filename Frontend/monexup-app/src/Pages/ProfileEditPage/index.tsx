@@ -16,10 +16,12 @@ import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 import NetworkContext from "../../Contexts/Network/NetworkContext";
 import ProfileContext from "../../Contexts/Profile/ProfileContext";
 import UserProfileInfo from "../../DTO/Domain/UserProfileInfo";
+import { useTranslation } from "react-i18next";
 
 
 export default function ProfileEditPage() {
 
+    const { t } = useTranslation();
     const authContext = useContext(AuthContext);
     const networkContext = useContext(NetworkContext);
     const profileContext = useContext(ProfileContext);
@@ -93,9 +95,9 @@ export default function ProfileEditPage() {
                         <h3>
                             <nav aria-label="breadcrumb">
                                 <ol className="breadcrumb">
-                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">My Network</Link></li>
-                                    <li className="breadcrumb-item"><Link to="/admin/team-structure">Network Team Structure</Link></li>
-                                    <li className="breadcrumb-item active" aria-current="page">New Team Structure</li>
+                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">{t('myNetwork')}</Link></li>
+                                    <li className="breadcrumb-item"><Link to="/admin/team-structure">{t('networkTeamStructure')}</Link></li>
+                                    <li className="breadcrumb-item active" aria-current="page">{insertMode ? t('newTeamStructure') : t('editTeamStructure')}</li>
                                 </ol>
                             </nav>
                         </h3>
@@ -107,15 +109,15 @@ export default function ProfileEditPage() {
                             <Card.Body>
                                 <Form>
                                     <div className="text-center mb-3">
-                                        Registration is not required to make swaps, but you can do so anyway to access your transaction history.
+                                        {t('profileEditPage.registrationNotRequired')}
                                     </div>
                                     <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="2">Name:</Form.Label>
+                                        <Form.Label column sm="2">{t('name')}:</Form.Label>
                                         <Col sm="10">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
-                                                    placeholder="Your profile name"
+                                                    placeholder={t('yourProfileName')}
                                                     value={profileContext.profile?.name}
                                                     onChange={(e) => {
                                                         profileContext.setProfile({
@@ -127,12 +129,12 @@ export default function ProfileEditPage() {
                                         </Col>
                                     </Form.Group>
                                     <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="2">Commission (%):</Form.Label>
+                                        <Form.Label column sm="2">{t('commission')} (%):</Form.Label>
                                         <Col sm="5">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faPercent} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg"
-                                                    placeholder="Commission in percents"
+                                                <Form.Control type="number" size="lg" // Changed type to number for consistency with parseFloat
+                                                    placeholder={t('commissionInPercents')}
                                                     value={profileContext.profile?.commission}
                                                     onChange={(e) => {
                                                         profileContext.setProfile({
@@ -142,12 +144,12 @@ export default function ProfileEditPage() {
                                                     }} />
                                             </InputGroup>
                                         </Col>
-                                        <Form.Label column sm="1">Level:</Form.Label>
+                                        <Form.Label column sm="1">{t('level')}:</Form.Label>
                                         <Col sm="4">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faLevelUp} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="number" size="lg"
-                                                    placeholder="Network level number"
+                                                    placeholder={t('networkLevelNumber')}
                                                     value={profileContext.profile?.level}
                                                     onChange={(e) => {
                                                         profileContext.setProfile({
@@ -161,7 +163,7 @@ export default function ProfileEditPage() {
                                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                                         <Button variant="danger" size="lg" onClick={() => {
                                             navigate("/admin/team-structure");
-                                        }}><FontAwesomeIcon icon={faArrowLeft} fixedWidth /> Back</Button>
+                                        }}><FontAwesomeIcon icon={faArrowLeft} fixedWidth /> {t('back')}</Button>
                                         <Button variant="success" size="lg" onClick={async (e) => {
                                             if (insertMode) {
                                                 //profileContext.profile.networkId = NetworkContext.
@@ -187,9 +189,9 @@ export default function ProfileEditPage() {
                                         }}
                                             disabled={profileContext.loadingUpdate}
                                         >
-                                            {profileContext.loadingUpdate ? "Loading..." :
+                                            {profileContext.loadingUpdate ? t('loading') :
                                                 <>
-                                                    <FontAwesomeIcon icon={faSave} fixedWidth />&nbsp;Save
+                                                    <FontAwesomeIcon icon={faSave} fixedWidth />&nbsp;{t('save')}
                                                 </>}
                                         </Button>
                                     </div>

@@ -263,5 +263,18 @@
   "product_search_placeholder_keyword": "Search for Keyword",
   "product_search_aria_label_keyword": "Search for Keyword",
   "product_search_button_new_product": "New Product",
-  "table_header_frequency": "Frequency"
+  "table_header_frequency": "Frequency",
+  "myNetwork": "My Network",
+  "networkTeamStructure": "Network Team Structure",
+  "newTeamStructure": "New Team Structure",
+  "editTeamStructure": "Edit Team Structure",
+  "profileEditPage.registrationNotRequired": "Registration is not required to make swaps, but you can do so anyway to access your transaction history.",
+  "name": "Name",
+  "yourProfileName": "Your profile name",
+  "commission": "Commission",
+  "commissionInPercents": "Commission in percents",
+  "level": "Level",
+  "networkLevelNumber": "Network level number",
+  "back": "Back",
+  "save": "Save"
 }
