@@ -21,6 +21,8 @@ namespace MonexUp.Domain.Interfaces.Services
         INetworkModel Update(NetworkInfo network, long userId);
         void RequestAccess(long networkId, long userId, long? referrerId);
         void ChangeStatus(long networkId, long userId, UserNetworkStatusEnum status, long managerId);
+        void Promote(long networkId, long userId, long manegerId);
+        void Demote(long networkId, long userId, long manegerId);
         IList<IUserNetworkModel> ListByUser(long userId);
         IList<IUserNetworkModel> ListByNetwork(long networkId);
 

@@ -17,7 +17,6 @@ export default function NetworkProvider(props: any) {
     const [loadingSeller, setLoadingSeller] = useState<boolean>(false);
     const [loadingUpdate, setLoadingUpdate] = useState<boolean>(false);
     const [loadingRequestAccess, setLoadingRequestAccess] = useState<boolean>(false);
-    const [loadingChangeStatus, setLoadingChangeStatus] = useState<boolean>(false);
 
     const [network, _setNetwork] = useState<NetworkInfo>(null);
     const [networks, setNetworks] = useState<NetworkInfo[]>([]);
@@ -33,7 +32,6 @@ export default function NetworkProvider(props: any) {
         loadingSeller: loadingSeller,
         loadingUpdate: loadingUpdate,
         loadingRequestAccess: loadingRequestAccess,
-        loadingChangeStatus: loadingChangeStatus,
 
         network: network,
         networks: networks,
@@ -440,11 +438,11 @@ export default function NetworkProvider(props: any) {
         },
         changeStatus: async (networkId: number, userId: number, status: number) => {
             let ret: Promise<ProviderResult>;
-            setLoadingChangeStatus(true);
+            setLoadingUpdate(true);
             try {
                 let brt = await NetworkFactory.NetworkBusiness.changeStatus(networkId, userId, status);
                 if (brt.sucesso) {
-                    setLoadingChangeStatus(false);
+                    setLoadingUpdate(false);
                     return {
                         ...ret,
                         sucesso: true,
@@ -452,7 +450,7 @@ export default function NetworkProvider(props: any) {
                     };
                 }
                 else {
-                    setLoadingChangeStatus(false);
+                    setLoadingUpdate(false);
                     return {
                         ...ret,
                         sucesso: false,
@@ -461,7 +459,69 @@ export default function NetworkProvider(props: any) {
                 }
             }
             catch (err) {
-                setLoadingChangeStatus(false);
+                setLoadingUpdate(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: JSON.stringify(err)
+                };
+            }
+        },
+        promote: async (networkId: number, userId: number) => {
+            let ret: Promise<ProviderResult>;
+            setLoadingUpdate(true);
+            try {
+                let brt = await NetworkFactory.NetworkBusiness.promote(networkId, userId);
+                if (brt.sucesso) {
+                    setLoadingUpdate(false);
+                    return {
+                        ...ret,
+                        sucesso: true,
+                        mensagemSucesso: "Network list"
+                    };
+                }
+                else {
+                    setLoadingUpdate(false);
+                    return {
+                        ...ret,
+                        sucesso: false,
+                        mensagemErro: brt.mensagem
+                    };
+                }
+            }
+            catch (err) {
+                setLoadingUpdate(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: JSON.stringify(err)
+                };
+            }
+        },
+        demote: async (networkId: number, userId: number) => {
+            let ret: Promise<ProviderResult>;
+            setLoadingUpdate(true);
+            try {
+                let brt = await NetworkFactory.NetworkBusiness.demote(networkId, userId);
+                if (brt.sucesso) {
+                    setLoadingUpdate(false);
+                    return {
+                        ...ret,
+                        sucesso: true,
+                        mensagemSucesso: "Network list"
+                    };
+                }
+                else {
+                    setLoadingUpdate(false);
+                    return {
+                        ...ret,
+                        sucesso: false,
+                        mensagemErro: brt.mensagem
+                    };
+                }
+            }
+            catch (err) {
+                setLoadingUpdate(false);
                 return {
                     ...ret,
                     sucesso: false,

@@ -22,4 +22,6 @@ export default interface INetworkService {
     getSellerBySlug: (networkSlug: string, userSlug: string) => Promise<UserNetworkResult>;
     requestAccess: (networkId: number, token: string, referrerId?: number) => Promise<StatusRequest>;
     changeStatus: (networkId: number, userId: number, status: number, token: string) => Promise<StatusRequest>;
+    promote: (networkId: number, userId: number, token: string) => Promise<StatusRequest>;
+    demote: (networkId: number, userId: number, token: string) => Promise<StatusRequest>;
 }

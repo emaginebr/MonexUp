@@ -206,7 +206,37 @@ const NetworkService : INetworkService = {
             };
         }
         return ret;
-    }
+    },
+    promote: async (networkId: number, userId: number, token: string) => {
+        let ret: StatusRequest;
+        let request = await _httpClient.doGetAuth<StatusRequest>("api/Network/promote/" + networkId + "/" + userId, token);
+        if (request.success) {
+            return request.data;
+        }
+        else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    },
+    demote: async (networkId: number, userId: number, token: string) => {
+        let ret: StatusRequest;
+        let request = await _httpClient.doGetAuth<StatusRequest>("api/Network/demote/" + networkId + "/" + userId, token);
+        if (request.success) {
+            return request.data;
+        }
+        else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    },
 }
 
 export default NetworkService;

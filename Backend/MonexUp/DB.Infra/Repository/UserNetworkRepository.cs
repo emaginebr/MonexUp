@@ -119,5 +119,57 @@ namespace DB.Infra.Repository
             //var rows = q.ToList();
             return rows.Select(x => DbToModel(factory, x));
         }
+
+        public void Promote(long networkId, long userId)
+        {
+            var row = _ccsContext.UserNetworks
+                .Where(x => x.NetworkId == networkId && x.UserId == userId)
+                .FirstOrDefault();
+            if (row == null)
+            {
+                return;
+            }
+            int? level = row.Profile?.Level;
+            if (!level.HasValue)
+            {
+                level = 0;
+            }
+            level--;
+            var rowProfile = _ccsContext.UserProfiles
+                .Where(x => x.NetworkId == networkId && x.Level == level)
+                .FirstOrDefault();
+            if (rowProfile != null)
+            {
+                row.ProfileId = rowProfile.ProfileId;
+                _ccsContext.Update(row);
+                _ccsContext.SaveChanges();
+            }
+        }
+
+        public void Demote(long networkId, long userId)
+        {
+            var row = _ccsContext.UserNetworks
+                .Where(x => x.NetworkId == networkId && x.UserId == userId)
+                .FirstOrDefault();
+            if (row == null)
+            {
+                return;
+            }
+            int? level = row.Profile?.Level;
+            if (!level.HasValue)
+            {
+                level = 0;
+            }
+            level++;
+            var rowProfile = _ccsContext.UserProfiles
+                .Where(x => x.NetworkId == networkId && x.Level == level)
+                .FirstOrDefault();
+            if (rowProfile != null)
+            {
+                row.ProfileId = rowProfile.ProfileId;
+                _ccsContext.Update(row);
+                _ccsContext.SaveChanges();
+            }
+        }
     }
 }

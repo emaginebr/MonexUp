@@ -291,7 +291,8 @@ namespace MonexUp.Domain.Impl.Services
 
             model.Insert(_userNetworkFactory);
         }
-        public void ChangeStatus(long networkId, long userId, UserNetworkStatusEnum status, long managerId)
+
+        private void ValidateAccess(long networkId, long userId, long managerId)
         {
             var userNetwork = _userNetworkFactory.BuildUserNetworkModel().Get(networkId, userId, _userNetworkFactory);
             if (userNetwork == null)
@@ -318,10 +319,28 @@ namespace MonexUp.Domain.Impl.Services
                     throw new Exception("Your dont have access to this network");
                 }
             }
+        }
+        public void ChangeStatus(long networkId, long userId, UserNetworkStatusEnum status, long managerId)
+        {
+            ValidateAccess(networkId, userId, managerId);
 
+            var userNetwork = _userNetworkFactory.BuildUserNetworkModel().Get(networkId, userId, _userNetworkFactory);
             userNetwork.Status = status;
-
             userNetwork.Update(_userNetworkFactory);
+        }
+
+        public void Promote(long networkId, long userId, long managerId)
+        {
+            ValidateAccess(networkId, userId, managerId);
+
+            _userNetworkFactory.BuildUserNetworkModel().Promote(networkId, userId);
+        }
+
+        public void Demote(long networkId, long userId, long managerId)
+        {
+            ValidateAccess(networkId, userId, managerId);
+
+            _userNetworkFactory.BuildUserNetworkModel().Demote(networkId, userId);
         }
     }
 }

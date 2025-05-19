@@ -18,4 +18,6 @@ export default interface INetworkBusiness {
   getSellerBySlug: (networkSlug: string, userSlug: string) => Promise<BusinessResult<UserNetworkInfo>>;
   requestAccess: (networkId: number, referrerId?: number) => Promise<BusinessResult<boolean>>;
   changeStatus: (networkId: number, userId: number, status: number) => Promise<BusinessResult<boolean>>; 
+  promote: (networkId: number, userId: number) => Promise<BusinessResult<boolean>>;
+  demote: (networkId: number, userId: number) => Promise<BusinessResult<boolean>>;
 }

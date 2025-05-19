@@ -364,5 +364,59 @@ namespace MonexUp.API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [Authorize]
+        [HttpGet("promote/{networkId}/{userId}")]
+        public ActionResult<StatusResult> Promote(long networkId, long userId)
+        {
+            try
+            {
+                var userSession = _userService.GetUserInSession(HttpContext);
+                if (userSession == null)
+                {
+                    return StatusCode(401, "Not Authorized");
+                }
+
+
+                _networkService.Promote(networkId, userId, userSession.UserId);
+
+                return new StatusResult
+                {
+                    Sucesso = true,
+                    Mensagem = "User successfully changed"
+                };
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpGet("demote/{networkId}/{userId}")]
+        public ActionResult<StatusResult> Demote(long networkId, long userId)
+        {
+            try
+            {
+                var userSession = _userService.GetUserInSession(HttpContext);
+                if (userSession == null)
+                {
+                    return StatusCode(401, "Not Authorized");
+                }
+
+
+                _networkService.Demote(networkId, userId, userSession.UserId);
+
+                return new StatusResult
+                {
+                    Sucesso = true,
+                    Mensagem = "User successfully changed"
+                };
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

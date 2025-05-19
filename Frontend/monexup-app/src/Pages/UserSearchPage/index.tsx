@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faCancel, faCheck, faCheckCircle, faClose, faCross, faDollar, faEdit, faEnvelope, faPlus, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDown, faArrowUp, faCalendar, faCancel, faCheck, faCheckCircle, faClose, faCross, faDollar, faEdit, faEnvelope, faPlus, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Table from "react-bootstrap/esm/Table";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
@@ -183,6 +183,34 @@ export default function UserSearchPage() {
                                             <td style={{ textAlign: "right" }}>{user.commission}%</td>
                                             <td>{showStatus(user.status)}</td>
                                             <td>
+                                                <>
+                                                    <a href="#" className="text-success" onClick={async (e) => {
+                                                        e.preventDefault();
+                                                        let ret = await networkContext.promote(networkContext.network?.networkId, user.userId);
+                                                        if (ret.sucesso) {
+                                                            showSuccessMessage("User promoted");
+                                                            searchUsers(userContext.searchResult?.pageNum);
+                                                        }
+                                                        else {
+                                                            throwError(ret.mensagemErro);
+                                                        }
+                                                    }}>
+                                                        <FontAwesomeIcon icon={faArrowUp} fixedWidth /> Promove
+                                                    </a>
+                                                    <a href="#" className="text-danger" onClick={async (e) => {
+                                                        e.preventDefault();
+                                                        let ret = await networkContext.demote(networkContext.network?.networkId, user.userId);
+                                                        if (ret.sucesso) {
+                                                            showSuccessMessage("User demoted");
+                                                            searchUsers(userContext.searchResult?.pageNum);
+                                                        }
+                                                        else {
+                                                            throwError(ret.mensagemErro);
+                                                        }
+                                                    }}>
+                                                        <FontAwesomeIcon icon={faArrowDown} fixedWidth /> Demote
+                                                    </a>
+                                                </>
                                                 {user.status == UserNetworkStatusEnum.Active &&
                                                     <>
                                                         <a href="#" className="text-danger" onClick={async (e) => {

@@ -88,5 +88,15 @@ namespace MonexUp.Domain.Impl.Models
         {
             return _repositoryNetwork.GetQtdyUserByNetwork(networkId);
         }
+
+        public void Promote(long networkId, long userId)
+        {
+            _repositoryNetwork.Promote(networkId, userId);
+        }
+
+        public void Demote(long networkId, long userId)
+        {
+            _repositoryNetwork.Demote(networkId, userId);
+        }
     }
 }

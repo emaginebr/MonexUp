@@ -9,7 +9,5 @@ namespace MonexUp.Application
     public class ConfigurationParam
     {
         public string ConnectionString { get; set; }
-        public string WalletStxApi {  get; set; }
-        public string StacksApi { get; set; }
     }
 }

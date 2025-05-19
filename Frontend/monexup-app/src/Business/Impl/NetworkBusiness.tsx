@@ -330,6 +330,64 @@ const NetworkBusiness: INetworkBusiness = {
       } catch {
         throw new Error("Failed to get user by email");
       }
+  },
+  promote: async (networkId: number, userId: number) => {
+    try {
+        let ret: BusinessResult<boolean>;
+        let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+        if (!session) {
+          return {
+            ...ret,
+            sucesso: false,
+            mensagem: "Not logged"
+          };
+        }
+        let retServ = await _networkService.promote(networkId, userId, session.token);
+        if (retServ.sucesso) {
+          return {
+            ...ret,
+            dataResult: retServ.sucesso,
+            sucesso: true
+          };
+        } else {
+          return {
+            ...ret,
+            sucesso: false,
+            mensagem: retServ.mensagem
+          };
+        }
+      } catch {
+        throw new Error("Failed to get user by email");
+      }
+  },
+  demote: async (networkId: number, userId: number) => {
+    try {
+        let ret: BusinessResult<boolean>;
+        let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+        if (!session) {
+          return {
+            ...ret,
+            sucesso: false,
+            mensagem: "Not logged"
+          };
+        }
+        let retServ = await _networkService.demote(networkId, userId, session.token);
+        if (retServ.sucesso) {
+          return {
+            ...ret,
+            dataResult: retServ.sucesso,
+            sucesso: true
+          };
+        } else {
+          return {
+            ...ret,
+            sucesso: false,
+            mensagem: retServ.mensagem
+          };
+        }
+      } catch {
+        throw new Error("Failed to get user by email");
+      }
   }
 }
 

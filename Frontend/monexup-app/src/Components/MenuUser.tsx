@@ -19,6 +19,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import UserContext from '../Contexts/User/UserContext';
 import TemplateContext from '../Contexts/Template/TemplateContext';
 import { MenuLanguage } from './Functions';
+import { useTranslation } from 'react-i18next';
 
 
 export default function MenuUser() {
@@ -27,6 +28,8 @@ export default function MenuUser() {
 
   const [showMessage, setShowMessage] = useState<boolean>(false);
   const [messageText, setMessageText] = useState<string>("");
+
+  const { t } = useTranslation();
 
   const throwError = (message: string) => {
     setMessageText(message);
@@ -68,7 +71,7 @@ export default function MenuUser() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Link className='nav-link' to={"/@/" + sellerSlug}><FontAwesomeIcon icon={faHome} fixedWidth /> Home</Link>
+              <Link className='nav-link' to={"/@/" + sellerSlug}><FontAwesomeIcon icon={faHome} fixedWidth /> {t('home')}</Link>
               {/*
               <Link className='nav-link' to={
                 authContext.sessionInfo ?
@@ -93,20 +96,20 @@ export default function MenuUser() {
                   <NavDropdown title={
                     <>
                       {templateContext.editMode ?
-                        <><FontAwesomeIcon icon={faCheckCircle} />&nbsp;Edit Mode (On)</>
+                        <><FontAwesomeIcon icon={faCheckCircle} />&nbsp;{t('edit_mode_on')}</>
                         :
-                        <><FontAwesomeIcon icon={faCircle} />&nbsp;Edit Mode (Off)</>
+                        <><FontAwesomeIcon icon={faCircle} />&nbsp;{t('edit_mode_off')}</>
                       }
                     </>
                   } id="basic-nav-dropdown">
-                    <NavDropdown.ItemText className='small'>Activate edit mode to change network pages</NavDropdown.ItemText>
+                    <NavDropdown.ItemText className='small'>{t('edit_mode_description_user')}</NavDropdown.ItemText>
                     <NavDropdown.Divider />
                     <NavDropdown.Item onClick={(e) => {
                       templateContext.setEditMode(true);
-                    }}><FontAwesomeIcon icon={faCheckCircle} />&nbsp;Edit Mode (On)</NavDropdown.Item>
+                    }}><FontAwesomeIcon icon={faCheckCircle} />&nbsp;{t('edit_mode_on')}</NavDropdown.Item>
                     <NavDropdown.Item onClick={(e) => {
                       templateContext.setEditMode(false);
-                    }}><FontAwesomeIcon icon={faCircle} />&nbsp;Edit Mode (Off)</NavDropdown.Item>
+                    }}><FontAwesomeIcon icon={faCircle} />&nbsp;{t('edit_mode_off')}</NavDropdown.Item>
                   </NavDropdown>
                 </>
               }
@@ -120,27 +123,27 @@ export default function MenuUser() {
                     </>
                   } id="basic-nav-dropdown">
                     <NavDropdown.Item onClick={async () => {
-                      navigate("/@/" + sellerSlug + "/account/edit-account");
-                    }}><FontAwesomeIcon icon={faPencil} fixedWidth /> Edit Account</NavDropdown.Item>
+                      navigate("/@/" + sellerSlug + "/account/edit-account"); // Apply t() to texts
+                    }}><FontAwesomeIcon icon={faPencil} fixedWidth /> {t('edit_account')}</NavDropdown.Item>
                     <NavDropdown.Item onClick={async () => {
-                      navigate("/@/" + sellerSlug + "/account/change-password");
-                    }}><FontAwesomeIcon icon={faLock} fixedWidth /> Change Password</NavDropdown.Item>
+                      navigate("/@/" + sellerSlug + "/account/change-password"); // Apply t() to texts
+                    }}><FontAwesomeIcon icon={faLock} fixedWidth /> {t('change_password')}</NavDropdown.Item>
                     <NavDropdown.Divider />
                     <NavDropdown.Item onClick={async () => {
                       let ret = authContext.logout();
                       if (!ret.sucesso) {
                         throwError(ret.mensagemErro);
                       }
-                      navigate("/@/" + sellerSlug);
-                    }}><FontAwesomeIcon icon={faClose} fixedWidth /> Logout</NavDropdown.Item>
+                      navigate("/@/" + sellerSlug); // Apply t() to texts
+                    }}><FontAwesomeIcon icon={faClose} fixedWidth /> {t('logout')}</NavDropdown.Item>
                   </NavDropdown>
                   :
                   <>
                     <Nav.Item>
-                      <Button variant="danger" onClick={async () => {
+                      <Button variant="danger" onClick={async () => { // Apply t() to button text
                         navigate("/@/" + sellerSlug + "/account/login");
                       }}>
-                        <FontAwesomeIcon icon={faSignInAlt} fixedWidth /> Sign In
+                        <FontAwesomeIcon icon={faSignInAlt} fixedWidth /> {t('sign_in')}
                       </Button>
                     </Nav.Item>
                   </>
@@ -152,7 +155,7 @@ export default function MenuUser() {
       {showAlert &&
         <Container className="mt-3">
           <Alert key="danger" variant="danger" onClose={() => setShowAlert(false)} dismissible>
-            <FontAwesomeIcon icon={faWarning} /> This is a <strong>trial version</strong>, do not make payments with your real data.
+            <FontAwesomeIcon icon={faWarning} /> {t('trial_version_warning_strong')}
           </Alert>
         </Container>
       }

@@ -12,7 +12,6 @@ interface INetworkProvider {
     loadingSeller: boolean;
     loadingUpdate: boolean;
     loadingRequestAccess: boolean;
-    loadingChangeStatus: boolean;
 
     network: NetworkInfo;
     networks: NetworkInfo[];
@@ -38,6 +37,8 @@ interface INetworkProvider {
     getSellerBySlug: (networkSlug: string, userSlug: string) => Promise<ProviderResult>;
     requestAccess: (networkId: number, referrerId?: number) => Promise<ProviderResult>;
     changeStatus: (networkId: number, userId: number, status: number) => Promise<ProviderResult>;
+    promote: (networkId: number, userId: number) => Promise<ProviderResult>;
+    demote: (networkId: number, userId: number) => Promise<ProviderResult>;
 }
 
 export default INetworkProvider;

@@ -15,5 +15,7 @@ namespace Core.Domain.Repository
         TModel Get(long networkId, long userId, TFactory factory);
         TModel Insert(TModel model, TFactory factory);
         TModel Update(TModel model, TFactory factory);
+        void Promote(long networkId, long userId);
+        void Demote(long networkId, long userId);
     }
 }
