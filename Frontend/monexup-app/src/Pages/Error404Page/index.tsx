@@ -3,9 +3,12 @@ import CardBody from "react-bootstrap/esm/CardBody";
 import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 export default function Error404Page() {
+
+    const { t } = useTranslation();
 
     return (
 
@@ -16,8 +19,8 @@ export default function Error404Page() {
                         <Card>
                             <CardBody>
                                 <span className="display-1 d-block">404</span>
-                                <div className="mb-4 lead">The page you are looking for was not found.</div>
-                                <Link to="/" className="btn btn-link">Back to Home</Link>
+                                <div className="mb-4 lead">{t('error404_message')}</div>
+                                <Link to="/" className="btn btn-link">{t('error404_back_to_home')}</Link>
                             </CardBody>
                         </Card>
                     </Col>

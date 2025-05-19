@@ -24,8 +24,12 @@ import { ProductStatusEnum } from "../../DTO/Enum/ProductStatusEnum";
 import 'react-quill/dist/quill.snow.css';
 import { ImageModal, ImageTypeEnum } from "../../Components/ImageModal";
 import ImageContext from "../../Contexts/Image/ImageContext";
+import { useTranslation } from "react-i18next";
 
 export default function ProductEditPage() {
+
+    const { t } = useTranslation();
+
 
     const networkContext = useContext(NetworkContext);
     const productContext = useContext(ProductContext);
@@ -101,9 +105,9 @@ export default function ProductEditPage() {
                         <h3>
                             <nav aria-label="breadcrumb">
                                 <ol className="breadcrumb">
-                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">My Network</Link></li>
-                                    <li className="breadcrumb-item"><Link to="/admin/products">Products List</Link></li>
-                                    <li className="breadcrumb-item active" aria-current="page">My Product</li>
+                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">{t('breadcrumb_my_network')}</Link></li>
+                                    <li className="breadcrumb-item"><Link to="/admin/products">{t('breadcrumb_products_list')}</Link></li>
+                                    <li className="breadcrumb-item active" aria-current="page">{t('breadcrumb_my_product')}</li>
                                 </ol>
                             </nav>
                         </h3>
@@ -124,23 +128,23 @@ export default function ProductEditPage() {
                                             e.preventDefault();
                                             setShowImageModal(true);
                                         }}>
-                                            <FontAwesomeIcon icon={faUpload} fixedWidth />&nbsp;Change Image
+                                            <FontAwesomeIcon icon={faUpload} fixedWidth />&nbsp;{t('product_edit_change_image_button')}
                                         </Button>
                                     }
                                 </div>
                             </Col>
                             <Col md="8">
                                 <Form>
-                                    <div className="text-center mb-3">
-                                        Registration is not required to make swaps, but you can do so anyway to access your transaction history.
+                                    <div className="text-center mb-3"> {/* TODO: Confirm if this text is appropriate here or should be changed/removed */}
+                                        {t('network_edit_registration_info')}
                                     </div>
                                     <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="2">Name:</Form.Label>
+                                        <Form.Label column sm="2">{t('form_label_name')}:</Form.Label>
                                         <Col sm="10">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
-                                                    placeholder="Your Product name"
+                                                    placeholder={t('product_edit_name_placeholder')}
                                                     value={productContext.product?.name}
                                                     onChange={(e) => {
                                                         productContext.setProduct({
@@ -153,12 +157,12 @@ export default function ProductEditPage() {
                                     </Form.Group>
                                     {productContext.product?.productId > 0 &&
                                         <Form.Group as={Row} className="mb-3">
-                                            <Form.Label column sm="2">Slug:</Form.Label>
+                                            <Form.Label column sm="2">{t('form_label_slug')}:</Form.Label>
                                             <Col sm="10">
                                                 <InputGroup>
                                                     <InputGroup.Text><FontAwesomeIcon icon={faCode} fixedWidth /></InputGroup.Text>
                                                     <Form.Control type="text" size="lg"
-                                                        placeholder="Ex: https://monexup.com/{my-network-slug}/{my-product-slug}"
+                                                        placeholder={t('product_edit_slug_placeholder')}
                                                         value={productContext.product?.slug}
                                                         onChange={(e) => {
                                                             productContext.setProduct({
@@ -171,7 +175,7 @@ export default function ProductEditPage() {
                                         </Form.Group>
                                     }
                                     <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="2">Frequency:</Form.Label>
+                                        <Form.Label column sm="2">{t('product_edit_frequency_label')}:</Form.Label>
                                         <Col sm="5">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faCalendar} fixedWidth /></InputGroup.Text>
@@ -185,18 +189,18 @@ export default function ProductEditPage() {
                                                         });
                                                     }}
                                                 >
-                                                    <option value={0}>Just only one time</option>
-                                                    <option value={30}>Monthly</option>
-                                                    <option value={365}>Annually</option>
+                                                    <option value={0}>{t('product_edit_frequency_one_time')}</option>
+                                                    <option value={30}>{t('product_edit_frequency_monthly')}</option>
+                                                    <option value={365}>{t('product_edit_frequency_annually')}</option>
                                                 </Form.Select>
                                             </InputGroup>
                                         </Col>
-                                        <Form.Label column sm="1">Price:</Form.Label>
+                                        <Form.Label column sm="1">{t('product_edit_price_label')}:</Form.Label>
                                         <Col sm="4">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faDollar} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="number" size="lg"
-                                                    placeholder="Product Price"
+                                                    placeholder={t('product_edit_price_placeholder')}
                                                     value={productContext.product?.price}
                                                     onChange={(e) => {
                                                         productContext.setProduct({
@@ -208,7 +212,7 @@ export default function ProductEditPage() {
                                         </Col>
                                     </Form.Group>
                                     <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="2">Status:</Form.Label>
+                                        <Form.Label column sm="2">{t('product_edit_status_label')}:</Form.Label>
                                         <Col sm="10">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faPercent} fixedWidth /></InputGroup.Text>
@@ -220,9 +224,9 @@ export default function ProductEditPage() {
                                                             status: parseInt(e.target.value)
                                                         });
                                                     }} >
-                                                    <option value={ProductStatusEnum.Active}>Active</option>
-                                                    <option value={ProductStatusEnum.Inactive}>Inactive</option>
-                                                    <option value={ProductStatusEnum.Expired}>Expired</option>
+                                                    <option value={ProductStatusEnum.Active}>{t('product_status_active')}</option>
+                                                    <option value={ProductStatusEnum.Inactive}>{t('product_status_inactive')}</option>
+                                                    <option value={ProductStatusEnum.Expired}>{t('product_status_expired')}</option>
                                                 </Form.Select>
                                             </InputGroup>
                                         </Col>
@@ -232,7 +236,7 @@ export default function ProductEditPage() {
                                         <ReactQuill
                                             theme="snow"
                                             value={productContext.product?.description}
-                                            placeholder="Inform your product description"
+                                            placeholder={t('product_edit_description_placeholder')}
                                             onChange={(value) => {
                                                 productContext.setProduct({
                                                     ...productContext.product,
@@ -257,8 +261,8 @@ export default function ProductEditPage() {
                                     </div>
                                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                                         <Button variant="danger" size="lg" onClick={() => {
-                                            navigate("/admin/products");
-                                        }}><FontAwesomeIcon icon={faArrowLeft} fixedWidth /> Back</Button>
+                                            navigate("/admin/products"); // TODO: Consider if this route should be dynamic or translated if it's a label
+                                        }}><FontAwesomeIcon icon={faArrowLeft} fixedWidth /> {t('back_button')}</Button>
                                         <Button variant="success" size="lg" onClick={async (e) => {
                                             if (insertMode) {
                                                 productContext.setProduct({
@@ -268,7 +272,7 @@ export default function ProductEditPage() {
                                                 });
                                                 let ret = await productContext.insert(productContext.product);
                                                 if (ret.sucesso) {
-                                                    showSuccessMessage(ret.mensagemSucesso);
+                                                    showSuccessMessage(ret.mensagemSucesso ? ret.mensagemSucesso : t('product_edit_insert_success_message'));
                                                     //alert(userContext.user?.id);
                                                 }
                                                 else {
@@ -279,7 +283,7 @@ export default function ProductEditPage() {
                                                 let ret = await productContext.update(productContext.product);
                                                 if (ret.sucesso) {
                                                     //alert(userContext.user?.id);
-                                                    showSuccessMessage(ret.mensagemSucesso);
+                                                    showSuccessMessage(ret.mensagemSucesso ? ret.mensagemSucesso : t('product_edit_update_success_message'));
                                                 }
                                                 else {
                                                     throwError(ret.mensagemErro);
@@ -288,9 +292,9 @@ export default function ProductEditPage() {
                                         }}
                                             disabled={productContext.loadingUpdate}
                                         >
-                                            {productContext.loadingUpdate ? "Loading..." :
+                                            {productContext.loadingUpdate ? t('loading') :
                                                 <>
-                                                    <FontAwesomeIcon icon={faSave} fixedWidth />&nbsp;Save
+                                                    <FontAwesomeIcon icon={faSave} fixedWidth />&nbsp;{t('save_button')}
                                                 </>}
                                         </Button>
                                     </div>

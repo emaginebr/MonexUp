@@ -18,9 +18,12 @@ import OrderInfo from "../../DTO/Domain/OrderInfo";
 import Moment from 'react-moment';
 import InvoiceContext from "../../Contexts/Invoice/InvoiceContext";
 import { InvoiceStatusEnum } from "../../DTO/Enum/InvoiceStatusEnum";
+import { useTranslation } from "react-i18next";
 
 export default function InvoiceSearchPage() {
 
+
+    const { t } = useTranslation();
 
     let navigate = useNavigate();
 
@@ -56,10 +59,10 @@ export default function InvoiceSearchPage() {
             if (ret.length > 0) {
                 ret = ret.substring(0, ret.length - 2);
             }
-            
+
         }
         if (ret.length == 0) {
-            ret = "Unknow";
+            ret = t('product_unknown');
         }
         return ret;
     };
@@ -78,9 +81,9 @@ export default function InvoiceSearchPage() {
         switch (networkContext.currentRole) {
             case UserRoleEnum.NetworkManager:
                 invoiceContext.search(
-                    networkContext.userNetwork.networkId, 
-                    0, 
-                    0, 
+                    networkContext.userNetwork.networkId,
+                    0,
+                    0,
                     pageNum
                 ).then((ret) => {
                     if (!ret.sucesso) {
@@ -90,9 +93,9 @@ export default function InvoiceSearchPage() {
                 break;
             case UserRoleEnum.Seller:
                 invoiceContext.search(
-                    networkContext.userNetwork.networkId, 
-                    0, 
-                    authContext.sessionInfo?.userId, 
+                    networkContext.userNetwork.networkId,
+                    0,
+                    authContext.sessionInfo?.userId,
                     pageNum
                 ).then((ret) => {
                     if (!ret.sucesso) {
@@ -102,9 +105,9 @@ export default function InvoiceSearchPage() {
                 break;
             case UserRoleEnum.User:
                 invoiceContext.search(
-                    networkContext.userNetwork.networkId, 
+                    networkContext.userNetwork.networkId,
                     authContext.sessionInfo?.userId,
-                    0, 
+                    0,
                     pageNum
                 ).then((ret) => {
                     if (!ret.sucesso) {
@@ -119,22 +122,22 @@ export default function InvoiceSearchPage() {
         let retorno: string;
         switch (status) {
             case InvoiceStatusEnum.Draft:
-                retorno = "Draft";
+                retorno = t('invoice_status_draft');
                 break;
             case InvoiceStatusEnum.Open:
-                retorno = "Open";
+                retorno = t('invoice_status_open');
                 break;
             case InvoiceStatusEnum.Paid:
-                retorno = "Paid";
+                retorno = t('invoice_status_paid');
                 break;
             case InvoiceStatusEnum.Cancelled:
-                retorno = "Cancelled";
+                retorno = t('invoice_status_cancelled');
                 break;
             case InvoiceStatusEnum.Lost:
-                retorno = "Lost";
+                retorno = t('invoice_status_lost');
                 break;
         }
-        return retorno;
+        return retorno!;
     };
 
     useEffect(() => {
@@ -162,17 +165,18 @@ export default function InvoiceSearchPage() {
                         <h3>
                             <nav aria-label="breadcrumb">
                                 <ol className="breadcrumb">
-                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">Minha Rede</Link></li>
-                                    <li className="breadcrumb-item active" aria-current="page">Invoice Search</li>
+                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">{t('breadcrumb_my_network')}</Link></li>
+                                    <li className="breadcrumb-item active" aria-current="page">{t('breadcrumb_invoice_search')}</li>
                                 </ol>
                             </nav>
                         </h3>
                     </Col>
                     <Col md="6" style={{ textAlign: "right" }}>
+                        {/*
                         <InputGroup className="pull-right">
                             <Dropdown>
                                 <Dropdown.Toggle variant="danger" id="dropdown-basic">
-                                    Filter by: All Status
+                                    {t('filter_by_all_status')}
                                 </Dropdown.Toggle>
 
                                 <Dropdown.Menu>
@@ -182,6 +186,7 @@ export default function InvoiceSearchPage() {
                                 </Dropdown.Menu>
                             </Dropdown>
                         </InputGroup>
+                        */}
                     </Col>
                 </Row>
                 <Row className="py-4">
@@ -189,14 +194,14 @@ export default function InvoiceSearchPage() {
                         <Table striped bordered hover>
                             <thead>
                                 <tr>
-                                    <th>Product</th>
-                                    <th style={{ textAlign: "right" }}>Price</th>
-                                    <th>Buyer</th>
-                                    <th>Seller</th>
-                                    <th>Due Date</th>
-                                    <th>Paid Date</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <th>{t('table_header_product')}</th>
+                                    <th style={{ textAlign: "right" }}>{t('table_header_price')}</th>
+                                    <th>{t('table_header_buyer')}</th>
+                                    <th>{t('table_header_seller')}</th>
+                                    <th>{t('table_header_due_date')}</th>
+                                    <th>{t('table_header_paid_date')}</th>
+                                    <th>{t('table_header_status')}</th>
+                                    <th>{t('table_header_actions')}</th>
                                 </tr>
                             </thead>
                             {
@@ -205,31 +210,44 @@ export default function InvoiceSearchPage() {
                                     <td colSpan={8}>
                                         <div className="d-flex justify-content-center">
                                             <div className="spinner-border" role="status">
-                                                <span className="visually-hidden">Loading...</span>
+                                                <span className="visually-hidden">{t('loading')}</span>
                                             </div>
                                         </div>
                                     </td>
                                 </tr>
                             }
                             <tbody>
-                                {!invoiceContext.loadingSearch && invoiceContext.searchResult?.invoices.map((invoice) => {
-                                    return (
-                                        <tr>
-                                            <td>{showProducts(invoice.order)}</td>
-                                            <td style={{ textAlign: "right" }}>R$ {showTotal(invoice.order)}</td>
-                                            <td>{invoice.user?.name}</td>
-                                            <td>{invoice.seller?.name}</td>
-                                            <td><Moment format="DD/MM/YYYY" interval={0}>{invoice.dueDate}</Moment></td>
-                                            <td><Moment format="DD/MM/YYYY" interval={0}>{invoice.paymentDate}</Moment></td>
-                                            <td>{showStatus(invoice.status)}</td>
-                                            <td>
-                                                <Link to="/admin/orders">
-                                                    <FontAwesomeIcon icon={faCancel} fixedWidth /> Suspend
-                                                </Link>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
+                                {!invoiceContext.loadingSearch && invoiceContext.searchResult &&
+                                    <>
+                                        {invoiceContext.searchResult.invoices.length == 0 &&
+                                            <tr>
+                                                <td colSpan={8}>
+                                                    <div className="d-flex justify-content-center">
+                                                        {t('invoice_search_no_invoices_found')}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                        {invoiceContext.searchResult.invoices.map((invoice) => {
+                                            return (
+                                                <tr>
+                                                    <td>{showProducts(invoice.order)}</td>
+                                                    <td style={{ textAlign: "right" }}>R$ {showTotal(invoice.order)}</td>
+                                                    <td>{invoice.user?.name}</td>
+                                                    <td>{invoice.seller?.name}</td>
+                                                    <td><Moment format="DD/MM/YYYY" interval={0}>{invoice.dueDate}</Moment></td>
+                                                    <td><Moment format="DD/MM/YYYY" interval={0}>{invoice.paymentDate}</Moment></td>
+                                                    <td>{showStatus(invoice.status)}</td>
+                                                    <td>
+                                                        <Link to="/admin/orders">
+                                                            <FontAwesomeIcon icon={faCancel} fixedWidth /> {t('action_suspend')}
+                                                        </Link>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </>
+                                }
 
                             </tbody>
                         </Table>

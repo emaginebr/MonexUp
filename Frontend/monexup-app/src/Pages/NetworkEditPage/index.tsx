@@ -17,8 +17,12 @@ import Moment from 'moment';
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 import NetworkContext from "../../Contexts/Network/NetworkContext";
 import { ImageModal, ImageTypeEnum } from "../../Components/ImageModal";
+import { useTranslation } from "react-i18next";
 
 export default function NetworkEditPage() {
+
+    const { t } = useTranslation();
+
 
     const authContext = useContext(AuthContext);
     //const userContext = useContext(UserContext);
@@ -93,15 +97,15 @@ export default function NetworkEditPage() {
                                                     e.preventDefault();
                                                     setShowImageModal(true);
                                                 }}>
-                                                    <FontAwesomeIcon icon={faUpload} fixedWidth />&nbsp;Change Image
+                                                    <FontAwesomeIcon icon={faUpload} fixedWidth />&nbsp;{t('network_edit_change_image_button')}
                                                 </Button>
                                             }
                                         </div>
                                     </Col>
                                     <Col md={8}>
                                         <Form>
-                                            <div className="text-center mb-3">
-                                                Registration is not required to make swaps, but you can do so anyway to access your transaction history.
+                                            <div className="text-center mb-3"> {/* TODO: This text seems out of place for a network edit page. Confirm if it should be translated or removed/changed. */}
+                                                {t('network_edit_registration_info')}
                                             </div>
                                             <Form.Group as={Row} className="mb-3">
                                                 <Form.Label column sm="2">Name:</Form.Label>
@@ -109,7 +113,7 @@ export default function NetworkEditPage() {
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
                                                         <Form.Control type="text" size="lg"
-                                                            placeholder="Your network name"
+                                                            placeholder={t('network_edit_name_placeholder')}
                                                             value={networkContext.network?.name}
                                                             onChange={(e) => {
                                                                 networkContext.setNetwork({
@@ -126,7 +130,7 @@ export default function NetworkEditPage() {
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faCode} fixedWidth /></InputGroup.Text>
                                                         <Form.Control type="text" size="lg"
-                                                            placeholder="Ex: https://monexup.com/{my-network-slug}"
+                                                            placeholder={t('network_edit_slug_placeholder')}
                                                             value={networkContext.network?.slug}
                                                             onChange={(e) => {
                                                                 networkContext.setNetwork({
@@ -143,7 +147,7 @@ export default function NetworkEditPage() {
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faEnvelope} fixedWidth /></InputGroup.Text>
                                                         <Form.Control type="email" size="lg"
-                                                            placeholder="Your email"
+                                                            placeholder={t('network_edit_email_placeholder')}
                                                             value={networkContext.network?.email}
                                                             onChange={(e) => {
                                                                 networkContext.setNetwork({
@@ -155,12 +159,12 @@ export default function NetworkEditPage() {
                                                 </Col>
                                             </Form.Group>
                                             <Form.Group as={Row} className="mb-3">
-                                                <Form.Label column sm="2">Minimal Withdrawal:</Form.Label>
+                                                <Form.Label column sm="2">{t('network_edit_minimal_withdrawal_label')}:</Form.Label>
                                                 <Col sm="4">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faDollar} fixedWidth /></InputGroup.Text>
                                                         <Form.Control type="number" size="lg"
-                                                            placeholder="Mininal Withdrawal amount"
+                                                            placeholder={t('network_edit_minimal_withdrawal_placeholder')}
                                                             value={networkContext.network?.withdrawalMin}
                                                             onChange={(e) => {
                                                                 networkContext.setNetwork({
@@ -170,12 +174,12 @@ export default function NetworkEditPage() {
                                                             }} />
                                                     </InputGroup>
                                                 </Col>
-                                                <Form.Label column sm="2">Withdrawal Period:</Form.Label>
+                                                <Form.Label column sm="2">{t('network_edit_withdrawal_period_label')}:</Form.Label>
                                                 <Col sm="4">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faCalendar} fixedWidth /></InputGroup.Text>
                                                         <Form.Control type="number" size="lg"
-                                                            placeholder="Withdrawal period value in days"
+                                                            placeholder={t('network_edit_withdrawal_period_placeholder')}
                                                             value={networkContext.network?.withdrawalPeriod}
                                                             onChange={(e) => {
                                                                 networkContext.setNetwork({
@@ -187,12 +191,12 @@ export default function NetworkEditPage() {
                                                 </Col>
                                             </Form.Group>
                                             <Form.Group as={Row} className="mb-3">
-                                                <Form.Label column sm="2">Commission:</Form.Label>
+                                                <Form.Label column sm="2">{t('network_edit_commission_label')}:</Form.Label>
                                                 <Col sm="4">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faPercent} fixedWidth /></InputGroup.Text>
                                                         <Form.Control type="number" size="lg"
-                                                            placeholder="Network Percent Commission"
+                                                            placeholder={t('network_edit_commission_placeholder')}
                                                             value={networkContext.network?.comission}
                                                             onChange={(e) => {
                                                                 networkContext.setNetwork({
@@ -205,13 +209,13 @@ export default function NetworkEditPage() {
                                             </Form.Group>
                                             <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                                                 <Button variant="danger" size="lg" onClick={() => {
-                                                    navigate("/admin/dashboard");
-                                                }}><FontAwesomeIcon icon={faArrowLeft} fixedWidth /> Back</Button>
+                                                    navigate("/admin/dashboard"); // TODO: Consider if this route should be dynamic or translated if it's a label
+                                                }}><FontAwesomeIcon icon={faArrowLeft} fixedWidth /> {t('back_button')}</Button>
                                                 <Button variant="success" size="lg" onClick={async (e) => {
                                                     let ret = await networkContext.update(networkContext.network);
                                                     if (ret.sucesso) {
                                                         //alert(userContext.user?.id);
-                                                        showSuccessMessage("Network updated successfully!");
+                                                        showSuccessMessage(t('network_edit_update_success_message'));
                                                     }
                                                     else {
                                                         throwError(ret.mensagemErro);
@@ -219,9 +223,9 @@ export default function NetworkEditPage() {
                                                 }}
                                                     disabled={networkContext.loadingUpdate}
                                                 >
-                                                    {networkContext.loadingUpdate ? "Loading..." :
+                                                    {networkContext.loadingUpdate ? t('loading') :
                                                         <>
-                                                            <FontAwesomeIcon icon={faSave} fixedWidth />&nbsp;Save
+                                                            <FontAwesomeIcon icon={faSave} fixedWidth />&nbsp;{t('save_button')}
                                                         </>}
                                                 </Button>
                                             </div>

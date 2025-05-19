@@ -20,9 +20,12 @@ import { UserRoleEnum } from "../../DTO/Enum/UserRoleEnum";
 import AuthContext from "../../Contexts/Auth/AuthContext";
 import OrderInfo from "../../DTO/Domain/OrderInfo";
 import Moment from 'react-moment';
+import { useTranslation } from "react-i18next";
 
 export default function OrderSearchPage() {
 
+
+    const { t } = useTranslation();
 
     let navigate = useNavigate();
 
@@ -61,7 +64,7 @@ export default function OrderSearchPage() {
             
         }
         if (ret.length == 0) {
-            ret = "Unknow";
+            ret = t('product_unknown'); // Reusing existing key
         }
         return ret;
     };
@@ -116,22 +119,22 @@ export default function OrderSearchPage() {
         let retorno: string;
         switch (status) {
             case OrderStatusEnum.Incoming:
-                retorno = "Incoming";
+                retorno = t('order_status_incoming');
                 break;
             case OrderStatusEnum.Active:
-                retorno = "Active";
+                retorno = t('order_status_active');
                 break;
             case OrderStatusEnum.Suspended:
-                retorno = "Suspended";
+                retorno = t('order_status_suspended');
                 break;
             case OrderStatusEnum.Finished:
-                retorno = "Finished";
+                retorno = t('order_status_finished');
                 break;
             case OrderStatusEnum.Expired:
-                retorno = "Expired";
+                retorno = t('order_status_expired');
                 break;
         }
-        return retorno;
+        return retorno!;
     };
 
     useEffect(() => {
@@ -159,17 +162,18 @@ export default function OrderSearchPage() {
                         <h3>
                             <nav aria-label="breadcrumb">
                                 <ol className="breadcrumb">
-                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">Minha Rede</Link></li>
-                                    <li className="breadcrumb-item active" aria-current="page">Order List</li>
+                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">{t('breadcrumb_my_network')}</Link></li>
+                                    <li className="breadcrumb-item active" aria-current="page">{t('breadcrumb_order_list')}</li>
                                 </ol>
                             </nav>
                         </h3>
                     </Col>
                     <Col md="6" style={{ textAlign: "right" }}>
+                        {/*}
                         <InputGroup className="pull-right">
                             <Dropdown>
                                 <Dropdown.Toggle variant="danger" id="dropdown-basic">
-                                    Filter by: All Status
+                                    {t('filter_by_all_status')}
                                 </Dropdown.Toggle>
 
                                 <Dropdown.Menu>
@@ -179,6 +183,7 @@ export default function OrderSearchPage() {
                                 </Dropdown.Menu>
                             </Dropdown>
                         </InputGroup>
+                        */}
                     </Col>
                 </Row>
                 <Row className="py-4">
@@ -186,13 +191,13 @@ export default function OrderSearchPage() {
                         <Table striped bordered hover>
                             <thead>
                                 <tr>
-                                    <th>Product</th>
-                                    <th style={{ textAlign: "right" }}>Price</th>
-                                    <th>Buyer</th>
-                                    <th>Seller</th>
-                                    <th>Last Change</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <th>{t('table_header_product')}</th>
+                                    <th style={{ textAlign: "right" }}>{t('table_header_price')}</th>
+                                    <th>{t('table_header_buyer')}</th>
+                                    <th>{t('table_header_seller')}</th>
+                                    <th>{t('table_header_last_change')}</th>
+                                    <th>{t('table_header_status')}</th>
+                                    <th>{t('table_header_actions')}</th>
                                 </tr>
                             </thead>
                             {
@@ -201,7 +206,7 @@ export default function OrderSearchPage() {
                                     <td colSpan={7}>
                                         <div className="d-flex justify-content-center">
                                             <div className="spinner-border" role="status">
-                                                <span className="visually-hidden">Loading...</span>
+                                                <span className="visually-hidden">{t('loading')}</span>
                                             </div>
                                         </div>
                                     </td>
@@ -219,7 +224,7 @@ export default function OrderSearchPage() {
                                             <td>{showStatus(order.status)}</td>
                                             <td>
                                                 <Link to="/admin/orders">
-                                                    <FontAwesomeIcon icon={faCancel} fixedWidth /> Suspend
+                                                    <FontAwesomeIcon icon={faCancel} fixedWidth /> {t('action_suspend')}
                                                 </Link>
                                             </td>
                                         </tr>

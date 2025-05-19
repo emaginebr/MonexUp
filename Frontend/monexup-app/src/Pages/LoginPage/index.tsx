@@ -16,8 +16,11 @@ import MessageToast from "../../Components/MessageToast";
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 import { useLocation } from 'react-router-dom';
 import NetworkContext from "../../Contexts/Network/NetworkContext";
+import { useTranslation } from "react-i18next";
 
 export default function LoginPage() {
+
+    const { t } = useTranslation();
 
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
@@ -58,30 +61,30 @@ export default function LoginPage() {
                 <Col md="8" className='offset-md-2'>
                     <Card>
                         <Card.Header>
-                            <h3 className="text-center">Login</h3>
+                            <h3 className="text-center">{t('login_title')}</h3>
                         </Card.Header>
                         <Card.Body>
                             <Form>
                                 <div className="text-center mb-3">
-                                    Log in with your email and password. You can also log in with your digital wallet.
+                                    {t('login_instruction')}
                                 </div>
                                 <Form.Group as={Row} className="mb-3">
-                                    <Form.Label column sm="3">Email:</Form.Label>
+                                    <Form.Label column sm="3">{t('login_email_label')}:</Form.Label>
                                     <Col sm="9">
                                         <InputGroup>
                                             <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
-                                            <Form.Control type="email" size="lg" placeholder="Your email" value={email} onChange={(e) => {
+                                            <Form.Control type="email" size="lg" placeholder={t('login_email_placeholder')} value={email} onChange={(e) => {
                                                 setEmail(e.target.value);
                                             }} />
                                         </InputGroup>
                                     </Col>
                                 </Form.Group>
                                 <Form.Group as={Row} className="mb-3">
-                                    <Form.Label column sm="3">Password:</Form.Label>
+                                    <Form.Label column sm="3">{t('login_password_label')}:</Form.Label>
                                     <Col sm="9">
                                         <InputGroup>
                                             <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
-                                            <Form.Control type="password" size="lg" placeholder="Your password" value={password} onChange={(e) => {
+                                            <Form.Control type="password" size="lg" placeholder={t('login_password_placeholder')} value={password} onChange={(e) => {
                                                 setPassword(e.target.value);
                                             }} />
                                         </InputGroup>
@@ -89,24 +92,24 @@ export default function LoginPage() {
                                 </Form.Group>
                                 <Form.Group as={Row} className="mb-3">
                                     <Col sm="9" className="offset-sm-3">
-                                        <Form.Check type="checkbox" label="Remember password?" />
+                                        <Form.Check type="checkbox" label={t('login_remember_password_label')} />
                                     </Col>
                                 </Form.Group>
                                 <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                                     <Button variant="secondary" size="lg" onClick={() => {
                                         navigate("/account/recovery-password");
                                     }}><FontAwesomeIcon icon={faEnvelope} fixedWidth /> Recovery Password?</Button>
-                                    <Button variant="danger" size="lg" onClick={() => {
+                                    <Button variant="danger" size="lg" onClick={() => { {/* TODO: Translate "Recovery Password?" */}
                                         navigate("/account/new-account");
-                                    }}><FontAwesomeIcon icon={faUserAlt} fixedWidth /> Create Account</Button>
+                                    }}><FontAwesomeIcon icon={faUserAlt} fixedWidth /> {t('login_create_account_button')}</Button>
                                     <Button variant="success" size="lg" disabled={authContext.loading} onClick={async (e) => {
                                         e.preventDefault();
                                         if (!email) {
-                                            throwError("Email is empty");
+                                            throwError(t('login_error_email_empty'));
                                             return;
                                         }
                                         if (!password) {
-                                            throwError("Password is empty");
+                                            throwError(t('login_error_password_empty'));
                                             return;
                                         }
                                         let ret = await authContext.loginWithEmail(email, password);  
@@ -123,7 +126,7 @@ export default function LoginPage() {
                                             throwError(ret.mensagemErro);
                                         }
                                     }}>
-                                        <FontAwesomeIcon icon={faSignInAlt} fixedWidth /> {authContext.loading ? "Loading..." : "Login"}
+                                        <FontAwesomeIcon icon={faSignInAlt} fixedWidth /> {authContext.loading ? t('loading') : t('login_button')}
                                     </Button>
                                 </div>
                             </Form>

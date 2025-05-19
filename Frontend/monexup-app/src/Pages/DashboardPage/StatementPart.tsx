@@ -6,6 +6,7 @@ import Moment from "react-moment";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import Pagination from 'react-bootstrap/Pagination';
+import { useTranslation } from "react-i18next";
 
 interface IStatementParam {
     loading: boolean;
@@ -14,19 +15,22 @@ interface IStatementParam {
 }
 
 export default function StatementPart(param: IStatementParam) {
+
+    const { t } = useTranslation();
+
     return (
         <>
             <Table striped bordered hover>
                 <thead>
                     <tr>
                         <th>-</th>
-                        <th>Pay Date</th>
-                        <th>Network</th>
-                        <th>Product</th>
-                        <th>Buyer</th>
-                        <th>Seller</th>
-                        <th style={{ textAlign: "right" }}>Amount</th>
-                        <th>Paid At</th>
+                        <th>{t('statement_pay_date')}</th>
+                        <th>{t('statement_network')}</th>
+                        <th>{t('statement_product')}</th>
+                        <th>{t('statement_buyer')}</th>
+                        <th>{t('statement_seller')}</th>
+                        <th style={{ textAlign: "right" }}>{t('statement_amount')}</th>
+                        <th>{t('statement_paid_at')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -35,7 +39,7 @@ export default function StatementPart(param: IStatementParam) {
                             <td colSpan={8}>
                                 <div className="d-flex justify-content-center">
                                     <div className="spinner-border" role="status">
-                                        <span className="visually-hidden">Loading...</span>
+                                        <span className="visually-hidden">{t('loading')}</span>
                                     </div>
                                 </div>
                             </td>
@@ -58,7 +62,7 @@ export default function StatementPart(param: IStatementParam) {
                     {!param.loading && param.StatementResult?.statements.length == 0 &&
                         <tr>
                             <td colSpan={8} className="text-center">
-                                No statement found!
+                                {t('statement_no_statement_found')}
                             </td>
                         </tr>
                     }

@@ -15,8 +15,12 @@ import MessageToast from "../../Components/MessageToast";
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 import Alert from 'react-bootstrap/Alert';
 import UserContext from "../../Contexts/User/UserContext";
+import { useTranslation } from "react-i18next";
 
 export default function PasswordPage() {
+
+    const { t } = useTranslation();
+
 
     const authContext = useContext(AuthContext);
     const userContext = useContext(UserContext);
@@ -55,7 +59,7 @@ export default function PasswordPage() {
             });
         }
         else {
-            throwError("User not found");
+            throwError(t('password_page_user_not_found'));
         }
     }, []);
 
@@ -72,15 +76,15 @@ export default function PasswordPage() {
                     <Col md="6" className='offset-md-3'>
                         <Card>
                             <Card.Header>
-                                <h3 className="text-center">Change Password</h3>
+                                <h3 className="text-center">{t('password_page_change_password_title')}</h3>
                             </Card.Header>
                             <Card.Body>
                                 <Form>
                                     <div className="text-center mb-3">
-                                        A password is not required, it is only used to log in via email. You can log in via your digital wallet.
+                                        {t('password_page_instruction')}
                                     </div>
                                     <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="3">Email:</Form.Label>
+                                        <Form.Label column sm="3">{t('form_label_email')}:</Form.Label>
                                         <Col sm="9">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
@@ -90,11 +94,11 @@ export default function PasswordPage() {
                                     </Form.Group>
                                     {userContext.userHasPassword &&
                                         <Form.Group as={Row} className="mb-3">
-                                            <Form.Label column sm="3">Old Password:</Form.Label>
+                                            <Form.Label column sm="3">{t('password_page_old_password_label')}:</Form.Label>
                                             <Col sm="9">
                                                 <InputGroup>
                                                     <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
-                                                    <Form.Control type="password" size="lg" placeholder="Your old password" value={oldPassword} onChange={(e) => {
+                                                    <Form.Control type="password" size="lg" placeholder={t('password_page_old_password_placeholder')} value={oldPassword} onChange={(e) => {
                                                         setOldPassword(e.target.value);
                                                     }} />
                                                 </InputGroup>
@@ -102,22 +106,22 @@ export default function PasswordPage() {
                                         </Form.Group>
                                     }
                                     <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="3">New Password:</Form.Label>
+                                        <Form.Label column sm="3">{t('password_page_new_password_label')}:</Form.Label>
                                         <Col sm="9">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="password" size="lg" placeholder="Your new password" value={newPassword} onChange={(e) => {
+                                                <Form.Control type="password" size="lg" placeholder={t('password_page_new_password_placeholder')} value={newPassword} onChange={(e) => {
                                                     setNewPassword(e.target.value);
                                                 }} />
                                             </InputGroup>
                                         </Col>
                                     </Form.Group>
                                     <Form.Group as={Row} className="mb-4">
-                                        <Form.Label column sm="3">Confirm Password:</Form.Label>
+                                        <Form.Label column sm="3">{t('form_label_confirm_password')}:</Form.Label>
                                         <Col sm="9">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="password" size="lg" placeholder="Confirm you new password" value={confirmPassword} onChange={(e) => {
+                                                <Form.Control type="password" size="lg" placeholder={t('password_page_confirm_new_password_placeholder')} value={confirmPassword} onChange={(e) => {
                                                     setConfirmPassword(e.target.value);
                                                 }} />
                                             </InputGroup>
@@ -125,7 +129,7 @@ export default function PasswordPage() {
                                     </Form.Group>
                                     {showAlert && !userContext.user?.email &&
                                         <Alert key="danger" variant="danger" onClose={() => setShowAlert(false)} dismissible>
-                                            <FontAwesomeIcon icon={faWarning} /> To register your <strong>password</strong>, first enter your <strong>email</strong>!
+                                            <FontAwesomeIcon icon={faWarning} /> {t('password_page_alert_enter_email_first_part_1')} <strong>{t('password_page_alert_password')}</strong>, {t('password_page_alert_enter_email_first_part_2')} <strong>{t('password_page_alert_email')}</strong>!
                                         </Alert>
                                     }
                                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -134,20 +138,20 @@ export default function PasswordPage() {
                                                 e.preventDefault();
                                                 if (userContext.userHasPassword) {
                                                     if (!oldPassword) {
-                                                        throwError("Old password is empty!");
+                                                        throwError(t('password_page_error_old_password_empty'));
                                                         return;
                                                     }
                                                 }
                                                 if (!newPassword) {
-                                                    throwError("New password is empty!");
+                                                    throwError(t('password_page_error_new_password_empty'));
                                                     return;
                                                 }
                                                 if (!confirmPassword) {
-                                                    throwError("Confirm password is empty!");
+                                                    throwError(t('password_page_error_confirm_password_empty'));
                                                     return;
                                                 }
                                                 if (newPassword != confirmPassword) {
-                                                    throwError("New password and Confirmation are not equal!");
+                                                    throwError(t('password_page_error_passwords_not_equal'));
                                                     return;
                                                 }
                                                 let ret = await userContext.changePassword(oldPassword, newPassword);
@@ -160,7 +164,7 @@ export default function PasswordPage() {
                                                 }
                                             }}>
                                                 <FontAwesomeIcon icon={faSave} fixedWidth />&nbsp;
-                                                {userContext.loadingUpdate ? "Loading..." : "Change Password"}
+                                                {userContext.loadingUpdate ? t('loading') : t('password_page_change_password_button')}
                                             </Button>
                                             :
                                             <>
@@ -168,10 +172,10 @@ export default function PasswordPage() {
                                                     e.preventDefault();
                                                     navigate("/edit-account");
                                                 }}>
-                                                    <FontAwesomeIcon icon={faUserEdit} fixedWidth /> Edit Account
+                                                    <FontAwesomeIcon icon={faUserEdit} fixedWidth /> {t('password_page_edit_account_button')}
                                                 </Button>
                                                 <Button variant="success" size="lg" disabled={true}>
-                                                    <FontAwesomeIcon icon={faSave} fixedWidth /> Change Password
+                                                    <FontAwesomeIcon icon={faSave} fixedWidth /> {t('password_page_change_password_button')}
                                                 </Button>
                                             </>
                                         }

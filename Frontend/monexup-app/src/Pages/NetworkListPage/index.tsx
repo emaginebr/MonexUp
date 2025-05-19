@@ -10,9 +10,12 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import NetworkContext from "../../Contexts/Network/NetworkContext";
+import { useTranslation } from "react-i18next";
 
 export default function NetworkListPage() {
 
+
+    const { t } = useTranslation();
 
     let navigate = useNavigate();
     const networkContext = useContext(NetworkContext);
@@ -32,8 +35,8 @@ export default function NetworkListPage() {
                     <Col md="12">
                         <InputGroup>
                             <Form.Control
-                                placeholder="Search for Network"
-                                aria-label="Search for Network"
+                                placeholder={t('network_list_search_placeholder')}
+                                aria-label={t('network_list_search_aria_label')}
                             />
                             <Button variant="outline-secondary"><FontAwesomeIcon icon={faSearch} fixedWidth /></Button>
                         </InputGroup>
@@ -44,11 +47,11 @@ export default function NetworkListPage() {
                         <Table striped bordered hover>
                             <thead>
                                 <tr>
-                                    <th>Network</th>
-                                    <th style={{ textAlign: "right" }}>Commission (%)</th>
-                                    <th>Owner</th>
-                                    <th style={{ textAlign: "right" }}>Members</th>
-                                    <th>Actions</th>
+                                    <th>{t('network_list_header_network')}</th>
+                                    <th style={{ textAlign: "right" }}>{t('network_list_header_commission')}</th>
+                                    <th>{t('network_list_header_owner')}</th>
+                                    <th style={{ textAlign: "right" }}>{t('network_list_header_members')}</th>
+                                    <th>{t('network_list_header_actions')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -58,7 +61,7 @@ export default function NetworkListPage() {
                                         <td colSpan={5}>
                                             <div className="d-flex justify-content-center">
                                                 <div className="spinner-border" role="status">
-                                                    <span className="visually-hidden">Loading...</span>
+                                                    <span className="visually-hidden">{t('loading')}</span>
                                                 </div>
                                             </div>
                                         </td>
@@ -74,7 +77,7 @@ export default function NetworkListPage() {
 
                                             }}>{network.network.name}</a></td>
                                             <td style={{ textAlign: "right" }}>{network.network.comission}%</td>
-                                            <td>Unknow</td>
+                                            <td>{t('unknown')}</td>
                                             <td style={{ textAlign: "right" }}>{network.network.qtdyUsers}/{network.network.maxUsers}</td>
                                             <td>
                                                 <Link to={"/" + network.network.slug}>

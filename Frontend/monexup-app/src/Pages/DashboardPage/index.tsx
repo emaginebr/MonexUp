@@ -28,12 +28,15 @@ import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 import Skeleton from "react-loading-skeleton";
 import StatementPart from "./StatementPart";
 import StatementSearchParam from "../../DTO/Domain/StatementSearchParam";
+import { useTranslation } from "react-i18next";
 
 export default function DashboardPage() {
 
     const authContext = useContext(AuthContext);
     const networkContext = useContext(NetworkContext);
     const invoiceContext = useContext(InvoiceContext);
+
+    const { t } = useTranslation();
 
     let navigate = useNavigate();
 
@@ -119,7 +122,7 @@ export default function DashboardPage() {
                         </Col>
                         <Col md={4}>
                             <Card bg="danger" text="light">
-                                <Card.Header>Current Balance</Card.Header>
+                                <Card.Header>{t('dashboard_current_balance')}</Card.Header>
                                 <Card.Body style={{ textAlign: "center" }}>
                                     <Card.Text>
                                         <p className="fw-bold display-5 text-right">
@@ -136,12 +139,12 @@ export default function DashboardPage() {
                                                 {invoiceContext.loadingAvailableBalance ?
                                                     <Skeleton />
                                                     :
-                                                    <span>Amount released for withdrawal is <small>R$</small>{invoiceContext.availableBalance}</span>
+                                                    <span>{t('dashboard_amount_released_for_withdrawal')} <small>R$</small>{invoiceContext.availableBalance}</span>
                                                 }
                                             </>
                                         }
                                     </Card.Text>
-                                    <Button variant="danger" disabled>Withdrawal <FontAwesomeIcon icon={faArrowRight} fixedWidth /></Button>
+                                    <Button variant="danger" disabled>{t('dashboard_withdrawal')} <FontAwesomeIcon icon={faArrowRight} fixedWidth /></Button>
                                 </Card.Body>
                             </Card>
                         </Col>
@@ -158,7 +161,7 @@ export default function DashboardPage() {
                         >
                             <Tab eventKey="balance" title={
                                 <>
-                                    <FontAwesomeIcon icon={faDollar} fixedWidth />&nbsp;Statement
+                                    <FontAwesomeIcon icon={faDollar} fixedWidth />&nbsp;{t('dashboard_statement')}
                                 </>
                             }>
                                 <StatementPart
@@ -168,7 +171,7 @@ export default function DashboardPage() {
                                         searchStatements(pagenum);
                                     }} />
                             </Tab>
-                            <Tab eventKey="order" title="Orders" disabled>
+                            <Tab eventKey="order" title={t('dashboard_orders_tab')} disabled>
                                 Tab content for Profile
                             </Tab>
                         </Tabs>
@@ -180,20 +183,20 @@ export default function DashboardPage() {
                                 {networkContext.currentRole >= UserRoleEnum.NetworkManager &&
                                     <>
                                         <ListGroup.Item variant="primary">
-                                            <FontAwesomeIcon icon={faUserGroup} fixedWidth /> Networks
+                                            <FontAwesomeIcon icon={faUserGroup} fixedWidth /> {t('dashboard_networks_title')}
                                         </ListGroup.Item>
                                         <ListGroup.Item action onClick={() => {
                                             navigate("/admin/network");
                                         }}>
                                             <div className="ms-2 me-auto">
-                                                <FontAwesomeIcon icon={faCog} fixedWidth /> Preferences
+                                                <FontAwesomeIcon icon={faCog} fixedWidth /> {t('preferences')}
                                             </div>
                                         </ListGroup.Item>
                                         <ListGroup.Item action onClick={() => {
                                             navigate("/admin/team-structure");
                                         }}>
                                             <div className="ms-2 me-auto">
-                                                <FontAwesomeIcon icon={faUserCog} fixedWidth /> Teams Structure
+                                                <FontAwesomeIcon icon={faUserCog} fixedWidth /> {t('team_structure')}
                                             </div>
                                         </ListGroup.Item>
                                         <ListGroup.Item action onClick={() => {
@@ -201,7 +204,7 @@ export default function DashboardPage() {
                                         }}>
                                             {/*<Badge bg="primary" pill style={{ float: "right" }}>7</Badge>*/}
                                             <div className="ms-2 me-auto">
-                                                <FontAwesomeIcon icon={faUserGroup} fixedWidth /> Teams
+                                                <FontAwesomeIcon icon={faUserGroup} fixedWidth /> {t('teams')}
                                             </div>
                                         </ListGroup.Item>
                                     </>
@@ -209,14 +212,14 @@ export default function DashboardPage() {
                                 {networkContext.currentRole >= UserRoleEnum.Seller &&
                                     <>
                                         <ListGroup.Item variant="primary">
-                                            <FontAwesomeIcon icon={faBox} fixedWidth /> Finances
+                                            <FontAwesomeIcon icon={faBox} fixedWidth /> {t('finances')}
                                         </ListGroup.Item>
                                         <ListGroup.Item action onClick={() => {
                                             navigate("/admin/orders");
                                         }}>
                                             {/*<Badge bg="primary" pill style={{ float: "right" }}>7</Badge>*/}
                                             <div className="ms-2 me-auto">
-                                                <FontAwesomeIcon icon={faList} fixedWidth /> List of Orders
+                                                <FontAwesomeIcon icon={faList} fixedWidth /> {t('orders')}
                                             </div>
                                         </ListGroup.Item>
                                         <ListGroup.Item action onClick={() => {
@@ -224,7 +227,7 @@ export default function DashboardPage() {
                                         }}>
                                             {/*<Badge bg="primary" pill style={{ float: "right" }}>7</Badge>*/}
                                             <div className="ms-2 me-auto">
-                                                <FontAwesomeIcon icon={faDollar} fixedWidth /> List of Invoices
+                                                <FontAwesomeIcon icon={faDollar} fixedWidth /> {t('invoices')}
                                             </div>
                                         </ListGroup.Item>
                                         <ListGroup.Item action onClick={() => {
@@ -232,7 +235,7 @@ export default function DashboardPage() {
                                         }}>
                                             {/*<Badge bg="primary" pill style={{ float: "right" }}>7</Badge>*/}
                                             <div className="ms-2 me-auto">
-                                                <FontAwesomeIcon icon={faBox} fixedWidth /> List of Products
+                                                <FontAwesomeIcon icon={faBox} fixedWidth /> {t('products')}
                                             </div>
                                         </ListGroup.Item>
                                     </>

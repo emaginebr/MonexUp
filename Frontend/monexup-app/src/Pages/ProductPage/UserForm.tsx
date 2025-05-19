@@ -9,6 +9,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faEnvelope, faLock, faRightFromBracket, faUser, faUserAlt } from "@fortawesome/free-solid-svg-icons";
 import { useContext, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { createSearchParams, useNavigate } from "react-router-dom";
 import UserContext from "../../Contexts/User/UserContext";
 
@@ -19,6 +20,8 @@ interface IUserParam {
 };
 
 export default function UserForm(param: IUserParam) {
+
+    const { t } = useTranslation();
 
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
@@ -34,16 +37,16 @@ export default function UserForm(param: IUserParam) {
 
             <Card>
                 <Card.Header>
-                    <h3 className="text-center">User registration</h3>
+                    <h3 className="text-center">{t('user_form_registration_title')}</h3>
                 </Card.Header>
                 <Card.Body>
                     <Form>
                         <Form.Group className="mb-1">
-                            <Form.Label sm="2">Name:</Form.Label>
+                            <Form.Label sm="2">{t('form_label_name')}:</Form.Label>
                             <InputGroup>
                                 <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
                                 <Form.Control type="text"
-                                    placeholder="Your name"
+                                    placeholder={t('form_placeholder_your_name')}
                                     value={userContext.user?.name}
                                     onChange={(e) => {
                                         userContext.setUser({
@@ -54,11 +57,11 @@ export default function UserForm(param: IUserParam) {
                             </InputGroup>
                         </Form.Group>
                         <Form.Group className="mb-1">
-                            <Form.Label sm="2">Email:</Form.Label>
+                            <Form.Label sm="2">{t('form_label_email')}:</Form.Label>
                             <InputGroup>
                                 <InputGroup.Text><FontAwesomeIcon icon={faEnvelope} fixedWidth /></InputGroup.Text>
                                 <Form.Control type="text"
-                                    placeholder="Your email"
+                                    placeholder={t('form_placeholder_your_email')}
                                     value={userContext.user?.email}
                                     onChange={(e) => {
                                         userContext.setUser({
@@ -69,11 +72,11 @@ export default function UserForm(param: IUserParam) {
                             </InputGroup>
                         </Form.Group>
                         <Form.Group className="mb-1">
-                            <Form.Label sm="2">Password:</Form.Label>
+                            <Form.Label sm="2">{t('form_label_password')}:</Form.Label>
                             <InputGroup>
                                 <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
                                 <Form.Control type="password"
-                                    placeholder="Your password"
+                                    placeholder={t('form_placeholder_your_password')}
                                     value={userContext.user?.password}
                                     onChange={(e) => {
                                         userContext.setUser({
@@ -84,11 +87,11 @@ export default function UserForm(param: IUserParam) {
                             </InputGroup>
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label sm="2">Confirm:</Form.Label>
+                            <Form.Label sm="2">{t('form_label_confirm_password')}:</Form.Label>
                             <InputGroup>
                                 <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
                                 <Form.Control type="password"
-                                    placeholder="Confirm your password"
+                                    placeholder={t('form_placeholder_confirm_your_password')}
                                     value={confirmPassword}
                                     onChange={(e) => {
                                         setConfirmPassword(e.target.value);
@@ -103,18 +106,18 @@ export default function UserForm(param: IUserParam) {
                                         returnUrl: param.url
                                     }).toString()
                                 });
-                            }}><FontAwesomeIcon icon={faRightFromBracket} fixedWidth /> Sign In</Button>
+                            }}><FontAwesomeIcon icon={faRightFromBracket} fixedWidth /> {t('sign_in_button')}</Button>
                             <Button variant="success" onClick={async (e) => {
                                 if (!userContext.user?.name) {
-                                    param.onThrowError("Name is empty");
+                                    param.onThrowError(t('error_name_empty'));
                                     return;
                                 }
                                 if (!userContext.user?.email) {
-                                    param.onThrowError("Email is empty");
+                                    param.onThrowError(t('error_email_empty'));
                                     return;
                                 }
                                 if (userContext.user?.password != confirmPassword) {
-                                    param.onThrowError("Password and confirmation are different");
+                                    param.onThrowError(t('error_password_confirmation_different'));
                                     return;
                                 }
                                 let ret = await userContext.insert(userContext.user);
@@ -126,7 +129,7 @@ export default function UserForm(param: IUserParam) {
                                 }
                             }}
                                 disabled={userContext.loadingUpdate}
-                            > {userContext.loadingUpdate ? "Loading..." : "Next"}
+                            > {userContext.loadingUpdate ? t('loading') : t('next_button')}
                                 <FontAwesomeIcon icon={faArrowRight} fixedWidth />
                             </Button>
                         </div>

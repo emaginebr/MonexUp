@@ -20,9 +20,12 @@ import { ProductStatusEnum } from "../../DTO/Enum/ProductStatusEnum";
 import { UserRoleEnum } from "../../DTO/Enum/UserRoleEnum";
 import ProductInfo from "../../DTO/Domain/ProductInfo";
 import ProductSearchParam from "../../DTO/Domain/ProductSearchParam";
+import { useTranslation } from "react-i18next";
 
 export default function ProductSearchPage() {
 
+
+    const { t } = useTranslation();
 
     let navigate = useNavigate();
 
@@ -67,44 +70,32 @@ export default function ProductSearchPage() {
         let retorno: string;
         switch (frequency) {
             case 0:
-                retorno = "Just one time";
-                break;
-            case 7:
-                retorno = "Weekly";
+                retorno = t('product_edit_frequency_one_time'); // Reusing key
                 break;
             case 30:
-                retorno = "Monthly";
-                break;
-            case 60:
-                retorno = "Bimonthly";
-                break;
-            case 90:
-                retorno = "Quarterly";
-                break;
-            case 180:
-                retorno = "Half-yearly";
+                retorno = t('product_edit_frequency_monthly'); // Reusing key
                 break;
             case 365:
-                retorno = "Annually";
+                retorno = t('product_edit_frequency_annually'); // Reusing key
                 break;
         }
-        return retorno;
+        return retorno!;
     };
 
     const showStatus = (status: ProductStatusEnum) => {
         let retorno: string;
         switch (status) {
             case ProductStatusEnum.Active:
-                retorno = "Active";
+                retorno = t('product_status_active'); // Reusing key
                 break;
             case ProductStatusEnum.Inactive:
-                retorno = "Inactive";
+                retorno = t('product_status_inactive'); // Reusing key
                 break;
             case ProductStatusEnum.Expired:
-                retorno = "Expired";
+                retorno = t('product_status_expired'); // Reusing key
                 break;
         }
-        return retorno;
+        return retorno!;
     };
 
     useEffect(() => {
@@ -131,8 +122,8 @@ export default function ProductSearchPage() {
                         <h3>
                             <nav aria-label="breadcrumb">
                                 <ol className="breadcrumb">
-                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">Minha Rede</Link></li>
-                                    <li className="breadcrumb-item active" aria-current="page">Products List</li>
+                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">{t('breadcrumb_my_network')}</Link></li>
+                                    <li className="breadcrumb-item active" aria-current="page">{t('breadcrumb_products_list')}</li>
                                 </ol>
                             </nav>
                         </h3>
@@ -140,13 +131,14 @@ export default function ProductSearchPage() {
                     <Col md="6" style={{ textAlign: "right" }}>
                         <InputGroup className="pull-right">
                             <Form.Control
-                                placeholder="Search for Keyword"
-                                aria-label="Search for Keyword"
+                                placeholder={t('product_search_placeholder_keyword')}
+                                aria-label={t('product_search_aria_label_keyword')}
                             />
                             <Button variant="outline-secondary"><FontAwesomeIcon icon={faSearch} fixedWidth /></Button>
+                            {/*
                             <Dropdown>
                                 <Dropdown.Toggle variant="danger" id="dropdown-basic">
-                                    Filter by: All Status
+                                    {t('filter_by_all_status')}
                                 </Dropdown.Toggle>
 
                                 <Dropdown.Menu>
@@ -155,10 +147,11 @@ export default function ProductSearchPage() {
                                     <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
+                            */}
                             <Button variant="success" onClick={() => {
                                 productContext.setProduct(null);
                                 navigate("/admin/products/new");
-                            }}><FontAwesomeIcon icon={faPlus} fixedWidth />&nbsp;New Product</Button>
+                            }}><FontAwesomeIcon icon={faPlus} fixedWidth />&nbsp;{t('product_search_button_new_product')}</Button>
                         </InputGroup>
                     </Col>
                 </Row>
@@ -167,12 +160,12 @@ export default function ProductSearchPage() {
                         <Table striped bordered hover>
                             <thead>
                                 <tr>
-                                    <th>Product</th>
-                                    <th>Frequency</th>
-                                    <th style={{ textAlign: "right" }}>Price</th>
-                                    <th>Status</th>
+                                    <th>{t('table_header_product')}</th>
+                                    <th>{t('table_header_frequency')}</th>
+                                    <th style={{ textAlign: "right" }}>{t('table_header_price')}</th>
+                                    <th>{t('table_header_status')}</th>
                                     {networkContext.currentRole >= UserRoleEnum.NetworkManager &&
-                                        <th>Actions</th>
+                                        <th>{t('table_header_actions')}</th>
                                     }
                                 </tr>
                             </thead>
@@ -183,7 +176,7 @@ export default function ProductSearchPage() {
                                         <td colSpan={5}>
                                             <div className="d-flex justify-content-center">
                                                 <div className="spinner-border" role="status">
-                                                    <span className="visually-hidden">Loading...</span>
+                                                    <span className="visually-hidden">{t('loading')}</span>
                                                 </div>
                                             </div>
                                         </td>
