@@ -102,7 +102,7 @@ export default function MenuUser() {
                       }
                     </>
                   } id="basic-nav-dropdown">
-                    <NavDropdown.ItemText className='small'>{t('edit_mode_description_user')}</NavDropdown.ItemText>
+                    <NavDropdown.ItemText className='small'>{t('role_description')}</NavDropdown.ItemText>
                     <NavDropdown.Divider />
                     <NavDropdown.Item onClick={(e) => {
                       templateContext.setEditMode(true);
@@ -155,7 +155,7 @@ export default function MenuUser() {
       {showAlert &&
         <Container className="mt-3">
           <Alert key="danger" variant="danger" onClose={() => setShowAlert(false)} dismissible>
-            <FontAwesomeIcon icon={faWarning} /> {t('trial_version_warning_strong')}
+            <FontAwesomeIcon icon={faWarning} /> {t('trial_version_warning')}
           </Alert>
         </Container>
       }

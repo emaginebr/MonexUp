@@ -31,13 +31,25 @@ export default function NetworkPart(param: INetworkParam) {
                     </Row>
                     {param.loading &&
                         <Row>
-                            <Col lg={4}>
-                                <div className="d-flex justify-content-center">
-                                    <div className="spinner-border" role="status">
-                                        <span className="visually-hidden">{t('home_networkpart_loading')}</span>
-                                    </div>
-                                </div>
-                            </Col>
+                        {[1,2,3,4].map((index) => {
+                            return (
+                                <Col lg={3}>
+                                    <Card className="shadow-lg p-3">
+                                        <Skeleton style={{width: "100%", height: "7rem"}} />
+                                        <Card.Body>
+                                            <div className="lc-block text-center mb-3">
+                                                <div>
+                                                    <h3><Skeleton /></h3>
+                                                </div>
+                                            </div>
+                                            <div className="lc-block text-center">
+                                                <Skeleton count={2} />
+                                            </div>
+                                        </Card.Body>
+                                    </Card>
+                                </Col>
+                            );
+                        })}
                         </Row>
                     }
                     <Row className="mb-5">

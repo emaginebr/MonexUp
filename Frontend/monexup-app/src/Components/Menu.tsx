@@ -189,7 +189,7 @@ export default function Menu() {
                     </NavDropdown>
                   }
                   <NavDropdown title={showRoleText(networkContext.currentRole)} id="basic-nav-dropdown">
-                    <NavDropdown.ItemText className='small'>{t('select_chain_to_connect')}</NavDropdown.ItemText>
+                    <NavDropdown.ItemText className='small'>{t('role_description')}</NavDropdown.ItemText>
                     <NavDropdown.Divider />
                     {networkContext.userNetwork?.role >= UserRoleEnum.User &&
                       <NavDropdown.Item onClick={(e) => {
