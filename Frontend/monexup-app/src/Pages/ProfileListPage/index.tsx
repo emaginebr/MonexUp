@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import Col from "react-bootstrap/esm/Col";
+import { useTranslation } from "react-i18next";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -18,6 +19,7 @@ import ProductContext from "../../Contexts/Product/ProductContext";
 
 export default function ProfileListPage() {
 
+    const { t } = useTranslation();
 
     let navigate = useNavigate();
 
@@ -65,7 +67,7 @@ export default function ProfileListPage() {
                     if (profileContext.profile) {
                         let ret = await profileContext.delete(profileContext.profile.profileId);
                         if (ret.sucesso) {
-                            showSuccessMessage("Profile successful deleted!");
+                            showSuccessMessage(t("profileListPage.profileSuccessfullyDeleted"));
                             let retList = await profileContext.listByNetwork(networkContext.userNetwork.networkId);
                             if (!retList.sucesso) {
                                 throwError(ret.mensagemErro);
@@ -85,8 +87,8 @@ export default function ProfileListPage() {
                         <h3>
                             <nav aria-label="breadcrumb">
                                 <ol className="breadcrumb">
-                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">My Network</Link></li>
-                                    <li className="breadcrumb-item active" aria-current="page">Network Team Structure</li>
+                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">{t("profileListPage.myNetwork")}</Link></li>
+                                    <li className="breadcrumb-item active" aria-current="page">{t("profileListPage.networkTeamStructure")}</li>
                                 </ol>
                             </nav>
                         </h3>
@@ -118,11 +120,11 @@ export default function ProfileListPage() {
                         <Table striped bordered hover>
                             <thead>
                                 <tr>
-                                    <th>Profile Name</th>
-                                    <th style={{ textAlign: "right" }}>Level</th>
-                                    <th style={{ textAlign: "right" }}>Commission (%)</th>
-                                    <th style={{ textAlign: "right" }}>Members</th>
-                                    <th>Actions</th>
+                                    <th>{t("profileListPage.profileName")}</th>
+                                    <th style={{ textAlign: "right" }}>{t("profileListPage.level")}</th>
+                                    <th style={{ textAlign: "right" }}>{t("profileListPage.commission")} (%)</th>
+                                    <th style={{ textAlign: "right" }}>{t("profileListPage.members")}</th>
+                                    <th>{t("profileListPage.actions")}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -132,7 +134,7 @@ export default function ProfileListPage() {
                                         <td colSpan={5}>
                                             <div className="d-flex justify-content-center">
                                                 <div className="spinner-border" role="status">
-                                                    <span className="visually-hidden">Loading...</span>
+                                                    <span className="visually-hidden">{t("loading")}...</span>
                                                 </div>
                                             </div>
                                         </td>
@@ -151,7 +153,7 @@ export default function ProfileListPage() {
                                                 </Link>
                                                 <a href="#" onClick={(e) => {
                                                     e.preventDefault();
-                                                    showDeleteMessage("Are you sure?");
+                                                    showDeleteMessage(t("areYouSure"));
                                                 }}><FontAwesomeIcon icon={faTrash} fixedWidth /></a>
                                             </td>
                                         </tr>

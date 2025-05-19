@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import Col from "react-bootstrap/esm/Col";
+import { useTranslation } from "react-i18next";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,6 +21,7 @@ import { UserNetworkStatusEnum } from "../../DTO/Enum/UserNetworkStatusEnum";
 
 export default function UserSearchPage() {
 
+    const { t } = useTranslation();
 
     let navigate = useNavigate();
 
@@ -47,38 +49,38 @@ export default function UserSearchPage() {
         let ret: string;
         switch (role) {
             case UserRoleEnum.NoRole:
-                ret = "No Role"
+                ret = t("userSearchPage.roles.noRole");
                 break;
             case UserRoleEnum.User:
-                ret = "User"
+                ret = t("userSearchPage.roles.user");
                 break;
             case UserRoleEnum.Seller:
-                ret = "Seller"
+                ret = t("userSearchPage.roles.seller");
                 break;
             case UserRoleEnum.NetworkManager:
-                ret = "Network Manager"
+                ret = t("userSearchPage.roles.networkManager");
                 break;
             case UserRoleEnum.Administrator:
-                ret = "Administrator"
+                ret = t("userSearchPage.roles.administrator");
                 break;
         }
         return ret;
     };
 
     const showStatus = (status: UserNetworkStatusEnum) => {
-        let ret: string;
+        let ret: string = "";
         switch (status) {
             case UserNetworkStatusEnum.Active:
-                ret = "Active"
+                ret = t("userSearchPage.status.active");
                 break;
             case UserNetworkStatusEnum.Blocked:
-                ret = "Blocked"
+                ret = t("userSearchPage.status.blocked");
                 break;
             case UserNetworkStatusEnum.Inactive:
-                ret = "Inactive"
+                ret = t("userSearchPage.status.inactive");
                 break;
             case UserNetworkStatusEnum.WaitForApproval:
-                ret = "Wait For Approval"
+                ret = t("userSearchPage.status.waitForApproval");
                 break;
         }
         return ret;
@@ -116,8 +118,8 @@ export default function UserSearchPage() {
                         <h3>
                             <nav aria-label="breadcrumb">
                                 <ol className="breadcrumb">
-                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">Minha Rede</Link></li>
-                                    <li className="breadcrumb-item active" aria-current="page">Network Team</li>
+                                    <li className="breadcrumb-item"><Link to="/admin/dashboard">{t("userSearchPage.breadcrumbs.myNetwork")}</Link></li>
+                                    <li className="breadcrumb-item active" aria-current="page">{t("userSearchPage.breadcrumbs.networkTeam")}</li>
                                 </ol>
                             </nav>
                         </h3>
@@ -125,10 +127,11 @@ export default function UserSearchPage() {
                     <Col md="6" style={{ textAlign: "right" }}>
                         <InputGroup className="pull-right">
                             <Form.Control
-                                placeholder="Search for Seller"
-                                aria-label="Search for Seller"
+                                placeholder={t("userSearchPage.searchPlaceholder")}
+                                aria-label={t("userSearchPage.searchPlaceholder")}
                             />
                             <Button variant="outline-secondary"><FontAwesomeIcon icon={faSearch} fixedWidth /></Button>
+                            {/*}
                             <Dropdown>
                                 <Dropdown.Toggle variant="danger" id="dropdown-basic">
                                     Filter by: All Profiles
@@ -140,7 +143,8 @@ export default function UserSearchPage() {
                                     <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
-                            <Button variant="primary" disabled><FontAwesomeIcon icon={faEnvelope} fixedWidth /> Invite</Button>
+                            */}
+                            <Button variant="primary" disabled><FontAwesomeIcon icon={faEnvelope} fixedWidth /> {t("userSearchPage.inviteButton")}</Button>
                         </InputGroup>
                     </Col>
                 </Row>
@@ -149,12 +153,12 @@ export default function UserSearchPage() {
                         <Table striped bordered hover>
                             <thead>
                                 <tr>
-                                    <th>Seller</th>
-                                    <th>Profile</th>
-                                    <th>Role</th>
-                                    <th style={{ textAlign: "right" }}>Commission (%)</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <th>{t("userSearchPage.tableHeaders.seller")}</th>
+                                    <th>{t("userSearchPage.tableHeaders.profile")}</th>
+                                    <th>{t("userSearchPage.tableHeaders.role")}</th>
+                                    <th style={{ textAlign: "right" }}>{t("userSearchPage.tableHeaders.commission")} (%)</th>
+                                    <th>{t("userSearchPage.tableHeaders.status")}</th>
+                                    <th>{t("userSearchPage.tableHeaders.actions")}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -164,7 +168,7 @@ export default function UserSearchPage() {
                                         <td colSpan={6}>
                                             <div className="d-flex justify-content-center">
                                                 <div className="spinner-border" role="status">
-                                                    <span className="visually-hidden">Loading...</span>
+                                                    <span className="visually-hidden">{t("loading")}...</span>
                                                 </div>
                                             </div>
                                         </td>
@@ -185,14 +189,14 @@ export default function UserSearchPage() {
                                                             e.preventDefault();
                                                             let ret = await networkContext.changeStatus(networkContext.network?.networkId, user.userId, UserNetworkStatusEnum.Inactive);
                                                             if (ret.sucesso) {
-                                                                showSuccessMessage("User access removed");
+                                                                showSuccessMessage(t("userSearchPage.messages.userAccessRemoved"));
                                                                 searchUsers(userContext.searchResult?.pageNum);
                                                             }
                                                             else {
                                                                 throwError(ret.mensagemErro);
                                                             }
                                                         }}>
-                                                            <FontAwesomeIcon icon={faTrash} fixedWidth /> Remove
+                                                            <FontAwesomeIcon icon={faTrash} fixedWidth /> {t("userSearchPage.actions.remove")}
                                                         </a>
                                                     </>
                                                 }
@@ -202,27 +206,27 @@ export default function UserSearchPage() {
                                                             e.preventDefault();
                                                             let ret = await networkContext.changeStatus(networkContext.network?.networkId, user.userId, UserNetworkStatusEnum.Active);
                                                             if (ret.sucesso) {
-                                                                showSuccessMessage("User reactivated");
+                                                                showSuccessMessage(t("userSearchPage.messages.userReactivated"));
                                                                 searchUsers(userContext.searchResult?.pageNum);
                                                             }
                                                             else {
                                                                 throwError(ret.mensagemErro);
                                                             }
                                                         }}>
-                                                            <FontAwesomeIcon icon={faCheck} fixedWidth /> Reativate
+                                                            <FontAwesomeIcon icon={faCheck} fixedWidth /> {t("userSearchPage.actions.reactivate")}
                                                         </a>
                                                         <a href="#" className="text-danger" onClick={async (e) => {
                                                             e.preventDefault();
                                                             let ret = await networkContext.changeStatus(networkContext.network?.networkId, user.userId, UserNetworkStatusEnum.Blocked);
                                                             if (ret.sucesso) {
-                                                                showSuccessMessage("User blocked");
+                                                                showSuccessMessage(t("userSearchPage.messages.userBlocked"));
                                                                 searchUsers(userContext.searchResult?.pageNum);
                                                             }
                                                             else {
                                                                 throwError(ret.mensagemErro);
                                                             }
                                                         }}>
-                                                            <FontAwesomeIcon icon={faCancel} fixedWidth /> Block
+                                                            <FontAwesomeIcon icon={faCancel} fixedWidth /> {t("userSearchPage.actions.block")}
                                                         </a>
                                                     </>
                                                 }
@@ -232,27 +236,27 @@ export default function UserSearchPage() {
                                                             e.preventDefault();
                                                             let ret = await networkContext.changeStatus(networkContext.network?.networkId, user.userId, UserNetworkStatusEnum.Active);
                                                             if (ret.sucesso) {
-                                                                showSuccessMessage("User approved");
+                                                                showSuccessMessage(t("userSearchPage.messages.userApproved"));
                                                                 searchUsers(userContext.searchResult?.pageNum);
                                                             }
                                                             else {
                                                                 throwError(ret.mensagemErro);
                                                             }
                                                         }}>
-                                                            <FontAwesomeIcon icon={faCheck} fixedWidth /> Approve
+                                                            <FontAwesomeIcon icon={faCheck} fixedWidth /> {t("userSearchPage.actions.approve")}
                                                         </a>
                                                         <a href="#" className="text-danger" onClick={async (e) => {
                                                             e.preventDefault();
                                                             let ret = await networkContext.changeStatus(networkContext.network?.networkId, user.userId, UserNetworkStatusEnum.Inactive);
                                                             if (ret.sucesso) {
-                                                                showSuccessMessage("User reproved");
+                                                                showSuccessMessage(t("userSearchPage.messages.userReproved"));
                                                                 searchUsers(userContext.searchResult?.pageNum);
                                                             }
                                                             else {
                                                                 throwError(ret.mensagemErro);
                                                             }
                                                         }}>
-                                                            <FontAwesomeIcon icon={faClose} fixedWidth /> Reprove
+                                                            <FontAwesomeIcon icon={faClose} fixedWidth /> {t("userSearchPage.actions.reprove")}
                                                         </a>
                                                     </>
                                                 }
@@ -262,14 +266,14 @@ export default function UserSearchPage() {
                                                             e.preventDefault();
                                                             let ret = await networkContext.changeStatus(networkContext.network?.networkId, user.userId, UserNetworkStatusEnum.Active);
                                                             if (ret.sucesso) {
-                                                                showSuccessMessage("User reactivated");
+                                                                showSuccessMessage(t("userSearchPage.messages.userReactivated"));
                                                                 searchUsers(userContext.searchResult?.pageNum);
                                                             }
                                                             else {
                                                                 throwError(ret.mensagemErro);
                                                             }
                                                         }}>
-                                                            <FontAwesomeIcon icon={faCheck} fixedWidth /> Reativate
+                                                            <FontAwesomeIcon icon={faCheck} fixedWidth /> {t("userSearchPage.actions.reactivate")}
                                                         </a>
                                                     </>
                                                 }

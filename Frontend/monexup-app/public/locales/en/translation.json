@@ -276,5 +276,155 @@
   "level": "Level",
   "networkLevelNumber": "Network level number",
   "back": "Back",
-  "save": "Save"
+  "save": "Save",
+  "profileListPage": {
+    "profileSuccessfullyDeleted": "Profile successfully deleted!",
+    "myNetwork": "My Network",
+    "networkTeamStructure": "Network Team Structure",
+    "profileName": "Profile Name",
+    "level": "Level",
+    "commission": "Commission",
+    "members": "Members",
+    "actions": "Actions"
+  },
+  "areYouSure": "Are you sure?",
+  "requestAccessPage": {
+    "youAreApproved": "You're Approved!",
+    "welcomeTo_part1": "Welcome to ",
+    "welcomeTo_part2": "!",
+    "requestApprovedInfo": "Your request to join the network has been approved.",
+    "youCanNow": "You can now: Start selling products; Invite new representatives; Track your earnings and progress.",
+    "everythingReady": "Everything is ready. Let’s get started!",
+    "goToDashboard": "Go to Dashboard!",
+    "accessDenied": "Access Denied!",
+    "accessDeniedMessage_part1": "We're sorry, but your request to join ",
+    "accessDeniedMessage_part2": " was ",
+    "notApproved": "not approved",
+    "accessDeniedReason": "This decision may be due to internal criteria or incomplete information. You may try again later or contact the network manager for more details.",
+    "requestSentSuccessfully": "Request sent successfully!",
+    "requestSentSuccessInfo_part1": "Your request to join the ",
+    "requestSentSuccessInfo_part2": " network has been successfully received.",
+    "waitForApprovalInfo": "Now all you have to do is wait for the network manager to approve it. As soon as your participation is approved, you will receive a notification and you can start selling, recruiting new reps and tracking your earnings!",
+    "importantTag": "Important",
+    "pendingRequestInfo": ": While your request is pending, you can still explore other public networks available.",
+    "accessBlocked": "Access Blocked!",
+    "accessBlockedMessage_part1": "Your access to the ",
+    "accessBlockedMessage_part2": " network has been ",
+    "blockedWord": "blocked",
+    "accessBlockedReason": "This may be due to a violation of the network's terms of service or an administrative decision by the network manager.",
+    "accessBlockedConsequences": "While your access is blocked, you will not be able to participate in network activities, including selling products or recruiting new members.",
+    "contactManagerForBlocked": "Please contact the network manager for more information or clarification regarding this status.",
+    "joinNetworkQuestion": "Do you want to join the {{networkName}}?",
+    "byJoiningInfo": "By joining this network, you will be able to: Sell the network's products and earn commissions; Recruit new representatives to grow your team; and Track your performance and earnings in real-time.",
+    "noteTag": "Note",
+    "approvalInfo": ": Your request will be sent to the network manager for approval.",
+    "confirmRequestAccess": "Do you want to request access to this network?",
+    "yesIWantToJoin": "Yes, I want to join",
+    "noGoBack": "No, go back"
+  },
+  "buttons": {
+    "back": "Back",
+    "save": "Save"
+  },
+  "sellerAddPage": {
+    "title": "Seller registration",
+    "registrationNote": "Registration is not required to make swaps, but you can do so anyway to access your transaction history.",
+    "nameLabel": "Name",
+    "namePlaceholder": "Your name",
+    "cpfLabel": "CPF",
+    "cpfPlaceholder": "Your CPF",
+    "birthdayLabel": "Birthday",
+    "birthdayPlaceholder": "Your birthday",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Your email",
+    "phoneLabel": "Phone",
+    "phonePlaceholder": "Your phone",
+    "zipCodeLabel": "ZIP Code",
+    "zipCodePlaceholder": "ZIP Code",
+    "addressLabel": "Address",
+    "addressPlaceholder": "Your address",
+    "complementLabel": "Complement",
+    "complementPlaceholder": "Your Complement",
+    "neighborhoodLabel": "Neighborhood",
+    "neighborhoodPlaceholder": "Your Neighborhood",
+    "cityLabel": "City",
+    "cityPlaceholder": "Your city",
+    "stateLabel": "State",
+    "statePlaceholder": "Your state",
+    "pixKeyLabel": "Pix Key",
+    "pixKeyPlaceholder": "Your Pix key",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Your password",
+    "confirmPasswordLabel": "Confirm password",
+    "confirmPasswordPlaceholder": "Confirm your password",
+    "uploadDocumentLabel": "Upload Document File",
+    "uploadDocumentPlaceholder": "Your ID document",
+    "errors": {
+      "passwordEmpty": "Password is empty",
+      "confirmPasswordEmpty": "Password confirmation is empty",
+      "passwordsNotEqual": "Password and confirmation are not equal"
+    }
+  },
+  "userPage": {
+    "changeImage": "Change Image",
+    "registrationNote": "Registration is not required to make swaps, but you can do so anyway to access your transaction history.",
+    "hashLabel": "Hash",
+    "nameLabel": "Name",
+    "namePlaceholder": "Your name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Your email",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Your password",
+    "confirmPasswordLabel": "Confirm",
+    "confirmPasswordPlaceholder": "Confirm your password",
+    "createdAtLabel": "Created At",
+    "updatedAtLabel": "Updated At",
+    "signIn": "Sign In",
+    "errors": {
+      "passwordsNotEqual": "Password and confirmation are different"
+    }
+  },
+  "userSearchPage": {
+    "breadcrumbs": {
+      "myNetwork": "My Network",
+      "networkTeam": "Network Team"
+    },
+    "searchPlaceholder": "Search for Seller",
+    "inviteButton": "Invite",
+    "tableHeaders": {
+      "seller": "Seller",
+      "profile": "Profile",
+      "role": "Role",
+      "commission": "Commission",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "roles": {
+      "noRole": "No Role",
+      "user": "User",
+      "seller": "Seller",
+      "networkManager": "Network Manager",
+      "administrator": "Administrator"
+    },
+    "status": {
+      "active": "Active",
+      "blocked": "Blocked",
+      "inactive": "Inactive",
+      "waitForApproval": "Wait For Approval"
+    },
+    "actions": {
+      "remove": "Remove",
+      "reactivate": "Reactivate",
+      "block": "Block",
+      "approve": "Approve",
+      "reprove": "Reprove"
+    },
+    "messages": {
+      "userAccessRemoved": "User access removed",
+      "userReactivated": "User reactivated",
+      "userBlocked": "User blocked",
+      "userApproved": "User approved",
+      "userReproved": "User reproved"
+    }
+  }
 }

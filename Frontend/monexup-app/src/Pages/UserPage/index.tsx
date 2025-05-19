@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import Col from "react-bootstrap/esm/Col";
+import { useTranslation } from "react-i18next";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Form from 'react-bootstrap/Form';
@@ -18,6 +19,8 @@ import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 import { ImageModal, ImageTypeEnum } from "../../Components/ImageModal";
 
 export default function UserPage() {
+
+    const { t } = useTranslation();
 
     const authContext = useContext(AuthContext);
     const userContext = useContext(UserContext);
@@ -105,19 +108,19 @@ export default function UserPage() {
                                             e.preventDefault();
                                             setShowImageModal(true);
                                         }}>
-                                            <FontAwesomeIcon icon={faUpload} fixedWidth />&nbsp;Change Image
+                                            <FontAwesomeIcon icon={faUpload} fixedWidth />&nbsp;{t("userPage.changeImage")}
                                         </Button>
                                     }
                                 </div>
                             </Col>
                             <Col md="9">
                                 <Form>
-                                    <div className="text-center mb-3">
-                                        Registration is not required to make swaps, but you can do so anyway to access your transaction history.
-                                    </div>
+                                    {/* <div className="text-center mb-3">
+                                        {t("userPage.registrationNote")}
+                                    </div> */}
                                     {!insertMode &&
                                         <Form.Group as={Row} className="mb-3">
-                                            <Form.Label column sm="2">Hash:</Form.Label>
+                                            <Form.Label column sm="2">{t("userPage.hashLabel")}:</Form.Label>
                                             <Col sm="10">
                                                 <InputGroup>
                                                     <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
@@ -130,12 +133,12 @@ export default function UserPage() {
                                         </Form.Group>
                                     }
                                     <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="2">Name:</Form.Label>
+                                        <Form.Label column sm="2">{t("userPage.nameLabel")}:</Form.Label>
                                         <Col sm="10">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
-                                                    placeholder="Your name"
+                                                    placeholder={t("userPage.namePlaceholder")}
                                                     value={userContext.user?.name}
                                                     onChange={(e) => {
                                                         userContext.setUser({
@@ -147,12 +150,12 @@ export default function UserPage() {
                                         </Col>
                                     </Form.Group>
                                     <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="2">Email:</Form.Label>
+                                        <Form.Label column sm="2">{t("userPage.emailLabel")}:</Form.Label>
                                         <Col sm="10">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faEnvelope} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
-                                                    placeholder="Your email"
+                                                    placeholder={t("userPage.emailPlaceholder")}
                                                     value={userContext.user?.email}
                                                     onChange={(e) => {
                                                         userContext.setUser({
@@ -166,12 +169,12 @@ export default function UserPage() {
                                     {insertMode &&
                                         <>
                                             <Form.Group as={Row} className="mb-3">
-                                                <Form.Label column sm="2">Password:</Form.Label>
+                                                <Form.Label column sm="2">{t("userPage.passwordLabel")}:</Form.Label>
                                                 <Col sm="10">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
                                                         <Form.Control type="password" size="lg"
-                                                            placeholder="Your password"
+                                                            placeholder={t("userPage.passwordPlaceholder")}
                                                             value={userContext.user?.password}
                                                             onChange={(e) => {
                                                                 userContext.setUser({
@@ -183,12 +186,12 @@ export default function UserPage() {
                                                 </Col>
                                             </Form.Group>
                                             <Form.Group as={Row} className="mb-3">
-                                                <Form.Label column sm="2">Confirm:</Form.Label>
+                                                <Form.Label column sm="2">{t("userPage.confirmPasswordLabel")}:</Form.Label>
                                                 <Col sm="10">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
                                                         <Form.Control type="password" size="lg"
-                                                            placeholder="Confirm your password"
+                                                            placeholder={t("userPage.confirmPasswordPlaceholder")}
                                                             value={confirmPassword}
                                                             onChange={(e) => {
                                                                 setConfirmPassword(e.target.value);
@@ -200,32 +203,32 @@ export default function UserPage() {
                                     }
                                     {!insertMode &&
                                         <Form.Group as={Row} className="mb-3">
-                                            <Form.Label column sm="2">Create At:</Form.Label>
+                                            <Form.Label column sm="2">{t("userPage.createdAtLabel")}:</Form.Label>
                                             <Col sm="4">
                                                 <InputGroup>
                                                     <InputGroup.Text><FontAwesomeIcon icon={faCalendarAlt} fixedWidth /></InputGroup.Text>
                                                     <Form.Control type="text" size="lg" disabled={true} readOnly={true}
-                                                        value={Moment(userContext.user?.createAt).format("DD/MM/YYYY")} />
+                                                        value={userContext.user?.createAt ? Moment(userContext.user?.createAt).format("DD/MM/YYYY") : ""} />
                                                 </InputGroup>
                                             </Col>
-                                            <Form.Label column sm="2">Update At:</Form.Label>
+                                            <Form.Label column sm="2">{t("userPage.updatedAtLabel")}:</Form.Label>
                                             <Col sm="4">
                                                 <InputGroup>
                                                     <InputGroup.Text><FontAwesomeIcon icon={faCalendarAlt} fixedWidth /></InputGroup.Text>
                                                     <Form.Control type="text" size="lg" disabled={true} readOnly={true}
-                                                        value={Moment(userContext.user?.updateAt).format("DD/MM/YYYY")} />
+                                                        value={userContext.user?.updateAt ? Moment(userContext.user?.updateAt).format("DD/MM/YYYY") : ""} />
                                                 </InputGroup>
                                             </Col>
                                         </Form.Group>
                                     }
                                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                        <Button variant="danger" size="lg" onClick={() => {
+                                        {/* <Button variant="danger" size="lg" onClick={() => {
                                             navigate("/account/login");
-                                        }}><FontAwesomeIcon icon={faSignInAlt} fixedWidth /> Sign In</Button>
+                                        }}><FontAwesomeIcon icon={faSignInAlt} fixedWidth /> {t("userPage.signIn")}</Button> */}
                                         <Button variant="success" size="lg" onClick={async (e) => {
                                             if (insertMode) {
                                                 if (userContext.user?.password != confirmPassword) {
-                                                    throwError("Password and confirmation are different");
+                                                    throwError(t("userPage.errors.passwordsNotEqual"));
                                                     return;
                                                 }
                                                 let ret = await userContext.insert(userContext.user);
@@ -249,8 +252,7 @@ export default function UserPage() {
                                             }
                                         }}
                                             disabled={userContext.loadingUpdate}
-                                        ><FontAwesomeIcon icon={faSave} fixedWidth />
-                                            {userContext.loadingUpdate ? "Loading..." : "Save"}
+                                        ><FontAwesomeIcon icon={faSave} fixedWidth /> {userContext.loadingUpdate ? t("loading") : t("buttons.save")}
                                         </Button>
                                     </div>
                                 </Form>

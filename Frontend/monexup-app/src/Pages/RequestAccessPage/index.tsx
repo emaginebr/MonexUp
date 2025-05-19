@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import Col from "react-bootstrap/esm/Col";
+import { useTranslation } from "react-i18next";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Form from 'react-bootstrap/Form';
@@ -18,6 +19,8 @@ import { UserNetworkStatusEnum } from "../../DTO/Enum/UserNetworkStatusEnum";
 import MessageToast from "../../Components/MessageToast";
 
 export default function RequestAccessPage() {
+
+    const { t } = useTranslation();
 
     let navigate = useNavigate();
 
@@ -64,24 +67,26 @@ export default function RequestAccessPage() {
             <>
                 <Card>
                     <Card.Body className="text-center">
-                        <h3 className="text-center">You're Approved!</h3>
+                        <h3 className="text-center">{t("requestAccessPage.youAreApproved")}</h3>
                         {networkContext.loading ?
                             <p><Skeleton /></p>
                             :
-                            <p>Welcome to <strong>{networkContext.network?.name}</strong>!</p>
+                            <p>{t("requestAccessPage.welcomeTo_part1")}<strong>{networkContext.network?.name}</strong>{t("requestAccessPage.welcomeTo_part2")}</p>
                         }
-                        <p>Your request to join the network has been approved.</p>
                         <p>
-                            You can now: Start selling products; Invite new representatives; Track your earnings and progress.
+                            {t("requestAccessPage.requestApprovedInfo")}
                         </p>
                         <p>
-                            Everything is ready. Let’s get started!
+                            {t("requestAccessPage.youCanNow")}
+                        </p>
+                        <p>
+                            {t("requestAccessPage.everythingReady")}
                         </p>
                         <div className="lc-block d-grid gap-3 d-md-block">
                             <Button variant="success" size="lg" className="me-md-2" onClick={(e) => {
                                 e.preventDefault();
                                 navigate("/admin/dashboard");
-                            }}><FontAwesomeIcon icon={faBoltLightning} fixedWidth />Go to Dashboard!</Button>
+                            }}><FontAwesomeIcon icon={faBoltLightning} fixedWidth />{t("requestAccessPage.goToDashboard")}</Button>
                         </div>
                     </Card.Body>
                 </Card>
@@ -94,18 +99,17 @@ export default function RequestAccessPage() {
             <>
                 <Card>
                     <Card.Body className="text-center">
-                        <h3 className="text-center">Access Denied!</h3>
+                        <h3 className="text-center">{t("requestAccessPage.accessDenied")}</h3>
                         {networkContext.loading ?
                             <p><Skeleton /></p>
                             :
                             <p>
-                                We're sorry, but your request to join <strong>{networkContext.network?.name}</strong>
-                                &nbsp;was <strong>not approved</strong>.
+                                {t("requestAccessPage.accessDeniedMessage_part1")}<strong>{networkContext.network?.name}</strong>
+                                {t("requestAccessPage.accessDeniedMessage_part2")}<strong>{t("requestAccessPage.notApproved")}</strong>.
                             </p>
                         }
                         <p>
-                            This decision may be due to internal criteria or incomplete information.
-                            You may try again later or contact the network manager for more details.
+                            {t("requestAccessPage.accessDeniedReason")}
                         </p>
                     </Card.Body>
                 </Card>
@@ -118,14 +122,13 @@ export default function RequestAccessPage() {
             <>
                 <Card>
                     <Card.Body>
-                        <h3 className="text-center">Request sent successfully!</h3>
-                        <p>Your request to join the <strong>{networkContext.network?.name}</strong> network has been successfully received.</p>
+                        <h3 className="text-center">{t("requestAccessPage.requestSentSuccessfully")}</h3>
+                        <p>{t("requestAccessPage.requestSentSuccessInfo_part1")}<strong>{networkContext.network?.name}</strong>{t("requestAccessPage.requestSentSuccessInfo_part2")}</p>
                         <p>
-                            Now all you have to do is wait for the network manager to approve it. As soon as your participation is approved,
-                            you will receive a notification and you can start selling, recruiting new reps and tracking your earnings!
+                            {t("requestAccessPage.waitForApprovalInfo")}
                         </p>
                         <p>
-                            <strong>Important</strong>: While your request is pending, you can still explore other public networks available.
+                            <strong>{t("requestAccessPage.importantTag")}</strong>{t("requestAccessPage.pendingRequestInfo")}
                         </p>
                     </Card.Body>
                 </Card>
@@ -138,22 +141,22 @@ export default function RequestAccessPage() {
             <>
                 <Card>
                     <Card.Body className="text-center">
-                        <h3 className="text-center">Access Blocked!</h3>
+                        <h3 className="text-center">{t("requestAccessPage.accessBlocked")}</h3>
                         {networkContext.loading ?
                             <p><Skeleton /></p>
                             :
                             <p>
-                                Your access to the <strong>{networkContext.network?.name}</strong> network has been <strong>blocked</strong>.
+                                {t("requestAccessPage.accessBlockedMessage_part1")}<strong>{networkContext.network?.name}</strong>{t("requestAccessPage.accessBlockedMessage_part2")}<strong>{t("requestAccessPage.blockedWord")}</strong>.
                             </p>
                         }
                         <p>
-                            This may be due to a violation of the network's terms of service or an administrative decision by the network manager.
+                            {t("requestAccessPage.accessBlockedReason")}
                         </p>
                         <p>
-                            While your access is blocked, you will not be able to participate in network activities, including selling products or recruiting new members.
+                            {t("requestAccessPage.accessBlockedConsequences")}
                         </p>
                         <p>
-                            Please contact the network manager for more information or clarification regarding this status.
+                            {t("requestAccessPage.contactManagerForBlocked")}
                         </p>
                     </Card.Body>
                 </Card>
@@ -196,7 +199,7 @@ export default function RequestAccessPage() {
                             </>
                             :
                             <>
-                                <h3 className="text-center">{networkContext.loading ? <Skeleton></Skeleton> : "Do you want to join the " + networkContext.network?.name + "?"}</h3>
+                                <h3 className="text-center">{networkContext.loading ? <Skeleton></Skeleton> : t("requestAccessPage.joinNetworkQuestion", { networkName: networkContext.network?.name })}</h3>
                                 <Card>
                                     <Card.Body>
                                         {networkContext.loading ?
@@ -208,11 +211,10 @@ export default function RequestAccessPage() {
                                             :
                                             <>
                                                 <p>
-                                                    By joining this network, you will be able to: Sell the network's products and earn commissions;
-                                                    Recruit new representatives to grow your team; and Track your performance and earnings in real-time.
+                                                    {t("requestAccessPage.byJoiningInfo")}
                                                 </p>
-                                                <p><strong>Note:</strong> Your request will be sent to the network manager for approval.</p>
-                                                <p>Do you want to request access to this network?</p>
+                                                <p><strong>{t("requestAccessPage.noteTag")}</strong>{t("requestAccessPage.approvalInfo")}</p>
+                                                <p>{t("requestAccessPage.confirmRequestAccess")}</p>
                                             </>
                                         }
 
@@ -228,16 +230,16 @@ export default function RequestAccessPage() {
                                                 }
 
                                             }} disabled={networkContext.loadingRequestAccess}>{networkContext.loadingRequestAccess ?
-                                                "Loading..."
+                                                t("loading")
                                                 :
                                                 <>
-                                                    <FontAwesomeIcon icon={faCheck} fixedWidth /> Yes, I want to join
+                                                    <FontAwesomeIcon icon={faCheck} fixedWidth /> {t("requestAccessPage.yesIWantToJoin")}
                                                 </>
                                                 }</Button>
                                             <Button variant="danger" size="lg" onClick={(e) => {
                                                 e.preventDefault();
                                                 navigate("/" + networkContext.network?.slug);
-                                            }}><FontAwesomeIcon icon={faClose} fixedWidth /> No, go back</Button>
+                                            }}><FontAwesomeIcon icon={faClose} fixedWidth /> {t("requestAccessPage.noGoBack")} </Button>
                                         </div>
                                     </Card.Body>
                                 </Card>

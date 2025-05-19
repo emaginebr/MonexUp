@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import Col from "react-bootstrap/esm/Col";
+import { useTranslation } from "react-i18next";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Form from 'react-bootstrap/Form';
@@ -23,6 +24,8 @@ import NetworkFooter from "../NetworkPage/NetworkFooter";
 import Footer from "../HomePage/Footer";
 
 export default function SellerAddPage() {
+
+    const { t } = useTranslation();
 
     const authContext = useContext(AuthContext);
     const userContext = useContext(UserContext);
@@ -106,20 +109,20 @@ export default function SellerAddPage() {
                     <Col md="12">
                         <Card>
                             <Card.Header>
-                                <h3 className="text-center">Seller registration</h3>
+                                <h3 className="text-center">{t("sellerAddPage.title")}</h3>
                             </Card.Header>
                             <Card.Body>
                                 <Form>
                                     <div className="text-center mb-3">
-                                        Registration is not required to make swaps, but you can do so anyway to access your transaction history.
+                                        {t("sellerAddPage.registrationNote")}
                                     </div>
                                     <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="2">Name:</Form.Label>
+                                        <Form.Label column sm="2">{t("sellerAddPage.nameLabel")}:</Form.Label>
                                         <Col sm="10">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
-                                                    placeholder="Your name"
+                                                    placeholder={t("sellerAddPage.namePlaceholder")}
                                                     value={user?.name}
                                                     onChange={(e) => {
                                                         setUser({
@@ -131,12 +134,12 @@ export default function SellerAddPage() {
                                         </Col>
                                     </Form.Group>
                                     <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="2">CPF:</Form.Label>
+                                        <Form.Label column sm="2">{t("sellerAddPage.cpfLabel")}:</Form.Label>
                                         <Col sm="5">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faIdCard} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
-                                                    placeholder="Seu CPF"
+                                                    placeholder={t("sellerAddPage.cpfPlaceholder")}
                                                     value={user?.iddocument}
                                                     onChange={(e) => {
                                                         setUser({
@@ -146,12 +149,12 @@ export default function SellerAddPage() {
                                                     }} />
                                             </InputGroup>
                                         </Col>
-                                        <Form.Label column sm="1">Birthday:</Form.Label>
+                                        <Form.Label column sm="1">{t("sellerAddPage.birthdayLabel")}:</Form.Label>
                                         <Col sm="4">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faCalendar} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="date" size="lg"
-                                                    placeholder="Your birthday"
+                                                    placeholder={t("sellerAddPage.birthdayPlaceholder")}
                                                     value={user?.birthDate}
                                                     onChange={(e) => {
                                                         setUser({
@@ -163,12 +166,12 @@ export default function SellerAddPage() {
                                         </Col>
                                     </Form.Group>
                                     <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="2">Email:</Form.Label>
+                                        <Form.Label column sm="2">{t("sellerAddPage.emailLabel")}:</Form.Label>
                                         <Col sm="5">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faEnvelope} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="email" size="lg"
-                                                    placeholder="Your email"
+                                                    placeholder={t("sellerAddPage.emailPlaceholder")}
                                                     value={user?.email}
                                                     onChange={(e) => {
                                                         setUser({
@@ -178,12 +181,12 @@ export default function SellerAddPage() {
                                                     }} />
                                             </InputGroup>
                                         </Col>
-                                        <Form.Label column sm="1">Phone:</Form.Label>
+                                        <Form.Label column sm="1">{t("sellerAddPage.phoneLabel")}:</Form.Label>
                                         <Col sm="4">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faPhone} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
-                                                    placeholder="Your phone"
+                                                    placeholder={t("sellerAddPage.phonePlaceholder")}
                                                     value={user?.phone}
                                                     onChange={(e) => {
                                                         setUser({
@@ -196,12 +199,12 @@ export default function SellerAddPage() {
                                     </Form.Group>
                                     <hr />
                                     <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="2">ZIP Code:</Form.Label>
+                                        <Form.Label column sm="2">{t("sellerAddPage.zipCodeLabel")}:</Form.Label>
                                         <Col sm="3">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faIdCard} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
-                                                    placeholder="ZIP Code"
+                                                    placeholder={t("sellerAddPage.zipCodePlaceholder")}
                                                     value={user?.zipCode}
                                                     onChange={(e) => {
                                                         setUser({
@@ -211,12 +214,12 @@ export default function SellerAddPage() {
                                                     }} />
                                             </InputGroup>
                                         </Col>
-                                        <Form.Label column sm="1">Address:</Form.Label>
+                                        <Form.Label column sm="1">{t("sellerAddPage.addressLabel")}:</Form.Label>
                                         <Col sm="6">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
-                                                    placeholder="Your address"
+                                                    placeholder={t("sellerAddPage.addressPlaceholder")}
                                                     value={user?.address}
                                                     onChange={(e) => {
                                                         setUser({
@@ -228,12 +231,12 @@ export default function SellerAddPage() {
                                         </Col>
                                     </Form.Group>
                                     <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="2">Complement:</Form.Label>
+                                        <Form.Label column sm="2">{t("sellerAddPage.complementLabel")}:</Form.Label>
                                         <Col sm="4">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
-                                                    placeholder="Your Complement"
+                                                    placeholder={t("sellerAddPage.complementPlaceholder")}
                                                     value={user?.complement}
                                                     onChange={(e) => {
                                                         setUser({
@@ -243,12 +246,12 @@ export default function SellerAddPage() {
                                                     }} />
                                             </InputGroup>
                                         </Col>
-                                        <Form.Label column sm="2">Neighborhood:</Form.Label>
+                                        <Form.Label column sm="2">{t("sellerAddPage.neighborhoodLabel")}:</Form.Label>
                                         <Col sm="4">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
-                                                    placeholder="Your Neighborhood"
+                                                    placeholder={t("sellerAddPage.neighborhoodPlaceholder")}
                                                     value={user?.neighborhood}
                                                     onChange={(e) => {
                                                         setUser({
@@ -260,12 +263,12 @@ export default function SellerAddPage() {
                                         </Col>
                                     </Form.Group>
                                     <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="2">City:</Form.Label>
+                                        <Form.Label column sm="2">{t("sellerAddPage.cityLabel")}:</Form.Label>
                                         <Col sm="5">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
-                                                    placeholder="Your city"
+                                                    placeholder={t("sellerAddPage.cityPlaceholder")}
                                                     value={user?.city}
                                                     onChange={(e) => {
                                                         setUser({
@@ -275,12 +278,12 @@ export default function SellerAddPage() {
                                                     }} />
                                             </InputGroup>
                                         </Col>
-                                        <Form.Label column sm="1">State:</Form.Label>
+                                        <Form.Label column sm="1">{t("sellerAddPage.stateLabel")}:</Form.Label>
                                         <Col sm="4">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
-                                                    placeholder="Your state"
+                                                    placeholder={t("sellerAddPage.statePlaceholder")}
                                                     value={user?.state}
                                                     onChange={(e) => {
                                                         setUser({
@@ -293,12 +296,12 @@ export default function SellerAddPage() {
                                     </Form.Group>
                                     <hr />
                                     <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="2">Chave Pix:</Form.Label>
+                                        <Form.Label column sm="2">{t("sellerAddPage.pixKeyLabel")}:</Form.Label>
                                         <Col sm="10">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faDollar} fixedWidth /></InputGroup.Text>
                                                 <Form.Control type="text" size="lg"
-                                                    placeholder="Your Pix key"
+                                                    placeholder={t("sellerAddPage.pixKeyPlaceholder")}
                                                     value={user?.pixkey}
                                                     onChange={(e) => {
                                                         setUser({
@@ -313,12 +316,12 @@ export default function SellerAddPage() {
                                         <>
                                             <hr />
                                             <Form.Group as={Row} className="mb-3">
-                                                <Form.Label column sm="2">Password:</Form.Label>
+                                                <Form.Label column sm="2">{t("sellerAddPage.passwordLabel")}:</Form.Label>
                                                 <Col sm="4">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
                                                         <Form.Control type="password" size="lg"
-                                                            placeholder="Your password"
+                                                            placeholder={t("sellerAddPage.passwordPlaceholder")}
                                                             value={user?.password}
                                                             onChange={(e) => {
                                                                 setUser({
@@ -328,12 +331,12 @@ export default function SellerAddPage() {
                                                             }} />
                                                     </InputGroup>
                                                 </Col>
-                                                <Form.Label column sm="2">Confirm password:</Form.Label>
+                                                <Form.Label column sm="2">{t("sellerAddPage.confirmPasswordLabel")}:</Form.Label>
                                                 <Col sm="4">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
                                                         <Form.Control type="password" size="lg"
-                                                            placeholder="Confirm your password"
+                                                            placeholder={t("sellerAddPage.confirmPasswordPlaceholder")}
                                                             value={user?.confirmPassword}
                                                             onChange={(e) => {
                                                                 setUser({
@@ -347,32 +350,32 @@ export default function SellerAddPage() {
                                         </>
                                     }
                                     <hr />
-                                    <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm="2">Upload Document File:</Form.Label>
+                                    {/* <Form.Group as={Row} className="mb-3">
+                                        <Form.Label column sm="2">{t("sellerAddPage.uploadDocumentLabel")}:</Form.Label>
                                         <Col sm="10">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faAddressBook} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="file" size="lg" placeholder="Your ID document" />
+                                                <Form.Control type="file" size="lg" placeholder={t("sellerAddPage.uploadDocumentPlaceholder")} />
                                             </InputGroup>
                                         </Col>
-                                    </Form.Group>
+                                    </Form.Group> */}
                                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                                         <Button variant="danger" size="lg" onClick={() => {
                                             navigate(networkSlug ? "/" + networkSlug : "/");
-                                        }}><FontAwesomeIcon icon={faArrowLeft} fixedWidth /> Back</Button>
+                                        }}><FontAwesomeIcon icon={faArrowLeft} fixedWidth /> {t("buttons.back")}</Button>
                                         <Button variant="success" size="lg" onClick={async (e) => {
                                             e.preventDefault();
 
                                             if (!user.password) {
-                                                throwError("Password is empty");
+                                                throwError(t("sellerAddPage.errors.passwordEmpty"));
                                                 return;
                                             }
                                             if (!user.confirmPassword) {
-                                                throwError("Password confirmation is empty");
+                                                throwError(t("sellerAddPage.errors.confirmPasswordEmpty"));
                                                 return;
                                             }
                                             if (user.password != user.confirmPassword) {
-                                                throwError("Password and confirmation are not equal");
+                                                throwError(t("sellerAddPage.errors.passwordsNotEqual"));
                                                 return;
                                             }
 
@@ -428,7 +431,7 @@ export default function SellerAddPage() {
                                         }}
                                             disabled={userContext.loadingUpdate}
                                         ><FontAwesomeIcon icon={faSave} fixedWidth />
-                                            {userContext.loadingUpdate ? "Loading..." : "Save"}
+                                            {userContext.loadingUpdate ? t("loading") : t("buttons.save")}
                                         </Button>
                                     </div>
                                 </Form>
