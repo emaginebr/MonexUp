@@ -1,7 +1,9 @@
 import StatementSearchParam from "../../DTO/Domain/StatementSearchParam";
 import InvoiceListPagedResult from "../../DTO/Services/InvoiceListPagedResult";
+import InvoiceResult from "../../DTO/Services/InvoiceResult";
 import NumberResult from "../../DTO/Services/NumberResult";
 import StatementListPagedResult from "../../DTO/Services/StatementListPagedResult";
+import StatusRequest from "../../DTO/Services/StatusRequest";
 import IHttpClient from "../../Infra/Interface/IHttpClient"; 
 import IInvoiceService from "../Interfaces/IInvoiceService";
 
@@ -65,6 +67,36 @@ const InvoiceService : IInvoiceService = {
     getAvailableBalance: async (token: string) => {
         let ret: NumberResult;
         let request = await _httpClient.doGetAuth<NumberResult>("/api/Invoice/getAvailableBalance", token);
+        if (request.success) {
+            return request.data;
+        }
+        else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    },
+    syncronize: async (token: string) => {
+        let ret: StatusRequest;
+        let request = await _httpClient.doGetAuth<StatusRequest>("/api/Invoice/syncronize", token);
+        if (request.success) {
+            return request.data;
+        }
+        else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    },
+    checkout: async (checkoutSessionId: string) => {
+        let ret: InvoiceResult;
+        let request = await _httpClient.doGet<InvoiceResult>("/api/Invoice/checkout/" + checkoutSessionId, {});
         if (request.success) {
             return request.data;
         }

@@ -11,9 +11,10 @@ namespace MonexUp.Domain.Interfaces.Services
 {
     public interface IStripeService
     {
-        Task<string> CreateSubscription(IUserModel user, IProductModel product);
+        Task<string> CreateSubscription(IUserModel user, IProductModel product, INetworkModel network, IUserModel seller);
 
         Task<string> CreateInvoice(IUserModel user, IProductModel product);
+        Task<IInvoiceModel> Checkout(string checkouSessionId);
 
         Task<IList<IInvoiceModel>> ListInvoices();
     }

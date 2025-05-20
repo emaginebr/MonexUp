@@ -19,6 +19,7 @@ namespace MonexUp.API.Controllers
         private readonly IUserService _userService;
         private readonly IOrderService _orderService;
         private readonly ISubscriptionService _subscriptionService;
+        private readonly INetworkService _networkService;
         private readonly IProductService _productService;
         private readonly IStripeService _stripeService;
         private readonly IUserDomainFactory _userFactory;
@@ -28,6 +29,7 @@ namespace MonexUp.API.Controllers
             IUserService userService, 
             IOrderService orderService,
             ISubscriptionService subscriptionService,
+            INetworkService networkService,
             IProductService productService,
             IStripeService stripeService,
             IUserDomainFactory userFactory,
@@ -37,6 +39,7 @@ namespace MonexUp.API.Controllers
             _userService = userService;
             _orderService = orderService;
             _subscriptionService = subscriptionService;
+            _networkService = networkService;
             _productService = productService;
             _stripeService = stripeService;
             _userFactory = userFactory;
@@ -45,7 +48,11 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpGet("createSubscription/{productSlug}")]
-        public async Task<ActionResult<SubscriptionResult>> CreateSubscription(string productSlug, [FromQuery] string sellerSlug)
+        public async Task<ActionResult<SubscriptionResult>> CreateSubscription(
+            string productSlug, 
+            [FromQuery] string networkSlug, 
+            [FromQuery] string sellerSlug
+        )
         {
             try
             {
@@ -59,6 +66,15 @@ namespace MonexUp.API.Controllers
                 if (product == null)
                 {
                     throw new Exception("Product not found");
+                }
+                long? networkId = null;
+                if (!string.IsNullOrEmpty(networkSlug))
+                {
+                    var network = _networkService.GetBySlug(networkSlug);
+                    if (network != null)
+                    {
+                        networkId = network.NetworkId;
+                    }
                 }
                 long? sellerId = null;
                 if (!string.IsNullOrEmpty(sellerSlug))
@@ -69,7 +85,7 @@ namespace MonexUp.API.Controllers
                         sellerId = seller.UserId;
                     }
                 }
-                var subscription = await _subscriptionService.CreateSubscription(product.ProductId, userSession.UserId, sellerId);
+                var subscription = await _subscriptionService.CreateSubscription(product.ProductId, userSession.UserId, networkId, sellerId);
 
                 return new SubscriptionResult()
                 {
@@ -82,70 +98,6 @@ namespace MonexUp.API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
-        /*
-        [Authorize]
-        [HttpGet("createInvoice/{productSlug}")]
-        public async Task<ActionResult<SubscriptionResult>> CreateInvoice(string productSlug)
-        {
-            try
-            {
-                var userSession = _userService.GetUserInSession(HttpContext);
-                if (userSession == null)
-                {
-                    return StatusCode(401, "Not Authorized");
-                }
-
-                var product = _productService.GetBySlug(productSlug);
-                if (product == null)
-                {
-                    throw new Exception("Product not found");
-                }
-                var subscription = await _subscriptionService.CreateInvoice(product.ProductId, userSession.UserId);
-
-                return new SubscriptionResult()
-                {
-                    Order = subscription.Order,
-                    ClientSecret = subscription.ClientSecret
-                };
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-        */
-
-        /*
-        [Authorize]
-        [HttpGet("insert/{productId}")]
-        public ActionResult<OrderResult> Insert(long productId)
-        {
-            try
-            {
-                var userSession = _userService.GetUserInSession(HttpContext);
-                if (userSession == null)
-                {
-                    return StatusCode(401, "Not Authorized");
-                }
-
-                var newOrder = _orderService.Insert(new OrderInfo
-                {
-                    ProductId = productId,
-                    UserId = userSession.UserId,
-                    Status = OrderStatusEnum.Incoming
-                });
-                return new OrderResult()
-                {
-                    Order = _orderService.GetOrderInfo(newOrder)
-                };
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-        */
 
         [Authorize]
         [HttpPost("update")]

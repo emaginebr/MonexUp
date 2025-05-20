@@ -133,33 +133,44 @@ namespace MonexUp.Domain.Impl.Services
             return newInvoice;
         }
 
+        public IInvoiceModel ProcessInvoice(IInvoiceModel invoiceStripe)
+        {
+            var invoice = _invoiceFactory.BuildInvoiceModel().GetByStripeId(invoiceStripe.StripeId, _invoiceFactory);
+            if (invoice != null)
+            {
+                if (invoice.Status != invoiceStripe.Status)
+                {
+                    if (invoiceStripe.Status == InvoiceStatusEnum.Paid)
+                    {
+                        invoice.PaymentDate = invoiceStripe.PaymentDate;
+                        return Pay(invoice);
+                    }
+                    invoice.Status = invoiceStripe.Status;
+                    var newInvoice = invoice.Update(_invoiceFactory);
+                    CalculateFee(newInvoice);
+                    return newInvoice;
+                }
+                return invoice;
+            }
+            return Insert(invoiceStripe);
+        }
+
+        public async Task<IInvoiceModel> Checkout(string checkoutSessionId)
+        {
+            var invoice = await _stripeService.Checkout(checkoutSessionId);
+            if (invoice == null)
+            {
+                throw new Exception("Invoice is empty");
+            }
+            return ProcessInvoice(invoice);
+        }
+
         public async Task Syncronize()
         {
             var invoicesStripe = await _stripeService.ListInvoices();
             foreach (var invoiceStripe in invoicesStripe)
             {
-                var invoice = _invoiceFactory.BuildInvoiceModel().GetByStripeId(invoiceStripe.StripeId, _invoiceFactory);
-                if (invoice != null)
-                {
-                    if (invoice.Status != invoiceStripe.Status)
-                    {
-                        if (invoiceStripe.Status == InvoiceStatusEnum.Paid)
-                        {
-                            invoice.PaymentDate = invoiceStripe.PaymentDate;
-                            Pay(invoice);
-                        }
-                        else
-                        {
-                            invoice.Status = invoiceStripe.Status;
-                            invoice.Update(_invoiceFactory);
-                            CalculateFee(invoice);
-                        }
-                    }
-                }
-                else
-                {
-                    Insert(invoiceStripe);
-                }
+                ProcessInvoice(invoiceStripe);
             }
         }
 

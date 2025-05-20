@@ -47,10 +47,11 @@ public partial class MonexUpContext : DbContext
 
     public virtual DbSet<UserProfile> UserProfiles { get; set; }
 
+    public virtual DbSet<Withdrawal> Withdrawals { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        //optionsBuilder.UseNpgsql("Host=167.172.240.71;Port=5432;Database=monexup;Username=postgres;Password=eaa69cpxy2");
-    }
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseNpgsql("Host=167.172.240.71;Port=5432;Database=monexup;Username=postgres;Password=eaa69cpxy2");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -537,6 +538,33 @@ public partial class MonexUpContext : DbContext
                 .HasForeignKey(d => d.NetworkId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_user_profile_network");
+        });
+
+        modelBuilder.Entity<Withdrawal>(entity =>
+        {
+            entity.HasKey(e => e.WithdrawalId).HasName("withdrawals_pkey");
+
+            entity.ToTable("withdrawals");
+
+            entity.Property(e => e.WithdrawalId).HasColumnName("withdrawal_id");
+            entity.Property(e => e.Duedate)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("duedate");
+            entity.Property(e => e.NetworkId).HasColumnName("network_id");
+            entity.Property(e => e.Status)
+                .HasDefaultValue(1)
+                .HasColumnName("status");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.Network).WithMany(p => p.Withdrawals)
+                .HasForeignKey(d => d.NetworkId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_withdrawal_network");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Withdrawals)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_withdrawal_user");
         });
         modelBuilder.HasSequence("network_id_seq");
         modelBuilder.HasSequence("profile_id_seq");

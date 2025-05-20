@@ -3,6 +3,7 @@ using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Order;
 using Stripe;
+using Stripe.Checkout;
 using Stripe.Climate;
 using System;
 using System.Collections.Generic;
@@ -91,7 +92,26 @@ namespace MonexUp.Domain.Impl.Services
             return session.ClientSecret;
         }
 
-        public async Task<string> CreateSubscription(IUserModel user, IProductModel product)
+        private string GetUrlCheckout(string networkSlug, string sellerSlug)
+        {
+            string url = "https://monexup.com";
+            if (!string.IsNullOrEmpty(networkSlug) && string.IsNullOrEmpty(sellerSlug))
+            {
+                url += $"/{networkSlug}/@/{sellerSlug}";
+            }
+            else if (!string.IsNullOrEmpty(networkSlug))
+            {
+                url += $"/{networkSlug}";
+            }
+            else if (!string.IsNullOrEmpty(sellerSlug))
+            {
+                url += $"/@/{sellerSlug}";
+            }
+            url += "/checkout/{CHECKOUT_SESSION_ID}";
+            return url;
+        }
+
+        public async Task<string> CreateSubscription(IUserModel user, IProductModel product, INetworkModel network, IUserModel seller)
         {
             var customerService = new CustomerService();
             var customers = await customerService.ListAsync(new CustomerListOptions { Email = user.Email, Limit = 1 });
@@ -180,7 +200,7 @@ namespace MonexUp.Domain.Impl.Services
                 },
                 UiMode = "embedded",
                 Customer = customer.Id,
-                ReturnUrl = "https://monexup.com/checkout/{CHECKOUT_SESSION_ID}",
+                ReturnUrl = GetUrlCheckout(network?.Slug, seller?.Slug),
             };
             var service = new Stripe.Checkout.SessionService();
             var session = service.Create(options);
@@ -255,7 +275,15 @@ namespace MonexUp.Domain.Impl.Services
             if (invoice.DueDate.HasValue)
             {
                 md.DueDate = invoice.DueDate.GetValueOrDefault();
-                md.PaymentDate = invoice.DueDate.GetValueOrDefault();
+                //md.PaymentDate = invoice.DueDate.GetValueOrDefault();
+            }
+            if (invoice.EffectiveAt.HasValue)
+            {
+                md.PaymentDate = invoice.EffectiveAt.GetValueOrDefault();
+                if (!invoice.DueDate.HasValue)
+                {
+                    invoice.DueDate = invoice.EffectiveAt.GetValueOrDefault();
+                }
             }
             md.Price = (double)invoice.AmountDue / 100.0;
             md.StripeId = invoice.Id;
@@ -284,6 +312,13 @@ namespace MonexUp.Domain.Impl.Services
                 }
             }
             return invoicesModel;
+        }
+
+        public async Task<IInvoiceModel> Checkout(string checkouSessionId)
+        {
+            var service = new SessionService();
+            var session = await service.GetAsync(checkouSessionId); // CHECKOUT_SESSION_ID
+            return await ConvertStripeToModel(session.Invoice);
         }
     }
 }

@@ -12,7 +12,7 @@ const OrderBusiness: IOrderBusiness = {
   init: function (orderService: IOrderService): void {
     _orderService = orderService;
   },
-  createSubscription: async (productSlug: string, sellerSlug?: string) => {
+  createSubscription: async (productSlug: string, networkSlug?: string, sellerSlug?: string) => {
     try {
         let ret: BusinessResult<string>;
         let session: AuthSession = AuthFactory.AuthBusiness.getSession();
@@ -23,7 +23,7 @@ const OrderBusiness: IOrderBusiness = {
             mensagem: "Not logged"
           };
         }
-        let retServ = await _orderService.createSubscription(productSlug, session.token, sellerSlug);
+        let retServ = await _orderService.createSubscription(productSlug, session.token, networkSlug, sellerSlug);
         if (retServ.sucesso) {
           return {
             ...ret,

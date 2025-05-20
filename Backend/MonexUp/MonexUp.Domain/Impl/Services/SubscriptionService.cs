@@ -1,4 +1,5 @@
 ﻿using MonexUp.Domain.Interfaces.Factory;
+using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Order;
 using MonexUp.DTO.Subscription;
@@ -16,6 +17,7 @@ namespace MonexUp.Domain.Impl.Services
         private readonly IOrderService _orderService;
         private readonly IStripeService _stripeService;
         private readonly IUserDomainFactory _userFactory;
+        private readonly INetworkDomainFactory _networkFactory;
         private readonly IProductDomainFactory _productFactory;
         private readonly IOrderItemDomainFactory _orderItemFactory;
 
@@ -23,6 +25,7 @@ namespace MonexUp.Domain.Impl.Services
             IOrderService orderService,
             IStripeService stripeService,
             IUserDomainFactory userFactory,
+            INetworkDomainFactory networkFactory,
             IProductDomainFactory productFactory,
             IOrderItemDomainFactory orderItemFactory
         )
@@ -30,17 +33,31 @@ namespace MonexUp.Domain.Impl.Services
             _orderService = orderService;
             _stripeService = stripeService;
             _userFactory = userFactory;
+            _networkFactory = networkFactory;
             _productFactory = productFactory;
             _orderItemFactory = orderItemFactory;
         }
 
-        public async Task<SubscriptionInfo> CreateSubscription(long productId, long userId, long? sellerId)
+        public async Task<SubscriptionInfo> CreateSubscription(long productId, long userId, long? networkId, long? sellerId)
         {
             var product = _productFactory.BuildProductModel().GetById(productId, _productFactory);
             if (product == null)
             {
                 throw new Exception("Product not found");
             }
+
+            INetworkModel network = null;
+            if (networkId.HasValue && networkId.Value > 0)
+            {
+                network = _networkFactory.BuildNetworkModel().GetById(networkId.Value, _networkFactory);
+            }
+
+            IUserModel seller = null;
+            if (sellerId.HasValue && sellerId.Value > 0)
+            {
+                seller = _userFactory.BuildUserModel().GetById(sellerId.Value, _userFactory);
+            }
+
             var order = _orderService.Get(productId, userId, sellerId, OrderStatusEnum.Incoming);
             if (order == null)
             {
@@ -60,7 +77,7 @@ namespace MonexUp.Domain.Impl.Services
                 });
             }
             var user = order.GetUser(_userFactory);
-            var clientSecret = await _stripeService.CreateSubscription(user, product);
+            var clientSecret = await _stripeService.CreateSubscription(user, product, network, seller);
             return new SubscriptionInfo()
             {
                 Order = _orderService.GetOrderInfo(order),

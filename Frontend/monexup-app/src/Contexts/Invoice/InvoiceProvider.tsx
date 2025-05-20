@@ -9,6 +9,7 @@ import StatementSearchParam from "../../DTO/Domain/StatementSearchParam";
 
 export default function InvoiceProvider(props: any) {
 
+    const [loadingUpdate, setLoadingUpdate] = useState<boolean>(false);
     const [loadingSearch, setLoadingSearch] = useState<boolean>(false);
     const [loadingBalance, setLoadingBalance] = useState<boolean>(false);
     const [loadingAvailableBalance, setLoadingAvailableBalance] = useState<boolean>(false);
@@ -20,6 +21,7 @@ export default function InvoiceProvider(props: any) {
     const [statementResult, setStatementResult] = useState<StatementListPagedInfo>(null);
 
     const invoiceProviderValue: IInvoiceProvider = {
+        loadingUpdate: loadingUpdate,
         loadingSearch: loadingSearch,
         loadingBalance: loadingBalance,
         loadingAvailableBalance: loadingAvailableBalance,
@@ -153,6 +155,74 @@ export default function InvoiceProvider(props: any) {
             }
             else {
                 setLoadingAvailableBalance(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: brt.mensagem
+                };
+            }
+            /*
+            }
+            catch (err) {
+                setLoadingUpdate(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: JSON.stringify(err)
+                };
+            }
+            */
+        },
+        syncronize: async () => {
+            let ret: Promise<ProviderResult>;
+            setLoadingUpdate(true);
+            //try {
+            let brt = await InvoiceFactory.InvoiceBusiness.syncronize();
+            if (brt.sucesso) {
+                setLoadingUpdate(false);
+                return {
+                    ...ret,
+                    sucesso: true,
+                    clientSecret: brt.dataResult,
+                    mensagemSucesso: "Syncronized"
+                };
+            }
+            else {
+                setLoadingUpdate(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: brt.mensagem
+                };
+            }
+            /*
+            }
+            catch (err) {
+                setLoadingUpdate(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: JSON.stringify(err)
+                };
+            }
+            */
+        },
+        checkout: async (checkoutSessionId: string) => {
+            let ret: Promise<ProviderResult>;
+            setLoadingUpdate(true);
+            //try {
+            let brt = await InvoiceFactory.InvoiceBusiness.checkout(checkoutSessionId);
+            if (brt.sucesso) {
+                setLoadingUpdate(false);
+                return {
+                    ...ret,
+                    sucesso: true,
+                    clientSecret: brt.dataResult,
+                    mensagemSucesso: "Checkout"
+                };
+            }
+            else {
+                setLoadingUpdate(false);
                 return {
                     ...ret,
                     sucesso: false,

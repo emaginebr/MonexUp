@@ -16,6 +16,8 @@ namespace MonexUp.Domain.Interfaces.Services
         IInvoiceModel Insert(IInvoiceModel invoice);
         IInvoiceModel Pay(IInvoiceModel invoice);
         void ClearFees(IInvoiceModel invoice);
+        IInvoiceModel ProcessInvoice(IInvoiceModel invoiceStripe);
+        Task<IInvoiceModel> Checkout(string checkoutSessionId);
         InvoiceInfo GetInvoiceInfo(IInvoiceModel invoice);
         InvoiceListPagedResult Search(long networkId, long? userId, long? sellerId, int pageNum);
         StatementListPagedResult SearchStatement(StatementSearchParam param);

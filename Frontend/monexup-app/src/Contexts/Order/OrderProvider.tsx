@@ -30,11 +30,11 @@ export default function OrderProvider(props: any) {
         searchResult: searchResult,
         clientSecret: clientSecret,
 
-        createSubscription: async (productSlug: string, sellerSlug?: string) => {
+        createSubscription: async (productSlug: string, networkSlug?: string, sellerSlug?: string) => {
             let ret: Promise<OrderProviderResult>;
             setLoadingUpdate(true);
             //try {
-            let brt = await OrderFactory.OrderBusiness.createSubscription(productSlug, sellerSlug);
+            let brt = await OrderFactory.OrderBusiness.createSubscription(productSlug, networkSlug, sellerSlug);
             if (brt.sucesso) {
                 setLoadingUpdate(false);
                 setClientSecret(brt.dataResult);

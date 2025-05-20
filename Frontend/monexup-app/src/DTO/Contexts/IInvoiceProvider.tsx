@@ -5,6 +5,7 @@ import ProviderResult from "./ProviderResult";
 
 
 interface IInvoiceProvider {
+    loadingUpdate: boolean;
     loadingSearch: boolean;
     loadingBalance: boolean;
     loadingAvailableBalance: boolean;
@@ -19,6 +20,8 @@ interface IInvoiceProvider {
     searchStatement: (param: StatementSearchParam) => Promise<ProviderResult>;
     getBalance: (networkId?: number) => Promise<ProviderResult>;
     getAvailableBalance: () => Promise<ProviderResult>;
+    syncronize: () => Promise<ProviderResult>;
+    checkout: (checkoutSessionId: string) => Promise<ProviderResult>;
 }
 
 export default IInvoiceProvider;

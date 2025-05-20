@@ -3,7 +3,7 @@ import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCancel } from '@fortawesome/free-solid-svg-icons';
+import { faCancel, faSync } from '@fortawesome/free-solid-svg-icons';
 import Table from "react-bootstrap/esm/Table";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -19,6 +19,7 @@ import Moment from 'react-moment';
 import InvoiceContext from "../../Contexts/Invoice/InvoiceContext";
 import { InvoiceStatusEnum } from "../../DTO/Enum/InvoiceStatusEnum";
 import { useTranslation } from "react-i18next";
+import Button from "react-bootstrap/esm/Button";
 
 export default function InvoiceSearchPage() {
 
@@ -171,22 +172,27 @@ export default function InvoiceSearchPage() {
                             </nav>
                         </h3>
                     </Col>
-                    <Col md="6" style={{ textAlign: "right" }}>
-                        {/*
-                        <InputGroup className="pull-right">
-                            <Dropdown>
-                                <Dropdown.Toggle variant="danger" id="dropdown-basic">
-                                    {t('filter_by_all_status')}
-                                </Dropdown.Toggle>
-
-                                <Dropdown.Menu>
-                                    <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                                    <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                                    <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-                                </Dropdown.Menu>
-                            </Dropdown>
+                    <Col md="6" className="d-flex justify-content-end">
+                        <InputGroup className="w-auto">
+                            <Button variant={invoiceContext.loadingUpdate ? "danger" : "success"} size="sm" onClick={async () => {
+                                let ret = await invoiceContext.syncronize();
+                                if (!ret.sucesso) {
+                                    throwError(ret.mensagemErro);
+                                    return;
+                                }
+                                searchInvoices(1);
+                            }}>
+                                {invoiceContext.loadingUpdate ?
+                                    <>
+                                        <FontAwesomeIcon icon={faSync} fixedWidth /> {t('loading')}
+                                    </>
+                                    :
+                                    <>
+                                        <FontAwesomeIcon icon={faSync} fixedWidth /> Syncronize
+                                    </>
+                                }
+                            </Button>
                         </InputGroup>
-                        */}
                     </Col>
                 </Row>
                 <Row className="py-4">

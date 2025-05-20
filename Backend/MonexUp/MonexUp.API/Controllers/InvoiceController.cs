@@ -134,5 +134,22 @@ namespace MonexUp.API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpGet("checkout/{checkoutSessionId}")]
+        public async Task<ActionResult<InvoiceResult>> Checkout(string checkoutSessionId)
+        {
+            try
+            {
+                return new InvoiceResult
+                {
+                    Sucesso = true,
+                    Invoice = _invoiceService.GetInvoiceInfo(await _invoiceService.Checkout(checkoutSessionId))
+                };
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

@@ -13,7 +13,7 @@ interface IOrderProvider {
     searchResult: OrderListPagedInfo;
     clientSecret: string;
     
-    createSubscription: (productSlug: string, sellerSlug?: string) => Promise<OrderProviderResult>;
+    createSubscription: (productSlug: string, networkSlug?: string, sellerSlug?: string) => Promise<OrderProviderResult>;
     createInvoice: (productSlug: string) => Promise<OrderProviderResult>;
     search: (networkId: number, userId: number, sellerId: number, pageNum: number) => Promise<ProviderResult>;
     getById: (orderId: number) => Promise<OrderProviderResult>;

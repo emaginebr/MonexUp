@@ -56,4 +56,6 @@ public partial class User
     public virtual ICollection<UserNetwork> UserNetworkUsers { get; set; } = new List<UserNetwork>();
 
     public virtual ICollection<UserPhone> UserPhones { get; set; } = new List<UserPhone>();
+
+    public virtual ICollection<Withdrawal> Withdrawals { get; set; } = new List<Withdrawal>();
 }

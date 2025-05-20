@@ -10,9 +10,12 @@ const OrderService : IOrderService = {
     init: function (htppClient: IHttpClient): void {
         _httpClient = htppClient;
     },
-    createSubscription: async (productSlug: string, token: string, sellerSlug?: string) => {
+    createSubscription: async (productSlug: string, token: string, networkSlug?: string, sellerSlug?: string) => {
         let ret: SubscriptionResult;
         let url: string = "/api/Order/createSubscription/" + productSlug;
+        if (networkSlug) {
+            url += "?networkSlug=" + networkSlug;
+        }
         if (sellerSlug) {
             url += "?sellerSlug=" + sellerSlug;
         }

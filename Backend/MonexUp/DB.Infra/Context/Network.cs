@@ -36,4 +36,6 @@ public partial class Network
     public virtual ICollection<UserNetwork> UserNetworks { get; set; } = new List<UserNetwork>();
 
     public virtual ICollection<UserProfile> UserProfiles { get; set; } = new List<UserProfile>();
+
+    public virtual ICollection<Withdrawal> Withdrawals { get; set; } = new List<Withdrawal>();
 }

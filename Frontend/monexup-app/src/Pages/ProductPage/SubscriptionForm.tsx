@@ -7,6 +7,7 @@ const stripePromise = loadStripe('pk_test_51QkuslD37qwDaRRTa9aljJbNC73hIl0kznGiY
 
 interface ProductPaymentParam {
     productSlug: string;
+    networkSlug?: string;
     sellerSlug?: string;
 }
 
@@ -15,7 +16,7 @@ export default function SubscriptionForm(param: ProductPaymentParam) {
     const orderContext = useContext(OrderContext);
 
     const fetchClientSecret = async () => {
-        let ret = await orderContext.createSubscription(param.productSlug, param.sellerSlug);
+        let ret = await orderContext.createSubscription(param.productSlug, param.networkSlug, param.sellerSlug);
         if (ret.sucesso) {
             return ret.clientSecret;
         }

@@ -133,7 +133,11 @@ export default function ProductPage() {
                             </Col>
                             <Col md={4}>
                                 {authContext.sessionInfo ?
-                                    <SubscriptionForm productSlug={productSlug} sellerSlug={sellerSlug} />
+                                    <SubscriptionForm 
+                                        productSlug={productSlug} 
+                                        networkSlug={networkSlug}
+                                        sellerSlug={sellerSlug} 
+                                    />
                                     :
                                     <UserForm url={getUrl()} onSuccess={(msgSuccess) => {
                                         showSuccessMessage(msgSuccess);

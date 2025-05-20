@@ -1,7 +1,9 @@
 import StatementSearchParam from "../../DTO/Domain/StatementSearchParam";
 import InvoiceListPagedResult from "../../DTO/Services/InvoiceListPagedResult";
+import InvoiceResult from "../../DTO/Services/InvoiceResult";
 import NumberResult from "../../DTO/Services/NumberResult";
 import StatementListPagedResult from "../../DTO/Services/StatementListPagedResult";
+import StatusRequest from "../../DTO/Services/StatusRequest";
 import IHttpClient from "../../Infra/Interface/IHttpClient";
 
 export default interface IInvoiceService {
@@ -10,4 +12,6 @@ export default interface IInvoiceService {
     searchStatement: (param: StatementSearchParam, token: string) => Promise<StatementListPagedResult>;
     getBalance: (token: string, networkId?: number) => Promise<NumberResult>;
     getAvailableBalance: (token: string) => Promise<NumberResult>;
+    syncronize: (token: string) => Promise<StatusRequest>;
+    checkout: (checkoutSessionId: string) => Promise<InvoiceResult>;
 }
