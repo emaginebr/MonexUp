@@ -7240,23 +7240,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\rodrigo.carneiro\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\Rodrigo\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Application\\MonexUp.Application.csproj",
+      "projectUniqueName": "D:\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Application\\MonexUp.Application.csproj",
       "projectName": "MonexUp.Application",
-      "projectPath": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Application\\MonexUp.Application.csproj",
-      "packagesPath": "C:\\Users\\rodrigo.carneiro\\.nuget\\packages\\",
-      "outputPath": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Application\\obj\\",
+      "projectPath": "D:\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Application\\MonexUp.Application.csproj",
+      "packagesPath": "C:\\Users\\Rodrigo\\.nuget\\packages\\",
+      "outputPath": "D:\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Application\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\rodrigo.carneiro\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Rodrigo\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -7264,7 +7264,6 @@
         "net8.0"
       ],
       "sources": {
-        "C:\\Benner\\Pacotes": {},
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
@@ -7273,14 +7272,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\Core.Domain\\Core.Domain.csproj": {
-              "projectPath": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\Core.Domain\\Core.Domain.csproj"
+            "D:\\Projetos\\MonexUp\\Backend\\MonexUp\\Core.Domain\\Core.Domain.csproj": {
+              "projectPath": "D:\\Projetos\\MonexUp\\Backend\\MonexUp\\Core.Domain\\Core.Domain.csproj"
             },
-            "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\DB.Infra.csproj": {
-              "projectPath": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\DB.Infra.csproj"
+            "D:\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\DB.Infra.csproj": {
+              "projectPath": "D:\\Projetos\\MonexUp\\Backend\\MonexUp\\DB.Infra\\DB.Infra.csproj"
             },
-            "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\MonexUp.Domain.csproj": {
-              "projectPath": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\MonexUp.Domain.csproj"
+            "D:\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\MonexUp.Domain.csproj": {
+              "projectPath": "D:\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\MonexUp.Domain.csproj"
             }
           }
         }
@@ -7294,7 +7293,8 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      }
+      },
+      "SdkAnalysisLevel": "9.0.200"
     },
     "frameworks": {
       "net8.0": {
@@ -7325,7 +7325,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.409/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

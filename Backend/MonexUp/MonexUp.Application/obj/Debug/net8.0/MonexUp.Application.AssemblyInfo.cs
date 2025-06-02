@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MonexUp.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fc07e19ea3854cc22fbe8158671c0a8c7bb67059")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fc1505c8057cd94326ddf4cc3b4f4ba12159532b")]
 [assembly: System.Reflection.AssemblyProductAttribute("MonexUp.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MonexUp.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
