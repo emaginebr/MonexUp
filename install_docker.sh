@@ -16,6 +16,7 @@ docker rm monexup-app1
 cd Backend/MonexUp
 docker build -t monexup-api -f MonexUp.API/Dockerfile .
 docker run --name monexup-api1 -p 8080:443 -e ASPNETCORE_URLS="https://+" -e ASPNETCORE_HTTPS_PORTS=8080 --network docker-network monexup-api &
+docker run --name monexup-api1 -e ASPNETCORE_URLS="https://+" -e ASPNETCORE_HTTPS_PORTS=443 --network docker-network monexup-api &
 cd ../../Frontend/monexup-app
 docker build -t monexup-app .
 docker run --name monexup-app1 -p 80:80 -p 443:443 monexup-app &
