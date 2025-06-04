@@ -14,7 +14,7 @@ const ProductService : IProductService = {
     },
     insert: async (product: ProductInfo, token: string) => {
         let ret: ProductResult;
-        let request = await _httpClient.doPostAuth<ProductResult>("api/Product/insert", product, token);
+        let request = await _httpClient.doPostAuth<ProductResult>("/Product/insert", product, token);
         if (request.success) {
             return request.data;
         }
@@ -29,7 +29,7 @@ const ProductService : IProductService = {
     },
     update: async (product: ProductInfo, token: string) => {
         let ret: ProductResult;
-        let request = await _httpClient.doPostAuth<ProductResult>("api/Product/update", product, token);
+        let request = await _httpClient.doPostAuth<ProductResult>("/Product/update", product, token);
         if (request.success) {
             return request.data;
         }
@@ -44,7 +44,7 @@ const ProductService : IProductService = {
     },
     search: async (param: ProductSearchParam, token: string) => {
         let ret: ProductListPagedResult;
-        let request = await _httpClient.doPostAuth<ProductListPagedResult>("/api/Product/search", param, token);
+        let request = await _httpClient.doPostAuth<ProductListPagedResult>("/Product/search", param, token);
         if (request.success) {
             return request.data;
         }
@@ -59,7 +59,7 @@ const ProductService : IProductService = {
     },
     listByNetwork: async (networkId: number) => {
         let ret: ProductListResult;
-        let request = await _httpClient.doGet<ProductListResult>("/api/Product/listByNetwork/" + networkId, {});
+        let request = await _httpClient.doGet<ProductListResult>("/Product/listByNetwork/" + networkId, {});
         if (request.success) {
             return request.data;
         }
@@ -74,7 +74,7 @@ const ProductService : IProductService = {
     },
     listByNetworkSlug: async (networkSlug: string) => {
         let ret: ProductListResult;
-        let request = await _httpClient.doGet<ProductListResult>("/api/Product/listByNetworkSlug/" + networkSlug, {});
+        let request = await _httpClient.doGet<ProductListResult>("/Product/listByNetworkSlug/" + networkSlug, {});
         if (request.success) {
             return request.data;
         }
@@ -89,7 +89,7 @@ const ProductService : IProductService = {
     },
     getById: async (productId: number, token: string) => {
         let ret: ProductResult;
-        let request = await _httpClient.doGetAuth<ProductResult>("/api/Product/getById/" + productId, token);
+        let request = await _httpClient.doGetAuth<ProductResult>("/Product/getById/" + productId, token);
         if (request.success) {
             return request.data;
         }
@@ -104,7 +104,7 @@ const ProductService : IProductService = {
     },
     getBySlug: async (productSlug: string) => {
         let ret: ProductResult;
-        let request = await _httpClient.doGet<ProductResult>("/api/Product/getBySlug/" + productSlug, {});
+        let request = await _httpClient.doGet<ProductResult>("/Product/getBySlug/" + productSlug, {});
         if (request.success) {
             return request.data;
         }

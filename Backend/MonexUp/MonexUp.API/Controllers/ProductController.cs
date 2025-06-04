@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace MonexUp.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ProductController: ControllerBase
     {

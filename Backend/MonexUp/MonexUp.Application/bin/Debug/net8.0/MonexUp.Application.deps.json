@@ -1390,7 +1390,7 @@
         },
         "runtime": {
           "Core.Domain.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         }
@@ -1406,7 +1406,7 @@
         },
         "runtime": {
           "DB.Infra.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         }
@@ -1426,7 +1426,7 @@
         },
         "runtime": {
           "MonexUp.Domain.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         }
@@ -1437,7 +1437,7 @@
         },
         "runtime": {
           "MonexUp.DTO.dll": {
-            "assemblyVersion": "1.0.0",
+            "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
         }

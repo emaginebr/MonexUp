@@ -15,7 +15,7 @@ const ImageService : IImageService = {
         formData.append('file', file, 'cropped.jpg');
 
         //formData.append("networkId", "0");
-        let request = await _httpClient.doPostFormDataAuth<StringResult>("/api/Image/uploadImageUser", formData, token);
+        let request = await _httpClient.doPostFormDataAuth<StringResult>("/Image/uploadImageUser", formData, token);
         if (request.success) {
             return request.data;
         }
@@ -35,7 +35,7 @@ const ImageService : IImageService = {
         formData.append('file', file, 'cropped.jpg');
         formData.append('networkId', networkId.toString());
 
-        let request = await _httpClient.doPostFormDataAuth<StringResult>("/api/Image/uploadImageNetwork", formData, token);
+        let request = await _httpClient.doPostFormDataAuth<StringResult>("/Image/uploadImageNetwork", formData, token);
         if (request.success) {
             return request.data;
         }
@@ -55,7 +55,7 @@ const ImageService : IImageService = {
         formData.append('file', file, 'cropped.jpg');
         formData.append('productId', productId.toString());
 
-        let request = await _httpClient.doPostFormDataAuth<StringResult>("/api/Image/uploadImageProduct", formData, token);
+        let request = await _httpClient.doPostFormDataAuth<StringResult>("/Image/uploadImageProduct", formData, token);
         if (request.success) {
             return request.data;
         }

@@ -16,7 +16,7 @@ const ProfileService : IProfileService = {
     },
     insert: async (profile: UserProfileInfo, token: string) => {
         let ret: UserProfileResult;
-        let request = await _httpClient.doPostAuth<UserProfileResult>("api/Profile/insert", profile, token);
+        let request = await _httpClient.doPostAuth<UserProfileResult>("/Profile/insert", profile, token);
         if (request.success) {
             return request.data;
         }
@@ -31,7 +31,7 @@ const ProfileService : IProfileService = {
     },
     update: async (profile: UserProfileInfo, token: string) => {
         let ret: UserProfileResult;
-        let request = await _httpClient.doPostAuth<UserProfileResult>("api/Profile/update", profile, token);
+        let request = await _httpClient.doPostAuth<UserProfileResult>("/Profile/update", profile, token);
         if (request.success) {
             return request.data;
         }
@@ -46,7 +46,7 @@ const ProfileService : IProfileService = {
     },
     delete: async (profileId: number, token: string) => {
         let ret: StatusRequest;
-        let request = await _httpClient.doGetAuth<StatusRequest>("api/Profile/delete/" + profileId, token);
+        let request = await _httpClient.doGetAuth<StatusRequest>("/Profile/delete/" + profileId, token);
         if (request.success) {
             return request.data;
         }
@@ -61,7 +61,7 @@ const ProfileService : IProfileService = {
     },
     listByNetwork: async (networkId: number, token: string) => {
         let ret: UserProfileListResult;
-        let request = await _httpClient.doGetAuth<UserProfileListResult>("api/Profile/listByNetwork/" + networkId, token);
+        let request = await _httpClient.doGetAuth<UserProfileListResult>("/Profile/listByNetwork/" + networkId, token);
         if (request.success) {
             return request.data;
         }
@@ -76,7 +76,7 @@ const ProfileService : IProfileService = {
     },
     getById: async (profileId: number, token: string) => {
         let ret: UserProfileResult;
-        let request = await _httpClient.doGetAuth<UserProfileResult>("/api/Profile/getById/" + profileId, token);
+        let request = await _httpClient.doGetAuth<UserProfileResult>("/Profile/getById/" + profileId, token);
         if (request.success) {
             return request.data;
         }

@@ -17,7 +17,7 @@ const UserService : IUserService = {
     },
     getMe: async (token: string) => {
         let ret: UserResult;
-        let url = "/api/User/getme";
+        let url = "/User/getme";
         let request = await _httpClient.doGetAuth<UserResult>(url, token);
         if (request.success) {
             return request.data;
@@ -33,7 +33,7 @@ const UserService : IUserService = {
     },
     getUserByEmail: async (email: string) => {
         let ret: UserResult;
-        let url = "/api/User/getbyemail/" + email;
+        let url = "/User/getbyemail/" + email;
         let request = await _httpClient.doGet<UserResult>(url, {});
         if (request.success) {
             return request.data;
@@ -49,7 +49,7 @@ const UserService : IUserService = {
     },
     getBySlug: async (slug: string) => {
         let ret: UserResult;
-        let url = "/api/User/getBySlug/" + slug;
+        let url = "/User/getBySlug/" + slug;
         let request = await _httpClient.doGet<UserResult>(url, {});
         if (request.success) {
             return request.data;
@@ -65,7 +65,7 @@ const UserService : IUserService = {
     },
     getTokenAuthorized: async (email: string, password: string) => {
         let ret: UserTokenResult;
-        let request = await _httpClient.doPost<UserTokenResult>("/api/User/gettokenauthorized", {
+        let request = await _httpClient.doPost<UserTokenResult>("/User/gettokenauthorized", {
             email: email,
             password: password
         });
@@ -83,7 +83,7 @@ const UserService : IUserService = {
     },
     insert: async (user: UserInfo) => {
         let ret: UserResult;
-        let request = await _httpClient.doPost<UserResult>("api/User/insert", user);
+        let request = await _httpClient.doPost<UserResult>("/User/insert", user);
         if (request.success) {
             return request.data;
         }
@@ -98,7 +98,7 @@ const UserService : IUserService = {
     },
     update: async (user: UserInfo, token: string) => {
         let ret: UserResult;
-        let request = await _httpClient.doPostAuth<UserResult>("api/User/update", user, token);
+        let request = await _httpClient.doPostAuth<UserResult>("/User/update", user, token);
         if (request.success) {
             return request.data;
         }
@@ -113,7 +113,7 @@ const UserService : IUserService = {
     },
     loginWithEmail: async (email: string, password: string) => {
         let ret: UserResult;
-        let request = await _httpClient.doPost<UserResult>("/api/User/loginwithemail", {
+        let request = await _httpClient.doPost<UserResult>("/User/loginwithemail", {
             email: email,
             password: password
         });
@@ -131,7 +131,7 @@ const UserService : IUserService = {
     },
     hasPassword: async (token: string) => {
         let ret: StatusRequest;
-        let url = "/api/User/haspassword";
+        let url = "/User/haspassword";
         let request = await _httpClient.doGetAuth<StatusRequest>(url, token);
         if (request.success) {
             return request.data;
@@ -147,7 +147,7 @@ const UserService : IUserService = {
     },
     changePassword: async (oldPassword: string, newPassword: string, token: string) => {
         let ret: StatusRequest;
-        let request = await _httpClient.doPostAuth<StatusRequest>("/api/User/changepassword", {
+        let request = await _httpClient.doPostAuth<StatusRequest>("/User/changepassword", {
             oldPassword: oldPassword,
             newPassword: newPassword
         }, token);
@@ -166,7 +166,7 @@ const UserService : IUserService = {
     },
     sendRecoveryEmail: async (email: string) => {
         let ret: StatusRequest;
-        let url = "/api/User/sendrecoveryemail/" + email;
+        let url = "/User/sendrecoveryemail/" + email;
         let request = await _httpClient.doGet<StatusRequest>(url, {});
         if (request.success) {
             return request.data;
@@ -182,7 +182,7 @@ const UserService : IUserService = {
     },
     changePasswordUsingHash: async (recoveryHash: string, newPassword: string) => {
         let ret: StatusRequest;
-        let request = await _httpClient.doPost<StatusRequest>("/api/User/changepasswordusinghash", {
+        let request = await _httpClient.doPost<StatusRequest>("/User/changepasswordusinghash", {
             recoveryHash: recoveryHash,
             newPassword: newPassword
         });
@@ -200,7 +200,7 @@ const UserService : IUserService = {
     },
     list: async (take: number) => {
         let ret: UserListResult;
-        let request = await _httpClient.doGet<UserResult>("/api/User/list/" + take, {});
+        let request = await _httpClient.doGet<UserResult>("/User/list/" + take, {});
         if (request.success) {
             return request.data;
         }
@@ -223,7 +223,7 @@ const UserService : IUserService = {
             profileId: profileId,
             pageNum: pageNum
         };
-        let request = await _httpClient.doPostAuth<UserListPagedResult>("/api/User/search", param, token);
+        let request = await _httpClient.doPostAuth<UserListPagedResult>("/User/search", param, token);
         if (request.success) {
             return request.data;
         }

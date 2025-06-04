@@ -14,7 +14,7 @@ const TemplateService : ITemplateService = {
     },
     getNetworkPage: async (networkSlug: string, pageSlug: string, language: string) => {
         let ret: TemplatePageResult;
-        let url: string = "api/Template/getNetworkPage/" + networkSlug + "/" + pageSlug + "/" + language;
+        let url: string = "/Template/getNetworkPage/" + networkSlug + "/" + pageSlug + "/" + language;
         let request = await _httpClient.doGet<TemplatePageResult>(url, {});
         if (request.success) {
             console.log("Template Page:", JSON.stringify(request.data));
@@ -31,7 +31,7 @@ const TemplateService : ITemplateService = {
     },
     getPageById: async (pageId: number, language: string) => {
         let ret: TemplatePageResult;
-        let url: string = "api/Template/getPageById/" + pageId + "/" + language;
+        let url: string = "/Template/getPageById/" + pageId + "/" + language;
         let request = await _httpClient.doGet<TemplatePageResult>(url, {});
         if (request.success) {
             console.log("Template Page:", JSON.stringify(request.data));
@@ -48,7 +48,7 @@ const TemplateService : ITemplateService = {
     },
     insertPart: async (part: TemplatePartInfo, token: string) => {
         let ret: StatusRequest;
-        let request = await _httpClient.doPostAuth<StatusRequest>("api/Template/insertPart", part, token);
+        let request = await _httpClient.doPostAuth<StatusRequest>("/Template/insertPart", part, token);
         if (request.success) {
             return request.data;
         }
@@ -63,7 +63,7 @@ const TemplateService : ITemplateService = {
     },
     updatePart: async (part: TemplatePartInfo, token: string) => {
         let ret: StatusRequest;
-        let request = await _httpClient.doPostAuth<StatusRequest>("api/Template/updatePart", part, token);
+        let request = await _httpClient.doPostAuth<StatusRequest>("/Template/updatePart", part, token);
         if (request.success) {
             return request.data;
         }
@@ -78,7 +78,7 @@ const TemplateService : ITemplateService = {
     },
     deletePart: async (partId: number, token: string) => {
         let ret: StatusRequest;
-        let request = await _httpClient.doGetAuth<StatusRequest>("api/Template/deletePart/" + partId, token);
+        let request = await _httpClient.doGetAuth<StatusRequest>("/Template/deletePart/" + partId, token);
         if (request.success) {
             return request.data;
         }
@@ -93,7 +93,7 @@ const TemplateService : ITemplateService = {
     },
     movePartUp: async (partId: number, token: string) => {
         let ret: StatusRequest;
-        let request = await _httpClient.doGetAuth<StatusRequest>("api/Template/movePartUp/" + partId, token);
+        let request = await _httpClient.doGetAuth<StatusRequest>("/Template/movePartUp/" + partId, token);
         if (request.success) {
             return request.data;
         }
@@ -108,7 +108,7 @@ const TemplateService : ITemplateService = {
     },
     movePartDown: async (partId: number, token: string) => {
         let ret: StatusRequest;
-        let request = await _httpClient.doGetAuth<StatusRequest>("api/Template/movePartDown/" + partId, token);
+        let request = await _httpClient.doGetAuth<StatusRequest>("/Template/movePartDown/" + partId, token);
         if (request.success) {
             return request.data;
         }
@@ -123,7 +123,7 @@ const TemplateService : ITemplateService = {
     },
     getVariable: async (pageId: number, key: string, token: string) => {
         let ret: TemplateVarResult;
-        let url: string = "api/Template/getVariable/" + pageId + "/" + key;
+        let url: string = "/Template/getVariable/" + pageId + "/" + key;
         let request = await _httpClient.doGetAuth<TemplateVarResult>(url, token);
         if (request.success) {
             return request.data;
@@ -139,7 +139,7 @@ const TemplateService : ITemplateService = {
     },
     saveVariable: async (variable: TemplateVarInfo, token: string) => {
         let ret: TemplateVarResult;
-        let url: string = "api/Template/saveVariable";
+        let url: string = "/Template/saveVariable";
         let request = await _httpClient.doPostAuth<TemplateVarResult>(url, variable, token);
         if (request.success) {
             return request.data;

@@ -12,7 +12,7 @@ const OrderService : IOrderService = {
     },
     createSubscription: async (productSlug: string, token: string, networkSlug?: string, sellerSlug?: string) => {
         let ret: SubscriptionResult;
-        let url: string = "/api/Order/createSubscription/" + productSlug;
+        let url: string = "/Order/createSubscription/" + productSlug;
         if (networkSlug) {
             url += "?networkSlug=" + networkSlug;
         }
@@ -34,7 +34,7 @@ const OrderService : IOrderService = {
     },
     createInvoice: async (productSlug: string, token: string) => {
         let ret: SubscriptionResult;
-        let request = await _httpClient.doGetAuth<SubscriptionResult>("/api/Order/createInvoice/" + productSlug, token);
+        let request = await _httpClient.doGetAuth<SubscriptionResult>("/Order/createInvoice/" + productSlug, token);
         if (request.success) {
             return request.data;
         }
@@ -49,7 +49,7 @@ const OrderService : IOrderService = {
     },
     search: async (networkId: number, userId: number, sellerId: number, pageNum: number, token: string) => {
         let ret: OrderListPagedResult;
-        let request = await _httpClient.doPostAuth<OrderListPagedResult>("/api/Order/search", {
+        let request = await _httpClient.doPostAuth<OrderListPagedResult>("/Order/search", {
             networkId: networkId,
             userId: userId,
             sellerId: sellerId,
@@ -69,7 +69,7 @@ const OrderService : IOrderService = {
     },
     getById: async (orderId: number, token: string) => {
         let ret: OrderResult;
-        let request = await _httpClient.doGetAuth<OrderListPagedResult>("/api/Order/getById/" + orderId, token);
+        let request = await _httpClient.doGetAuth<OrderListPagedResult>("/Order/getById/" + orderId, token);
         if (request.success) {
             return request.data;
         }

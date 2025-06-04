@@ -14,7 +14,7 @@ using System.Text;
 
 namespace MonexUp.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ImageController: ControllerBase
     {

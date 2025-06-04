@@ -18,7 +18,7 @@ const NetworkService : INetworkService = {
     },
     insert: async (network: NetworkInsertInfo, token: string) => {
         let ret: NetworkResult;
-        let request = await _httpClient.doPostAuth<NetworkResult>("api/Network/insert", network, token);
+        let request = await _httpClient.doPostAuth<NetworkResult>("/Network/insert", network, token);
         if (request.success) {
             return request.data;
         }
@@ -33,7 +33,7 @@ const NetworkService : INetworkService = {
     },
     update: async (network: NetworkInfo, token: string) => {
         let ret: NetworkResult;
-        let request = await _httpClient.doPostAuth<NetworkResult>("api/Network/update", network, token);
+        let request = await _httpClient.doPostAuth<NetworkResult>("/Network/update", network, token);
         if (request.success) {
             return request.data;
         }
@@ -48,7 +48,7 @@ const NetworkService : INetworkService = {
     },
     listAll: async () => {
         let ret: NetworkListResult;
-        let request = await _httpClient.doGet<NetworkListResult>("/api/Network/listAll", {});
+        let request = await _httpClient.doGet<NetworkListResult>("/Network/listAll", {});
         if (request.success) {
             return request.data;
         }
@@ -63,7 +63,7 @@ const NetworkService : INetworkService = {
     },
     listByUser: async (token: string) => {
         let ret: UserNetworkListResult;
-        let request = await _httpClient.doGetAuth<UserNetworkListResult>("/api/Network/listByUser", token);
+        let request = await _httpClient.doGetAuth<UserNetworkListResult>("/Network/listByUser", token);
         if (request.success) {
             return request.data;
         }
@@ -78,7 +78,7 @@ const NetworkService : INetworkService = {
     },
     listByNetwork: async (networkSlug: string) => {
         let ret: UserNetworkListResult;
-        let request = await _httpClient.doGet<UserNetworkListResult>("/api/Network/listByNetwork/" + networkSlug, {});
+        let request = await _httpClient.doGet<UserNetworkListResult>("/Network/listByNetwork/" + networkSlug, {});
         if (request.success) {
             return request.data;
         }
@@ -93,7 +93,7 @@ const NetworkService : INetworkService = {
     },
     getById: async (networkId: number, token: string) => {
         let ret: NetworkResult;
-        let request = await _httpClient.doGetAuth<NetworkResult>("/api/Network/getById/" + networkId, token);
+        let request = await _httpClient.doGetAuth<NetworkResult>("/Network/getById/" + networkId, token);
         if (request.success) {
             return request.data;
         }
@@ -108,7 +108,7 @@ const NetworkService : INetworkService = {
     },
     getBySlug: async (networkSlug: string) => {
         let ret: NetworkResult;
-        let request = await _httpClient.doGet<NetworkResult>("/api/Network/getBySlug/" + networkSlug, {});
+        let request = await _httpClient.doGet<NetworkResult>("/Network/getBySlug/" + networkSlug, {});
         if (request.success) {
             return request.data;
         }
@@ -123,7 +123,7 @@ const NetworkService : INetworkService = {
     },
     getUserNetwork: async (networkId: number, token: string) => {
         let ret: UserNetworkResult;
-        let request = await _httpClient.doGetAuth<UserNetworkResult>("/api/Network/getUserNetwork/" + networkId, token);
+        let request = await _httpClient.doGetAuth<UserNetworkResult>("/Network/getUserNetwork/" + networkId, token);
         if (request.success) {
             return request.data;
         }
@@ -138,7 +138,7 @@ const NetworkService : INetworkService = {
     },
     getUserNetworkBySlug: async (networkSlug: string, token: string) => {
         let ret: UserNetworkResult;
-        let request = await _httpClient.doGetAuth<UserNetworkResult>("/api/Network/getUserNetworkBySlug/" + networkSlug, token);
+        let request = await _httpClient.doGetAuth<UserNetworkResult>("/Network/getUserNetworkBySlug/" + networkSlug, token);
         if (request.success) {
             return request.data;
         }
@@ -153,7 +153,7 @@ const NetworkService : INetworkService = {
     },
     getSellerBySlug: async (networkSlug: string, userSlug: string) => {
         let ret: UserNetworkResult;
-        let request = await _httpClient.doGet<UserNetworkResult>("/api/Network/getSellerBySlug/" + networkSlug + "/" + userSlug, {});
+        let request = await _httpClient.doGet<UserNetworkResult>("/Network/getSellerBySlug/" + networkSlug + "/" + userSlug, {});
         if (request.success) {
             return request.data;
         }
@@ -172,7 +172,7 @@ const NetworkService : INetworkService = {
             networkId: networkId,
             referrerId: referrerId
         }));
-        let request = await _httpClient.doPostAuth<StatusRequest>("api/Network/requestAccess", {
+        let request = await _httpClient.doPostAuth<StatusRequest>("/Network/requestAccess", {
             networkId: networkId,
             referrerId: referrerId
         }, token);
@@ -190,7 +190,7 @@ const NetworkService : INetworkService = {
     },
     changeStatus: async (networkId: number, userId: number, status: number, token: string) => {
         let ret: StatusRequest;
-        let request = await _httpClient.doPostAuth<StatusRequest>("api/Network/changeStatus", {
+        let request = await _httpClient.doPostAuth<StatusRequest>("/Network/changeStatus", {
             networkId: networkId,
             userId: userId,
             status: status
@@ -209,7 +209,7 @@ const NetworkService : INetworkService = {
     },
     promote: async (networkId: number, userId: number, token: string) => {
         let ret: StatusRequest;
-        let request = await _httpClient.doGetAuth<StatusRequest>("api/Network/promote/" + networkId + "/" + userId, token);
+        let request = await _httpClient.doGetAuth<StatusRequest>("/Network/promote/" + networkId + "/" + userId, token);
         if (request.success) {
             return request.data;
         }
@@ -224,7 +224,7 @@ const NetworkService : INetworkService = {
     },
     demote: async (networkId: number, userId: number, token: string) => {
         let ret: StatusRequest;
-        let request = await _httpClient.doGetAuth<StatusRequest>("api/Network/demote/" + networkId + "/" + userId, token);
+        let request = await _httpClient.doGetAuth<StatusRequest>("/Network/demote/" + networkId + "/" + userId, token);
         if (request.success) {
             return request.data;
         }

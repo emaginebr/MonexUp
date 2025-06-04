@@ -20,7 +20,7 @@ using MonexUp.Domain.Interfaces.Factory;
 
 namespace MonexUp.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {

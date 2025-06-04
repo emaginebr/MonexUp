@@ -22,9 +22,7 @@ namespace MonexUp.BackgroundService
         {
             var config = new ConfigurationParam
             {
-                ConnectionString = Configuration.GetConnectionString("NoChainSwapContext"),
-                WalletStxApi = Configuration.GetSection("Stacks:WalletApi").Value,
-                StacksApi = Configuration.GetSection("Stacks:StacksApi").Value
+                ConnectionString = Configuration.GetConnectionString("NoChainSwapContext")
             };
             Initializer.Configure(services, config, false);
             services.AddHostedService<Service>();

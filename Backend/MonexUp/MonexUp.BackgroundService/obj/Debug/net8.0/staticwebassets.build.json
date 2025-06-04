@@ -1,11 +1,1 @@
-{
-  "Version": 1,
-  "Hash": "zVZ3bFhshNRsAFlqYFHzbNyqGgKDkGOiSVbzDMRq6DU=",
-  "Source": "MonexUp.BackgroundService",
-  "BasePath": "_content/MonexUp.BackgroundService",
-  "Mode": "Default",
-  "ManifestType": "Build",
-  "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": []
-}
+{"Version":1,"Hash":"SbteTJSS00j+O6d3kz85UtMEvTcQKWaf4cz1OAEOArA=","Source":"MonexUp.BackgroundService","BasePath":"_content/MonexUp.BackgroundService","Mode":"Default","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[],"Assets":[],"Endpoints":[]}

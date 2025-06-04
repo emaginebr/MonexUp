@@ -50,8 +50,13 @@ public partial class MonexUpContext : DbContext
     public virtual DbSet<Withdrawal> Withdrawals { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=167.172.240.71;Port=5432;Database=monexup;Username=postgres;Password=eaa69cpxy2");
+    {
+#if DEBUG
+        optionsBuilder.UseNpgsql("Host=emagine-db-do-user-4436480-0.e.db.ondigitalocean.com;Port=25060;Database=monexup;Username=doadmin;Password=AVNS_akcvzXVnMkvNKaO10-O");
+#else
+        optionsBuilder.UseNpgsql("Host=private-emagine-db-do-user-4436480-0.e.db.ondigitalocean.com;Port=25060;Database=monexup;Username=doadmin;Password=AVNS_akcvzXVnMkvNKaO10-O");
+#endif
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

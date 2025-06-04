@@ -15,7 +15,7 @@ const InvoiceService : IInvoiceService = {
     },
     search: async (networkId: number, userId: number, sellerId: number, pageNum: number, token: string) => {
         let ret: InvoiceListPagedResult;
-        let request = await _httpClient.doPostAuth<InvoiceListPagedResult>("/api/Invoice/search", {
+        let request = await _httpClient.doPostAuth<InvoiceListPagedResult>("/Invoice/search", {
             networkId: networkId,
             userId: userId,
             sellerId: sellerId,
@@ -35,7 +35,7 @@ const InvoiceService : IInvoiceService = {
     },
     searchStatement: async (param: StatementSearchParam, token: string) => {
         let ret: StatementListPagedResult;
-        let request = await _httpClient.doPostAuth<StatementListPagedResult>("/api/Invoice/searchStatement", param, token);
+        let request = await _httpClient.doPostAuth<StatementListPagedResult>("/Invoice/searchStatement", param, token);
         if (request.success) {
             return request.data;
         }
@@ -66,7 +66,7 @@ const InvoiceService : IInvoiceService = {
     },
     getAvailableBalance: async (token: string) => {
         let ret: NumberResult;
-        let request = await _httpClient.doGetAuth<NumberResult>("/api/Invoice/getAvailableBalance", token);
+        let request = await _httpClient.doGetAuth<NumberResult>("/Invoice/getAvailableBalance", token);
         if (request.success) {
             return request.data;
         }
@@ -81,7 +81,7 @@ const InvoiceService : IInvoiceService = {
     },
     syncronize: async (token: string) => {
         let ret: StatusRequest;
-        let request = await _httpClient.doGetAuth<StatusRequest>("/api/Invoice/syncronize", token);
+        let request = await _httpClient.doGetAuth<StatusRequest>("/Invoice/syncronize", token);
         if (request.success) {
             return request.data;
         }
@@ -96,7 +96,7 @@ const InvoiceService : IInvoiceService = {
     },
     checkout: async (checkoutSessionId: string) => {
         let ret: InvoiceResult;
-        let request = await _httpClient.doGet<InvoiceResult>("/api/Invoice/checkout/" + checkoutSessionId, {});
+        let request = await _httpClient.doGet<InvoiceResult>("/Invoice/checkout/" + checkoutSessionId, {});
         if (request.success) {
             return request.data;
         }
