@@ -55,7 +55,7 @@ namespace MonexUp.API
             }));
             services.AddHttpsRedirection(options =>
             {
-                options.HttpsPort = 8080;
+                options.HttpsPort = 443;
             });
         }
 
