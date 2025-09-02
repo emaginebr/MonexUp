@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "Q3iNPmZUyXY=",
+  "dgSpecHash": "Nfmc/X4R7S4=",
   "success": true,
-  "projectFilePath": "D:\\Projetos\\MonexUp\\Backend\\MonexUp\\Core.Domain\\Core.Domain.csproj",
+  "projectFilePath": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\Core.Domain\\Core.Domain.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Rodrigo\\.nuget\\packages\\microsoft.win32.systemevents\\9.0.4\\microsoft.win32.systemevents.9.0.4.nupkg.sha512",
-    "C:\\Users\\Rodrigo\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
-    "C:\\Users\\Rodrigo\\.nuget\\packages\\system.drawing.common\\9.0.4\\system.drawing.common.9.0.4.nupkg.sha512"
+    "C:\\Users\\rodrigo.carneiro\\.nuget\\packages\\microsoft.win32.systemevents\\9.0.8\\microsoft.win32.systemevents.9.0.8.nupkg.sha512",
+    "C:\\Users\\rodrigo.carneiro\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
+    "C:\\Users\\rodrigo.carneiro\\.nuget\\packages\\system.drawing.common\\9.0.8\\system.drawing.common.9.0.8.nupkg.sha512"
   ],
   "logs": []
 }
