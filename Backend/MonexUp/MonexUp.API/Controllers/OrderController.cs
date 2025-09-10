@@ -1,11 +1,12 @@
-﻿using MonexUp.Domain.Impl.Services;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using MonexUp.Domain.Impl.Services;
 using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Order;
 using MonexUp.DTO.Product;
 using MonexUp.DTO.Subscription;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+using NAuth.Client;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,33 +17,30 @@ namespace MonexUp.API.Controllers
     [ApiController]
     public class OrderController: ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IUserClient _userClient;
         private readonly IOrderService _orderService;
         private readonly ISubscriptionService _subscriptionService;
         private readonly INetworkService _networkService;
         private readonly IProductService _productService;
         private readonly IStripeService _stripeService;
-        private readonly IUserDomainFactory _userFactory;
         private readonly IProductDomainFactory _productFactory;
 
         public OrderController(
-            IUserService userService, 
+            IUserClient userClient, 
             IOrderService orderService,
             ISubscriptionService subscriptionService,
             INetworkService networkService,
             IProductService productService,
             IStripeService stripeService,
-            IUserDomainFactory userFactory,
             IProductDomainFactory productFactory
         )
         {
-            _userService = userService;
+            _userClient = userClient;
             _orderService = orderService;
             _subscriptionService = subscriptionService;
             _networkService = networkService;
             _productService = productService;
             _stripeService = stripeService;
-            _userFactory = userFactory;
             _productFactory = productFactory;
         }
 
@@ -56,7 +54,7 @@ namespace MonexUp.API.Controllers
         {
             try
             {
-                var userSession = _userService.GetUserInSession(HttpContext);
+                var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
                     return StatusCode(401, "Not Authorized");
@@ -79,7 +77,7 @@ namespace MonexUp.API.Controllers
                 long? sellerId = null;
                 if (!string.IsNullOrEmpty(sellerSlug))
                 {
-                    var seller = _userService.GetBySlug(sellerSlug);
+                    var seller = await _userClient.GetBySlugAsync(sellerSlug);
                     if (seller != null)
                     {
                         sellerId = seller.UserId;
@@ -105,7 +103,7 @@ namespace MonexUp.API.Controllers
         {
             try
             {
-                var userSession = _userService.GetUserInSession(HttpContext);
+                var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
                     return StatusCode(401, "Not Authorized");
@@ -128,7 +126,7 @@ namespace MonexUp.API.Controllers
         {
             try
             {
-                var userSession = _userService.GetUserInSession(HttpContext);
+                var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
                     return StatusCode(401, "Not Authorized");
@@ -147,7 +145,7 @@ namespace MonexUp.API.Controllers
         {
             try
             {
-                var userSession = _userService.GetUserInSession(HttpContext);
+                var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
                     return StatusCode(401, "Not Authorized");
@@ -173,7 +171,7 @@ namespace MonexUp.API.Controllers
         {
             try
             {
-                var userSession = _userService.GetUserInSession(HttpContext);
+                var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
                     return StatusCode(401, "Not Authorized");

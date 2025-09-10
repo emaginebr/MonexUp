@@ -12,6 +12,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using NAuth.Client;
+using System.Threading.Tasks;
 
 namespace MonexUp.API.Controllers
 {
@@ -21,15 +23,21 @@ namespace MonexUp.API.Controllers
     {
         private readonly INetworkDomainFactory _networkFactory;
         private readonly IUserNetworkDomainFactory _userNetworkFactory;
-        private readonly IUserService _userService;
+        private readonly IUserClient _userClient;
         private readonly INetworkService _networkService;
         private readonly IProfileService _profileService;
 
-        public NetworkController(INetworkDomainFactory networkFactory, IUserNetworkDomainFactory userNetworkFactory, IUserService userService, INetworkService networkService, IProfileService profileService)
+        public NetworkController(
+            INetworkDomainFactory networkFactory, 
+            IUserNetworkDomainFactory userNetworkFactory, 
+            IUserClient userClient, 
+            INetworkService networkService, 
+            IProfileService profileService
+        )
         {
             _networkFactory = networkFactory;
             _userNetworkFactory = userNetworkFactory;
-            _userService = userService;
+            _userClient = userClient;
             _networkService = networkService;
             _profileService = profileService;
         }
@@ -40,7 +48,7 @@ namespace MonexUp.API.Controllers
         {
             try
             {
-                var userSession = _userService.GetUserInSession(HttpContext);
+                var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
                     return StatusCode(401, "Not Authorized");
@@ -63,7 +71,7 @@ namespace MonexUp.API.Controllers
         {
             try
             {
-                var userSession = _userService.GetUserInSession(HttpContext);
+                var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
                     return StatusCode(401, "Not Authorized");
@@ -107,7 +115,7 @@ namespace MonexUp.API.Controllers
         {
             try
             {
-                var userSession = _userService.GetUserInSession(HttpContext);
+                var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
                     return StatusCode(401, "Not Authorized");
@@ -194,7 +202,7 @@ namespace MonexUp.API.Controllers
         {
             try
             {
-                var userSession = _userService.GetUserInSession(HttpContext);
+                var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
                     return StatusCode(401, "Not Authorized");
@@ -218,7 +226,7 @@ namespace MonexUp.API.Controllers
         {
             try
             {
-                var userSession = _userService.GetUserInSession(HttpContext);
+                var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
                     return StatusCode(401, "Not Authorized");
@@ -242,7 +250,7 @@ namespace MonexUp.API.Controllers
         {
             try
             {
-                var userSession = _userService.GetUserInSession(HttpContext);
+                var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
                     return StatusCode(401, "Not Authorized");
@@ -283,7 +291,7 @@ namespace MonexUp.API.Controllers
         }
 
         [HttpGet("getSellerBySlug/{networkSlug}/{sellerSlug}")]
-        public ActionResult<UserNetworkResult> GetSellerBySlug(string networkSlug, string sellerSlug)
+        public async Task<ActionResult<UserNetworkResult>> GetSellerBySlug(string networkSlug, string sellerSlug)
         {
             try
             {
@@ -292,13 +300,17 @@ namespace MonexUp.API.Controllers
                 {
                     throw new Exception("Network not found");
                 }
-                var user = _userService.GetBySlug(sellerSlug);
+                var user = await _userClient.GetBySlugAsync(sellerSlug);
                 if (user == null)
                 {
                     throw new Exception("User not found");
                 }
+                if (!user.Sucesso)
+                {
+                    throw new Exception(user.Mensagem);
+                }
 
-                var userNetwork = _networkService.GetUserNetwork(network.NetworkId, user.UserId);
+                var userNetwork = _networkService.GetUserNetwork(network.NetworkId, user.User.UserId);
 
                 return new UserNetworkResult()
                 {
@@ -317,7 +329,7 @@ namespace MonexUp.API.Controllers
         {
             try
             {
-                var userSession = _userService.GetUserInSession(HttpContext);
+                var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
                     return StatusCode(401, "Not Authorized");
@@ -343,7 +355,7 @@ namespace MonexUp.API.Controllers
         {
             try
             {
-                var userSession = _userService.GetUserInSession(HttpContext);
+                var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
                     return StatusCode(401, "Not Authorized");
@@ -371,7 +383,7 @@ namespace MonexUp.API.Controllers
         {
             try
             {
-                var userSession = _userService.GetUserInSession(HttpContext);
+                var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
                     return StatusCode(401, "Not Authorized");
@@ -398,7 +410,7 @@ namespace MonexUp.API.Controllers
         {
             try
             {
-                var userSession = _userService.GetUserInSession(HttpContext);
+                var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
                     return StatusCode(401, "Not Authorized");

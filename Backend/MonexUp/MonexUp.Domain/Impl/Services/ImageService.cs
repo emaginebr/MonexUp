@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Core.Domain;
+using NAuth.Client;
 
 namespace MonexUp.Domain.Impl.Services
 {
@@ -25,16 +26,16 @@ namespace MonexUp.Domain.Impl.Services
         private const string REGION = "nyc3"; // ou fra1, sgp1, etc.
         private const string ENDPOINT = "https://emagine.nyc3.digitaloceanspaces.com";
 
-        private readonly IUserDomainFactory _userFactory;
+        private readonly IUserClient _userClient;
         private readonly INetworkDomainFactory _networkFactory;
         private readonly IProductDomainFactory _productFactory;
 
         public ImageService(
-            IUserDomainFactory userFactory,
+            IUserClient userClient,
             INetworkDomainFactory networkFactory,
             IProductDomainFactory productFactory
         ) {
-            _userFactory = userFactory;
+            _userClient = userClient;
             _networkFactory = networkFactory;
             _productFactory = productFactory;
         }
@@ -77,20 +78,21 @@ namespace MonexUp.Domain.Impl.Services
             return name;
         }
 
-        public string InsertToUser(Stream stream, long userId)
+        public async Task<string> InsertToUser(Stream stream, long userId)
         {
             if (!(userId > 0))
             {
                 throw new Exception("Invalid User ID");
             }
-            var user = _userFactory.BuildUserModel().GetById(userId, _userFactory);
+            //var user = _userFactory.BuildUserModel().GetById(userId, _userFactory);
+            var user = await _userClient.GetByIdAsync(userId);
             if (user == null)
             {
                 throw new Exception("User not found");
             }
             var name = string.Format("user-{0}.jpg", StringUtils.GenerateShortUniqueString());
             UploadFile(stream, name);
-            user.Image = name;
+            user.ImageUrl = name;
             user.Update(_userFactory);
             return name;
         }

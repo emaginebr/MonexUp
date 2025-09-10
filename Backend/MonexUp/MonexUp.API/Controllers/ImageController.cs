@@ -7,6 +7,7 @@ using MonexUp.Domain.Impl.Services;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Domain;
 using MonexUp.DTO.Network;
+using NAuth.Client;
 using System;
 using System.IO;
 using System.Security.Cryptography;
@@ -18,49 +19,19 @@ namespace MonexUp.API.Controllers
     [ApiController]
     public class ImageController: ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IUserClient _userClient;
         private readonly INetworkService _networkService;
         private readonly IImageService _imageService;
 
         public ImageController(
-            IUserService userService,
+            IUserClient userClient,
             INetworkService networkService,
             IImageService imageService
-        ) { 
-            _userService = userService;
+        ) {
+            _userClient = userClient;
             _networkService = networkService;
             _imageService = imageService;
         }
-
-        /*
-        [Authorize]
-        [HttpPost("uploadImage")]
-        public ActionResult<StringResult> UploadImage(IFormFile file)
-        {
-            try
-            {
-                if (file == null || file.Length == 0)
-                {
-                    return BadRequest("No file uploaded");
-                }
-                var userSession = _userService.GetUserInSession(HttpContext);
-                if (userSession == null)
-                {
-                    return StatusCode(401, "Not Authorized");
-                }
-
-                var fileName = _imageService.InsertFromStream(file.OpenReadStream(), file.FileName);
-                return new StringResult()
-                {
-                    Value = fileName
-                };
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-        */
 
         [Authorize]
         [HttpPost("uploadImageUser")]
@@ -72,7 +43,7 @@ namespace MonexUp.API.Controllers
                 {
                     return BadRequest("No file uploaded");
                 }
-                var userSession = _userService.GetUserInSession(HttpContext);
+                var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
                     return StatusCode(401, "Not Authorized");
@@ -100,7 +71,7 @@ namespace MonexUp.API.Controllers
                 {
                     return BadRequest("No file uploaded");
                 }
-                var userSession = _userService.GetUserInSession(HttpContext);
+                var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
                     return StatusCode(401, "Not Authorized");
@@ -128,7 +99,7 @@ namespace MonexUp.API.Controllers
                 {
                     return BadRequest("No file uploaded");
                 }
-                var userSession = _userService.GetUserInSession(HttpContext);
+                var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
                     return StatusCode(401, "Not Authorized");

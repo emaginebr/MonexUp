@@ -1,5 +1,6 @@
 ﻿using MonexUp.DTO.Product;
 using MonexUp.DTO.User;
+using NAuth.DTO.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using NAuth.Client;
+using System.Threading.Tasks;
 
 namespace MonexUp.API.Controllers
 {
@@ -14,11 +16,11 @@ namespace MonexUp.API.Controllers
     [ApiController]
     public class ProductController: ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IUserClient _userService;
         private readonly INetworkService _networkService;
         private readonly IProductService _productService;
 
-        public ProductController(IUserService userService, INetworkService networkService, IProductService productService)
+        public ProductController(IUserClient userService, INetworkService networkService, IProductService productService)
         {
             _userService = userService;
             _networkService = networkService;
@@ -72,7 +74,7 @@ namespace MonexUp.API.Controllers
         }
 
         [HttpPost("search")]
-        public ActionResult<ProductListPagedResult> Search([FromBody] ProductSearchParam param)
+        public async Task<ActionResult<ProductListPagedResult>> Search([FromBody] ProductSearchParam param)
         {
             try
             {
@@ -93,7 +95,7 @@ namespace MonexUp.API.Controllers
                 }
                 if (!string.IsNullOrEmpty(param.UserSlug) && !(param.UserId.HasValue && param.UserId.Value > 0))
                 {
-                    var user = _userService.GetBySlug(param.UserSlug);
+                    var user = await _userService.GetBySlugAsync(param.UserSlug);
                     if (user != null)
                     {
                         param.UserId = user.UserId;

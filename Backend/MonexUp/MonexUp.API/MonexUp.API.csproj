@@ -36,4 +36,13 @@
   <ItemGroup>
     <EmbeddedResource Include="monexup.com.pfx" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="NAuth.Client">
+      <HintPath>..\Lib\NAuth.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="NAuth.DTO">
+      <HintPath>..\Lib\NAuth.DTO.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>
