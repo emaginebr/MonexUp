@@ -9,6 +9,7 @@ interface ProductPaymentParam {
     productSlug: string;
     networkSlug?: string;
     sellerSlug?: string;
+    onError?: (message: string) => void;
 }
 
 export default function SubscriptionForm(param: ProductPaymentParam) {
@@ -21,7 +22,7 @@ export default function SubscriptionForm(param: ProductPaymentParam) {
             return ret.clientSecret;
         }
         else {
-            alert(ret.mensagemErro);
+            if (param.onError) param.onError(ret.mensagemErro);
             return "";
         }
     };

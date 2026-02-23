@@ -1,401 +1,709 @@
 ---
 name: react-arch
-description: Create the complete frontend architecture for a new entity in the React application. Generates TypeScript types, service class, context provider, custom hook, and registers the provider in main.tsx. Use this skill when the user asks to create a new entity, feature module, or domain area in the frontend.
+description: Create the complete frontend architecture for a new entity in the React application. Generates DTO types, Service (interface + implementation), Business (interface + implementation + factory), Context, Provider, and registers everything in ServiceFactory and App.tsx. Use this skill when the user asks to create a new entity, feature module, or domain area in the frontend.
 ---
 
-This skill defines the standard approach for scaffolding a complete frontend entity architecture in this project. It creates all necessary files following the established patterns: Types, Service, Context, Hook, and Provider registration.
+This skill defines the standard approach for scaffolding a complete frontend entity architecture in the MonexUp project. It creates all necessary files following the established layered pattern.
 
 ## Prerequisites
 
 Before creating the architecture, you MUST:
 
-1. **Ask the user** for the entity name (e.g., "Clan", "Achievement", "Shop")
-2. **Ask the user** for the API base path (e.g., "/api/clan", "/api/achievement")
-3. **Ask the user** for the entity fields/properties or check if API documentation exists in `docs/`
-4. **Check if the entity already exists** — search `src/types/`, `src/services/`, `src/contexts/`, and `src/hooks/` before creating anything
+1. **Ask the user** for the entity name (e.g., "Withdrawal", "Template", "Notification")
+2. **Ask the user** for the API controller path (e.g., "/Withdrawal", "/Template")
+3. **Ask the user** for the entity fields/properties or check if the backend DTO already exists in `MonexUp.DTO/`
+4. **Check if the entity already exists** — search `src/DTO/Domain/`, `src/Services/`, `src/Business/`, `src/Contexts/` before creating anything
 
 ## Creation Order
 
 Always create files in this exact order:
 
-1. **Types** → `src/types/{entity}.ts`
-2. **Service** → `src/services/{entity}Service.ts`
-3. **Context** → `src/contexts/{Entity}Context.tsx`
-4. **Hook** → `src/hooks/use{Entity}.ts`
-5. **Provider registration** → `src/main.tsx`
+1. **DTO Domain** → `src/DTO/Domain/{Entity}Info.tsx`
+2. **DTO Service Result** → `src/DTO/Services/{Entity}Result.tsx` (and optional `{Entity}ListResult.tsx`)
+3. **DTO Context Interface** → `src/DTO/Contexts/I{Entity}Provider.tsx`
+4. **Service Interface** → `src/Services/Interfaces/I{Entity}Service.tsx`
+5. **Service Implementation** → `src/Services/Impl/{Entity}Service.tsx`
+6. **ServiceFactory registration** → `src/Services/ServiceFactory.tsx`
+7. **Business Interface** → `src/Business/Interfaces/I{Entity}Business.tsx`
+8. **Business Implementation** → `src/Business/Impl/{Entity}Business.tsx`
+9. **Business Factory** → `src/Business/Factory/{Entity}Factory.tsx`
+10. **Context** → `src/Contexts/{Entity}/{Entity}Context.tsx`
+11. **Provider** → `src/Contexts/{Entity}/{Entity}Provider.tsx`
+12. **App.tsx registration** → `src/App.tsx`
 
 ## Rules
 
 1. **Never use `any` type** — all types must be explicitly defined.
-2. **Never use `alert()` or `window.confirm()`** — use `toast` from `sonner` for notifications and `ConfirmModal` for confirmation dialogs.
-3. **Always use `useCallback`** for all context methods to prevent unnecessary re-renders.
-4. **Always include `loading`, `error`, and main data state** in every context.
-5. **Always use the class-based service pattern** with private `handleResponse` method.
-6. **Always use `getHeaders(true)`** from `apiHelpers` for authenticated requests.
-7. **Always check `result.sucesso`** before updating state (API responses use Portuguese keys).
-8. **Always export both** the singleton instance and the class from services.
-9. **Always export the context as default** and the provider as named export.
-10. **Always add JSDoc comments** to service methods and type interfaces.
+2. **Never use `alert()` or `window.confirm()`** — use `MessageToast` (see `react-alert` skill).
+3. **Never create custom hooks** — components use `useContext()` directly.
+4. **Never use `useCallback`** — the project does not use it in providers.
+5. **Always use the singleton-object pattern** for services and business (not classes).
+6. **Always use module-level variables** (`let _httpClient`, `let _service`) for dependency injection via `init()`.
+7. **Always check `result.sucesso`** before updating state — API responses use Portuguese keys.
+8. **Always use `AuthFactory.AuthBusiness.getSession()`** to get auth tokens in business methods.
+9. **Always extend `StatusRequest`** for service result types.
+10. **Always return `ProviderResult`** from provider async methods.
 
-## Step 1: Create Types
+## Existing Types to Reuse (DO NOT recreate)
 
-**File**: `src/types/{entity}.ts`
+These types already exist and should be imported:
 
-```typescript
-/** {Entity} Types — Types for the {entity description} system */
+- `src/DTO/Services/StatusRequest.tsx` → `{ sucesso: boolean; mensagem: string; erros: any }`
+- `src/DTO/Services/ApiResponse.tsx` → `ApiResponse<T>` (generic HTTP response wrapper)
+- `src/DTO/Business/BusinessResult.tsx` → `BusinessResult<T>` extends StatusRequest with `dataResult: T`
+- `src/DTO/Contexts/ProviderResult.tsx` → `{ sucesso: boolean; mensagemErro: string; mensagemSucesso: string }`
+- `src/Infra/Interface/IHttpClient.tsx` → `IHttpClient` (HTTP client interface)
+- `src/DTO/Domain/AuthSession.tsx` → `AuthSession` (auth session type)
 
-// Enums (if needed)
-export enum {Entity}StatusEnum {
-  Unknown = 0,
-  Active = 1,
-  Inactive = 2,
-}
+## Step 1: Create DTO Domain
 
-// Core Entity
-/** Main {entity} information */
-export interface {Entity}Info {
-  {entity}Id: number;
-  name: string;
-  // ... other fields with JSDoc comments
-}
+**File**: `src/DTO/Domain/{Entity}Info.tsx`
 
-// DTOs
-/** Data required to create a new {entity} (no ID) */
-export interface {Entity}InsertInfo {
-  name: string;
-  // ... fields required for creation
-}
-
-/** Data required to update an existing {entity} (includes ID) */
-export interface {Entity}UpdateInfo {
-  {entity}Id: number;
-  name: string;
-  // ... fields required for update
-}
-
-// API Response Types — always include sucesso, mensagem, erros (Portuguese keys)
-export interface {Entity}ListResult {
-  {entities}: {Entity}Info[];
-  sucesso: boolean;
-  mensagem: string | null;
-  erros: string[] | null;
-}
-
-export interface {Entity}GetResult {
-  {entity}: {Entity}Info;
-  sucesso: boolean;
-  mensagem: string | null;
-  erros: string[] | null;
-}
-
-/** Status-only operation result (import from existing types file if already defined) */
-export interface StatusResult {
-  sucesso: boolean;
-  mensagem: string;
-  erros: string[] | null;
+```tsx
+export default interface {Entity}Info {
+    {entity}Id: number;
+    name: string;
+    // ... entity-specific fields
+    // Use appropriate types: number, string, boolean, Date
+    // Reference enums from src/DTO/Enum/ if needed
 }
 ```
 
-**Key conventions:**
-- API responses always have `sucesso`, `mensagem`, `erros` — Portuguese keys
-- Entity IDs use camelCase: `{entity}Id` (e.g., `clanId`)
-- Nullable fields use `| null`, not optional `?`
-- Separate interfaces for Insert (no ID) and Update (with ID) DTOs
-- If `StatusResult` already exists in another types file, import it instead of redefining
+**Conventions:**
+- Entity ID uses camelCase: `{entity}Id` (e.g., `withdrawalId`)
+- Export as `default interface`
+- File extension is `.tsx`
 
-## Step 2: Create Service
+## Step 2: Create DTO Service Result
 
-**File**: `src/services/{entity}Service.ts`
+**File**: `src/DTO/Services/{Entity}Result.tsx`
 
-```typescript
-import type {
-  {Entity}ListResult, {Entity}GetResult,
-  {Entity}InsertInfo, {Entity}UpdateInfo, StatusResult,
-} from '../types/{entity}';
-import { getHeaders } from './apiHelpers';
+```tsx
+import {Entity}Info from "../Domain/{Entity}Info";
+import StatusRequest from "./StatusRequest";
 
-const API_BASE = `${import.meta.env.VITE_GOBLIN_API_URL || 'http://localhost:4041'}/api/{entity-kebab}`;
+export default interface {Entity}Result extends StatusRequest {
+    {entity}?: {Entity}Info;
+}
+```
 
-interface {Entity}ServiceConfig {
-  onUnauthorized?: () => void;
+**If a list result is needed**, create `src/DTO/Services/{Entity}ListResult.tsx`:
+
+```tsx
+import {Entity}Info from "../Domain/{Entity}Info";
+import StatusRequest from "./StatusRequest";
+
+export default interface {Entity}ListResult extends StatusRequest {
+    {entities}?: {Entity}Info[];
+}
+```
+
+## Step 3: Create DTO Context Interface
+
+**File**: `src/DTO/Contexts/I{Entity}Provider.tsx`
+
+```tsx
+import {Entity}Info from "../Domain/{Entity}Info";
+import ProviderResult from "./ProviderResult";
+
+interface I{Entity}Provider {
+    loading: boolean;
+    loadingList: boolean;
+    loadingUpdate: boolean;
+
+    {entity}: {Entity}Info;
+    {entities}: {Entity}Info[];
+
+    set{Entity}: ({entity}: {Entity}Info) => void;
+
+    insert: ({entity}: {Entity}Info) => Promise<ProviderResult>;
+    update: ({entity}: {Entity}Info) => Promise<ProviderResult>;
+    getById: ({entity}Id: number) => Promise<ProviderResult>;
+    list: () => Promise<ProviderResult>;
 }
 
-/** {Entity} Service — Manages all API operations related to {entities} */
-class {Entity}Service {
-  private config: {Entity}ServiceConfig;
+export default I{Entity}Provider;
+```
 
-  constructor(config: {Entity}ServiceConfig = {}) {
-    this.config = config;
-  }
+**Conventions:**
+- Include granular loading states: `loading`, `loadingList`, `loadingUpdate`
+- All async methods return `Promise<ProviderResult>`
+- Include a setter for the single entity: `set{Entity}`
 
-  private async handleResponse<T>(response: Response): Promise<T> {
-    if (response.status === 401) {
-      this.config.onUnauthorized?.();
-      throw new Error('Unauthorized');
-    }
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(error || 'Request failed');
-    }
-    return response.json();
-  }
+## Step 4: Create Service Interface
 
-  /** List all {entities} */
-  async list(): Promise<{Entity}ListResult> {
-    const response = await fetch(`${API_BASE}/list`, { headers: getHeaders(true) });
-    return this.handleResponse<{Entity}ListResult>(response);
-  }
+**File**: `src/Services/Interfaces/I{Entity}Service.tsx`
 
-  /** Get a {entity} by ID */
-  async getById(id: number): Promise<{Entity}GetResult> {
-    const response = await fetch(`${API_BASE}/getbyid/${id}`, { headers: getHeaders(true) });
-    return this.handleResponse<{Entity}GetResult>(response);
-  }
+```tsx
+import {Entity}Info from "../../DTO/Domain/{Entity}Info";
+import {Entity}Result from "../../DTO/Services/{Entity}Result";
+import {Entity}ListResult from "../../DTO/Services/{Entity}ListResult";
+import IHttpClient from "../../Infra/Interface/IHttpClient";
 
-  /** Create a new {entity} */
-  async insert(data: {Entity}InsertInfo): Promise<{Entity}GetResult> {
-    const response = await fetch(`${API_BASE}/insert`, {
-      method: 'POST', headers: getHeaders(true), body: JSON.stringify(data),
-    });
-    return this.handleResponse<{Entity}GetResult>(response);
-  }
-
-  /** Update an existing {entity} */
-  async update(data: {Entity}UpdateInfo): Promise<{Entity}GetResult> {
-    const response = await fetch(`${API_BASE}/update`, {
-      method: 'PUT', headers: getHeaders(true), body: JSON.stringify(data),
-    });
-    return this.handleResponse<{Entity}GetResult>(response);
-  }
-
-  /** Delete a {entity} by ID */
-  async delete(id: number): Promise<StatusResult> {
-    const response = await fetch(`${API_BASE}/delete/${id}`, {
-      method: 'DELETE', headers: getHeaders(true),
-    });
-    return this.handleResponse<StatusResult>(response);
-  }
+export default interface I{Entity}Service {
+    init: (httpClient: IHttpClient) => void;
+    insert: ({entity}: {Entity}Info, token: string) => Promise<{Entity}Result>;
+    update: ({entity}: {Entity}Info, token: string) => Promise<{Entity}Result>;
+    getById: ({entity}Id: number, token: string) => Promise<{Entity}Result>;
+    list: (token: string) => Promise<{Entity}ListResult>;
 }
+```
 
-export const {entity}Service = new {Entity}Service();
+**Conventions:**
+- Always include `init(httpClient: IHttpClient)` method
+- Auth-required methods receive `token: string` as last parameter
+- Public (no-auth) methods omit the token parameter
+
+## Step 5: Create Service Implementation
+
+**File**: `src/Services/Impl/{Entity}Service.tsx`
+
+```tsx
+import {Entity}Info from "../../DTO/Domain/{Entity}Info";
+import {Entity}Result from "../../DTO/Services/{Entity}Result";
+import {Entity}ListResult from "../../DTO/Services/{Entity}ListResult";
+import IHttpClient from "../../Infra/Interface/IHttpClient";
+import I{Entity}Service from "../Interfaces/I{Entity}Service";
+
+let _httpClient: IHttpClient;
+
+const {Entity}Service: I{Entity}Service = {
+    init: function (httpClient: IHttpClient): void {
+        _httpClient = httpClient;
+    },
+    insert: async ({entity}: {Entity}Info, token: string) => {
+        let ret: {Entity}Result;
+        let request = await _httpClient.doPostAuth<{Entity}Result>("/{Entity}/insert", {entity}, token);
+        if (request.success) {
+            return request.data;
+        } else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    },
+    update: async ({entity}: {Entity}Info, token: string) => {
+        let ret: {Entity}Result;
+        let request = await _httpClient.doPostAuth<{Entity}Result>("/{Entity}/update", {entity}, token);
+        if (request.success) {
+            return request.data;
+        } else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    },
+    getById: async ({entity}Id: number, token: string) => {
+        let ret: {Entity}Result;
+        let request = await _httpClient.doGetAuth<{Entity}Result>("/{Entity}/getById/" + {entity}Id, token);
+        if (request.success) {
+            return request.data;
+        } else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    },
+    list: async (token: string) => {
+        let ret: {Entity}ListResult;
+        let request = await _httpClient.doGetAuth<{Entity}ListResult>("/{Entity}/list", token);
+        if (request.success) {
+            return request.data;
+        } else {
+            ret = {
+                mensagem: request.messageError,
+                sucesso: false,
+                ...ret
+            };
+        }
+        return ret;
+    }
+};
+
 export default {Entity}Service;
 ```
 
-**Key conventions:**
-- Class-based with private `handleResponse` that checks 401 and calls `onUnauthorized`
-- `API_BASE` uses `VITE_GOBLIN_API_URL` env var with `http://localhost:4041` fallback
-- Always use `getHeaders(true)` for authenticated requests
-- Export both singleton instance (camelCase) and class (PascalCase default)
+**Key patterns:**
+- Module-level `let _httpClient: IHttpClient` for closure-based DI
+- Singleton `const` object implementing the interface
+- Error handling: check `request.success`, return `request.data` on success, build error result on failure
+- Use `_httpClient.doPostAuth` for POST with auth, `_httpClient.doGetAuth` for GET with auth
+- Use `_httpClient.doPost` / `_httpClient.doGet` for public endpoints (no token)
+- API paths match the backend controller (e.g., `/{Entity}/insert`, `/{Entity}/getById/{id}`)
 
-## Step 3: Create Context
+## Step 6: Register in ServiceFactory
 
-**File**: `src/contexts/{Entity}Context.tsx`
+**File**: `src/Services/ServiceFactory.tsx`
 
-The context wraps the service and provides state management with three method categories: **API Methods** (direct service wrappers returning API results), **State Management** (handle loading/error, update local state), and optionally **Utility Methods**.
+Add to the existing file:
 
-```typescript
-import { createContext, useState, useCallback, ReactNode } from 'react';
-import { {entity}Service } from '../services/{entity}Service';
-import type {
-  {Entity}Info, {Entity}ListResult, {Entity}GetResult,
-  {Entity}InsertInfo, {Entity}UpdateInfo, StatusResult,
-} from '../types/{entity}';
+```tsx
+// Add imports
+import I{Entity}Service from './Interfaces/I{Entity}Service';
+import {Entity}Service from './Impl/{Entity}Service';
 
-interface {Entity}ContextType {
-  // State
-  {entities}: {Entity}Info[];
-  selected{Entity}: {Entity}Info | null;
-  loading: boolean;
-  error: string | null;
-  // API Methods (return API results for caller to check sucesso)
-  list{Entities}: () => Promise<{Entity}ListResult>;
-  get{Entity}ById: (id: number) => Promise<{Entity}GetResult>;
-  insert{Entity}: (data: {Entity}InsertInfo) => Promise<{Entity}GetResult>;
-  update{Entity}: (data: {Entity}UpdateInfo) => Promise<{Entity}GetResult>;
-  delete{Entity}: (id: number) => Promise<StatusResult>;
-  // State Management (return void, handle loading/error internally)
-  load{Entities}: () => Promise<void>;
-  refresh{Entities}: () => Promise<void>;
-  setSelected{Entity}: (item: {Entity}Info | null) => void;
-  clearError: () => void;
-}
+// Add initialization (after httpClientAuth.init)
+const {entity}ServiceImpl: I{Entity}Service = {Entity}Service;
+{entity}ServiceImpl.init(httpClientAuth);
 
-const {Entity}Context = createContext<{Entity}ContextType | undefined>(undefined);
-
-export const {Entity}Provider = ({ children }: { children: ReactNode }) => {
-  const [{entities}, set{Entities}] = useState<{Entity}Info[]>([]);
-  const [selected{Entity}, setSelected{Entity}] = useState<{Entity}Info | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleError = (err: unknown): never => {
-    const errorMsg = err instanceof Error ? err.message : 'Unknown error';
-    setError(errorMsg);
-    throw err;
-  };
-
-  // --- API Methods (direct service wrappers) ---
-
-  const list{Entities} = useCallback(async (): Promise<{Entity}ListResult> => {
-    try { setError(null); return await {entity}Service.list(); }
-    catch (err) { return handleError(err); }
-  }, []);
-
-  const get{Entity}ById = useCallback(async (id: number): Promise<{Entity}GetResult> => {
-    try { setError(null); return await {entity}Service.getById(id); }
-    catch (err) { return handleError(err); }
-  }, []);
-
-  const insert{Entity} = useCallback(async (data: {Entity}InsertInfo): Promise<{Entity}GetResult> => {
-    try {
-      setError(null);
-      const result = await {entity}Service.insert(data);
-      if (result.sucesso) await load{Entities}();
-      return result;
-    } catch (err) { return handleError(err); }
-  }, []);
-
-  const update{Entity} = useCallback(async (data: {Entity}UpdateInfo): Promise<{Entity}GetResult> => {
-    try {
-      setError(null);
-      const result = await {entity}Service.update(data);
-      if (result.sucesso) {
-        set{Entities}((prev) => prev.map((item) =>
-          item.{entity}Id === data.{entity}Id ? result.{entity} : item
-        ));
-        if (selected{Entity}?.{entity}Id === data.{entity}Id) setSelected{Entity}(result.{entity});
-      }
-      return result;
-    } catch (err) { return handleError(err); }
-  }, [selected{Entity}]);
-
-  const delete{Entity} = useCallback(async (id: number): Promise<StatusResult> => {
-    try {
-      setError(null);
-      const result = await {entity}Service.delete(id);
-      if (result.sucesso) {
-        set{Entities}((prev) => prev.filter((item) => item.{entity}Id !== id));
-        if (selected{Entity}?.{entity}Id === id) setSelected{Entity}(null);
-      }
-      return result;
-    } catch (err) { return handleError(err); }
-  }, [selected{Entity}]);
-
-  // --- State Management ---
-
-  const load{Entities} = useCallback(async (): Promise<void> => {
-    try {
-      setLoading(true);
-      setError(null);
-      const result = await {entity}Service.list();
-      if (result.sucesso) set{Entities}(result.{entities});
-      else throw new Error(result.mensagem || 'Failed to load {entities}');
-    } catch (err) { handleError(err); }
-    finally { setLoading(false); }
-  }, []);
-
-  const refresh{Entities} = useCallback(async () => { await load{Entities}(); }, [load{Entities}]);
-  const clearError = useCallback(() => { setError(null); }, []);
-
-  const value: {Entity}ContextType = {
-    {entities}, selected{Entity}, loading, error,
-    list{Entities}, get{Entity}ById, insert{Entity}, update{Entity}, delete{Entity},
-    load{Entities}, refresh{Entities}, setSelected{Entity}, clearError,
-  };
-
-  return <{Entity}Context.Provider value={value}>{children}</{Entity}Context.Provider>;
+// Add to ServiceFactory object
+const ServiceFactory = {
+    // ... existing services ...
+    {Entity}Service: {entity}ServiceImpl,
 };
+```
+
+## Step 7: Create Business Interface
+
+**File**: `src/Business/Interfaces/I{Entity}Business.tsx`
+
+```tsx
+import BusinessResult from "../../DTO/Business/BusinessResult";
+import {Entity}Info from "../../DTO/Domain/{Entity}Info";
+import I{Entity}Service from "../../Services/Interfaces/I{Entity}Service";
+
+export default interface I{Entity}Business {
+    init: ({entity}Service: I{Entity}Service) => void;
+    insert: ({entity}: {Entity}Info) => Promise<BusinessResult<{Entity}Info>>;
+    update: ({entity}: {Entity}Info) => Promise<BusinessResult<{Entity}Info>>;
+    getById: ({entity}Id: number) => Promise<BusinessResult<{Entity}Info>>;
+    list: () => Promise<BusinessResult<{Entity}Info[]>>;
+}
+```
+
+**Conventions:**
+- `init()` receives the service interface
+- Methods return `BusinessResult<T>` — no token parameter (handled internally)
+
+## Step 8: Create Business Implementation
+
+**File**: `src/Business/Impl/{Entity}Business.tsx`
+
+```tsx
+import BusinessResult from "../../DTO/Business/BusinessResult";
+import AuthSession from "../../DTO/Domain/AuthSession";
+import {Entity}Info from "../../DTO/Domain/{Entity}Info";
+import I{Entity}Service from "../../Services/Interfaces/I{Entity}Service";
+import AuthFactory from "../Factory/AuthFactory";
+import I{Entity}Business from "../Interfaces/I{Entity}Business";
+
+let _{entity}Service: I{Entity}Service;
+
+const {Entity}Business: I{Entity}Business = {
+    init: function ({entity}Service: I{Entity}Service): void {
+        _{entity}Service = {entity}Service;
+    },
+    insert: async ({entity}: {Entity}Info) => {
+        try {
+            let ret: BusinessResult<{Entity}Info>;
+            let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+            if (!session) {
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagem: "Not logged"
+                };
+            }
+            let retServ = await _{entity}Service.insert({entity}, session.token);
+            if (retServ.sucesso) {
+                return {
+                    ...ret,
+                    dataResult: retServ.{entity},
+                    sucesso: true
+                };
+            } else {
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagem: retServ.mensagem
+                };
+            }
+        } catch {
+            throw new Error("Failed to insert {entity}");
+        }
+    },
+    update: async ({entity}: {Entity}Info) => {
+        try {
+            let ret: BusinessResult<{Entity}Info>;
+            let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+            if (!session) {
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagem: "Not logged"
+                };
+            }
+            let retServ = await _{entity}Service.update({entity}, session.token);
+            if (retServ.sucesso) {
+                return {
+                    ...ret,
+                    dataResult: retServ.{entity},
+                    sucesso: true
+                };
+            } else {
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagem: retServ.mensagem
+                };
+            }
+        } catch {
+            throw new Error("Failed to update {entity}");
+        }
+    },
+    getById: async ({entity}Id: number) => {
+        try {
+            let ret: BusinessResult<{Entity}Info>;
+            let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+            if (!session) {
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagem: "Not logged"
+                };
+            }
+            let retServ = await _{entity}Service.getById({entity}Id, session.token);
+            if (retServ.sucesso) {
+                return {
+                    ...ret,
+                    dataResult: retServ.{entity},
+                    sucesso: true
+                };
+            } else {
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagem: retServ.mensagem
+                };
+            }
+        } catch {
+            throw new Error("Failed to get {entity}");
+        }
+    },
+    list: async () => {
+        try {
+            let ret: BusinessResult<{Entity}Info[]>;
+            let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+            if (!session) {
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagem: "Not logged"
+                };
+            }
+            let retServ = await _{entity}Service.list(session.token);
+            if (retServ.sucesso) {
+                return {
+                    ...ret,
+                    dataResult: retServ.{entities},
+                    sucesso: true
+                };
+            } else {
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagem: retServ.mensagem
+                };
+            }
+        } catch {
+            throw new Error("Failed to list {entities}");
+        }
+    }
+};
+
+export default {Entity}Business;
+```
+
+**Key patterns:**
+- Module-level `let _{entity}Service` for closure-based DI
+- Gets auth token from `AuthFactory.AuthBusiness.getSession()`
+- Always checks `if (!session)` before making service calls
+- Maps service results to `BusinessResult<T>` with `dataResult`
+- Result field names from service: `retServ.{entity}` (single) or `retServ.{entities}` (list)
+
+## Step 9: Create Business Factory
+
+**File**: `src/Business/Factory/{Entity}Factory.tsx`
+
+```tsx
+import ServiceFactory from '../../Services/ServiceFactory';
+import {Entity}Business from '../Impl/{Entity}Business';
+import I{Entity}Business from '../Interfaces/I{Entity}Business';
+
+const {entity}Service = ServiceFactory.{Entity}Service;
+
+const {entity}BusinessImpl: I{Entity}Business = {Entity}Business;
+{entity}BusinessImpl.init({entity}Service);
+
+const {Entity}Factory = {
+    {Entity}Business: {entity}BusinessImpl
+};
+
+export default {Entity}Factory;
+```
+
+## Step 10: Create Context
+
+**File**: `src/Contexts/{Entity}/{Entity}Context.tsx`
+
+```tsx
+import React from 'react';
+import I{Entity}Provider from '../../DTO/Contexts/I{Entity}Provider';
+
+const {Entity}Context = React.createContext<I{Entity}Provider>(null);
 
 export default {Entity}Context;
 ```
 
-**Key conventions:**
-- `handleError` sets error state AND re-throws (returns `never`)
-- After insert: reload full list. After update: update item in local state. After delete: remove from local state.
-- Check `result.sucesso` before updating state
-- Export provider as named export, context as default export
+## Step 11: Create Provider
 
-## Step 4: Create Hook
+**File**: `src/Contexts/{Entity}/{Entity}Provider.tsx`
 
-**File**: `src/hooks/use{Entity}.ts`
+```tsx
+import { useState } from "react";
+import ProviderResult from "../../DTO/Contexts/ProviderResult";
+import I{Entity}Provider from "../../DTO/Contexts/I{Entity}Provider";
+import {Entity}Info from "../../DTO/Domain/{Entity}Info";
+import {Entity}Factory from "../../Business/Factory/{Entity}Factory";
+import {Entity}Context from "./{Entity}Context";
 
-```typescript
-import { useContext } from 'react';
-import {Entity}Context from '../contexts/{Entity}Context';
+export default function {Entity}Provider(props: any) {
 
-/** Custom hook to access the {Entity} context. Throws if used outside {Entity}Provider. */
-export const use{Entity} = () => {
-  const context = useContext({Entity}Context);
-  if (!context) throw new Error('use{Entity} must be used within a {Entity}Provider');
-  return context;
-};
+    const [loading, setLoading] = useState<boolean>(false);
+    const [loadingList, setLoadingList] = useState<boolean>(false);
+    const [loadingUpdate, setLoadingUpdate] = useState<boolean>(false);
 
-export default use{Entity};
+    const [{entity}, _set{Entity}] = useState<{Entity}Info>(null);
+    const [{entities}, set{Entities}] = useState<{Entity}Info[]>([]);
+
+    const {entity}ProviderValue: I{Entity}Provider = {
+        loading: loading,
+        loadingList: loadingList,
+        loadingUpdate: loadingUpdate,
+
+        {entity}: {entity},
+        {entities}: {entities},
+
+        set{Entity}: ({entity}: {Entity}Info) => {
+            _set{Entity}({entity});
+        },
+
+        insert: async ({entity}: {Entity}Info) => {
+            let ret: Promise<ProviderResult>;
+            setLoadingUpdate(true);
+            try {
+                let brt = await {Entity}Factory.{Entity}Business.insert({entity});
+                if (brt.sucesso) {
+                    setLoadingUpdate(false);
+                    _set{Entity}(brt.dataResult);
+                    return {
+                        ...ret,
+                        sucesso: true,
+                        mensagemSucesso: "{entity}_added_successfully"
+                    };
+                } else {
+                    setLoadingUpdate(false);
+                    return {
+                        ...ret,
+                        sucesso: false,
+                        mensagemErro: brt.mensagem
+                    };
+                }
+            } catch (err) {
+                setLoadingUpdate(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: JSON.stringify(err)
+                };
+            }
+        },
+        update: async ({entity}: {Entity}Info) => {
+            let ret: Promise<ProviderResult>;
+            setLoadingUpdate(true);
+            try {
+                let brt = await {Entity}Factory.{Entity}Business.update({entity});
+                if (brt.sucesso) {
+                    setLoadingUpdate(false);
+                    _set{Entity}(brt.dataResult);
+                    return {
+                        ...ret,
+                        sucesso: true,
+                        mensagemSucesso: "{entity}_updated_successfully"
+                    };
+                } else {
+                    setLoadingUpdate(false);
+                    return {
+                        ...ret,
+                        sucesso: false,
+                        mensagemErro: brt.mensagem
+                    };
+                }
+            } catch (err) {
+                setLoadingUpdate(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: JSON.stringify(err)
+                };
+            }
+        },
+        getById: async ({entity}Id: number) => {
+            let ret: Promise<ProviderResult>;
+            setLoading(true);
+            _set{Entity}(null);
+            try {
+                let brt = await {Entity}Factory.{Entity}Business.getById({entity}Id);
+                if (brt.sucesso) {
+                    setLoading(false);
+                    _set{Entity}(brt.dataResult);
+                    return {
+                        ...ret,
+                        sucesso: true,
+                        mensagemSucesso: "{entity}_loaded_successfully"
+                    };
+                } else {
+                    setLoading(false);
+                    return {
+                        ...ret,
+                        sucesso: false,
+                        mensagemErro: brt.mensagem
+                    };
+                }
+            } catch (err) {
+                setLoading(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: JSON.stringify(err)
+                };
+            }
+        },
+        list: async () => {
+            let ret: Promise<ProviderResult>;
+            setLoadingList(true);
+            try {
+                let brt = await {Entity}Factory.{Entity}Business.list();
+                if (brt.sucesso) {
+                    setLoadingList(false);
+                    set{Entities}(brt.dataResult);
+                    return {
+                        ...ret,
+                        sucesso: true,
+                        mensagemSucesso: "{entities}_loaded_successfully"
+                    };
+                } else {
+                    setLoadingList(false);
+                    return {
+                        ...ret,
+                        sucesso: false,
+                        mensagemErro: brt.mensagem
+                    };
+                }
+            } catch (err) {
+                setLoadingList(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: JSON.stringify(err)
+                };
+            }
+        }
+    };
+
+    return (
+        <{Entity}Context.Provider value={{entity}ProviderValue}>
+            {props.children}
+        </{Entity}Context.Provider>
+    );
+}
 ```
 
-Only add computed values/derived state if the user specifically requests it.
+**Key patterns:**
+- Functional component with `props: any`
+- Multiple `useState` for loading states and entity data
+- Creates provider value object implementing the interface
+- Calls `{Entity}Factory.{Entity}Business` methods
+- Sets loading state before and after async calls
+- Maps business results to `ProviderResult` with `sucesso`, `mensagemErro`, `mensagemSucesso`
+- Success messages are translation keys (e.g., `"{entity}_added_successfully"`)
 
-## Step 5: Register Provider in main.tsx
+## Step 12: Register Provider in App.tsx
 
-**File**: `src/main.tsx`
+**File**: `src/App.tsx`
 
-```typescript
-// Add import at the top with other provider imports
-import { {Entity}Provider } from './contexts/{Entity}Context.tsx'
+Add import and include in the ContextBuilder array:
 
-// Add to the provider chain based on dependencies:
-// - If it depends on AuthContext → must be inside AuthProvider
-// - If it depends on GoblinContext → must be inside GoblinProvider
-// - If independent → place near the end, before App
+```tsx
+// Add import
+import {Entity}Provider from './Contexts/{Entity}/{Entity}Provider';
+
+// Add to ContextBuilder array
+const ContextContainer = ContextBuilder([
+    AuthProvider, UserProvider, NetworkProvider, ProfileProvider, ProductProvider,
+    OrderProvider, InvoiceProvider, ImageProvider, TemplateProvider,
+    {Entity}Provider  // <-- Add here
+]);
 ```
 
 **Nesting rules:**
-- `AuthProvider` is always the outermost (all contexts depend on auth)
-- Place the new provider **as close to `<App />`** as possible unless it has dependents
-- If other contexts will depend on this one, place it above those contexts
-- Keep related contexts grouped (economy, gameplay, admin, etc.)
-
-**Current provider order:**
-```
-AuthProvider → FinanceProvider → GoblinProvider → TeamProvider →
-GoboxProvider → AuctionProvider → GLogProvider → QuestProvider →
-ItemProvider → ItemClaimProvider → MiningProvider → MapProvider →
-TerritoryProvider → TerritoryEnemyProvider → ArenaProvider → App
-```
+- `AuthProvider` must always be first (all contexts depend on auth via AuthFactory)
+- Place new providers at the end of the array
+- If the new provider depends on another context, place it after that provider
 
 ## Naming Convention Reference
 
 | Item | Convention | Example |
 |------|-----------|---------|
-| Types file | `src/types/{entity}.ts` | `src/types/clan.ts` |
-| Service file | `src/services/{entity}Service.ts` | `src/services/clanService.ts` |
-| Service class | `{Entity}Service` | `ClanService` |
-| Service instance | `{entity}Service` | `clanService` |
-| Context file | `src/contexts/{Entity}Context.tsx` | `src/contexts/ClanContext.tsx` |
-| Provider | `{Entity}Provider` | `ClanProvider` |
-| Hook file | `src/hooks/use{Entity}.ts` | `src/hooks/useClan.ts` |
-| Hook function | `use{Entity}` | `useClan` |
-| Entity ID field | `{entity}Id` | `clanId` |
-| List/Get result | `{Entity}ListResult` / `{Entity}GetResult` | `ClanListResult` / `ClanGetResult` |
-| Insert/Update DTO | `{Entity}InsertInfo` / `{Entity}UpdateInfo` | `ClanInsertInfo` / `ClanUpdateInfo` |
+| Domain DTO | `src/DTO/Domain/{Entity}Info.tsx` | `WithdrawalInfo.tsx` |
+| Service Result | `src/DTO/Services/{Entity}Result.tsx` | `WithdrawalResult.tsx` |
+| List Result | `src/DTO/Services/{Entity}ListResult.tsx` | `WithdrawalListResult.tsx` |
+| Context Interface | `src/DTO/Contexts/I{Entity}Provider.tsx` | `IWithdrawalProvider.tsx` |
+| Service Interface | `src/Services/Interfaces/I{Entity}Service.tsx` | `IWithdrawalService.tsx` |
+| Service Impl | `src/Services/Impl/{Entity}Service.tsx` | `WithdrawalService.tsx` |
+| Business Interface | `src/Business/Interfaces/I{Entity}Business.tsx` | `IWithdrawalBusiness.tsx` |
+| Business Impl | `src/Business/Impl/{Entity}Business.tsx` | `WithdrawalBusiness.tsx` |
+| Business Factory | `src/Business/Factory/{Entity}Factory.tsx` | `WithdrawalFactory.tsx` |
+| Context | `src/Contexts/{Entity}/{Entity}Context.tsx` | `WithdrawalContext.tsx` |
+| Provider | `src/Contexts/{Entity}/{Entity}Provider.tsx` | `WithdrawalProvider.tsx` |
+| Entity ID field | `{entity}Id` | `withdrawalId` |
 
 ## Verification Checklist
 
-- [ ] Types file at `src/types/{entity}.ts` with all interfaces
-- [ ] Service file at `src/services/{entity}Service.ts` with class pattern
-- [ ] Context file at `src/contexts/{Entity}Context.tsx` with provider
-- [ ] Hook file at `src/hooks/use{Entity}.ts` with null-check
-- [ ] Provider imported and added to `src/main.tsx` in correct nesting position
-- [ ] All API response types include `sucesso`, `mensagem`, `erros` fields
-- [ ] All context methods use `useCallback`
-- [ ] `handleError` pattern: sets error state + re-throws
+- [ ] Domain DTO at `src/DTO/Domain/{Entity}Info.tsx`
+- [ ] Service result at `src/DTO/Services/{Entity}Result.tsx`
+- [ ] Context interface at `src/DTO/Contexts/I{Entity}Provider.tsx`
+- [ ] Service interface at `src/Services/Interfaces/I{Entity}Service.tsx`
+- [ ] Service implementation at `src/Services/Impl/{Entity}Service.tsx`
+- [ ] Service registered in `src/Services/ServiceFactory.tsx`
+- [ ] Business interface at `src/Business/Interfaces/I{Entity}Business.tsx`
+- [ ] Business implementation at `src/Business/Impl/{Entity}Business.tsx`
+- [ ] Business factory at `src/Business/Factory/{Entity}Factory.tsx`
+- [ ] Context at `src/Contexts/{Entity}/{Entity}Context.tsx`
+- [ ] Provider at `src/Contexts/{Entity}/{Entity}Provider.tsx`
+- [ ] Provider added to `ContextBuilder` in `src/App.tsx`
+- [ ] All service results extend `StatusRequest`
+- [ ] All provider methods return `ProviderResult`
+- [ ] Business uses `AuthFactory.AuthBusiness.getSession()` for auth
 - [ ] No `any` types, no `alert()`, no `window.confirm()`
-- [ ] Service uses `getHeaders(true)` and `VITE_GOBLIN_API_URL` env var
+- [ ] API paths match backend controller routes
 
 ## Common Gotchas
 
-- **StatusResult may already exist**: Check `src/types/map.ts` or other type files before redefining. Import from existing file if available.
+- **StatusRequest already exists**: Import from `src/DTO/Services/StatusRequest.tsx`, never recreate.
+- **ProviderResult already exists**: Import from `src/DTO/Contexts/ProviderResult.tsx`, never recreate.
+- **BusinessResult already exists**: Import from `src/DTO/Business/BusinessResult.tsx`, never recreate.
 - **Entity ID naming**: Always use `{entity}Id` (camelCase), not `{entity}_id` or `id`.
-- **API response keys are Portuguese**: `sucesso` (not `success`), `mensagem` (not `message`), `erros` (not `errors`).
-- **Service constructor config**: Always include `onUnauthorized` callback in config interface.
-- **Provider nesting order matters**: A context cannot use hooks from providers nested inside it.
+- **Portuguese field names**: `sucesso` (not `success`), `mensagem` (not `message`), `mensagemErro`, `mensagemSucesso`.
+- **Service result field names**: The service result wraps the entity with a field name matching the entity (e.g., `product` in `ProductResult`, `{entities}` in list results).
+- **Spread operator pattern**: `let ret: Type; ... return { ...ret, sucesso: true }` — this is the project convention even though `ret` is uninitialized.
+- **No useCallback**: The project does not use `useCallback` in providers. Methods are defined directly in the provider value object.

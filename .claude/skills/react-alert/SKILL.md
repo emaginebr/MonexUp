@@ -1,147 +1,214 @@
 ---
 name: react-alert
-description: Display user-facing alerts, notifications, and feedback messages using toast notifications from the sonner library. Use this skill whenever the user asks to show an alert, notification, success message, error message, warning, or any kind of user feedback popup.
+description: Display user-facing alerts, notifications, and feedback messages using the MessageToast component built on react-bootstrap Toast. Use this skill whenever the user asks to show an alert, notification, success message, error message, warning, or any kind of user feedback popup.
 ---
 
-This skill defines the standard approach for displaying alerts, notifications, and user feedback in this project. All alerts MUST use toast notifications from the `sonner` library — never native browser alerts.
+This skill defines the standard approach for displaying alerts, notifications, and user feedback in this project. All alerts MUST use the `MessageToast` component — never native browser alerts.
 
-## Setup
+## Component Location
 
-The `sonner` package is already installed in this project. The `<Toaster>` provider is already mounted in `src/App.tsx`:
-
-```tsx
-import { Toaster } from 'sonner';
-
-// Inside the App component JSX:
-<Toaster position="bottom-right" richColors />
-```
-
-No additional setup is needed. Just import `toast` from `sonner` and call it.
+- **MessageToast**: `src/Components/MessageToast.tsx`
+- **MessageToastEnum**: `src/DTO/Enum/MessageToastEnum.tsx`
 
 ## Rules
 
-1. **Always use `toast` from `sonner`** for any user-facing alert, notification, or feedback message.
-2. **Never use `window.alert()`** — use `toast()` or `toast.error()` instead.
-3. **Never use `window.confirm()`** — use the Modal component (see `react-modal` skill) for confirmation dialogs, with toast for the resulting success/error feedback.
-4. **Never use `window.prompt()`** — use the Modal component with a form input instead.
-5. **Never use `console.log()` as a substitute for user feedback** — if the user should see it, use a toast.
-6. **Never create custom alert/notification components** (banners, snackbars, inline alerts) for transient feedback. The toast system already handles this with consistent styling and auto-dismiss behavior.
+1. **Always use `MessageToast`** for any user-facing alert, notification, or feedback message.
+2. **Never use `window.alert()`** — use `MessageToast` with `MessageToastEnum.Error` or `MessageToastEnum.Information`.
+3. **Never use `window.confirm()`** — use `MessageToast` with `MessageToastEnum.Confirmation` and `onYes`/`onNo` callbacks.
+4. **Never use `window.prompt()`** — use a Modal with a form input instead (see `react-modal` skill).
+5. **Never create custom alert/notification components** — the `MessageToast` system already handles this.
+6. **Always use `useTranslation()`** for translatable messages.
 
-## Toast Types
+## MessageToastEnum
 
-Use the appropriate toast variant to match the nature of the message:
+```typescript
+// src/DTO/Enum/MessageToastEnum.tsx
+export enum MessageToastEnum {
+    Error = 0,        // Red warning icon
+    Success = 1,      // Green checkmark icon
+    Information = 2,  // Blue info icon
+    Confirmation = 3  // Question icon with Yes/No buttons
+}
+```
+
+## Setup Pattern
+
+Every page that needs alerts must include these 3 state variables, helper functions, and the `MessageToast` JSX:
 
 ```tsx
-import { toast } from 'sonner';
+import { useState } from "react";
+import MessageToast from "../../Components/MessageToast";
+import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
+import { useTranslation } from "react-i18next";
 
-// Success — operation completed successfully
-toast.success('Profile updated successfully!');
+export default function SomePage() {
+    const { t } = useTranslation();
 
-// Error — something went wrong
-toast.error('Failed to save changes. Please try again.');
+    // --- Toast State ---
+    const [showMessage, setShowMessage] = useState<boolean>(false);
+    const [messageText, setMessageText] = useState<string>("");
+    const [dialog, setDialog] = useState<MessageToastEnum>(MessageToastEnum.Error);
 
-// Warning — caution or important notice
-toast.warning('Your session will expire in 5 minutes.');
+    // --- Toast Helpers ---
+    const throwError = (message: string) => {
+        setDialog(MessageToastEnum.Error);
+        setMessageText(message);
+        setShowMessage(true);
+    };
 
-// Info — neutral informational message
-toast.info('New updates are available.');
+    const throwSuccess = (message: string) => {
+        setDialog(MessageToastEnum.Success);
+        setMessageText(message);
+        setShowMessage(true);
+    };
 
-// Default — generic notification (no icon/color)
-toast('Something happened.');
+    const throwInfo = (message: string) => {
+        setDialog(MessageToastEnum.Information);
+        setMessageText(message);
+        setShowMessage(true);
+    };
 
-// Loading — for async operations with follow-up
-toast.loading('Saving changes...');
+    return (
+        <>
+            {/* Toast MUST be placed at the top of the JSX, outside the main Container */}
+            <MessageToast
+                dialog={dialog}
+                showMessage={showMessage}
+                messageText={messageText}
+                onClose={() => setShowMessage(false)}
+            />
+            {/* ... rest of page content ... */}
+        </>
+    );
+}
 ```
 
 ## Usage Patterns
 
-### Basic feedback after an action
+### Error feedback after a failed operation
 
 ```tsx
-import { toast } from 'sonner';
-
 const handleSave = async () => {
-  try {
-    await saveData();
-    toast.success('Changes saved successfully!');
-  } catch (error) {
-    toast.error(error.message || 'Failed to save changes.');
-  }
+    let ret = await someContext.update(data);
+    if (ret.sucesso) {
+        throwSuccess(t(ret.mensagemSucesso));
+    } else {
+        throwError(ret.mensagemErro);
+    }
 };
 ```
 
-### Promise-based toast (loading → success/error)
-
-For async operations where you want to show a loading state that resolves:
+### Validation errors before calling the API
 
 ```tsx
-import { toast } from 'sonner';
-
-const handleDelete = () => {
-  toast.promise(deleteItem(id), {
-    loading: 'Deleting item...',
-    success: 'Item deleted successfully!',
-    error: 'Failed to delete item.',
-  });
+const handleSubmit = async () => {
+    if (!name) {
+        throwError(t('error_name_required'));
+        return;
+    }
+    if (!email) {
+        throwError(t('error_email_required'));
+        return;
+    }
+    // proceed with API call...
 };
 ```
 
-### Toast with action button
+### Confirmation dialog with Yes/No
 
-When the user might want to undo or take a follow-up action:
-
-```tsx
-import { toast } from 'sonner';
-
-toast('Item archived.', {
-  action: {
-    label: 'Undo',
-    onClick: () => restoreItem(id),
-  },
-});
-```
-
-### Toast with custom duration
-
-Default auto-dismiss is usually fine, but you can customize:
+For confirmation prompts (e.g., "Are you sure you want to delete?"), use `MessageToastEnum.Confirmation` with `onYes` and `onNo` callbacks:
 
 ```tsx
-import { toast } from 'sonner';
+export default function SomePage() {
+    const { t } = useTranslation();
 
-// Stay longer for important messages (duration in ms)
-toast.warning('Unsaved changes will be lost.', { duration: 8000 });
+    const [showMessage, setShowMessage] = useState<boolean>(false);
+    const [messageText, setMessageText] = useState<string>("");
+    const [dialog, setDialog] = useState<MessageToastEnum>(MessageToastEnum.Error);
 
-// Persistent toast that requires manual dismiss
-toast.error('Connection lost. Check your internet.', { duration: Infinity });
+    // Store what action to take on confirmation
+    const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
+
+    const throwError = (message: string) => {
+        setDialog(MessageToastEnum.Error);
+        setMessageText(message);
+        setShowMessage(true);
+    };
+
+    const throwSuccess = (message: string) => {
+        setDialog(MessageToastEnum.Success);
+        setMessageText(message);
+        setShowMessage(true);
+    };
+
+    const askConfirmation = (message: string, onConfirm: () => void) => {
+        setDialog(MessageToastEnum.Confirmation);
+        setMessageText(message);
+        setPendingAction(() => onConfirm);
+        setShowMessage(true);
+    };
+
+    const handleDelete = (itemId: number) => {
+        askConfirmation(t('confirm_delete'), async () => {
+            let ret = await someContext.delete(itemId);
+            if (ret.sucesso) {
+                throwSuccess(t(ret.mensagemSucesso));
+            } else {
+                throwError(ret.mensagemErro);
+            }
+        });
+    };
+
+    return (
+        <>
+            <MessageToast
+                dialog={dialog}
+                showMessage={showMessage}
+                messageText={messageText}
+                onClose={() => setShowMessage(false)}
+                onYes={() => {
+                    setShowMessage(false);
+                    if (pendingAction) pendingAction();
+                }}
+                onNo={() => setShowMessage(false)}
+            />
+            {/* ... page content ... */}
+        </>
+    );
+}
 ```
 
-### Toast with description
+## MessageToast Props Reference
 
-For messages that need additional context:
+```typescript
+interface IMessageToastParam {
+    dialog: MessageToastEnum;      // Toast type (Error, Success, Information, Confirmation)
+    showMessage: boolean;          // Whether to show the toast
+    messageText: string;           // Message to display
+    onClose: () => void;           // Called when toast is dismissed
+    onYes?: () => void;            // Called when "Yes" is clicked (Confirmation only)
+    onNo?: () => void;             // Called when "No" is clicked (Confirmation only)
+}
+```
 
+## Integration with ProviderResult
+
+Context methods return `ProviderResult`:
+
+```typescript
+interface ProviderResult {
+    sucesso: boolean;          // Whether the operation succeeded
+    mensagemErro: string;      // Error message (show directly)
+    mensagemSucesso: string;   // Success message key (pass through t() for translation)
+}
+```
+
+Standard pattern:
 ```tsx
-import { toast } from 'sonner';
-
-toast.success('User invited', {
-  description: 'An invitation email has been sent to john@example.com.',
-});
+let ret = await context.someMethod(data);
+if (ret.sucesso) {
+    throwSuccess(t(ret.mensagemSucesso));  // Translate the success key
+} else {
+    throwError(ret.mensagemErro);          // Show error directly
+}
 ```
-
-## Message Guidelines
-
-- Keep toast messages **short and clear** (one sentence).
-- Use **past tense** for completed actions: "Profile updated successfully!" not "Profile has been updated."
-- Use **imperative or present tense** for errors and instructions: "Failed to save. Please try again."
-- Don't include technical details in user-facing messages — log those to `console.error()` separately.
-- Always provide a fallback message when the error object might not have a `.message`:
-  ```tsx
-  toast.error(error.message || 'An unexpected error occurred.');
-  ```
-
-## Existing Conventions
-
-This project already uses `toast` from `sonner` in several pages. Follow the same pattern:
-
-- **Success on completed action:** `toast.success('Login successful! Welcome back.')`
-- **Error with message fallback:** `toast.error(error.message || 'Login failed. Please try again.')`
-- **Callbacks from `nauth-react` components:** Pass `onSuccess` / `onError` handlers that call `toast.success()` / `toast.error()`.

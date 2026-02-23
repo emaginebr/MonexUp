@@ -18,7 +18,8 @@ interface IImageModalParam {
     networkId?: number,
     productId?: number,
     onClose: () => void,
-    onSuccess?: (url: string) => void
+    onSuccess?: (url: string) => void,
+    onError?: (message: string) => void
 };
 
 function ImageModal(param: IImageModalParam) {
@@ -102,7 +103,7 @@ function ImageModal(param: IImageModalParam) {
                     }
                 }
                 else {
-                    alert(ret.mensagemErro);
+                    if (param.onError) param.onError(ret.mensagemErro);
                     return;
                 }
                 break;
@@ -114,7 +115,7 @@ function ImageModal(param: IImageModalParam) {
                     }
                 }
                 else {
-                    alert(ret.mensagemErro);
+                    if (param.onError) param.onError(ret.mensagemErro);
                     return;
                 }
                 break;
@@ -126,7 +127,7 @@ function ImageModal(param: IImageModalParam) {
                     }
                 }
                 else {
-                    alert(ret.mensagemErro);
+                    if (param.onError) param.onError(ret.mensagemErro);
                     return;
                 }
                 break;

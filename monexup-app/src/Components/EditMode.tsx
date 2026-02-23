@@ -18,23 +18,27 @@ interface IEditModeProps {
     isEditing?: boolean;
     part: TemplatePartInfo;
     acceptableParts: WebsitePartEnum[];
+    onErrorMessage?: (message: string) => void;
 };
 
 interface IEditModeNewProps {
     isEditing?: boolean;
     acceptableParts: WebsitePartEnum[];
+    onErrorMessage?: (message: string) => void;
 };
 
 interface IEditModeTextProps {
     name: string;
     value: string;
     isEditing?: boolean;
+    onErrorMessage?: (message: string) => void;
 };
 
 interface IEditModeBtnProps extends ButtonProps {
     name: string;
     value: string;
     isEditing?: boolean;
+    onErrorMessage?: (message: string) => void;
 };
 
 interface IEditModeImgProps extends React.ButtonHTMLAttributes<HTMLImageElement> {
@@ -61,7 +65,7 @@ interface IEditModeModalPartProps extends IEditModeModalProps {
     acceptableParts: WebsitePartEnum[];
 };
 
-const New: React.FC<IEditModeNewProps> = ({ acceptableParts, isEditing = true }) => {
+const New: React.FC<IEditModeNewProps> = ({ acceptableParts, isEditing = true, onErrorMessage }) => {
 
     const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -79,12 +83,12 @@ const New: React.FC<IEditModeNewProps> = ({ acceptableParts, isEditing = true })
                 onSave={async () => {
                     let ret = await templateContext.insertPart(templateContext.part);
                     if (!ret.sucesso) {
-                        alert(ret.mensagemErro);
+                        if (onErrorMessage) onErrorMessage(ret.mensagemErro);
                         return;
                     }
                     let retLd = await templateContext.getPageById(templateContext.page?.pageId, authContext.language);
                     if (!retLd.sucesso) {
-                        alert(retLd.mensagemErro);
+                        if (onErrorMessage) onErrorMessage(retLd.mensagemErro);
                         return;
                     }
                     setShowModal(false);
@@ -110,7 +114,7 @@ const New: React.FC<IEditModeNewProps> = ({ acceptableParts, isEditing = true })
     )
 };
 
-const Text: React.FC<IEditModeTextProps> = ({ name, value, isEditing = true }) => {
+const Text: React.FC<IEditModeTextProps> = ({ name, value, isEditing = true, onErrorMessage }) => {
 
     const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -120,7 +124,7 @@ const Text: React.FC<IEditModeTextProps> = ({ name, value, isEditing = true }) =
     const reloadPage = async () => {
         let ret = await templateContext.getPageById(templateContext.page?.pageId, authContext.language);
         if (!ret.sucesso) {
-            alert(ret.mensagemErro);
+            if (onErrorMessage) onErrorMessage(ret.mensagemErro);
             return;
         }
     };
@@ -138,7 +142,7 @@ const Text: React.FC<IEditModeTextProps> = ({ name, value, isEditing = true }) =
                 onSave={ async () => { 
                     let ret = await templateContext.saveVariable(templateContext.variable);
                     if (!ret.sucesso) {
-                        alert(ret.mensagemErro);
+                        if (onErrorMessage) onErrorMessage(ret.mensagemErro);
                         return;
                     }
                     await reloadPage();
@@ -151,7 +155,7 @@ const Text: React.FC<IEditModeTextProps> = ({ name, value, isEditing = true }) =
                     e.preventDefault();
                     let ret = await templateContext.getVariable(templateContext.page?.pageId, name);
                     if (!ret.sucesso) {
-                        alert(ret.mensagemErro);
+                        if (onErrorMessage) onErrorMessage(ret.mensagemErro);
                         return;
                     }
                     setShowModal(true);
@@ -160,7 +164,7 @@ const Text: React.FC<IEditModeTextProps> = ({ name, value, isEditing = true }) =
     )
 };
 
-const Btn: React.FC<IEditModeBtnProps> = ({ name, value, isEditing = true, ...rest }) => {
+const Btn: React.FC<IEditModeBtnProps> = ({ name, value, isEditing = true, onErrorMessage, ...rest }) => {
 
     const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -170,7 +174,7 @@ const Btn: React.FC<IEditModeBtnProps> = ({ name, value, isEditing = true, ...re
     const reloadPage = async () => {
         let ret = await templateContext.getPageById(templateContext.page?.pageId, authContext.language);
         if (!ret.sucesso) {
-            alert(ret.mensagemErro);
+            if (onErrorMessage) onErrorMessage(ret.mensagemErro);
             return;
         }
     };
@@ -190,7 +194,7 @@ const Btn: React.FC<IEditModeBtnProps> = ({ name, value, isEditing = true, ...re
                 onSave={ async () => { 
                     let ret = await templateContext.saveVariable(templateContext.variable);
                     if (!ret.sucesso) {
-                        alert(ret.mensagemErro);
+                        if (onErrorMessage) onErrorMessage(ret.mensagemErro);
                         return;
                     }
                     await reloadPage();
@@ -204,7 +208,7 @@ const Btn: React.FC<IEditModeBtnProps> = ({ name, value, isEditing = true, ...re
                     e.preventDefault();
                     let ret = await templateContext.getVariable(templateContext.page?.pageId, name);
                     if (!ret.sucesso) {
-                        alert(ret.mensagemErro);
+                        if (onErrorMessage) onErrorMessage(ret.mensagemErro);
                         return;
                     }
                     setShowModal(true);
@@ -422,7 +426,7 @@ const EditMode: React.FC<IEditModeProps> & {
     Text: React.FC<IEditModeTextProps>,
     Btn: React.FC<IEditModeBtnProps>,
     Img: React.FC<IEditModeImgProps>
-} = ({ children = "", part = null, acceptableParts, isEditing = true }) => {
+} = ({ children = "", part = null, acceptableParts, isEditing = true, onErrorMessage }) => {
 
     const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -432,7 +436,7 @@ const EditMode: React.FC<IEditModeProps> & {
     const reloadPage = async () => {
         let ret = await templateContext.getPageById(templateContext.page?.pageId, authContext.language);
         if (!ret.sucesso) {
-            alert(ret.mensagemErro);
+            if (onErrorMessage) onErrorMessage(ret.mensagemErro);
             return;
         }
     };
@@ -449,7 +453,7 @@ const EditMode: React.FC<IEditModeProps> & {
                 onSave={async () => {
                     let ret = await templateContext.updatePart(templateContext.part);
                     if (!ret.sucesso) {
-                        alert(ret.mensagemErro);
+                        if (onErrorMessage) onErrorMessage(ret.mensagemErro);
                         return;
                     }
                     await reloadPage();
@@ -468,7 +472,7 @@ const EditMode: React.FC<IEditModeProps> & {
                             if (part) {
                                 let ret = await templateContext.movePartUp(part.partId);
                                 if (!ret.sucesso) {
-                                    alert(ret.mensagemErro);
+                                    if (onErrorMessage) onErrorMessage(ret.mensagemErro);
                                     return;
                                 }
                                 await reloadPage();
@@ -492,7 +496,7 @@ const EditMode: React.FC<IEditModeProps> & {
                             if (part) {
                                 let ret = await templateContext.deletePart(part.partId);
                                 if (!ret.sucesso) {
-                                    alert(ret.mensagemErro);
+                                    if (onErrorMessage) onErrorMessage(ret.mensagemErro);
                                     return;
                                 }
                                 await reloadPage();
@@ -507,7 +511,7 @@ const EditMode: React.FC<IEditModeProps> & {
                             if (part) {
                                 let ret = await templateContext.movePartDown(part.partId);
                                 if (!ret.sucesso) {
-                                    alert(ret.mensagemErro);
+                                    if (onErrorMessage) onErrorMessage(ret.mensagemErro);
                                     return;
                                 }
                                 await reloadPage();

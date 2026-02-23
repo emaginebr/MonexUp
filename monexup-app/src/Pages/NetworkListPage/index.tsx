@@ -11,6 +11,8 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import NetworkContext from "../../Contexts/Network/NetworkContext";
 import { useTranslation } from "react-i18next";
+import MessageToast from "../../Components/MessageToast";
+import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 
 export default function NetworkListPage() {
 
@@ -20,16 +22,30 @@ export default function NetworkListPage() {
     let navigate = useNavigate();
     const networkContext = useContext(NetworkContext);
 
+    const [showMessage, setShowMessage] = useState<boolean>(false);
+    const [messageText, setMessageText] = useState<string>("");
+
+    const throwError = (message: string) => {
+        setMessageText(message);
+        setShowMessage(true);
+    };
+
     useEffect(() => {
         networkContext.listByUser().then((ret) => {
             if (!ret.sucesso) {
-                alert(ret.mensagemErro);
+                throwError(ret.mensagemErro);
             }
         });
     }, []);
 
     return (
         <>
+            <MessageToast
+                dialog={MessageToastEnum.Error}
+                showMessage={showMessage}
+                messageText={messageText}
+                onClose={() => setShowMessage(false)}
+            />
             <Container>
                 <Row>
                     <Col md="12">

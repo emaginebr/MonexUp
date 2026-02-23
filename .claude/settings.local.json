@@ -22,7 +22,11 @@
       "Bash(git mv:*)",
       "Bash(git rm:*)",
       "Bash(while IFS= read -r f)",
-      "Bash(do git rm --cached \"$f\")"
+      "Bash(do git rm --cached \"$f\")",
+      "Bash(npm run build:*)",
+      "Bash(npx react-scripts build)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }
