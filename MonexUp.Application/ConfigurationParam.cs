@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MonexUp.Application
+{
+    public class ConfigurationParam
+    {
+        public string ConnectionString { get; set; }
+        public string NAuthApiUrl { get; set; }
+        public string NAuthJwtSecret { get; set; }
+        public string NAuthBucketName { get; set; }
+    }
+}
