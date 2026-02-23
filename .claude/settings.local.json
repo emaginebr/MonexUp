@@ -26,7 +26,17 @@
       "Bash(npm run build:*)",
       "Bash(npx react-scripts build)",
       "Bash(npm install:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(dotnet tool update:*)",
+      "Bash(dotnet ef migrations add:*)",
+      "Bash(test:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(gh api:*)",
+      "Bash(git submodule add:*)",
+      "Bash(git submodule update:*)",
+      "Bash(findstr:*)",
+      "Bash(del \"C:\\\\repos\\\\MonexUp\\\\git_tracked.txt\")"
     ]
   }
 }

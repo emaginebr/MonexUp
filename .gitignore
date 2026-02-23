@@ -3,6 +3,19 @@
 .env.*
 !.env.example
 
+# Frontend environment (secrets)
+monexup-app/.env.production
+
+# Frontend build output
+monexup-app/build/
+
+# SSL certificates (private keys)
+certs/
+ssl.crt
+ssl.key
+monexup-app/*.crt
+monexup-app/*.key
+
 # Sensitive config files
 appsettings.Development.json
 appsettings.Docker.json

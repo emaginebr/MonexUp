@@ -420,6 +420,7 @@ public partial class MonexUpContext : DbContext
         });
         modelBuilder.HasSequence("network_id_seq");
         modelBuilder.HasSequence("profile_id_seq");
+        modelBuilder.HasSequence("invoice_commission_commission_id_seq");
 
         OnModelCreatingPartial(modelBuilder);
     }

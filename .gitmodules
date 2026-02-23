@@ -1,0 +1,6 @@
+[submodule "submodules/NAuth"]
+	path = submodules/NAuth
+	url = https://github.com/emaginebr/NAuth.git
+[submodule "submodules/zTools"]
+	path = submodules/zTools
+	url = https://github.com/emaginebr/zTools.git
