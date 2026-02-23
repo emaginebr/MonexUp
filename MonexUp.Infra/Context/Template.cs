@@ -18,6 +18,4 @@ public partial class Template
     public virtual Network Network { get; set; }
 
     public virtual ICollection<TemplatePage> TemplatePages { get; set; } = new List<TemplatePage>();
-
-    public virtual User User { get; set; }
 }

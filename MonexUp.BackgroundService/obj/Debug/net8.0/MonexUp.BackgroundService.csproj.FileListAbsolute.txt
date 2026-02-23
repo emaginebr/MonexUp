@@ -93,4 +93,3 @@ C:\repos\MonexUp\MonexUp.BackgroundService\obj\Debug\net8.0\refint\MonexUp.Backg
 C:\repos\MonexUp\MonexUp.BackgroundService\obj\Debug\net8.0\MonexUp.BackgroundService.pdb
 C:\repos\MonexUp\MonexUp.BackgroundService\obj\Debug\net8.0\MonexUp.BackgroundService.genruntimeconfig.cache
 C:\repos\MonexUp\MonexUp.BackgroundService\obj\Debug\net8.0\ref\MonexUp.BackgroundService.dll
-C:\repos\MonexUp\MonexUp.BackgroundService\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

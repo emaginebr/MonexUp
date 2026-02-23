@@ -20,6 +20,4 @@ public partial class InvoiceFee
     public virtual Invoice Invoice { get; set; }
 
     public virtual Network Network { get; set; }
-
-    public virtual User User { get; set; }
 }

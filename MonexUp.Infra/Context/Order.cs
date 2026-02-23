@@ -26,6 +26,4 @@ public partial class Order
     public virtual Network Network { get; set; }
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
-
-    public virtual User User { get; set; }
 }

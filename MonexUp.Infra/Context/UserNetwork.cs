@@ -20,8 +20,4 @@ public partial class UserNetwork
     public virtual Network Network { get; set; }
 
     public virtual UserProfile Profile { get; set; }
-
-    public virtual User Referrer { get; set; }
-
-    public virtual User User { get; set; }
 }

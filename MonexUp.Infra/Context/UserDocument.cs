@@ -12,6 +12,4 @@ public partial class UserDocument
     public int DocumentType { get; set; }
 
     public string Base64 { get; set; }
-
-    public virtual User User { get; set; }
 }

@@ -109,10 +109,6 @@ namespace DB.Infra.Repository
             {
                 q = q.Where(x => x.ProfileId == profileId.Value);
             }
-            if (!string.IsNullOrEmpty(keyword))
-            {
-                q = q.Where(x => x.User.Name.Contains(keyword, StringComparison.CurrentCultureIgnoreCase));
-            }
             var pages = (double)q.Count() / (double)PAGE_SIZE;
             pageCount = Convert.ToInt32(Math.Ceiling(pages));
             var rows = q.Skip((pageNum - 1) * PAGE_SIZE).Take(PAGE_SIZE).ToList();
