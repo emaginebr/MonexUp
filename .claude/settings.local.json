@@ -13,7 +13,16 @@
       "Bash(dotnet nuget:*)",
       "Bash(dotnet tool list:*)",
       "Bash(dotnet script:*)",
-      "Bash(dotnet add:*)"
+      "Bash(dotnet add:*)",
+      "Bash(dotnet clean:*)",
+      "Bash(for d in MonexUp.API MonexUp.Application MonexUp.Domain MonexUp.DTO MonexUp.BackgroundService Core.Domain DB.Infra)",
+      "Bash(do rm -rf \"$d/bin\" \"$d/obj\")",
+      "Bash(done)",
+      "Bash(ls:*)",
+      "Bash(git mv:*)",
+      "Bash(git rm:*)",
+      "Bash(while IFS= read -r f)",
+      "Bash(do git rm --cached \"$f\")"
     ]
   }
 }

@@ -17,17 +17,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MonexUp.DTO\MonexUp.DTO.csproj" />
-    <ProjectReference Include="..\Core.Domain\Core.Domain.csproj" />
+    <ProjectReference Include="..\MonexUp.Infra.Interfaces\MonexUp.Infra.Interfaces.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Impl\Services\AuthService.cs" />
-    <Compile Remove="Interfaces\Services\IAuthService.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="System.Drawing.Common" />
     <None Remove="SixLabors.ImageSharp" />
-    <None Remove="Interfaces\Models\WithDraw\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NAuth" Version="0.4.2" />

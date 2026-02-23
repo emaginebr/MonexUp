@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core.Domain\Core.Domain.csproj" />
+    <ProjectReference Include="..\MonexUp.Infra.Interfaces\MonexUp.Infra.Interfaces.csproj" />
     <ProjectReference Include="..\MonexUp.Application\MonexUp.Application.csproj" />
     <ProjectReference Include="..\MonexUp.Domain\MonexUp.Domain.csproj" />
     <ProjectReference Include="..\MonexUp.DTO\MonexUp.DTO.csproj" />

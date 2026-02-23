@@ -4522,7 +4522,6 @@
       "path": "system.net.http/4.1.0",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/Xamarinmac20/_._",
@@ -4910,6 +4909,7 @@
       "path": "system.private.datacontractserialization/4.1.1",
       "files": [
         ".nupkg.metadata",
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/netstandard1.3/System.Private.DataContractSerialization.dll",
@@ -5707,6 +5707,7 @@
       "path": "system.runtime.serialization.primitives/4.1.1",
       "files": [
         ".nupkg.metadata",
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -6881,6 +6882,7 @@
       "path": "system.xml.xmldocument/4.0.1",
       "files": [
         ".nupkg.metadata",
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -6919,6 +6921,7 @@
       "path": "system.xml.xmlserializer/4.0.11",
       "files": [
         ".nupkg.metadata",
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -6998,8 +7001,8 @@
     },
     "Core.Domain/1.0.0": {
       "type": "project",
-      "path": "../Core.Domain/Core.Domain.csproj",
-      "msbuildProject": "../Core.Domain/Core.Domain.csproj"
+      "path": "../MonexUp.Infra.Interfaces/MonexUp.Infra.Interfaces.csproj",
+      "msbuildProject": "../MonexUp.Infra.Interfaces/MonexUp.Infra.Interfaces.csproj"
     },
     "MonexUp.DTO/1.0.0": {
       "type": "project",
@@ -7055,11 +7058,11 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\repos\\MonexUp\\Core.Domain\\Core.Domain.csproj": {
-              "projectPath": "C:\\repos\\MonexUp\\Core.Domain\\Core.Domain.csproj"
-            },
             "C:\\repos\\MonexUp\\MonexUp.DTO\\MonexUp.DTO.csproj": {
               "projectPath": "C:\\repos\\MonexUp\\MonexUp.DTO\\MonexUp.DTO.csproj"
+            },
+            "C:\\repos\\MonexUp\\MonexUp.Infra.Interfaces\\MonexUp.Infra.Interfaces.csproj": {
+              "projectPath": "C:\\repos\\MonexUp\\MonexUp.Infra.Interfaces\\MonexUp.Infra.Interfaces.csproj"
             }
           }
         }

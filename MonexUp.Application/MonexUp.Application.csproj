@@ -14,8 +14,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MonexUp.Domain\MonexUp.Domain.csproj" />
-    <ProjectReference Include="..\Core.Domain\Core.Domain.csproj" />
-    <ProjectReference Include="..\DB.Infra\DB.Infra.csproj" />
+    <ProjectReference Include="..\MonexUp.Infra.Interfaces\MonexUp.Infra.Interfaces.csproj" />
+    <ProjectReference Include="..\MonexUp.Infra\MonexUp.Infra.csproj" />
   </ItemGroup>
 
   <ItemGroup>

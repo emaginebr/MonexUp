@@ -7,21 +7,21 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["BTCSTXSwap.BackgroundService/BTCSTXSwap.BackgroundService.csproj", "BTCSTXSwap.BackgroundService/"]
-COPY ["BTCSTXSwap.Application/BTCSTXSwap.Application.csproj", "BTCSTXSwap.Application/"]
-COPY ["BTCSTXSwap.Domain/BTCSTXSwap.Domain.csproj", "BTCSTXSwap.Domain/"]
-COPY ["Core.Domain/Core.Domain.csproj", "Core.Domain/"]
-COPY ["BTCSTXSwap.DTO/BTCSTXSwap.DTO.csproj", "BTCSTXSwap.DTO/"]
-COPY ["DB.Infra/DB.Infra.csproj", "DB.Infra/"]
-RUN dotnet restore "BTCSTXSwap.BackgroundService/BTCSTXSwap.BackgroundService.csproj"
+COPY ["MonexUp.BackgroundService/MonexUp.BackgroundService.csproj", "MonexUp.BackgroundService/"]
+COPY ["MonexUp.Application/MonexUp.Application.csproj", "MonexUp.Application/"]
+COPY ["MonexUp.Domain/MonexUp.Domain.csproj", "MonexUp.Domain/"]
+COPY ["MonexUp.Infra.Interfaces/MonexUp.Infra.Interfaces.csproj", "MonexUp.Infra.Interfaces/"]
+COPY ["MonexUp.DTO/MonexUp.DTO.csproj", "MonexUp.DTO/"]
+COPY ["MonexUp.Infra/MonexUp.Infra.csproj", "MonexUp.Infra/"]
+RUN dotnet restore "MonexUp.BackgroundService/MonexUp.BackgroundService.csproj"
 COPY . .
-WORKDIR "/src/BTCSTXSwap.BackgroundService"
-RUN dotnet build "BTCSTXSwap.BackgroundService.csproj" -c Release -o /app/build
+WORKDIR "/src/MonexUp.BackgroundService"
+RUN dotnet build "MonexUp.BackgroundService.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "BTCSTXSwap.BackgroundService.csproj" -c Release -o /app/publish
+RUN dotnet publish "MonexUp.BackgroundService.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "BTCSTXSwap.BackgroundService.dll"]
+ENTRYPOINT ["dotnet", "MonexUp.BackgroundService.dll"]

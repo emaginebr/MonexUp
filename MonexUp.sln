@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonexUp.Domain", "MonexUp.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonexUp.DTO", "MonexUp.DTO\MonexUp.DTO.csproj", "{2E16DDBE-A432-411E-BF7E-F4ED76FFB184}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Domain", "Core.Domain\Core.Domain.csproj", "{E149BFCB-5FFB-44D5-8FA0-BE1480D2D8CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonexUp.Infra.Interfaces", "MonexUp.Infra.Interfaces\MonexUp.Infra.Interfaces.csproj", "{E149BFCB-5FFB-44D5-8FA0-BE1480D2D8CA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DB.Infra", "DB.Infra\DB.Infra.csproj", "{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonexUp.Infra", "MonexUp.Infra\MonexUp.Infra.csproj", "{84C58D7E-C390-4AAF-98B3-F5CBB09C91BC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{4CA0FD41-3A9C-40D1-99D3-240B1C82D7D9}"
 	ProjectSection(SolutionItems) = preProject

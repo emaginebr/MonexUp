@@ -23,9 +23,9 @@ COPY ["MonexUp.API/monexup.com.pfx", "MonexUp.API/"]
 COPY ["MonexUp.API/MonexUp.API.csproj", "MonexUp.API/"]
 COPY ["MonexUp.Application/MonexUp.Application.csproj", "MonexUp.Application/"]
 COPY ["MonexUp.Domain/MonexUp.Domain.csproj", "MonexUp.Domain/"]
-COPY ["Core.Domain/Core.Domain.csproj", "Core.Domain/"]
+COPY ["MonexUp.Infra.Interfaces/MonexUp.Infra.Interfaces.csproj", "MonexUp.Infra.Interfaces/"]
 COPY ["MonexUp.DTO/MonexUp.DTO.csproj", "MonexUp.DTO/"]
-COPY ["DB.Infra/DB.Infra.csproj", "DB.Infra/"]
+COPY ["MonexUp.Infra/MonexUp.Infra.csproj", "MonexUp.Infra/"]
 RUN dotnet restore "MonexUp.API/MonexUp.API.csproj"
 COPY . .
 WORKDIR "/src/MonexUp.API"
