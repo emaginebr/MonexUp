@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "WWPIAwjiv5Q=",
+  "success": true,
+  "projectFilePath": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\MonexUp.DTO.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\rodrigo.carneiro\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

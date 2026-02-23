@@ -1,0 +1,13 @@
+C:\Git\Projetos\NoChainSwap\Backend\NoChainSwap\NoChainSwap.DTO\bin\Release\net8.0\NoChainSwap.DTO.deps.json
+C:\Git\Projetos\NoChainSwap\Backend\NoChainSwap\NoChainSwap.DTO\bin\Release\net8.0\NoChainSwap.DTO.dll
+C:\Git\Projetos\NoChainSwap\Backend\NoChainSwap\NoChainSwap.DTO\bin\Release\net8.0\NoChainSwap.DTO.pdb
+C:\Git\Projetos\NoChainSwap\Backend\NoChainSwap\NoChainSwap.DTO\obj\Release\net8.0\NoChainSwap.DTO.csproj.AssemblyReference.cache
+C:\Git\Projetos\NoChainSwap\Backend\NoChainSwap\NoChainSwap.DTO\obj\Release\net8.0\NoChainSwap.DTO.GeneratedMSBuildEditorConfig.editorconfig
+C:\Git\Projetos\NoChainSwap\Backend\NoChainSwap\NoChainSwap.DTO\obj\Release\net8.0\NoChainSwap.DTO.AssemblyInfoInputs.cache
+C:\Git\Projetos\NoChainSwap\Backend\NoChainSwap\NoChainSwap.DTO\obj\Release\net8.0\NoChainSwap.DTO.AssemblyInfo.cs
+C:\Git\Projetos\NoChainSwap\Backend\NoChainSwap\NoChainSwap.DTO\obj\Release\net8.0\NoChainSwap.DTO.csproj.CoreCompileInputs.cache
+C:\Git\Projetos\NoChainSwap\Backend\NoChainSwap\NoChainSwap.DTO\obj\Release\net8.0\NoChainSwap.DTO.sourcelink.json
+C:\Git\Projetos\NoChainSwap\Backend\NoChainSwap\NoChainSwap.DTO\obj\Release\net8.0\NoChainSwap.DTO.dll
+C:\Git\Projetos\NoChainSwap\Backend\NoChainSwap\NoChainSwap.DTO\obj\Release\net8.0\refint\NoChainSwap.DTO.dll
+C:\Git\Projetos\NoChainSwap\Backend\NoChainSwap\NoChainSwap.DTO\obj\Release\net8.0\NoChainSwap.DTO.pdb
+C:\Git\Projetos\NoChainSwap\Backend\NoChainSwap\NoChainSwap.DTO\obj\Release\net8.0\ref\NoChainSwap.DTO.dll

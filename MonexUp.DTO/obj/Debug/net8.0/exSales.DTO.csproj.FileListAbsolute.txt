@@ -1,0 +1,13 @@
+C:\Git\Projetos\exsales\Backend\exSales\exSales.DTO\bin\Debug\net8.0\exSales.DTO.deps.json
+C:\Git\Projetos\exsales\Backend\exSales\exSales.DTO\bin\Debug\net8.0\exSales.DTO.dll
+C:\Git\Projetos\exsales\Backend\exSales\exSales.DTO\bin\Debug\net8.0\exSales.DTO.pdb
+C:\Git\Projetos\exsales\Backend\exSales\exSales.DTO\obj\Debug\net8.0\exSales.DTO.csproj.AssemblyReference.cache
+C:\Git\Projetos\exsales\Backend\exSales\exSales.DTO\obj\Debug\net8.0\exSales.DTO.GeneratedMSBuildEditorConfig.editorconfig
+C:\Git\Projetos\exsales\Backend\exSales\exSales.DTO\obj\Debug\net8.0\exSales.DTO.AssemblyInfoInputs.cache
+C:\Git\Projetos\exsales\Backend\exSales\exSales.DTO\obj\Debug\net8.0\exSales.DTO.AssemblyInfo.cs
+C:\Git\Projetos\exsales\Backend\exSales\exSales.DTO\obj\Debug\net8.0\exSales.DTO.csproj.CoreCompileInputs.cache
+C:\Git\Projetos\exsales\Backend\exSales\exSales.DTO\obj\Debug\net8.0\exSales.DTO.sourcelink.json
+C:\Git\Projetos\exsales\Backend\exSales\exSales.DTO\obj\Debug\net8.0\exSales.DTO.dll
+C:\Git\Projetos\exsales\Backend\exSales\exSales.DTO\obj\Debug\net8.0\refint\exSales.DTO.dll
+C:\Git\Projetos\exsales\Backend\exSales\exSales.DTO\obj\Debug\net8.0\exSales.DTO.pdb
+C:\Git\Projetos\exsales\Backend\exSales\exSales.DTO\obj\Debug\net8.0\ref\exSales.DTO.dll

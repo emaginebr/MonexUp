@@ -4,244 +4,244 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 # User-specific files
-/Backend/MonexUp/*.rsuser
-/Backend/MonexUp/*.suo
-/Backend/MonexUp/*.user
-/Backend/MonexUp/*.userosscache
-/Backend/MonexUp/*.sln.docstates
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
 
 # User-specific files (MonoDevelop/Xamarin Studio)
-/Backend/MonexUp/*.userprefs
+*.userprefs
 
 # Mono auto generated files
-/Backend/MonexUp/mono_crash.*
+mono_crash.*
 
 # Build results
-/Backend/MonexUp/[Dd]ebug/
-/Backend/MonexUp/[Dd]ebugPublic/
-/Backend/MonexUp/[Rr]elease/
-/Backend/MonexUp/[Rr]eleases/
-/Backend/MonexUp/x64/
-/Backend/MonexUp/x86/
-/Backend/MonexUp/[Ww][Ii][Nn]32/
-/Backend/MonexUp/[Aa][Rr][Mm]/
-/Backend/MonexUp/[Aa][Rr][Mm]64/
-/Backend/MonexUp/bld/
-/Backend/MonexUp/[Bb]in/
-/Backend/MonexUp/[Oo]bj/
-/Backend/MonexUp/[Ll]og/
-/Backend/MonexUp/[Ll]ogs/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
 
 # Visual Studio 2015/2017 cache/options directory
-/Backend/MonexUp/.vs/
+.vs/
 # Uncomment if you have tasks that create the project's static files in wwwroot
 #wwwroot/
 
 # Visual Studio 2017 auto generated files
-/Backend/MonexUp/Generated\ Files/
+Generated\ Files/
 
 # MSTest test Results
-/Backend/MonexUp/[Tt]est[Rr]esult*/
-/Backend/MonexUp/[Bb]uild[Ll]og.*
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
 
 # NUnit
-/Backend/MonexUp/*.VisualState.xml
-/Backend/MonexUp/TestResult.xml
-/Backend/MonexUp/nunit-*.xml
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
 
 # Build Results of an ATL Project
-/Backend/MonexUp/[Dd]ebugPS/
-/Backend/MonexUp/[Rr]eleasePS/
-/Backend/MonexUp/dlldata.c
+[Dd]ebugPS/
+[Rr]eleasePS/
+dlldata.c
 
 # Benchmark Results
-/Backend/MonexUp/BenchmarkDotNet.Artifacts/
+BenchmarkDotNet.Artifacts/
 
 # .NET Core
-/Backend/MonexUp/project.lock.json
-/Backend/MonexUp/project.fragment.lock.json
-/Backend/MonexUp/artifacts/
+project.lock.json
+project.fragment.lock.json
+artifacts/
 
 # ASP.NET Scaffolding
-/Backend/MonexUp/ScaffoldingReadMe.txt
+ScaffoldingReadMe.txt
 
 # StyleCop
-/Backend/MonexUp/StyleCopReport.xml
+StyleCopReport.xml
 
 # Files built by Visual Studio
-/Backend/MonexUp/*_i.c
-/Backend/MonexUp/*_p.c
-/Backend/MonexUp/*_h.h
-/Backend/MonexUp/*.ilk
-/Backend/MonexUp/*.meta
-/Backend/MonexUp/*.obj
-/Backend/MonexUp/*.iobj
-/Backend/MonexUp/*.pch
-/Backend/MonexUp/*.pdb
-/Backend/MonexUp/*.ipdb
-/Backend/MonexUp/*.pgc
-/Backend/MonexUp/*.pgd
-/Backend/MonexUp/*.rsp
+*_i.c
+*_p.c
+*_h.h
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.pch
+*.pdb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
 # but not Directory.Build.rsp, as it configures directory-level build defaults
-/Backend/MonexUp/!Directory.Build.rsp
-/Backend/MonexUp/*.sbr
-/Backend/MonexUp/*.tlb
-/Backend/MonexUp/*.tli
-/Backend/MonexUp/*.tlh
-/Backend/MonexUp/*.tmp
-/Backend/MonexUp/*.tmp_proj
-/Backend/MonexUp/*_wpftmp.csproj
-/Backend/MonexUp/*.log
-/Backend/MonexUp/*.tlog
-/Backend/MonexUp/*.vspscc
-/Backend/MonexUp/*.vssscc
-/Backend/MonexUp/.builds
-/Backend/MonexUp/*.pidb
-/Backend/MonexUp/*.svclog
-/Backend/MonexUp/*.scc
+!Directory.Build.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*_wpftmp.csproj
+*.log
+*.tlog
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
 
 # Chutzpah Test files
-/Backend/MonexUp/_Chutzpah*
+_Chutzpah*
 
 # Visual C++ cache files
-/Backend/MonexUp/ipch/
-/Backend/MonexUp/*.aps
-/Backend/MonexUp/*.ncb
-/Backend/MonexUp/*.opendb
-/Backend/MonexUp/*.opensdf
-/Backend/MonexUp/*.sdf
-/Backend/MonexUp/*.cachefile
-/Backend/MonexUp/*.VC.db
-/Backend/MonexUp/*.VC.VC.opendb
+ipch/
+*.aps
+*.ncb
+*.opendb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
 
 # Visual Studio profiler
-/Backend/MonexUp/*.psess
-/Backend/MonexUp/*.vsp
-/Backend/MonexUp/*.vspx
-/Backend/MonexUp/*.sap
+*.psess
+*.vsp
+*.vspx
+*.sap
 
 # Visual Studio Trace Files
-/Backend/MonexUp/*.e2e
+*.e2e
 
 # TFS 2012 Local Workspace
-/Backend/MonexUp/$tf/
+$tf/
 
 # Guidance Automation Toolkit
-/Backend/MonexUp/*.gpState
+*.gpState
 
 # ReSharper is a .NET coding add-in
-/Backend/MonexUp/_ReSharper*/
-/Backend/MonexUp/*.[Rr]e[Ss]harper
-/Backend/MonexUp/*.DotSettings.user
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
 
 # TeamCity is a build add-in
-/Backend/MonexUp/_TeamCity*
+_TeamCity*
 
 # DotCover is a Code Coverage Tool
-/Backend/MonexUp/*.dotCover
+*.dotCover
 
 # AxoCover is a Code Coverage Tool
-/Backend/MonexUp/.axoCover/*
-/Backend/MonexUp/!.axoCover/settings.json
+.axoCover/*
+!.axoCover/settings.json
 
 # Coverlet is a free, cross platform Code Coverage Tool
-/Backend/MonexUp/coverage*.json
-/Backend/MonexUp/coverage*.xml
-/Backend/MonexUp/coverage*.info
+coverage*.json
+coverage*.xml
+coverage*.info
 
 # Visual Studio code coverage results
-/Backend/MonexUp/*.coverage
-/Backend/MonexUp/*.coveragexml
+*.coverage
+*.coveragexml
 
 # NCrunch
-/Backend/MonexUp/_NCrunch_*
-/Backend/MonexUp/.NCrunch_*
-/Backend/MonexUp/.*crunch*.local.xml
-/Backend/MonexUp/nCrunchTemp_*
+_NCrunch_*
+.NCrunch_*
+.*crunch*.local.xml
+nCrunchTemp_*
 
 # MightyMoose
-/Backend/MonexUp/*.mm.*
-/Backend/MonexUp/AutoTest.Net/
+*.mm.*
+AutoTest.Net/
 
 # Web workbench (sass)
-/Backend/MonexUp/.sass-cache/
+.sass-cache/
 
 # Installshield output folder
-/Backend/MonexUp/[Ee]xpress/
+[Ee]xpress/
 
 # DocProject is a documentation generator add-in
-/Backend/MonexUp/DocProject/buildhelp/
-/Backend/MonexUp/DocProject/Help/*.HxT
-/Backend/MonexUp/DocProject/Help/*.HxC
-/Backend/MonexUp/DocProject/Help/*.hhc
-/Backend/MonexUp/DocProject/Help/*.hhk
-/Backend/MonexUp/DocProject/Help/*.hhp
-/Backend/MonexUp/DocProject/Help/Html2
-/Backend/MonexUp/DocProject/Help/html
+DocProject/buildhelp/
+DocProject/Help/*.HxT
+DocProject/Help/*.HxC
+DocProject/Help/*.hhc
+DocProject/Help/*.hhk
+DocProject/Help/*.hhp
+DocProject/Help/Html2
+DocProject/Help/html
 
 # Click-Once directory
-/Backend/MonexUp/publish/
+publish/
 
 # Publish Web Output
-/Backend/MonexUp/*.[Pp]ublish.xml
-/Backend/MonexUp/*.azurePubxml
+*.[Pp]ublish.xml
+*.azurePubxml
 # Note: Comment the next line if you want to checkin your web deploy settings,
 # but database connection strings (with potential passwords) will be unencrypted
-/Backend/MonexUp/*.pubxml
-/Backend/MonexUp/*.publishproj
+*.pubxml
+*.publishproj
 
 # Microsoft Azure Web App publish settings. Comment the next line if you want to
 # checkin your Azure Web App publish settings, but sensitive information contained
 # in these scripts will be unencrypted
-/Backend/MonexUp/PublishScripts/
+PublishScripts/
 
 # NuGet Packages
-/Backend/MonexUp/*.nupkg
+*.nupkg
 # NuGet Symbol Packages
-/Backend/MonexUp/*.snupkg
+*.snupkg
 # The packages folder can be ignored because of Package Restore
-/Backend/MonexUp/**/[Pp]ackages/*
+**/[Pp]ackages/*
 # except build/, which is used as an MSBuild target.
-/Backend/MonexUp/!**/[Pp]ackages/build/
+!**/[Pp]ackages/build/
 # Uncomment if necessary however generally it will be regenerated when needed
 #!**/[Pp]ackages/repositories.config
 # NuGet v3's project.json files produces more ignorable files
-/Backend/MonexUp/*.nuget.props
-/Backend/MonexUp/*.nuget.targets
+*.nuget.props
+*.nuget.targets
 
 # Microsoft Azure Build Output
-/Backend/MonexUp/csx/
-/Backend/MonexUp/*.build.csdef
+csx/
+*.build.csdef
 
 # Microsoft Azure Emulator
-/Backend/MonexUp/ecf/
-/Backend/MonexUp/rcf/
+ecf/
+rcf/
 
 # Windows Store app package directories and files
-/Backend/MonexUp/AppPackages/
-/Backend/MonexUp/BundleArtifacts/
-/Backend/MonexUp/Package.StoreAssociation.xml
-/Backend/MonexUp/_pkginfo.txt
-/Backend/MonexUp/*.appx
-/Backend/MonexUp/*.appxbundle
-/Backend/MonexUp/*.appxupload
+AppPackages/
+BundleArtifacts/
+Package.StoreAssociation.xml
+_pkginfo.txt
+*.appx
+*.appxbundle
+*.appxupload
 
 # Visual Studio cache files
 # files ending in .cache can be ignored
-/Backend/MonexUp/*.[Cc]ache
+*.[Cc]ache
 # but keep track of directories ending in .cache
-/Backend/MonexUp/!?*.[Cc]ache/
+!?*.[Cc]ache/
 
 # Others
-/Backend/MonexUp/ClientBin/
-/Backend/MonexUp/~$*
-/Backend/MonexUp/*~
-/Backend/MonexUp/*.dbmdl
-/Backend/MonexUp/*.dbproj.schemaview
-/Backend/MonexUp/*.jfm
+ClientBin/
+~$*
+*~
+*.dbmdl
+*.dbproj.schemaview
+*.jfm
 #*.pfx
-/Backend/MonexUp/*.publishsettings
-/Backend/MonexUp/orleans.codegen.cs
+*.publishsettings
+orleans.codegen.cs
 
 # Including strong name files can present a security risk
 # (https://github.com/github/gitignore/pull/2483#issue-259490424)
@@ -252,152 +252,150 @@
 #bower_components/
 
 # RIA/Silverlight projects
-/Backend/MonexUp/Generated_Code/
+Generated_Code/
 
 # Backup & report files from converting an old project file
 # to a newer Visual Studio version. Backup files are not needed,
 # because we have git ;-)
-/Backend/MonexUp/_UpgradeReport_Files/
-/Backend/MonexUp/Backup*/
-/Backend/MonexUp/UpgradeLog*.XML
-/Backend/MonexUp/UpgradeLog*.htm
-/Backend/MonexUp/ServiceFabricBackup/
-/Backend/MonexUp/*.rptproj.bak
+_UpgradeReport_Files/
+Backup*/
+UpgradeLog*.XML
+UpgradeLog*.htm
+ServiceFabricBackup/
+*.rptproj.bak
 
 # SQL Server files
-/Backend/MonexUp/*.mdf
-/Backend/MonexUp/*.ldf
-/Backend/MonexUp/*.ndf
+*.mdf
+*.ldf
+*.ndf
 
 # Business Intelligence projects
-/Backend/MonexUp/*.rdl.data
-/Backend/MonexUp/*.bim.layout
-/Backend/MonexUp/*.bim_*.settings
-/Backend/MonexUp/*.rptproj.rsuser
-/Backend/MonexUp/*- [Bb]ackup.rdl
-/Backend/MonexUp/*- [Bb]ackup ([0-9]).rdl
-/Backend/MonexUp/*- [Bb]ackup ([0-9][0-9]).rdl
+*.rdl.data
+*.bim.layout
+*.bim_*.settings
+*.rptproj.rsuser
+*- [Bb]ackup.rdl
+*- [Bb]ackup ([0-9]).rdl
+*- [Bb]ackup ([0-9][0-9]).rdl
 
 # Microsoft Fakes
-/Backend/MonexUp/FakesAssemblies/
+FakesAssemblies/
 
 # GhostDoc plugin setting file
-/Backend/MonexUp/*.GhostDoc.xml
+*.GhostDoc.xml
 
 # Node.js Tools for Visual Studio
-/Backend/MonexUp/.ntvs_analysis.dat
-/Backend/MonexUp/node_modules/
+.ntvs_analysis.dat
+node_modules/
 
 # Visual Studio 6 build log
-/Backend/MonexUp/*.plg
+*.plg
 
 # Visual Studio 6 workspace options file
-/Backend/MonexUp/*.opt
+*.opt
 
 # Visual Studio 6 auto-generated workspace file (contains which files were open etc.)
-/Backend/MonexUp/*.vbw
+*.vbw
 
 # Visual Studio 6 auto-generated project file (contains which files were open etc.)
-/Backend/MonexUp/*.vbp
+*.vbp
 
 # Visual Studio 6 workspace and project file (working project files containing files to include in project)
-/Backend/MonexUp/*.dsw
-/Backend/MonexUp/*.dsp
+*.dsw
+*.dsp
 
 # Visual Studio 6 technical files
-/Backend/MonexUp/*.ncb
-/Backend/MonexUp/*.aps
+*.ncb
+*.aps
 
 # Visual Studio LightSwitch build output
-/Backend/MonexUp/**/*.HTMLClient/GeneratedArtifacts
-/Backend/MonexUp/**/*.DesktopClient/GeneratedArtifacts
-/Backend/MonexUp/**/*.DesktopClient/ModelManifest.xml
-/Backend/MonexUp/**/*.Server/GeneratedArtifacts
-/Backend/MonexUp/**/*.Server/ModelManifest.xml
-/Backend/MonexUp/_Pvt_Extensions
+**/*.HTMLClient/GeneratedArtifacts
+**/*.DesktopClient/GeneratedArtifacts
+**/*.DesktopClient/ModelManifest.xml
+**/*.Server/GeneratedArtifacts
+**/*.Server/ModelManifest.xml
+_Pvt_Extensions
 
 # Paket dependency manager
-/Backend/MonexUp/.paket/paket.exe
-/Backend/MonexUp/paket-files/
+.paket/paket.exe
+paket-files/
 
 # FAKE - F# Make
-/Backend/MonexUp/.fake/
+.fake/
 
 # CodeRush personal settings
-/Backend/MonexUp/.cr/personal
+.cr/personal
 
 # Python Tools for Visual Studio (PTVS)
-/Backend/MonexUp/__pycache__/
-/Backend/MonexUp/*.pyc
+__pycache__/
+*.pyc
 
 # Cake - Uncomment if you are using it
 # tools/**
 # !tools/packages.config
 
 # Tabs Studio
-/Backend/MonexUp/*.tss
+*.tss
 
 # Telerik's JustMock configuration file
-/Backend/MonexUp/*.jmconfig
+*.jmconfig
 
 # BizTalk build output
-/Backend/MonexUp/*.btp.cs
-/Backend/MonexUp/*.btm.cs
-/Backend/MonexUp/*.odx.cs
-/Backend/MonexUp/*.xsd.cs
+*.btp.cs
+*.btm.cs
+*.odx.cs
+*.xsd.cs
 
 # OpenCover UI analysis results
-/Backend/MonexUp/OpenCover/
+OpenCover/
 
 # Azure Stream Analytics local run output
-/Backend/MonexUp/ASALocalRun/
+ASALocalRun/
 
 # MSBuild Binary and Structured Log
-/Backend/MonexUp/*.binlog
+*.binlog
 
 # NVidia Nsight GPU debugger configuration file
-/Backend/MonexUp/*.nvuser
+*.nvuser
 
 # MFractors (Xamarin productivity tool) working folder
-/Backend/MonexUp/.mfractor/
+.mfractor/
 
 # Local History for Visual Studio
-/Backend/MonexUp/.localhistory/
+.localhistory/
 
 # Visual Studio History (VSHistory) files
-/Backend/MonexUp/.vshistory/
+.vshistory/
 
 # BeatPulse healthcheck temp database
-/Backend/MonexUp/healthchecksdb
+healthchecksdb
 
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
-/Backend/MonexUp/MigrationBackup/
+MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
-/Backend/MonexUp/.ionide/
+.ionide/
 
 # Fody - auto-generated XML schema
-/Backend/MonexUp/FodyWeavers.xsd
+FodyWeavers.xsd
 
 # VS Code files for those working on multiple tools
-/Backend/MonexUp/.vscode/*
-/Backend/MonexUp/!.vscode/settings.json
-/Backend/MonexUp/!.vscode/tasks.json
-/Backend/MonexUp/!.vscode/launch.json
-/Backend/MonexUp/!.vscode/extensions.json
-/Backend/MonexUp/*.code-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
 
 # Local History for Visual Studio Code
-/Backend/MonexUp/.history/
+.history/
 
 # Windows Installer files from build outputs
-/Backend/MonexUp/*.cab
-/Backend/MonexUp/*.msi
-/Backend/MonexUp/*.msix
-/Backend/MonexUp/*.msm
-/Backend/MonexUp/*.msp
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
 
 # JetBrains Rider
-/Backend/MonexUp/*.sln.iml
-/Backend/MonexUp/MonexUp.API/bin
-/Backend/MonexUp/MonexUp.API/obj
+*.sln.iml
