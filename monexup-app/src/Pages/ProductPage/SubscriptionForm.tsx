@@ -3,7 +3,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { useContext, useEffect } from "react";
 import OrderContext from "../../Contexts/Order/OrderContext";
 
-const stripePromise = loadStripe('pk_test_51QkuslD37qwDaRRTa9aljJbNC73hIl0kznGiY5d8kHrvxtNrbyg3YxVufK3KQZeLLTjK6UNVeulQ74JUz0Nda4ZR00vo6t2EML');
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || '');
 
 interface ProductPaymentParam {
     productSlug: string;

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using NAuth.ACL.Interfaces;
 
@@ -28,7 +29,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("insert")]
-        public ActionResult<ProfileResult> Insert([FromBody] UserProfileInfo profile)
+        public async Task<ActionResult<ProfileResult>> Insert([FromBody] UserProfileInfo profile)
         {
             try
             {
@@ -37,7 +38,7 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                var newProfile = _profileService.Insert(profile, userSession.UserId);
+                var newProfile = await _profileService.Insert(profile, userSession.UserId);
                 return new ProfileResult()
                 {
                     Profile = _profileService.GetUserProfileInfo(newProfile)
@@ -51,7 +52,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("update")]
-        public ActionResult<ProfileResult> Update([FromBody] UserProfileInfo profile)
+        public async Task<ActionResult<ProfileResult>> Update([FromBody] UserProfileInfo profile)
         {
             try
             {
@@ -60,7 +61,7 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                var newProfile = _profileService.Update(profile, userSession.UserId);
+                var newProfile = await _profileService.Update(profile, userSession.UserId);
                 return new ProfileResult()
                 {
                     Profile = _profileService.GetUserProfileInfo(newProfile)
@@ -74,7 +75,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpGet("delete/{profileId}")]
-        public ActionResult<StatusResult> Delete(long profileId)
+        public async Task<ActionResult<StatusResult>> Delete(long profileId)
         {
             try
             {
@@ -83,7 +84,7 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                _profileService.Delete(profileId, userSession.UserId);
+                await _profileService.Delete(profileId, userSession.UserId);
                 return new StatusResult
                 {
                     Sucesso = true,

@@ -1,20 +1,14 @@
-﻿using MonexUp.Domain.Impl.Models;
-using MonexUp.Domain.Interfaces.Models;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MonexUp.Domain.Interfaces.Services
 {
     public interface IImageService
     {
-        string GetImageUrl(string fileName);
-        string InsertFromStream(Stream stream, string name);
-        string InsertToUser(Stream stream, long userId);
-        string InsertToNetwork(Stream stream, long networkId);
-        string InsertToProduct(Stream stream, long productId);
+        Task<string> GetImageUrlAsync(string fileName);
+        Task<string> InsertFromStreamAsync(Stream stream, string name);
+        Task<string> InsertToUserAsync(Stream stream, long userId);
+        Task<string> InsertToNetworkAsync(Stream stream, long networkId);
+        Task<string> InsertToProductAsync(Stream stream, long productId);
     }
 }

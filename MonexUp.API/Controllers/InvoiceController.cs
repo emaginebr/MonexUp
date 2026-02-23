@@ -54,7 +54,7 @@ namespace MonexUp.API.Controllers
 
         [HttpPost("search")]
         [Authorize]
-        public ActionResult<InvoiceListPagedResult> Search([FromBody] InvoiceSearchParam param)
+        public async Task<ActionResult<InvoiceListPagedResult>> Search([FromBody] InvoiceSearchParam param)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                return _invoiceService.Search(param.NetworkId, param.UserId, param.SellerId, param.PageNum);
+                return await _invoiceService.Search(param.NetworkId, param.UserId, param.SellerId, param.PageNum);
             }
             catch (Exception ex)
             {
@@ -73,7 +73,7 @@ namespace MonexUp.API.Controllers
 
         [HttpPost("searchStatement")]
         [Authorize]
-        public ActionResult<StatementListPagedResult> searchStatement([FromBody] StatementSearchParam param)
+        public async Task<ActionResult<StatementListPagedResult>> searchStatement([FromBody] StatementSearchParam param)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                return _invoiceService.SearchStatement(param);
+                return await _invoiceService.SearchStatement(param);
             }
             catch (Exception ex)
             {
@@ -144,7 +144,7 @@ namespace MonexUp.API.Controllers
                 return new InvoiceResult
                 {
                     Sucesso = true,
-                    Invoice = _invoiceService.GetInvoiceInfo(await _invoiceService.Checkout(checkoutSessionId))
+                    Invoice = await _invoiceService.GetInvoiceInfo(await _invoiceService.Checkout(checkoutSessionId))
                 };
             }
             catch (Exception ex)

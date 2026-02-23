@@ -18,9 +18,9 @@ namespace MonexUp.Domain.Interfaces.Services
         void ClearFees(IInvoiceModel invoice);
         IInvoiceModel ProcessInvoice(IInvoiceModel invoiceStripe);
         Task<IInvoiceModel> Checkout(string checkoutSessionId);
-        InvoiceInfo GetInvoiceInfo(IInvoiceModel invoice);
-        InvoiceListPagedResult Search(long networkId, long? userId, long? sellerId, int pageNum);
-        StatementListPagedResult SearchStatement(StatementSearchParam param);
+        Task<InvoiceInfo> GetInvoiceInfo(IInvoiceModel invoice);
+        Task<InvoiceListPagedResult> Search(long networkId, long? userId, long? sellerId, int pageNum);
+        Task<StatementListPagedResult> SearchStatement(StatementSearchParam param);
         double GetBalance(long? networkId, long? userId);
         double GetAvailableBalance(long userId);
     }

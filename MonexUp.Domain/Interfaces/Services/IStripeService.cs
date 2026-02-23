@@ -1,5 +1,6 @@
-﻿using MonexUp.Domain.Interfaces.Models;
+using MonexUp.Domain.Interfaces.Models;
 using MonexUp.DTO.Order;
+using NAuth.DTO.User;
 using Stripe;
 using System;
 using System.Collections.Generic;
@@ -11,9 +12,9 @@ namespace MonexUp.Domain.Interfaces.Services
 {
     public interface IStripeService
     {
-        Task<string> CreateSubscription(IUserModel user, IProductModel product, INetworkModel network, IUserModel seller);
+        Task<string> CreateSubscription(UserInfo user, IProductModel product, INetworkModel network, UserInfo seller);
 
-        Task<string> CreateInvoice(IUserModel user, IProductModel product);
+        Task<string> CreateInvoice(UserInfo user, IProductModel product);
         Task<IInvoiceModel> Checkout(string checkouSessionId);
 
         Task<IList<IInvoiceModel>> ListInvoices();

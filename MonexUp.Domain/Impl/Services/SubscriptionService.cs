@@ -1,8 +1,10 @@
-﻿using MonexUp.Domain.Interfaces.Factory;
+using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Order;
 using MonexUp.DTO.Subscription;
+using NAuth.ACL.Interfaces;
+using NAuth.DTO.User;
 using Stripe.Climate;
 using System;
 using System.Collections.Generic;
@@ -16,7 +18,7 @@ namespace MonexUp.Domain.Impl.Services
     {
         private readonly IOrderService _orderService;
         private readonly IStripeService _stripeService;
-        private readonly IUserDomainFactory _userFactory;
+        private readonly IUserClient _userClient;
         private readonly INetworkDomainFactory _networkFactory;
         private readonly IProductDomainFactory _productFactory;
         private readonly IOrderItemDomainFactory _orderItemFactory;
@@ -24,7 +26,7 @@ namespace MonexUp.Domain.Impl.Services
         public SubscriptionService(
             IOrderService orderService,
             IStripeService stripeService,
-            IUserDomainFactory userFactory,
+            IUserClient userClient,
             INetworkDomainFactory networkFactory,
             IProductDomainFactory productFactory,
             IOrderItemDomainFactory orderItemFactory
@@ -32,7 +34,7 @@ namespace MonexUp.Domain.Impl.Services
         {
             _orderService = orderService;
             _stripeService = stripeService;
-            _userFactory = userFactory;
+            _userClient = userClient;
             _networkFactory = networkFactory;
             _productFactory = productFactory;
             _orderItemFactory = orderItemFactory;
@@ -52,10 +54,10 @@ namespace MonexUp.Domain.Impl.Services
                 network = _networkFactory.BuildNetworkModel().GetById(networkId.Value, _networkFactory);
             }
 
-            IUserModel seller = null;
+            UserInfo seller = null;
             if (sellerId.HasValue && sellerId.Value > 0)
             {
-                seller = _userFactory.BuildUserModel().GetById(sellerId.Value, _userFactory);
+                seller = await _userClient.GetByIdAsync(sellerId.Value, "");
             }
 
             var order = _orderService.Get(productId, userId, sellerId, OrderStatusEnum.Incoming);
@@ -76,48 +78,13 @@ namespace MonexUp.Domain.Impl.Services
                     }
                 });
             }
-            var user = order.GetUser(_userFactory);
+            var user = await _userClient.GetByIdAsync(order.UserId, "");
             var clientSecret = await _stripeService.CreateSubscription(user, product, network, seller);
             return new SubscriptionInfo()
             {
-                Order = _orderService.GetOrderInfo(order),
+                Order = await _orderService.GetOrderInfo(order),
                 ClientSecret = clientSecret
             };
         }
-
-        /*
-        public async Task<SubscriptionInfo> CreateInvoice(long productId, long userId)
-        {
-            var product = _productFactory.BuildProductModel().GetById(productId, _productFactory);
-            if (product == null)
-            {
-                throw new Exception("Product not found");
-            }
-            var order = _orderService.Get(productId, userId, OrderStatusEnum.Incoming);
-            if (order == null)
-            {
-                order = _orderService.Insert(new OrderInfo
-                {
-                    NetworkId = product.NetworkId,
-                    UserId = userId,
-                    Status = OrderStatusEnum.Incoming,
-                    Items = new List<OrderItemInfo>
-                    {
-                        new OrderItemInfo {
-                            ProductId = productId,
-                            Quantity = 1
-                        }
-                    }
-                });
-            }
-            var user = order.GetUser(_userFactory);
-            var clientSecret = await _stripeService.CreateInvoice(user, product);
-            return new SubscriptionInfo()
-            {
-                Order = _orderService.GetOrderInfo(order),
-                ClientSecret = clientSecret
-            };
-        }
-        */
     }
 }

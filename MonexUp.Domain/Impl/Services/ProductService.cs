@@ -1,35 +1,37 @@
-﻿using Core.Domain;
+using Core.Domain;
 using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Product;
+using NAuth.ACL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MonexUp.Domain.Impl.Services
 {
     public class ProductService : IProductService
     {
-        private readonly IUserDomainFactory _userFactory;
+        private readonly IUserClient _userClient;
         private readonly IUserNetworkDomainFactory _userNetworkFactory;
         private readonly IProductDomainFactory _productFactory;
         private readonly IImageService _imageService;
 
         public ProductService(
-            IUserDomainFactory userFactory,
+            IUserClient userClient,
             IUserNetworkDomainFactory userNetworkFactory,
             IProductDomainFactory productFactory,
             IImageService imageService
         )
         {
-            _userFactory = userFactory;
+            _userClient = userClient;
             _userNetworkFactory = userNetworkFactory;
             _productFactory = productFactory;
             _imageService = imageService;
         }
 
-        private void ValidateAccess(long networkId, long userId)
+        private async Task ValidateAccess(long networkId, long userId)
         {
             var networkAccess = _userNetworkFactory.BuildUserNetworkModel().Get(networkId, userId, _userNetworkFactory);
 
@@ -40,7 +42,7 @@ namespace MonexUp.Domain.Impl.Services
 
             if (networkAccess.Role != DTO.User.UserRoleEnum.NetworkManager)
             {
-                var user = _userFactory.BuildUserModel().GetById(userId, _userFactory);
+                var user = await _userClient.GetByIdAsync(userId, "");
                 if (user == null)
                 {
                     throw new Exception("User not found");
@@ -61,7 +63,7 @@ namespace MonexUp.Domain.Impl.Services
             return _productFactory.BuildProductModel().GetBySlug(productSlug, _productFactory);
         }
 
-        public ProductInfo GetProductInfo(IProductModel md)
+        public async Task<ProductInfo> GetProductInfo(IProductModel md)
         {
             return new ProductInfo
             {
@@ -70,7 +72,7 @@ namespace MonexUp.Domain.Impl.Services
                 Name = md.Name,
                 Slug = md.Slug,
                 Image = md.Image,
-                ImageUrl = _imageService.GetImageUrl(md.Image),
+                ImageUrl = await _imageService.GetImageUrlAsync(md.Image),
                 Description = md.Description,
                 Price = md.Price,
                 Frequency = md.Frequency,
@@ -95,9 +97,9 @@ namespace MonexUp.Domain.Impl.Services
             return newSlug;
         }
 
-        public IProductModel Insert(ProductInfo product, long userId)
+        public async Task<IProductModel> Insert(ProductInfo product, long userId)
         {
-            ValidateAccess(product.NetworkId, userId);
+            await ValidateAccess(product.NetworkId, userId);
 
             if (string.IsNullOrEmpty(product.Name))
             {
@@ -123,9 +125,9 @@ namespace MonexUp.Domain.Impl.Services
             return model.Insert(_productFactory);
         }
 
-        public IProductModel Update(ProductInfo product, long userId)
+        public async Task<IProductModel> Update(ProductInfo product, long userId)
         {
-            ValidateAccess(product.NetworkId, userId);
+            await ValidateAccess(product.NetworkId, userId);
 
             if (string.IsNullOrEmpty(product.Name))
             {
@@ -152,20 +154,22 @@ namespace MonexUp.Domain.Impl.Services
             return model.Update(_productFactory);
         }
 
-        public ProductListPagedResult Search(ProductSearchInternalParam param)
+        public async Task<ProductListPagedResult> Search(ProductSearchInternalParam param)
         {
-
             var model = _productFactory.BuildProductModel();
             int pageCount = 0;
-            var products = model.Search(
+            var productModels = model.Search(
                 param.NetworkId <= 0 ? null : param.NetworkId,
                 param.UserId <= 0 ? null : param.UserId,
                 param.Keyword,
                 param.OnlyActive, param.PageNum,
                 out pageCount, _productFactory
-                )
-                .Select(x => GetProductInfo(x))
-                .ToList();
+                ).ToList();
+            var products = new List<ProductInfo>();
+            foreach (var x in productModels)
+            {
+                products.Add(await GetProductInfo(x));
+            }
             return new ProductListPagedResult
             {
                 Sucesso = true,

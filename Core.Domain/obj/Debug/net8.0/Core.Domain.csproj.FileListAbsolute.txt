@@ -63,3 +63,16 @@ C:\Git\Projetos\MonexUp\Backend\MonexUp\Core.Domain\obj\Debug\net8.0\Core.Domain
 C:\Git\Projetos\MonexUp\Backend\MonexUp\Core.Domain\obj\Debug\net8.0\refint\Core.Domain.dll
 C:\Git\Projetos\MonexUp\Backend\MonexUp\Core.Domain\obj\Debug\net8.0\Core.Domain.pdb
 C:\Git\Projetos\MonexUp\Backend\MonexUp\Core.Domain\obj\Debug\net8.0\ref\Core.Domain.dll
+C:\repos\MonexUp\Core.Domain\bin\Debug\net8.0\Core.Domain.deps.json
+C:\repos\MonexUp\Core.Domain\bin\Debug\net8.0\Core.Domain.dll
+C:\repos\MonexUp\Core.Domain\bin\Debug\net8.0\Core.Domain.pdb
+C:\repos\MonexUp\Core.Domain\obj\Debug\net8.0\Core.Domain.csproj.AssemblyReference.cache
+C:\repos\MonexUp\Core.Domain\obj\Debug\net8.0\Core.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\repos\MonexUp\Core.Domain\obj\Debug\net8.0\Core.Domain.AssemblyInfoInputs.cache
+C:\repos\MonexUp\Core.Domain\obj\Debug\net8.0\Core.Domain.AssemblyInfo.cs
+C:\repos\MonexUp\Core.Domain\obj\Debug\net8.0\Core.Domain.csproj.CoreCompileInputs.cache
+C:\repos\MonexUp\Core.Domain\obj\Debug\net8.0\Core.Domain.sourcelink.json
+C:\repos\MonexUp\Core.Domain\obj\Debug\net8.0\Core.Domain.dll
+C:\repos\MonexUp\Core.Domain\obj\Debug\net8.0\refint\Core.Domain.dll
+C:\repos\MonexUp\Core.Domain\obj\Debug\net8.0\Core.Domain.pdb
+C:\repos\MonexUp\Core.Domain\obj\Debug\net8.0\ref\Core.Domain.dll

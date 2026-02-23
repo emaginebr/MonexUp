@@ -41,26 +41,6 @@ namespace MonexUp.Domain.Impl.Models
             return factory.BuildOrderModel().GetById(OrderId, factory);
         }
 
-        /*
-        public IUserModel GetUser(IUserDomainFactory factory)
-        {
-            if (UserId <= 0)
-            {
-                return null;
-            }
-            return factory.BuildUserModel().GetById(UserId, factory);
-        }
-
-        public IUserModel GetSeller(IUserDomainFactory factory)
-        {
-            if (!SellerId.HasValue || SellerId.Value <= 0)
-            {
-                return null;
-            }
-            return factory.BuildUserModel().GetById(SellerId.Value, factory);
-        }
-        */
-
         public IList<IInvoiceFeeModel> ListFees(IInvoiceFeeDomainFactory factory)
         {
             if (InvoiceId <= 0)

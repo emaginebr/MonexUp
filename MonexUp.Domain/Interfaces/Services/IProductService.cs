@@ -12,14 +12,14 @@ namespace MonexUp.Domain.Interfaces.Services
 {
     public interface IProductService
     {
-        ProductListPagedResult Search(ProductSearchInternalParam param);
+        Task<ProductListPagedResult> Search(ProductSearchInternalParam param);
         IList<IProductModel> ListByNetwork(long networkId);
         IProductModel GetById(long productId);
         IProductModel GetBySlug(string productSlug);
         IProductModel GetByStripeProductId(string stripeProductId);
         IProductModel GetByStripePriceId(string stripePriceId);
-        ProductInfo GetProductInfo(IProductModel product);
-        IProductModel Insert(ProductInfo product, long userId);
-        IProductModel Update(ProductInfo product, long userId);
+        Task<ProductInfo> GetProductInfo(IProductModel product);
+        Task<IProductModel> Insert(ProductInfo product, long userId);
+        Task<IProductModel> Update(ProductInfo product, long userId);
     }
 }

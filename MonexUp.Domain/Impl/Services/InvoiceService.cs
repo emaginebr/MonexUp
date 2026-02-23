@@ -1,8 +1,9 @@
-﻿using MonexUp.Domain.Interfaces.Factory;
+using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Invoice;
 using MonexUp.DTO.Order;
+using NAuth.ACL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,12 +17,11 @@ namespace MonexUp.Domain.Impl.Services
     {
         private readonly IInvoiceDomainFactory _invoiceFactory;
         private readonly IInvoiceFeeDomainFactory _feeFactory;
-        private readonly IUserDomainFactory _userFactory;
+        private readonly IUserClient _userClient;
         private readonly IUserProfileDomainFactory _profileFactory;
         private readonly IOrderDomainFactory _orderFactory;
         private readonly IOrderItemDomainFactory _orderItemFactory;
         private readonly IProductDomainFactory _productFactory;
-        private readonly IUserService _userService;
         private readonly IOrderService _orderService;
         private readonly INetworkService _networkService;
         private readonly IStripeService _stripeService;
@@ -29,14 +29,13 @@ namespace MonexUp.Domain.Impl.Services
         private const double PLATAFORM_FEE = 0.02;
 
         public InvoiceService(
-            IInvoiceDomainFactory invoiceFactory, 
+            IInvoiceDomainFactory invoiceFactory,
             IInvoiceFeeDomainFactory feeFactory,
-            IUserDomainFactory userFactory,
+            IUserClient userClient,
             IUserProfileDomainFactory profileFactory,
             IOrderDomainFactory orderFactory,
             IOrderItemDomainFactory orderItemFactory,
             IProductDomainFactory productFactory,
-            IUserService userService,
             IOrderService orderService,
             INetworkService networkService,
             IStripeService stripeService
@@ -44,12 +43,11 @@ namespace MonexUp.Domain.Impl.Services
         {
             _invoiceFactory = invoiceFactory;
             _feeFactory = feeFactory;
-            _userFactory = userFactory;
+            _userClient = userClient;
             _profileFactory = profileFactory;
             _orderFactory = orderFactory;
             _orderItemFactory = orderItemFactory;
             _productFactory = productFactory;
-            _userService = userService;
             _orderService = orderService;
             _networkService = networkService;
             _stripeService = stripeService;
@@ -71,7 +69,7 @@ namespace MonexUp.Domain.Impl.Services
         }
 
         public void CalculateFee(IInvoiceModel invoice)
-        {            
+        {
             ClearFees(invoice);
 
             var order = _orderService.GetById(invoice.OrderId);
@@ -174,7 +172,7 @@ namespace MonexUp.Domain.Impl.Services
             }
         }
 
-        public InvoiceInfo GetInvoiceInfo(IInvoiceModel invoice)
+        public async Task<InvoiceInfo> GetInvoiceInfo(IInvoiceModel invoice)
         {
             if (invoice == null)
             {
@@ -190,10 +188,10 @@ namespace MonexUp.Domain.Impl.Services
                 DueDate = invoice.DueDate,
                 PaymentDate = invoice.PaymentDate,
                 Status = invoice.Status,
-                Order = _orderService.GetOrderInfo(invoice.GetOrder(_orderFactory)),
-                User = _userService.GetUserInfoFromModel(invoice.GetUser(_userFactory)),
-                Seller = invoice.SellerId.HasValue ? 
-                    _userService.GetUserInfoFromModel(invoice.GetSeller(_userFactory)) : null,
+                Order = await _orderService.GetOrderInfo(invoice.GetOrder(_orderFactory)),
+                User = await _userClient.GetByIdAsync(invoice.UserId, ""),
+                Seller = invoice.SellerId.HasValue ?
+                    await _userClient.GetByIdAsync(invoice.SellerId.Value, "") : null,
                 Fees = invoice.ListFees(_feeFactory).Select(x => new InvoiceFeeInfo
                 {
                     FeeId = x.FeeId,
@@ -206,13 +204,16 @@ namespace MonexUp.Domain.Impl.Services
             };
         }
 
-        public InvoiceListPagedResult Search(long networkId, long? userId, long? sellerId, int pageNum)
+        public async Task<InvoiceListPagedResult> Search(long networkId, long? userId, long? sellerId, int pageNum)
         {
             var model = _invoiceFactory.BuildInvoiceModel();
             int pageCount = 0;
-            var invoices = model.Search(networkId, userId, sellerId, pageNum, out pageCount, _invoiceFactory)
-                .Select(x => GetInvoiceInfo(x))
-                .ToList();
+            var invoiceModels = model.Search(networkId, userId, sellerId, pageNum, out pageCount, _invoiceFactory).ToList();
+            var invoices = new List<InvoiceInfo>();
+            foreach (var x in invoiceModels)
+            {
+                invoices.Add(await GetInvoiceInfo(x));
+            }
             return new InvoiceListPagedResult
             {
                 Sucesso = true,
@@ -222,40 +223,47 @@ namespace MonexUp.Domain.Impl.Services
             };
         }
 
-        private StatementInfo GetStatementInfo(IInvoiceFeeModel fee)
+        private async Task<StatementInfo> GetStatementInfo(IInvoiceFeeModel fee)
         {
             var invoice = _invoiceFactory.BuildInvoiceModel().GetById(fee.InvoiceId, _invoiceFactory);
             var order = invoice.GetOrder(_orderFactory);
             var network = _networkService.GetById(order.NetworkId);
+            var buyer = await _userClient.GetByIdAsync(invoice.UserId, "");
+            var seller = invoice.SellerId.HasValue ? await _userClient.GetByIdAsync(invoice.SellerId.Value, "") : null;
             return new StatementInfo {
                 InvoiceId = fee.InvoiceId,
                 FeeId = fee.FeeId,
                 NetworkId = order.NetworkId,
                 NetworkName = network.Name,
                 UserId = invoice.UserId,
-                BuyerName = invoice.GetUser(_userFactory).Name,
+                BuyerName = buyer?.Name,
                 SellerId = invoice.SellerId,
-                SellerName = invoice.GetSeller(_userFactory)?.Name,
+                SellerName = seller?.Name,
                 PaymentDate = invoice.PaymentDate,
-                Description = string.Join(", ", 
+                Description = string.Join(", ",
                     order.ListItems(_orderItemFactory)
                     .Select(x => x.GetProduct(_productFactory).Name + " (" + x.Quantity.ToString() + ")")
                     .ToArray()
-                ),  
+                ),
                 Amount = fee.Amount,
                 PaidAt = fee.PaidAt,
             };
         }
 
-        public StatementListPagedResult SearchStatement(StatementSearchParam param)
+        public async Task<StatementListPagedResult> SearchStatement(StatementSearchParam param)
         {
             int pageCount = 0;
             var fees = _feeFactory.BuildInvoiceFeeModel().Search(param.NetworkId, param.UserId, param.Ini, param.End, param.PageNum, out pageCount, _feeFactory);
+            var statements = new List<StatementInfo>();
+            foreach (var fee in fees)
+            {
+                statements.Add(await GetStatementInfo(fee));
+            }
             return new StatementListPagedResult
             {
                 PageNum = param.PageNum,
                 PageCount = pageCount,
-                Statements = fees.Select(x => GetStatementInfo(x)).ToList()
+                Statements = statements
             };
         }
 

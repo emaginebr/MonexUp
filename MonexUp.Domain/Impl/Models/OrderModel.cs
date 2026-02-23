@@ -34,24 +34,6 @@ namespace MonexUp.Domain.Impl.Models
         public DateTime UpdatedAt { get; set; }
         public string StripeId { get; set; }
 
-        public IUserModel GetUser(IUserDomainFactory factory)
-        {
-            if (UserId <= 0)
-            {
-                return null;
-            }
-            return factory.BuildUserModel().GetById(UserId, factory);
-        }
-
-        public IUserModel GetSeller(IUserDomainFactory factory)
-        {
-            if (!SellerId.HasValue || SellerId.Value <= 0)
-            {
-                return null;
-            }
-            return factory.BuildUserModel().GetById(SellerId.Value, factory);
-        }
-
         public IList<IOrderItemModel> ListItems(IOrderItemDomainFactory factory)
         {
             if (OrderId <= 0)

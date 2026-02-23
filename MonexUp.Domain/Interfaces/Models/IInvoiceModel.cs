@@ -28,8 +28,6 @@ namespace MonexUp.Domain.Interfaces.Models
         string StripeId { get; set; }
 
         IOrderModel GetOrder(IOrderDomainFactory factory);
-        //IUserModel GetUser(IUserDomainFactory factory);
-        //IUserModel GetSeller(IUserDomainFactory factory);
         IList<IInvoiceFeeModel> ListFees(IInvoiceFeeDomainFactory factory);
 
         IInvoiceModel Insert(IInvoiceDomainFactory factory);

@@ -19,8 +19,6 @@ namespace MonexUp.Domain.Interfaces.Models
         DateTime UpdatedAt { get; set; }
         OrderStatusEnum Status { get; set; }
 
-        IUserModel GetUser(IUserDomainFactory factory);
-        IUserModel GetSeller(IUserDomainFactory factory);
         IList<IOrderItemModel> ListItems(IOrderItemDomainFactory factory);
 
         IEnumerable<IOrderModel> List(long networkId, long userId, OrderStatusEnum? status, IOrderDomainFactory factory);

@@ -22,7 +22,6 @@ namespace MonexUp.Domain.Interfaces.Models
 
         long? ReferrerId { get; set; }
 
-        IUserModel GetUser(IUserDomainFactory factory);
         INetworkModel GetNetwork(INetworkDomainFactory factory);
         IUserProfileModel GetProfile(IUserProfileDomainFactory factory);
 

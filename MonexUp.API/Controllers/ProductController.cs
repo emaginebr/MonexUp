@@ -1,11 +1,9 @@
-﻿using MonexUp.Domain.Impl.Services;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Product;
-using MonexUp.DTO.Profile;
-using MonexUp.DTO.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using NAuth.ACL.Interfaces;
 using System.Threading.Tasks;
@@ -29,7 +27,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("insert")]
-        public ActionResult<ProductResult> Insert([FromBody] ProductInfo product)
+        public async Task<ActionResult<ProductResult>> Insert([FromBody] ProductInfo product)
         {
             try
             {
@@ -38,10 +36,10 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                var newProfile = _productService.Insert(product, userSession.UserId);
+                var newProfile = await _productService.Insert(product, userSession.UserId);
                 return new ProductResult()
                 {
-                    Product = _productService.GetProductInfo(newProfile)
+                    Product = await _productService.GetProductInfo(newProfile)
                 };
             }
             catch (Exception ex)
@@ -52,7 +50,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("update")]
-        public ActionResult<ProductResult> Update([FromBody] ProductInfo product)
+        public async Task<ActionResult<ProductResult>> Update([FromBody] ProductInfo product)
         {
             try
             {
@@ -61,10 +59,10 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                var newProduct = _productService.Update(product, userSession.UserId);
+                var newProduct = await _productService.Update(product, userSession.UserId);
                 return new ProductResult()
                 {
-                    Product = _productService.GetProductInfo(newProduct)
+                    Product = await _productService.GetProductInfo(newProduct)
                 };
             }
             catch (Exception ex)
@@ -78,13 +76,6 @@ namespace MonexUp.API.Controllers
         {
             try
             {
-                /*
-                var userSession = _userService.GetUserInSession(HttpContext);
-                if (userSession == null)
-                {
-                    return StatusCode(401, "Not Authorized");
-                }
-                */
                 if (!string.IsNullOrEmpty(param.NetworkSlug) && !(param.NetworkId.HasValue && param.NetworkId.Value > 0))
                 {
                     var network = _networkService.GetBySlug(param.NetworkSlug);
@@ -101,7 +92,7 @@ namespace MonexUp.API.Controllers
                         param.UserId = user.UserId;
                     }
                 }
-                return _productService.Search(param);
+                return await _productService.Search(param);
             }
             catch (Exception ex)
             {
@@ -110,14 +101,17 @@ namespace MonexUp.API.Controllers
         }
 
         [HttpGet("listByNetwork/{networkId}")]
-        public ActionResult<ProductListResult> ListByNetwork(long networkId)
+        public async Task<ActionResult<ProductListResult>> ListByNetwork(long networkId)
         {
             try
             {
-                var products = _productService
-                    .ListByNetwork(networkId)
-                    .Select(x => _productService.GetProductInfo(x))
-                    .ToList();
+                var productModels = _productService
+                    .ListByNetwork(networkId);
+                var products = new List<ProductInfo>();
+                foreach (var x in productModels)
+                {
+                    products.Add(await _productService.GetProductInfo(x));
+                }
                 return new ProductListResult
                 {
                     Sucesso = true,
@@ -131,7 +125,7 @@ namespace MonexUp.API.Controllers
         }
 
         [HttpGet("listByNetworkSlug/{networkSlug}")]
-        public ActionResult<ProductListResult> ListByNetworkSlug(string networkSlug)
+        public async Task<ActionResult<ProductListResult>> ListByNetworkSlug(string networkSlug)
         {
             try
             {
@@ -141,10 +135,13 @@ namespace MonexUp.API.Controllers
                     throw new Exception("Network not found");
                 }
 
-                var products = _productService
-                    .ListByNetwork(network.NetworkId)
-                    .Select(x => _productService.GetProductInfo(x))
-                    .ToList();
+                var productModels = _productService
+                    .ListByNetwork(network.NetworkId);
+                var products = new List<ProductInfo>();
+                foreach (var x in productModels)
+                {
+                    products.Add(await _productService.GetProductInfo(x));
+                }
                 return new ProductListResult
                 {
                     Sucesso = true,
@@ -159,7 +156,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpGet("getById/{productId}")]
-        public ActionResult<ProductResult> GetById(long productId)
+        public async Task<ActionResult<ProductResult>> GetById(long productId)
         {
             try
             {
@@ -171,7 +168,7 @@ namespace MonexUp.API.Controllers
                 return new ProductResult
                 {
                     Sucesso = true,
-                    Product = _productService.GetProductInfo(_productService.GetById(productId))
+                    Product = await _productService.GetProductInfo(_productService.GetById(productId))
                 };
             }
             catch (Exception ex)
@@ -181,14 +178,14 @@ namespace MonexUp.API.Controllers
         }
 
         [HttpGet("getBySlug/{productSlug}")]
-        public ActionResult<ProductResult> GetBySlug(string productSlug)
+        public async Task<ActionResult<ProductResult>> GetBySlug(string productSlug)
         {
             try
             {
                 return new ProductResult
                 {
                     Sucesso = true,
-                    Product = _productService.GetProductInfo(_productService.GetBySlug(productSlug))
+                    Product = await _productService.GetProductInfo(_productService.GetBySlug(productSlug))
                 };
             }
             catch (Exception ex)

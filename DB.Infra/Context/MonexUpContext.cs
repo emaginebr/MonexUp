@@ -51,11 +51,15 @@ public partial class MonexUpContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-#if DEBUG
-        optionsBuilder.UseNpgsql("Host=emagine-db-do-user-4436480-0.e.db.ondigitalocean.com;Port=25060;Database=monexup;Username=doadmin;Password=AVNS_akcvzXVnMkvNKaO10-O");
-#else
-        optionsBuilder.UseNpgsql("Host=private-emagine-db-do-user-4436480-0.e.db.ondigitalocean.com;Port=25060;Database=monexup;Username=doadmin;Password=AVNS_akcvzXVnMkvNKaO10-O");
-#endif
+        if (!optionsBuilder.IsConfigured)
+        {
+            var host = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost";
+            var port = Environment.GetEnvironmentVariable("DB_PORT") ?? "5432";
+            var database = Environment.GetEnvironmentVariable("DB_NAME") ?? "monexup";
+            var username = Environment.GetEnvironmentVariable("DB_USER") ?? "postgres";
+            var password = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "";
+            optionsBuilder.UseNpgsql($"Host={host};Port={port};Database={database};Username={username};Password={password}");
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

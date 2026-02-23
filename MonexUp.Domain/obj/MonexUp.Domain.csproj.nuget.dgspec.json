@@ -1,24 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\MonexUp.Domain.csproj": {}
+    "C:\\repos\\MonexUp\\MonexUp.Domain\\MonexUp.Domain.csproj": {}
   },
   "projects": {
-    "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\Core.Domain\\Core.Domain.csproj": {
+    "C:\\repos\\MonexUp\\Core.Domain\\Core.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\Core.Domain\\Core.Domain.csproj",
+        "projectUniqueName": "C:\\repos\\MonexUp\\Core.Domain\\Core.Domain.csproj",
         "projectName": "Core.Domain",
-        "projectPath": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\Core.Domain\\Core.Domain.csproj",
-        "packagesPath": "C:\\Users\\rodrigo.carneiro\\.nuget\\packages\\",
-        "outputPath": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\Core.Domain\\obj\\",
+        "projectPath": "C:\\repos\\MonexUp\\Core.Domain\\Core.Domain.csproj",
+        "packagesPath": "C:\\Users\\rodri\\.nuget\\packages\\",
+        "outputPath": "C:\\repos\\MonexUp\\Core.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\rodrigo.carneiro\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\rodri\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,7 +25,6 @@
           "net8.0"
         ],
         "sources": {
-          "C:\\Benner\\Pacotes": {},
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
@@ -78,25 +76,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.309/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\MonexUp.Domain.csproj": {
+    "C:\\repos\\MonexUp\\MonexUp.Domain\\MonexUp.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\MonexUp.Domain.csproj",
+        "projectUniqueName": "C:\\repos\\MonexUp\\MonexUp.Domain\\MonexUp.Domain.csproj",
         "projectName": "MonexUp.Domain",
-        "projectPath": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\MonexUp.Domain.csproj",
-        "packagesPath": "C:\\Users\\rodrigo.carneiro\\.nuget\\packages\\",
-        "outputPath": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.Domain\\obj\\",
+        "projectPath": "C:\\repos\\MonexUp\\MonexUp.Domain\\MonexUp.Domain.csproj",
+        "packagesPath": "C:\\Users\\rodri\\.nuget\\packages\\",
+        "outputPath": "C:\\repos\\MonexUp\\MonexUp.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\rodrigo.carneiro\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\rodri\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -104,7 +101,6 @@
           "net8.0"
         ],
         "sources": {
-          "C:\\Benner\\Pacotes": {},
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
@@ -113,11 +109,11 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\Core.Domain\\Core.Domain.csproj": {
-                "projectPath": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\Core.Domain\\Core.Domain.csproj"
+              "C:\\repos\\MonexUp\\Core.Domain\\Core.Domain.csproj": {
+                "projectPath": "C:\\repos\\MonexUp\\Core.Domain\\Core.Domain.csproj"
               },
-              "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\MonexUp.DTO.csproj": {
-                "projectPath": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\MonexUp.DTO.csproj"
+              "C:\\repos\\MonexUp\\MonexUp.DTO\\MonexUp.DTO.csproj": {
+                "projectPath": "C:\\repos\\MonexUp\\MonexUp.DTO\\MonexUp.DTO.csproj"
               }
             }
           }
@@ -138,10 +134,6 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
-            "AWSSDK.S3": {
-              "target": "Package",
-              "version": "[4.0.6.12, )"
-            },
             "Microsoft.AspNetCore.Authentication": {
               "target": "Package",
               "version": "[2.3.0, )"
@@ -149,6 +141,10 @@
             "Microsoft.Extensions.Logging": {
               "target": "Package",
               "version": "[9.0.8, )"
+            },
+            "NAuth": {
+              "target": "Package",
+              "version": "[0.4.2, )"
             },
             "Newtonsoft.Json": {
               "target": "Package",
@@ -169,6 +165,10 @@
             "System.Drawing.Common": {
               "target": "Package",
               "version": "[9.0.8, )"
+            },
+            "zTools": {
+              "target": "Package",
+              "version": "[0.3.1, )"
             }
           },
           "imports": [
@@ -187,25 +187,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.309/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\MonexUp.DTO.csproj": {
+    "C:\\repos\\MonexUp\\MonexUp.DTO\\MonexUp.DTO.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\MonexUp.DTO.csproj",
+        "projectUniqueName": "C:\\repos\\MonexUp\\MonexUp.DTO\\MonexUp.DTO.csproj",
         "projectName": "MonexUp.DTO",
-        "projectPath": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\MonexUp.DTO.csproj",
-        "packagesPath": "C:\\Users\\rodrigo.carneiro\\.nuget\\packages\\",
-        "outputPath": "C:\\Git\\Projetos\\MonexUp\\Backend\\MonexUp\\MonexUp.DTO\\obj\\",
+        "projectPath": "C:\\repos\\MonexUp\\MonexUp.DTO\\MonexUp.DTO.csproj",
+        "packagesPath": "C:\\Users\\rodri\\.nuget\\packages\\",
+        "outputPath": "C:\\repos\\MonexUp\\MonexUp.DTO\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\rodrigo.carneiro\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\rodri\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -213,7 +212,6 @@
           "net8.0"
         ],
         "sources": {
-          "C:\\Benner\\Pacotes": {},
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
@@ -240,6 +238,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "NAuth": {
+              "target": "Package",
+              "version": "[0.4.2, )"
+            },
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[13.0.3, )"
@@ -261,7 +263,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.309/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

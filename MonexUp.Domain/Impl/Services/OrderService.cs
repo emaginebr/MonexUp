@@ -1,8 +1,9 @@
-﻿using MonexUp.Domain.Interfaces.Factory;
+using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Order;
 using MonexUp.DTO.Product;
+using NAuth.ACL.Interfaces;
 using Stripe.Climate;
 using System;
 using System.Collections.Generic;
@@ -17,24 +18,21 @@ namespace MonexUp.Domain.Impl.Services
         private readonly IOrderDomainFactory _orderFactory;
         private readonly IOrderItemDomainFactory _itemFactory;
         private readonly IProductService _productService;
-        private readonly IUserService _userService;
+        private readonly IUserClient _userClient;
         private readonly IProductDomainFactory _productFactory;
-        private readonly IUserDomainFactory _userFactory;
 
         public OrderService(
-            IOrderDomainFactory orderFactory, 
+            IOrderDomainFactory orderFactory,
             IOrderItemDomainFactory itemFactory,
             IProductService productService,
-            IUserService userService,
-            IProductDomainFactory productFactory,
-            IUserDomainFactory userFactory)
+            IUserClient userClient,
+            IProductDomainFactory productFactory)
         {
             _orderFactory = orderFactory;
             _itemFactory = itemFactory;
             _productService = productService;
-            _userService = userService;
+            _userClient = userClient;
             _productFactory = productFactory;
-            _userFactory = userFactory;
         }
 
         public IOrderModel Insert(OrderInfo order)
@@ -95,8 +93,20 @@ namespace MonexUp.Domain.Impl.Services
             return _orderFactory.BuildOrderModel().Get(productId, userId, sellerId, status, _orderFactory);
         }
 
-        public OrderInfo GetOrderInfo(IOrderModel order)
+        public async Task<OrderInfo> GetOrderInfo(IOrderModel order)
         {
+            var items = new List<OrderItemInfo>();
+            foreach (var x in order.ListItems(_itemFactory))
+            {
+                items.Add(new OrderItemInfo
+                {
+                    ItemId = x.ItemId,
+                    OrderId = x.OrderId,
+                    ProductId = x.ProductId,
+                    Quantity = x.Quantity,
+                    Product = await _productService.GetProductInfo(x.GetProduct(_productFactory))
+                });
+            }
             return new OrderInfo
             {
                 OrderId = order.OrderId,
@@ -106,16 +116,9 @@ namespace MonexUp.Domain.Impl.Services
                 Status = order.Status,
                 CreatedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt,
-                User = _userService.GetUserInfoFromModel(order.GetUser(_userFactory)),
-                Seller = _userService.GetUserInfoFromModel(order.GetSeller(_userFactory)),
-                Items = order.ListItems(_itemFactory).Select(x => new OrderItemInfo
-                {
-                    ItemId = x.ItemId,
-                    OrderId = x.OrderId,
-                    ProductId = x.ProductId,
-                    Quantity = x.Quantity,
-                    Product = _productService.GetProductInfo(x.GetProduct(_productFactory))
-                }).ToList()
+                User = await _userClient.GetByIdAsync(order.UserId, ""),
+                Seller = order.SellerId.HasValue ? await _userClient.GetByIdAsync(order.SellerId.Value, "") : null,
+                Items = items
             };
         }
 
@@ -129,13 +132,16 @@ namespace MonexUp.Domain.Impl.Services
             return _orderFactory.BuildOrderModel().GetByStripeId(stripeId, _orderFactory);
         }
 
-        public OrderListPagedResult Search(long networkId, long? userId, long? sellerId, int pageNum)
+        public async Task<OrderListPagedResult> Search(long networkId, long? userId, long? sellerId, int pageNum)
         {
             var model = _orderFactory.BuildOrderModel();
             int pageCount = 0;
-            var orders = model.Search(networkId, userId, sellerId, pageNum, out pageCount, _orderFactory)
-                .Select(x => GetOrderInfo(x))
-                .ToList();
+            var orderModels = model.Search(networkId, userId, sellerId, pageNum, out pageCount, _orderFactory).ToList();
+            var orders = new List<OrderInfo>();
+            foreach (var x in orderModels)
+            {
+                orders.Add(await GetOrderInfo(x));
+            }
             return new OrderListPagedResult
             {
                 Sucesso = true,

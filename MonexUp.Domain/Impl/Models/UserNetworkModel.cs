@@ -29,15 +29,6 @@ namespace MonexUp.Domain.Impl.Models
         public UserNetworkStatusEnum Status { get; set; }
         public long? ReferrerId { get; set; }
 
-        public IUserModel GetUser(IUserDomainFactory factory)
-        {
-            if (UserId > 0)
-            {
-                return factory.BuildUserModel().GetById(UserId, factory);
-            }
-            return null;
-        }
-
         public INetworkModel GetNetwork(INetworkDomainFactory factory)
         {
             if (NetworkId > 0)

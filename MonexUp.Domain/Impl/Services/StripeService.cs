@@ -1,7 +1,9 @@
-﻿using MonexUp.Domain.Interfaces.Factory;
+using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Order;
+using NAuth.ACL.Interfaces;
+using NAuth.DTO.User;
 using Stripe;
 using Stripe.Checkout;
 using Stripe.Climate;
@@ -15,29 +17,29 @@ namespace MonexUp.Domain.Impl.Services
 {
     public class StripeService: IStripeService
     {
-        private const string API_KEY = "sk_test_51QkuslD37qwDaRRT7Xnw3HtnoCVpTKM3cZSBSp9uCvCQlJfCn8fuhokykPmOcRKYdLxFcQFZxe8esAmpCsiYv4et00L5OCzjXe";
-
         private readonly IProductDomainFactory _productFactory;
         private readonly IInvoiceDomainFactory _invoiceFactory;
-        private readonly IUserDomainFactory _userFactory;
+        private readonly IUserClient _userClient;
         private readonly IOrderDomainFactory _orderFactory;
 
         public StripeService(
-            IProductDomainFactory productFactory, 
-            IInvoiceDomainFactory invoiceFactory, 
-            IUserDomainFactory userFactory,
-            IOrderDomainFactory orderFactory
+            IProductDomainFactory productFactory,
+            IInvoiceDomainFactory invoiceFactory,
+            IUserClient userClient,
+            IOrderDomainFactory orderFactory,
+            Microsoft.Extensions.Configuration.IConfiguration configuration
         )
         {
-            StripeConfiguration.ApiKey = API_KEY;
+            StripeConfiguration.ApiKey = configuration["STRIPE_SECRET_KEY"]
+                ?? throw new InvalidOperationException("STRIPE_SECRET_KEY is not configured.");
 
             _productFactory = productFactory;
             _invoiceFactory = invoiceFactory;
-            _userFactory = userFactory;
+            _userClient = userClient;
             _orderFactory = orderFactory;
         }
 
-        public async Task<string> CreateInvoice(IUserModel user, IProductModel product)
+        public async Task<string> CreateInvoice(UserInfo user, IProductModel product)
         {
             var customerService = new CustomerService();
             var customers = await customerService.ListAsync(new CustomerListOptions { Email = user.Email, Limit = 1 });
@@ -111,7 +113,7 @@ namespace MonexUp.Domain.Impl.Services
             return url;
         }
 
-        public async Task<string> CreateSubscription(IUserModel user, IProductModel product, INetworkModel network, IUserModel seller)
+        public async Task<string> CreateSubscription(UserInfo user, IProductModel product, INetworkModel network, UserInfo seller)
         {
             var customerService = new CustomerService();
             var customers = await customerService.ListAsync(new CustomerListOptions { Email = user.Email, Limit = 1 });
@@ -212,7 +214,7 @@ namespace MonexUp.Domain.Impl.Services
         {
             var md = _invoiceFactory.BuildInvoiceModel();
 
-            var user = _userFactory.BuildUserModel().GetByEmail(invoice.CustomerEmail, _userFactory);
+            var user = await _userClient.GetByEmailAsync(invoice.CustomerEmail);
             if (user == null)
             {
                 throw new Exception(string.Format("User with email {0} not found", invoice.CustomerEmail));
@@ -256,7 +258,7 @@ namespace MonexUp.Domain.Impl.Services
 
             var productId = item.Pricing.PriceDetails.Product;
 
-            var product = _productFactory.BuildProductModel().GetByStripeProductId(productId, _productFactory); 
+            var product = _productFactory.BuildProductModel().GetByStripeProductId(productId, _productFactory);
             if (product == null)
             {
                 throw new Exception(string.Format("Product with id '{0}' not found", productId));
@@ -307,7 +309,7 @@ namespace MonexUp.Domain.Impl.Services
                 {
                     invoicesModel.Add(await ConvertStripeToModel(invoice));
                 }
-                catch (Exception ex) { 
+                catch (Exception ex) {
                     Console.WriteLine(ex.Message);
                 }
             }

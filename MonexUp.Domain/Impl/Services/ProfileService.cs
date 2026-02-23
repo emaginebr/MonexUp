@@ -1,7 +1,8 @@
-﻿using MonexUp.Domain.Interfaces.Factory;
+using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Profile;
+using NAuth.ACL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,18 +15,18 @@ namespace MonexUp.Domain.Impl.Services
 {
     public class ProfileService : IProfileService
     {
-        private readonly IUserDomainFactory _userFactory;
+        private readonly IUserClient _userClient;
         private readonly IUserNetworkDomainFactory _userNetworkFactory;
         private readonly IUserProfileDomainFactory _profileFactory;
 
-        public ProfileService(IUserDomainFactory userFactory, IUserNetworkDomainFactory userNetworFactory, IUserProfileDomainFactory profileFactory)
+        public ProfileService(IUserClient userClient, IUserNetworkDomainFactory userNetworFactory, IUserProfileDomainFactory profileFactory)
         {
-            _userFactory = userFactory;
+            _userClient = userClient;
             _userNetworkFactory = userNetworFactory;
             _profileFactory = profileFactory;
         }
 
-        private void ValidateAccess(long networkId, long userId)
+        private async Task ValidateAccess(long networkId, long userId)
         {
             var networkAccess = _userNetworkFactory.BuildUserNetworkModel().Get(networkId, userId, _userNetworkFactory);
 
@@ -36,7 +37,7 @@ namespace MonexUp.Domain.Impl.Services
 
             if (networkAccess.Role != DTO.User.UserRoleEnum.NetworkManager)
             {
-                var user = _userFactory.BuildUserModel().GetById(userId, _userFactory);
+                var user = await _userClient.GetByIdAsync(userId, "");
                 if (user == null)
                 {
                     throw new Exception("User not found");
@@ -48,9 +49,9 @@ namespace MonexUp.Domain.Impl.Services
             }
         }
 
-        public IUserProfileModel Insert(UserProfileInfo profile, long userId)
+        public async Task<IUserProfileModel> Insert(UserProfileInfo profile, long userId)
         {
-            ValidateAccess(profile.NetworkId, userId);
+            await ValidateAccess(profile.NetworkId, userId);
 
             if (string.IsNullOrEmpty(profile.Name))
             {
@@ -67,9 +68,9 @@ namespace MonexUp.Domain.Impl.Services
             return model.Insert(_profileFactory);
         }
 
-        public IUserProfileModel Update(UserProfileInfo profile, long userId)
+        public async Task<IUserProfileModel> Update(UserProfileInfo profile, long userId)
         {
-            ValidateAccess(profile.NetworkId, userId);
+            await ValidateAccess(profile.NetworkId, userId);
 
             if (string.IsNullOrEmpty(profile.Name))
             {
@@ -87,11 +88,11 @@ namespace MonexUp.Domain.Impl.Services
             return model.Update(_profileFactory);
         }
 
-        public void Delete(long profileId, long userId)
+        public async Task Delete(long profileId, long userId)
         {
             var model = _profileFactory.BuildUserProfileModel().GetById(profileId, _profileFactory);
 
-            ValidateAccess(model.NetworkId, userId);
+            await ValidateAccess(model.NetworkId, userId);
 
             int qtdeUser = model.GetUsersCount(model.NetworkId, profileId);
 

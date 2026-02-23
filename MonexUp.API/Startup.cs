@@ -33,14 +33,25 @@ namespace MonexUp.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connectionString = Configuration.GetConnectionString("MonexUpContext");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                var host = Configuration["DB_HOST"] ?? Environment.GetEnvironmentVariable("DB_HOST");
+                var port = Configuration["DB_PORT"] ?? Environment.GetEnvironmentVariable("DB_PORT") ?? "5432";
+                var db = Configuration["DB_NAME"] ?? Environment.GetEnvironmentVariable("DB_NAME") ?? "monexup";
+                var user = Configuration["DB_USER"] ?? Environment.GetEnvironmentVariable("DB_USER");
+                var pass = Configuration["DB_PASSWORD"] ?? Environment.GetEnvironmentVariable("DB_PASSWORD");
+                connectionString = $"Host={host};Port={port};Database={db};Username={user};Password={pass}";
+            }
+
             var config = new ConfigurationParam
             {
-                ConnectionString = Configuration.GetConnectionString("MonexUpContext"),
+                ConnectionString = connectionString,
                 NAuthApiUrl = Configuration["NAuthSetting:ApiUrl"],
                 NAuthJwtSecret = Configuration["NAuthSetting:JwtSecret"],
                 NAuthBucketName = Configuration["NAuthSetting:BucketName"]
             };
-            Initializer.Configure(services, config);
+            Initializer.Configure(services, config, Configuration);
             services.AddControllers();
             services.AddHealthChecks();
             services.AddSwaggerGen(c =>

@@ -1,91 +1,65 @@
-﻿using Amazon.S3.Transfer;
-using Amazon.S3;
-using MonexUp.Domain.Impl.Models;
 using MonexUp.Domain.Interfaces.Factory;
-using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using Core.Domain;
+using zTools.ACL.Interfaces;
 
 namespace MonexUp.Domain.Impl.Services
 {
     public class ImageService : IImageService
     {
-
-        private const string ACCESS_KEY = "DO00JY46P2RAD368YY3B";
-        private const string SECRET_KEY = "6aojG9/UVwcn9Ss8mT7HNCPPUCk2GF1bG/CarPcC5n0";
-        private const string BUCKET_NAME = "monexup";
-        private const string REGION = "nyc3"; // ou fra1, sgp1, etc.
-        private const string ENDPOINT = "https://emagine.nyc3.digitaloceanspaces.com";
-
+        private readonly string _bucketName;
+        private readonly IFileClient _fileClient;
         private readonly INetworkDomainFactory _networkFactory;
         private readonly IProductDomainFactory _productFactory;
 
         public ImageService(
             INetworkDomainFactory networkFactory,
-            IProductDomainFactory productFactory
+            IProductDomainFactory productFactory,
+            IFileClient fileClient,
+            Microsoft.Extensions.Configuration.IConfiguration configuration
         ) {
             _networkFactory = networkFactory;
             _productFactory = productFactory;
+            _fileClient = fileClient;
+            _bucketName = configuration["DO_SPACES_BUCKET"] ?? "monexup";
         }
 
-        public string GetImageUrl(string fileName)
+        public async Task<string> GetImageUrlAsync(string fileName)
         {
             if (!string.IsNullOrEmpty(fileName))
             {
-                return ENDPOINT + "/" + BUCKET_NAME + "/" + fileName;
+                return await _fileClient.GetFileUrlAsync(_bucketName, fileName);
             }
             return string.Empty;
         }
 
-        private void UploadFile(Stream fileStream, string fileName)
+        private async Task UploadFileAsync(Stream fileStream, string fileName)
         {
-            var config = new AmazonS3Config
-            {
-                ServiceURL = ENDPOINT,
-                ForcePathStyle = true,
-                //SignatureVersion = "v4",
-            };
-
-            using var client = new AmazonS3Client(ACCESS_KEY, SECRET_KEY, config);
-            var transferUtility = new TransferUtility(client);
-
-            var request = new TransferUtilityUploadRequest
-            {
-                InputStream = fileStream,
-                Key = fileName,
-                BucketName = BUCKET_NAME,
-                CannedACL = S3CannedACL.PublicRead // ou Private se quiser restrito
-            };
-
-            transferUtility.Upload(request);
+            var formFile = new FormFileWrapper(fileStream, fileName, "image/jpeg");
+            await _fileClient.UploadFileAsync(_bucketName, formFile);
         }
 
-        public string InsertFromStream(Stream stream, string name)
+        public async Task<string> InsertFromStreamAsync(Stream stream, string name)
         {
-            UploadFile(stream, name);
+            await UploadFileAsync(stream, name);
             return name;
         }
 
-        public string InsertToUser(Stream stream, long userId)
+        public async Task<string> InsertToUserAsync(Stream stream, long userId)
         {
             if (!(userId > 0))
             {
                 throw new Exception("Invalid User ID");
             }
             var name = string.Format("user-{0}.jpg", StringUtils.GenerateShortUniqueString());
-            UploadFile(stream, name);
+            await UploadFileAsync(stream, name);
             return name;
         }
 
-        public string InsertToNetwork(Stream stream, long networkId)
+        public async Task<string> InsertToNetworkAsync(Stream stream, long networkId)
         {
             if (!(networkId > 0))
             {
@@ -97,13 +71,13 @@ namespace MonexUp.Domain.Impl.Services
                 throw new Exception("Network not found");
             }
             var name = string.Format("network-{0}.jpg", StringUtils.GenerateShortUniqueString());
-            UploadFile(stream, name);
+            await UploadFileAsync(stream, name);
             network.Image = name;
             network.Update(_networkFactory);
             return name;
         }
 
-        public string InsertToProduct(Stream stream, long productId)
+        public async Task<string> InsertToProductAsync(Stream stream, long productId)
         {
             if (!(productId > 0))
             {
@@ -115,7 +89,7 @@ namespace MonexUp.Domain.Impl.Services
                 throw new Exception("Product not found");
             }
             var name = string.Format("product-{0}.jpg", StringUtils.GenerateShortUniqueString());
-            UploadFile(stream, name);
+            await UploadFileAsync(stream, name);
             product.Image = name;
             product.Update(_productFactory);
             return name;

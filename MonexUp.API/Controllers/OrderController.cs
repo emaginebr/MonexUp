@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MonexUp.Domain.Impl.Services;
 using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Order;
-using MonexUp.DTO.Product;
 using MonexUp.DTO.Subscription;
 using NAuth.ACL.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,7 +25,7 @@ namespace MonexUp.API.Controllers
         private readonly IProductDomainFactory _productFactory;
 
         public OrderController(
-            IUserClient userClient, 
+            IUserClient userClient,
             IOrderService orderService,
             ISubscriptionService subscriptionService,
             INetworkService networkService,
@@ -47,8 +46,8 @@ namespace MonexUp.API.Controllers
         [Authorize]
         [HttpGet("createSubscription/{productSlug}")]
         public async Task<ActionResult<SubscriptionResult>> CreateSubscription(
-            string productSlug, 
-            [FromQuery] string networkSlug, 
+            string productSlug,
+            [FromQuery] string networkSlug,
             [FromQuery] string sellerSlug
         )
         {
@@ -99,7 +98,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("update")]
-        public ActionResult<OrderResult> Update([FromBody] OrderInfo order)
+        public async Task<ActionResult<OrderResult>> Update([FromBody] OrderInfo order)
         {
             try
             {
@@ -111,7 +110,7 @@ namespace MonexUp.API.Controllers
                 var newOrder = _orderService.Update(order);
                 return new OrderResult()
                 {
-                    Order = _orderService.GetOrderInfo(newOrder)
+                    Order = await _orderService.GetOrderInfo(newOrder)
                 };
             }
             catch (Exception ex)
@@ -122,7 +121,7 @@ namespace MonexUp.API.Controllers
 
         [HttpPost("search")]
         [Authorize]
-        public ActionResult<OrderListPagedResult> Search([FromBody] OrderSearchParam param)
+        public async Task<ActionResult<OrderListPagedResult>> Search([FromBody] OrderSearchParam param)
         {
             try
             {
@@ -131,7 +130,7 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                return _orderService.Search(param.NetworkId, param.UserId, param.SellerId, param.PageNum);
+                return await _orderService.Search(param.NetworkId, param.UserId, param.SellerId, param.PageNum);
             }
             catch (Exception ex)
             {
@@ -141,7 +140,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("list")]
-        public ActionResult<OrderListResult> List([FromBody] OrderParam param)
+        public async Task<ActionResult<OrderListResult>> List([FromBody] OrderParam param)
         {
             try
             {
@@ -150,13 +149,16 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
+                var orderModels = _orderService.List(param.NetworkId, param.UserId, param.Status).ToList();
+                var orders = new List<OrderInfo>();
+                foreach (var x in orderModels)
+                {
+                    orders.Add(await _orderService.GetOrderInfo(x));
+                }
                 return new OrderListResult
                 {
                     Sucesso = true,
-                    Orders = _orderService.List(param.NetworkId, param.UserId, param.Status)
-                    .ToList()
-                    .Select(x => _orderService.GetOrderInfo(x))
-                    .ToList()
+                    Orders = orders
                 };
             }
             catch (Exception ex)
@@ -167,7 +169,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpGet("getById/{orderId}")]
-        public ActionResult<OrderResult> GetById(long orderId)
+        public async Task<ActionResult<OrderResult>> GetById(long orderId)
         {
             try
             {
@@ -179,7 +181,7 @@ namespace MonexUp.API.Controllers
                 return new OrderResult
                 {
                     Sucesso = true,
-                    Order = _orderService.GetOrderInfo(_orderService.GetById(orderId))
+                    Order = await _orderService.GetOrderInfo(_orderService.GetById(orderId))
                 };
             }
             catch (Exception ex)

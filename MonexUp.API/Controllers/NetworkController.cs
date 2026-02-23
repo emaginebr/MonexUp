@@ -1,4 +1,4 @@
-﻿using DB.Infra.Context;
+using DB.Infra.Context;
 using MonexUp.Domain.Impl.Services;
 using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
@@ -28,10 +28,10 @@ namespace MonexUp.API.Controllers
         private readonly IProfileService _profileService;
 
         public NetworkController(
-            INetworkDomainFactory networkFactory, 
-            IUserNetworkDomainFactory userNetworkFactory, 
-            IUserClient userClient, 
-            INetworkService networkService, 
+            INetworkDomainFactory networkFactory,
+            IUserNetworkDomainFactory userNetworkFactory,
+            IUserClient userClient,
+            INetworkService networkService,
             IProfileService profileService
         )
         {
@@ -44,7 +44,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("insert")]
-        public ActionResult<NetworkResult> Insert([FromBody] NetworkInsertInfo network)
+        public async Task<ActionResult<NetworkResult>> Insert([FromBody] NetworkInsertInfo network)
         {
             try
             {
@@ -56,7 +56,7 @@ namespace MonexUp.API.Controllers
                 var newNetwork = _networkService.Insert(network, userSession.UserId);
                 return new NetworkResult()
                 {
-                    Network = _networkService.GetNetworkInfo(newNetwork)
+                    Network = await _networkService.GetNetworkInfo(newNetwork)
                 };
             }
             catch (Exception ex)
@@ -67,7 +67,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("update")]
-        public ActionResult<NetworkResult> Update([FromBody] NetworkInfo network)
+        public async Task<ActionResult<NetworkResult>> Update([FromBody] NetworkInfo network)
         {
             try
             {
@@ -76,10 +76,10 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                var newNetwork = _networkService.Update(network, userSession.UserId);
+                var newNetwork = await _networkService.Update(network, userSession.UserId);
                 return new NetworkResult()
                 {
-                    Network = _networkService.GetNetworkInfo(newNetwork)
+                    Network = await _networkService.GetNetworkInfo(newNetwork)
                 };
             }
             catch (Exception ex)
@@ -89,7 +89,7 @@ namespace MonexUp.API.Controllers
         }
 
         [HttpGet("listAll")]
-        public ActionResult<NetworkListResult> ListAll()
+        public async Task<ActionResult<NetworkListResult>> ListAll()
         {
             try
             {
@@ -98,9 +98,14 @@ namespace MonexUp.API.Controllers
                 var networks = _networkService
                     .ListByStatus(NetworkStatusEnum.Active)
                     .ToList();
+                var networkInfos = new List<NetworkInfo>();
+                foreach (var x in networks)
+                {
+                    networkInfos.Add(await _networkService.GetNetworkInfo(x));
+                }
                 return new NetworkListResult()
                 {
-                    Networks = networks.Select(x => _networkService.GetNetworkInfo(x)).ToList()
+                    Networks = networkInfos
                 };
             }
             catch (Exception ex)
@@ -111,7 +116,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpGet("listByUser")]
-        public ActionResult<UserNetworkListResult> ListByUser()
+        public async Task<ActionResult<UserNetworkListResult>> ListByUser()
         {
             try
             {
@@ -126,9 +131,14 @@ namespace MonexUp.API.Controllers
                 var userNetworks = _networkService
                     .ListByUser(userSession.UserId)
                     .ToList();
+                var userNetworkInfos = new List<UserNetworkInfo>();
+                foreach (var x in userNetworks)
+                {
+                    userNetworkInfos.Add(await _networkService.GetUserNetworkInfo(x));
+                }
                 return new UserNetworkListResult()
                 {
-                    UserNetworks = userNetworks.Select(x => _networkService.GetUserNetworkInfo(x)).ToList()
+                    UserNetworks = userNetworkInfos
                 };
             }
             catch (Exception ex)
@@ -138,7 +148,7 @@ namespace MonexUp.API.Controllers
         }
 
         [HttpGet("listByNetwork/{networkSlug}")]
-        public ActionResult<UserNetworkListResult> ListByNetwork(string networkSlug)
+        public async Task<ActionResult<UserNetworkListResult>> ListByNetwork(string networkSlug)
         {
             try
             {
@@ -153,9 +163,14 @@ namespace MonexUp.API.Controllers
                 var userNetworks = _networkService
                     .ListByNetwork(network.NetworkId)
                     .ToList();
+                var userNetworkInfos = new List<UserNetworkInfo>();
+                foreach (var x in userNetworks)
+                {
+                    userNetworkInfos.Add(await _networkService.GetUserNetworkInfo(x));
+                }
                 return new UserNetworkListResult()
                 {
-                    UserNetworks = userNetworks.Select(x => _networkService.GetUserNetworkInfo(x)).ToList()
+                    UserNetworks = userNetworkInfos
                 };
             }
             catch (Exception ex)
@@ -164,41 +179,9 @@ namespace MonexUp.API.Controllers
             }
         }
 
-        /*
-        private NetworkInfo NetworkModelToInfo(INetworkModel model)
-        {
-            var networkInfo = _networkService.GetNetworkInfo(model);
-            if (networkInfo != null)
-            {
-                var mdUserNetwork = _userNetworkFactory.BuildUserNetworkModel();
-                networkInfo.QtdyUsers = mdUserNetwork.GetQtdyUserByNetwork(model.NetworkId);
-                networkInfo.MaxUsers = model.MaxQtdyUserByNetwork();
-            }
-            return networkInfo;
-        }
-
-        private UserNetworkInfo UserNetworkModelToInfo(IUserNetworkModel model)
-        {
-            var userNetwork = _networkService.GetUserNetworkInfo(model);
-            if (userNetwork != null)
-            {
-                var md = _networkFactory.BuildNetworkModel().GetById(userNetwork.NetworkId, _networkFactory);
-                userNetwork.Network = _networkService.GetNetworkInfo(md);
-                userNetwork.Network.QtdyUsers = model.GetQtdyUserByNetwork(userNetwork.NetworkId);
-                userNetwork.Network.MaxUsers = md.MaxQtdyUserByNetwork();
-                if (userNetwork.ProfileId.HasValue)
-                {
-                    var mdProfile = _profileService.GetById(userNetwork.ProfileId.Value);
-                    userNetwork.Profile = _profileService.GetUserProfileInfo(mdProfile);
-                }
-            }
-            return userNetwork;
-        }
-        */
-
         [Authorize]
         [HttpGet("getById/{networkId}")]
-        public ActionResult<NetworkResult> GetById(long networkId)
+        public async Task<ActionResult<NetworkResult>> GetById(long networkId)
         {
             try
             {
@@ -211,7 +194,7 @@ namespace MonexUp.API.Controllers
                 var network = _networkService.GetById(networkId);
                 return new NetworkResult()
                 {
-                    Network = _networkService.GetNetworkInfo(network)
+                    Network = await _networkService.GetNetworkInfo(network)
                 };
             }
             catch (Exception ex)
@@ -222,7 +205,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpGet("getUserNetwork/{networkId}")]
-        public ActionResult<UserNetworkResult> GetUserNetwork(long networkId)
+        public async Task<ActionResult<UserNetworkResult>> GetUserNetwork(long networkId)
         {
             try
             {
@@ -235,7 +218,7 @@ namespace MonexUp.API.Controllers
                 var userNetwork = _networkService.GetUserNetwork(networkId, userSession.UserId);
                 return new UserNetworkResult()
                 {
-                    UserNetwork = _networkService.GetUserNetworkInfo(userNetwork)
+                    UserNetwork = await _networkService.GetUserNetworkInfo(userNetwork)
                 };
             }
             catch (Exception ex)
@@ -246,7 +229,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpGet("getUserNetworkBySlug/{networkSlug}")]
-        public ActionResult<UserNetworkResult> GetUserNetworkBySlug(string networkSlug)
+        public async Task<ActionResult<UserNetworkResult>> GetUserNetworkBySlug(string networkSlug)
         {
             try
             {
@@ -264,7 +247,7 @@ namespace MonexUp.API.Controllers
                 var userNetwork = _networkService.GetUserNetwork(network.NetworkId, userSession.UserId);
                 return new UserNetworkResult()
                 {
-                    UserNetwork = _networkService.GetUserNetworkInfo(userNetwork)
+                    UserNetwork = await _networkService.GetUserNetworkInfo(userNetwork)
                 };
             }
             catch (Exception ex)
@@ -274,14 +257,14 @@ namespace MonexUp.API.Controllers
         }
 
         [HttpGet("getBySlug/{networkSlug}")]
-        public ActionResult<NetworkResult> GetBySlug(string networkSlug)
+        public async Task<ActionResult<NetworkResult>> GetBySlug(string networkSlug)
         {
             try
             {
                 var network = _networkService.GetBySlug(networkSlug);
                 return new NetworkResult()
                 {
-                    Network = _networkService.GetNetworkInfo(network)
+                    Network = await _networkService.GetNetworkInfo(network)
                 };
             }
             catch (Exception ex)
@@ -310,7 +293,7 @@ namespace MonexUp.API.Controllers
 
                 return new UserNetworkResult()
                 {
-                    UserNetwork = _networkService.GetUserNetworkInfo(userNetwork)
+                    UserNetwork = await _networkService.GetUserNetworkInfo(userNetwork)
                 };
             }
             catch (Exception ex)
@@ -347,7 +330,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("changeStatus")]
-        public ActionResult<StatusResult> ChangeStatus([FromBody] NetworkChangeStatusInfo changeStatus)
+        public async Task<ActionResult<StatusResult>> ChangeStatus([FromBody] NetworkChangeStatusInfo changeStatus)
         {
             try
             {
@@ -359,7 +342,7 @@ namespace MonexUp.API.Controllers
 
                 UserNetworkStatusEnum status = (UserNetworkStatusEnum)changeStatus.Status;
 
-                _networkService.ChangeStatus(changeStatus.NetworkId, changeStatus.UserId, status, userSession.UserId);
+                await _networkService.ChangeStatus(changeStatus.NetworkId, changeStatus.UserId, status, userSession.UserId);
 
                 return new StatusResult
                 {
@@ -375,7 +358,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpGet("promote/{networkId}/{userId}")]
-        public ActionResult<StatusResult> Promote(long networkId, long userId)
+        public async Task<ActionResult<StatusResult>> Promote(long networkId, long userId)
         {
             try
             {
@@ -386,7 +369,7 @@ namespace MonexUp.API.Controllers
                 }
 
 
-                _networkService.Promote(networkId, userId, userSession.UserId);
+                await _networkService.Promote(networkId, userId, userSession.UserId);
 
                 return new StatusResult
                 {
@@ -402,7 +385,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpGet("demote/{networkId}/{userId}")]
-        public ActionResult<StatusResult> Demote(long networkId, long userId)
+        public async Task<ActionResult<StatusResult>> Demote(long networkId, long userId)
         {
             try
             {
@@ -413,7 +396,7 @@ namespace MonexUp.API.Controllers
                 }
 
 
-                _networkService.Demote(networkId, userId, userSession.UserId);
+                await _networkService.Demote(networkId, userId, userSession.UserId);
 
                 return new StatusResult
                 {

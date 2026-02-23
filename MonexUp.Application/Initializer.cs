@@ -19,6 +19,9 @@ using System;
 using NAuth.ACL;
 using NAuth.ACL.Interfaces;
 using NAuth.DTO.Settings;
+using zTools.ACL;
+using zTools.ACL.Interfaces;
+using zTools.DTO.Settings;
 
 namespace MonexUp.Application
 {
@@ -32,7 +35,7 @@ namespace MonexUp.Application
             else
                 services.AddTransient(serviceType, implementationType);
         }
-        public static void Configure(IServiceCollection services, ConfigurationParam config, bool scoped = true)
+        public static void Configure(IServiceCollection services, ConfigurationParam config, IConfiguration configuration, bool scoped = true)
         {
             if (scoped)
                 services.AddDbContext<MonexUpContext>(x => x.UseLazyLoadingProxies().UseNpgsql(config.ConnectionString));
@@ -52,12 +55,8 @@ namespace MonexUp.Application
             injectDependency(typeof(IOrderRepository<IOrderModel, IOrderDomainFactory>), typeof(OrderRepository), services, scoped);
             injectDependency(typeof(IOrderItemRepository<IOrderItemModel, IOrderItemDomainFactory>), typeof(OrderItemRepository), services, scoped);
             injectDependency(typeof(IProductRepository<IProductModel, IProductDomainFactory>), typeof(ProductRepository), services, scoped);
-            injectDependency(typeof(IUserAddressRepository<IUserAddressModel, IUserAddressDomainFactory>), typeof(UserAddressRepository), services, scoped);
-            injectDependency(typeof(IUserDocumentRepository<IUserDocumentModel, IUserDocumentDomainFactory>), typeof(UserDocumentRepository), services, scoped);
             injectDependency(typeof(IUserNetworkRepository<IUserNetworkModel, IUserNetworkDomainFactory>), typeof(UserNetworkRepository), services, scoped);
-            injectDependency(typeof(IUserPhoneRepository<IUserPhoneModel, IUserPhoneDomainFactory>), typeof(UserPhoneRepository), services, scoped);
             injectDependency(typeof(IUserProfileRepository<IUserProfileModel, IUserProfileDomainFactory>), typeof(UserProfileRepository), services, scoped);
-            injectDependency(typeof(IUserRepository<IUserModel, IUserDomainFactory>), typeof(UserRepository), services, scoped);
             injectDependency(typeof(ITemplateRepository<ITemplateModel, ITemplateDomainFactory>), typeof(TemplateRepository), services, scoped);
             injectDependency(typeof(ITemplatePageRepository<ITemplatePageModel, ITemplatePageDomainFactory>), typeof(TemplatePageRepository), services, scoped);
             injectDependency(typeof(ITemplatePartRepository<ITemplatePartModel, ITemplatePartDomainFactory>), typeof(TemplatePartRepository), services, scoped);
@@ -76,9 +75,14 @@ namespace MonexUp.Application
             injectDependency(typeof(IRoleClient), typeof(RoleClient), services, scoped);
             #endregion
 
+            #region zTools
+            services.Configure<zToolsetting>(configuration.GetSection("zTools"));
+            injectDependency(typeof(IFileClient), typeof(FileClient), services, scoped);
+            injectDependency(typeof(IMailClient), typeof(MailClient), services, scoped);
+            #endregion
+
             #region Service
             injectDependency(typeof(IImageService), typeof(ImageService), services, scoped);
-            injectDependency(typeof(IUserService), typeof(UserService), services, scoped);
             injectDependency(typeof(INetworkService), typeof(NetworkService), services, scoped);
             injectDependency(typeof(IProfileService), typeof(ProfileService), services, scoped);
             injectDependency(typeof(IProductService), typeof(ProductService), services, scoped);
@@ -97,12 +101,8 @@ namespace MonexUp.Application
             injectDependency(typeof(IOrderDomainFactory), typeof(OrderDomainFactory), services, scoped);
             injectDependency(typeof(IOrderItemDomainFactory), typeof(OrderItemDomainFactory), services, scoped);
             injectDependency(typeof(IProductDomainFactory), typeof(ProductDomainFactory), services, scoped);
-            injectDependency(typeof(IUserAddressDomainFactory), typeof(UserAddressDomainFactory), services, scoped);
-            injectDependency(typeof(IUserDocumentDomainFactory), typeof(UserDocumentDomainFactory), services, scoped);
             injectDependency(typeof(IUserNetworkDomainFactory), typeof(UserNetworkDomainFactory), services, scoped);
-            injectDependency(typeof(IUserPhoneDomainFactory), typeof(UserPhoneDomainFactory), services, scoped);
             injectDependency(typeof(IUserProfileDomainFactory), typeof(UserProfileDomainFactory), services, scoped);
-            injectDependency(typeof(IUserDomainFactory), typeof(UserDomainFactory), services, scoped);
             injectDependency(typeof(ITemplateDomainFactory), typeof(TemplateDomainFactory), services, scoped);
             injectDependency(typeof(ITemplatePageDomainFactory), typeof(TemplatePageDomainFactory), services, scoped);
             injectDependency(typeof(ITemplatePartDomainFactory), typeof(TemplatePartDomainFactory), services, scoped);

@@ -1,44 +1,50 @@
-﻿using Newtonsoft.Json;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.MailerSend;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
+using zTools.ACL.Interfaces;
 
 namespace MonexUp.Domain.Impl.Services
 {
     public class MailerSendService : IMailerSendService
     {
-        private const string MAIL_SENDER = "contact@trial-3zxk54vxer6gjy6v.mlsender.net";
-        private const string API_URL = "https://api.mailersend.com/v1/email";
-        private const string API_TOKEN = "mlsn.30332ed20b31409638f22ad3c259905860bbf5e2ec79e3e3542f3d5776c6dabd";
+        private readonly string _mailSender;
+        private readonly IMailClient _mailClient;
 
+        public MailerSendService(
+            IMailClient mailClient,
+            Microsoft.Extensions.Configuration.IConfiguration configuration
+        )
+        {
+            _mailClient = mailClient;
+            _mailSender = configuration["MAILERSEND_SENDER"]
+                ?? throw new InvalidOperationException("MAILERSEND_SENDER is not configured.");
+        }
 
         public async Task<bool> Sendmail(MailerInfo email)
         {
-            using (var client = new HttpClient())
+            email.From.Email = _mailSender;
+
+            var zToolsEmail = new zTools.DTO.MailerSend.MailerInfo
             {
-                email.From.Email = MAIL_SENDER;
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", API_TOKEN);
-                var jsonContent = new StringContent(JsonConvert.SerializeObject(email), Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await client.PostAsync(API_URL, jsonContent);
-                if (!response.IsSuccessStatusCode)
+                From = new zTools.DTO.MailerSend.MailerRecipientInfo
                 {
-                    var errorStr = await response.Content.ReadAsStringAsync();
-                    var msgErro = JsonConvert.DeserializeObject<MailerErrorInfo>(errorStr);
-                    if (msgErro != null && !string.IsNullOrEmpty(msgErro.Message))
-                    {
-                        throw new Exception(msgErro.Message);
-                    }
-                    throw new Exception("Unknown error");
-                }
-            }
-            return await Task.FromResult(true);
+                    Email = email.From.Email,
+                    Name = email.From.Name
+                },
+                To = email.To.Select(t => new zTools.DTO.MailerSend.MailerRecipientInfo
+                {
+                    Email = t.Email,
+                    Name = t.Name
+                }).ToList(),
+                Subject = email.Subject,
+                Text = email.Text,
+                Html = email.Html
+            };
+
+            await _mailClient.SendmailAsync(zToolsEmail);
+            return true;
         }
     }
 }

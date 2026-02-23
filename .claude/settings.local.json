@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build:*)",
+      "Bash(git stash:*)",
+      "Bash(git checkout:*)",
+      "Bash(dir:*)",
+      "WebFetch(domain:www.nuget.org)",
+      "Bash(dotnet restore:*)",
+      "Bash(echo:*)",
+      "Bash(tee:*)",
+      "Bash(find:*)",
+      "Bash(dotnet nuget:*)",
+      "Bash(dotnet tool list:*)",
+      "Bash(dotnet script:*)",
+      "Bash(dotnet add:*)"
+    ]
+  }
+}

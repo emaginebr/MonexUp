@@ -1,9 +1,10 @@
-﻿using Core.Domain;
+using Core.Domain;
 using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Network;
 using MonexUp.DTO.User;
+using NAuth.ACL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,28 +19,25 @@ namespace MonexUp.Domain.Impl.Services
     {
 
         private readonly INetworkDomainFactory _networkFactory;
-        private readonly IUserDomainFactory _userFactory;
+        private readonly IUserClient _userClient;
         private readonly IUserNetworkDomainFactory _userNetworkFactory;
         private readonly IUserProfileDomainFactory _userProfileFactory;
-        private readonly IUserService _userService;
         private readonly IProfileService _profileService;
         private readonly IImageService _imageService;
 
         public NetworkService(
-            IUserDomainFactory userFactory,
-            INetworkDomainFactory networkFactory, 
-            IUserNetworkDomainFactory userNetworkFactory, 
+            IUserClient userClient,
+            INetworkDomainFactory networkFactory,
+            IUserNetworkDomainFactory userNetworkFactory,
             IUserProfileDomainFactory userProfileFactory,
-            IUserService userService,
             IProfileService profileService,
             IImageService imageService
         )
         {
-            _userFactory = userFactory;
+            _userClient = userClient;
             _networkFactory = networkFactory;
             _userNetworkFactory = userNetworkFactory;
-            _userProfileFactory = userProfileFactory;   
-            _userService = userService;
+            _userProfileFactory = userProfileFactory;
             _profileService = profileService;
             _imageService = imageService;
         }
@@ -128,7 +126,7 @@ namespace MonexUp.Domain.Impl.Services
             return md;
         }
 
-        public INetworkModel Update(NetworkInfo network, long userId)
+        public async Task<INetworkModel> Update(NetworkInfo network, long userId)
         {
             var networkAccess = _userNetworkFactory.BuildUserNetworkModel().Get(network.NetworkId, userId, _userNetworkFactory);
 
@@ -139,7 +137,7 @@ namespace MonexUp.Domain.Impl.Services
 
             if (networkAccess.Role != DTO.User.UserRoleEnum.NetworkManager)
             {
-                var user = _userFactory.BuildUserModel().GetById(userId, _userFactory);
+                var user = await _userClient.GetByIdAsync(userId, "");
                 if (user == null)
                 {
                     throw new Exception("User not found");
@@ -225,7 +223,7 @@ namespace MonexUp.Domain.Impl.Services
             return _userNetworkFactory.BuildUserNetworkModel().Get(networkId, userId, _userNetworkFactory);
         }
 
-        public UserNetworkInfo GetUserNetworkInfo(IUserNetworkModel model)
+        public async Task<UserNetworkInfo> GetUserNetworkInfo(IUserNetworkModel model)
         {
             if (model == null)
             {
@@ -239,8 +237,8 @@ namespace MonexUp.Domain.Impl.Services
                 ReferrerId = model.ReferrerId,
                 Role = model.Role,
                 Status = model.Status,
-                Network = GetNetworkInfo(model.GetNetwork(_networkFactory)),
-                User = _userService.GetUserInfoFromModel(_userFactory.BuildUserModel().GetById(model.UserId, _userFactory)),
+                Network = await GetNetworkInfo(model.GetNetwork(_networkFactory)),
+                User = await _userClient.GetByIdAsync(model.UserId, ""),
                 Profile = _profileService.GetUserProfileInfo(
                     _userProfileFactory.BuildUserProfileModel()
                     .GetById(model.ProfileId.GetValueOrDefault(), _userProfileFactory)
@@ -249,7 +247,7 @@ namespace MonexUp.Domain.Impl.Services
             };
         }
 
-        public NetworkInfo GetNetworkInfo(INetworkModel model)
+        public async Task<NetworkInfo> GetNetworkInfo(INetworkModel model)
         {
             if (model == null)
             {
@@ -260,7 +258,7 @@ namespace MonexUp.Domain.Impl.Services
                 NetworkId = model.NetworkId,
                 Name = model.Name,
                 Slug = model.Slug,
-                ImageUrl = _imageService.GetImageUrl(model.Image),
+                ImageUrl = await _imageService.GetImageUrlAsync(model.Image),
                 Email = model.Email,
                 Plan = model.Plan,
                 Commission = model.Commission,
@@ -292,7 +290,7 @@ namespace MonexUp.Domain.Impl.Services
             model.Insert(_userNetworkFactory);
         }
 
-        private void ValidateAccess(long networkId, long userId, long managerId)
+        private async Task ValidateAccess(long networkId, long userId, long managerId)
         {
             var userNetwork = _userNetworkFactory.BuildUserNetworkModel().Get(networkId, userId, _userNetworkFactory);
             if (userNetwork == null)
@@ -309,7 +307,7 @@ namespace MonexUp.Domain.Impl.Services
 
             if (networkAccess.Role != DTO.User.UserRoleEnum.NetworkManager)
             {
-                var user = _userFactory.BuildUserModel().GetById(userId, _userFactory);
+                var user = await _userClient.GetByIdAsync(userId, "");
                 if (user == null)
                 {
                     throw new Exception("User not found");
@@ -320,25 +318,25 @@ namespace MonexUp.Domain.Impl.Services
                 }
             }
         }
-        public void ChangeStatus(long networkId, long userId, UserNetworkStatusEnum status, long managerId)
+        public async Task ChangeStatus(long networkId, long userId, UserNetworkStatusEnum status, long managerId)
         {
-            ValidateAccess(networkId, userId, managerId);
+            await ValidateAccess(networkId, userId, managerId);
 
             var userNetwork = _userNetworkFactory.BuildUserNetworkModel().Get(networkId, userId, _userNetworkFactory);
             userNetwork.Status = status;
             userNetwork.Update(_userNetworkFactory);
         }
 
-        public void Promote(long networkId, long userId, long managerId)
+        public async Task Promote(long networkId, long userId, long managerId)
         {
-            ValidateAccess(networkId, userId, managerId);
+            await ValidateAccess(networkId, userId, managerId);
 
             _userNetworkFactory.BuildUserNetworkModel().Promote(networkId, userId);
         }
 
-        public void Demote(long networkId, long userId, long managerId)
+        public async Task Demote(long networkId, long userId, long managerId)
         {
-            ValidateAccess(networkId, userId, managerId);
+            await ValidateAccess(networkId, userId, managerId);
 
             _userNetworkFactory.BuildUserNetworkModel().Demote(networkId, userId);
         }

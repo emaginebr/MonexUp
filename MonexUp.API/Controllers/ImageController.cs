@@ -1,17 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
-using MonexUp.Domain.Impl.Services;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Domain;
-using MonexUp.DTO.Network;
 using NAuth.ACL.Interfaces;
 using System;
-using System.IO;
-using System.Security.Cryptography;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace MonexUp.API.Controllers
 {
@@ -35,7 +29,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("uploadImageUser")]
-        public ActionResult<StringResult> UploadImageUser(IFormFile file)
+        public async Task<ActionResult<StringResult>> UploadImageUser(IFormFile file)
         {
             try
             {
@@ -49,10 +43,10 @@ namespace MonexUp.API.Controllers
                     return StatusCode(401, "Not Authorized");
                 }
 
-                var fileName = _imageService.InsertToUser(file.OpenReadStream(), userSession.UserId);
+                var fileName = await _imageService.InsertToUserAsync(file.OpenReadStream(), userSession.UserId);
                 return new StringResult()
                 {
-                    Value = _imageService.GetImageUrl(fileName)
+                    Value = await _imageService.GetImageUrlAsync(fileName)
                 };
             }
             catch (Exception ex)
@@ -63,7 +57,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("uploadImageNetwork")]
-        public ActionResult<StringResult> UploadImageNetwork([FromForm] long networkId, IFormFile file)
+        public async Task<ActionResult<StringResult>> UploadImageNetwork([FromForm] long networkId, IFormFile file)
         {
             try
             {
@@ -77,10 +71,10 @@ namespace MonexUp.API.Controllers
                     return StatusCode(401, "Not Authorized");
                 }
 
-                var fileName = _imageService.InsertToNetwork(file.OpenReadStream(), networkId);
+                var fileName = await _imageService.InsertToNetworkAsync(file.OpenReadStream(), networkId);
                 return new StringResult()
                 {
-                    Value = _imageService.GetImageUrl(fileName)
+                    Value = await _imageService.GetImageUrlAsync(fileName)
                 };
             }
             catch (Exception ex)
@@ -91,7 +85,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("uploadImageProduct")]
-        public ActionResult<StringResult> UploadImageProduct([FromForm] long productId, IFormFile file)
+        public async Task<ActionResult<StringResult>> UploadImageProduct([FromForm] long productId, IFormFile file)
         {
             try
             {
@@ -105,10 +99,10 @@ namespace MonexUp.API.Controllers
                     return StatusCode(401, "Not Authorized");
                 }
 
-                var fileName = _imageService.InsertToProduct(file.OpenReadStream(), productId);
+                var fileName = await _imageService.InsertToProductAsync(file.OpenReadStream(), productId);
                 return new StringResult()
                 {
-                    Value = _imageService.GetImageUrl(fileName)
+                    Value = await _imageService.GetImageUrlAsync(fileName)
                 };
             }
             catch (Exception ex)
