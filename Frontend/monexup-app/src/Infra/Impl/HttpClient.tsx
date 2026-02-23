@@ -76,7 +76,7 @@ const HttpClient  = () : IHttpClient => {
       await axiosIntance.post(path, parameters, {
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Basic " + tokenAuth
+          "Authorization": "Bearer " + tokenAuth
         }
       })
         .then((response) => {
@@ -99,7 +99,7 @@ const HttpClient  = () : IHttpClient => {
       await axiosIntance.get(path, {
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Basic " + tokenAuth
+          "Authorization": "Bearer " + tokenAuth
         }
       })
         .then((response) => {
@@ -167,7 +167,7 @@ const HttpClient  = () : IHttpClient => {
       await axiosIntance.post(path, parameters, {
         headers: {
           'Content-Type': 'multipart/form-data;',
-          "Authorization": "Basic " + tokenAuth
+          "Authorization": "Bearer " + tokenAuth
         }
       })
         .then((response) => {

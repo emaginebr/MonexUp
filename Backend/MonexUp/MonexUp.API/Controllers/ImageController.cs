@@ -7,7 +7,7 @@ using MonexUp.Domain.Impl.Services;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Domain;
 using MonexUp.DTO.Network;
-using NAuth.Client;
+using NAuth.ACL.Interfaces;
 using System;
 using System.IO;
 using System.Security.Cryptography;

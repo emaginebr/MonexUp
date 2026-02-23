@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
-using NAuth.Client;
+using NAuth.ACL.Interfaces;
 using System.Threading.Tasks;
 
 namespace MonexUp.API.Controllers

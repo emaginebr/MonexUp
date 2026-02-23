@@ -1,5 +1,7 @@
 import './App.css';
 import { Routes, Route, Outlet, Link } from "react-router-dom";
+import { NAuthProvider } from 'nauth-react';
+import 'nauth-react/styles';
 import Menu from "./Components/Menu";
 import ContextBuilder from './Contexts/Utils/ContextBuilder';
 import AuthProvider from './Contexts/Auth/AuthProvider';
@@ -66,13 +68,21 @@ function LayoutUser() {
   );
 }
 
+const nauthConfig = {
+  apiUrl: process.env.REACT_APP_NAUTH_API_URL || process.env.REACT_APP_API_URL || '',
+  enableFingerprinting: true,
+  language: 'pt',
+  redirectOnUnauthorized: '/account/login',
+};
+
 function App() {
   const ContextContainer = ContextBuilder([
-    AuthProvider, UserProvider, NetworkProvider, ProfileProvider, ProductProvider, 
+    AuthProvider, UserProvider, NetworkProvider, ProfileProvider, ProductProvider,
     OrderProvider, InvoiceProvider, ImageProvider, TemplateProvider
   ]);
 
   return (
+    <NAuthProvider config={nauthConfig}>
     <ContextContainer>
       <Routes>
         <Route path="/" element={<Layout />}>
@@ -157,6 +167,7 @@ function App() {
         <Route path="*" element={<Error404Page />} />
       </Routes>
     </ContextContainer>
+    </NAuthProvider>
   );
 }
 

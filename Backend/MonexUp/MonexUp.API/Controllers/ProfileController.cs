@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using NAuth.Client;
+using NAuth.ACL.Interfaces;
 
 namespace MonexUp.API.Controllers
 {

@@ -12,7 +12,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using NAuth.Client;
+using NAuth.ACL.Interfaces;
 using System.Threading.Tasks;
 
 namespace MonexUp.API.Controllers
@@ -305,12 +305,8 @@ namespace MonexUp.API.Controllers
                 {
                     throw new Exception("User not found");
                 }
-                if (!user.Sucesso)
-                {
-                    throw new Exception(user.Mensagem);
-                }
 
-                var userNetwork = _networkService.GetUserNetwork(network.NetworkId, user.User.UserId);
+                var userNetwork = _networkService.GetUserNetwork(network.NetworkId, user.UserId);
 
                 return new UserNetworkResult()
                 {

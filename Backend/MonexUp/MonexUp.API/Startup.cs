@@ -35,7 +35,10 @@ namespace MonexUp.API
         {
             var config = new ConfigurationParam
             {
-                ConnectionString = Configuration.GetConnectionString("MonexUpContext")
+                ConnectionString = Configuration.GetConnectionString("MonexUpContext"),
+                NAuthApiUrl = Configuration["NAuthSetting:ApiUrl"],
+                NAuthJwtSecret = Configuration["NAuthSetting:JwtSecret"],
+                NAuthBucketName = Configuration["NAuthSetting:BucketName"]
             };
             Initializer.Configure(services, config);
             services.AddControllers();

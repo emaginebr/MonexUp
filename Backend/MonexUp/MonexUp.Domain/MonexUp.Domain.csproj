@@ -30,11 +30,6 @@
     <None Remove="Interfaces\Models\WithDraw\" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="NAuth.Client">
-      <HintPath>..\Lib\NAuth.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="NAuth.DTO">
-      <HintPath>..\Lib\NAuth.DTO.dll</HintPath>
-    </Reference>
+    <PackageReference Include="NAuth" Version="0.4.2" />
   </ItemGroup>
 </Project>

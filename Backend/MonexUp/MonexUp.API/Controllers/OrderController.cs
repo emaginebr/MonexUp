@@ -6,7 +6,7 @@ using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Order;
 using MonexUp.DTO.Product;
 using MonexUp.DTO.Subscription;
-using NAuth.Client;
+using NAuth.ACL.Interfaces;
 using System;
 using System.Linq;
 using System.Threading.Tasks;

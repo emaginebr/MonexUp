@@ -14,8 +14,11 @@ using MonexUp.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using System;
-using MonexUp.Domain;
+using NAuth.ACL;
+using NAuth.ACL.Interfaces;
+using NAuth.DTO.Settings;
 
 namespace MonexUp.Application
 {
@@ -61,6 +64,18 @@ namespace MonexUp.Application
             injectDependency(typeof(ITemplateVarRepository<ITemplateVarModel, ITemplateVarDomainFactory>), typeof(TemplateVarRepository), services, scoped);
             #endregion
 
+            #region NAuth
+            services.Configure<NAuthSetting>(options =>
+            {
+                options.ApiUrl = config.NAuthApiUrl;
+                options.JwtSecret = config.NAuthJwtSecret;
+                options.BucketName = config.NAuthBucketName;
+            });
+            services.AddHttpClient();
+            injectDependency(typeof(IUserClient), typeof(UserClient), services, scoped);
+            injectDependency(typeof(IRoleClient), typeof(RoleClient), services, scoped);
+            #endregion
+
             #region Service
             injectDependency(typeof(IImageService), typeof(ImageService), services, scoped);
             injectDependency(typeof(IUserService), typeof(UserService), services, scoped);
@@ -95,8 +110,8 @@ namespace MonexUp.Application
             #endregion
 
 
-            services.AddAuthentication("BasicAuthentication")
-                .AddScheme<AuthenticationSchemeOptions, AuthHandler>("BasicAuthentication", null);
+            services.AddAuthentication("NAuth")
+                .AddScheme<AuthenticationSchemeOptions, NAuthHandler>("NAuth", options => { });
 
         }
     }

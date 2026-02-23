@@ -5,7 +5,7 @@ using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Domain;
 using MonexUp.DTO.Network;
 using MonexUp.DTO.Template;
-using NAuth.Client;
+using NAuth.ACL.Interfaces;
 using System;
 using System.Linq;
 

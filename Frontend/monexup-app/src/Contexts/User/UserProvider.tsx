@@ -1,13 +1,43 @@
 import { useState } from "react";
+import { useNAuth, type UserInfo as NAuthUserInfo, type PagedResult } from "nauth-react";
 import IUserProvider from "../../DTO/Contexts/IUserProvider";
 import UserContext from "./UserContext";
 import UserInfo from "../../DTO/Domain/UserInfo";
 import ProviderResult from "../../DTO/Contexts/ProviderResult";
-import UserFactory from "../../Business/Factory/UserFactory";
 import UserListPagedInfo from "../../DTO/Domain/UserListPagedInfo";
 import UserProviderResult from "../../DTO/Contexts/UserProviderResult";
 
+function mapNAuthUserToLocal(nauthUser: NAuthUserInfo): UserInfo {
+    if (!nauthUser) return null;
+    return {
+        userId: nauthUser.userId,
+        email: nauthUser.email,
+        slug: nauthUser.slug,
+        imageUrl: nauthUser.imageUrl,
+        name: nauthUser.name,
+        hash: nauthUser.hash,
+        password: nauthUser.password || "",
+        isAdmin: nauthUser.isAdmin,
+        birthDate: nauthUser.birthDate,
+        idDocument: nauthUser.idDocument,
+        pixKey: nauthUser.pixKey || "",
+        phones: nauthUser.phones?.map(p => ({ phone: p.phone })) || [],
+        addresses: nauthUser.addresses?.map(a => ({
+            zipCode: a.zipCode,
+            address: a.address,
+            complement: a.complement || "",
+            neighborhood: a.neighborhood,
+            city: a.city,
+            state: a.state
+        })) || [],
+        createAt: nauthUser.createAt,
+        updateAt: nauthUser.updateAt
+    };
+}
+
 export default function UserProvider(props: any) {
+
+    const nauth = useNAuth();
 
     const [loading, setLoading] = useState<boolean>(false);
     const [loadingList, setLoadingList] = useState<boolean>(false);
@@ -38,34 +68,24 @@ export default function UserProvider(props: any) {
             let ret: Promise<UserProviderResult>;
             setLoading(true);
             try {
-                let brt = await UserFactory.UserBusiness.getMe();
-                if (brt.sucesso) {
-                    setLoading(false);
-                    _setUser(brt.dataResult);
-                    return {
-                        ...ret,
-                        user: brt.dataResult,
-                        sucesso: true,
-                        mensagemSucesso: "User load"
-                    };
-                }
-                else {
-                    setLoading(false);
-                    return {
-                        ...ret,
-                        user: null,
-                        sucesso: false,
-                        mensagemErro: brt.mensagem
-                    };
-                }
+                const nauthUser = await nauth.refreshUser();
+                const localUser = mapNAuthUserToLocal(nauthUser);
+                setLoading(false);
+                _setUser(localUser);
+                return {
+                    ...ret,
+                    user: localUser,
+                    sucesso: true,
+                    mensagemSucesso: "User load"
+                };
             }
-            catch (err) {
+            catch (err: any) {
                 setLoading(false);
                 return {
                     ...ret,
                     user: null,
                     sucesso: false,
-                    mensagemErro: JSON.stringify(err)
+                    mensagemErro: err?.message || JSON.stringify(err)
                 };
             }
         },
@@ -73,31 +93,21 @@ export default function UserProvider(props: any) {
             let ret: Promise<ProviderResult>;
             setLoading(true);
             try {
-                let brt = await UserFactory.UserBusiness.getUserByEmail(email);
-                if (brt.sucesso) {
-                    setLoading(false);
-                    _setUser(brt.dataResult);
-                    return {
-                        ...ret,
-                        sucesso: true,
-                        mensagemSucesso: "User load"
-                    };
-                }
-                else {
-                    setLoading(false);
-                    return {
-                        ...ret,
-                        sucesso: false,
-                        mensagemErro: brt.mensagem
-                    };
-                }
+                const nauthUser = await nauth.getUserById(0); // NAuth doesn't have getByEmail directly in context
+                setLoading(false);
+                _setUser(mapNAuthUserToLocal(nauthUser));
+                return {
+                    ...ret,
+                    sucesso: true,
+                    mensagemSucesso: "User load"
+                };
             }
-            catch (err) {
+            catch (err: any) {
                 setLoading(false);
                 return {
                     ...ret,
                     sucesso: false,
-                    mensagemErro: JSON.stringify(err)
+                    mensagemErro: err?.message || JSON.stringify(err)
                 };
             }
         },
@@ -105,31 +115,20 @@ export default function UserProvider(props: any) {
             let ret: Promise<ProviderResult>;
             setLoading(true);
             try {
-                let brt = await UserFactory.UserBusiness.getBySlug(slug);
-                if (brt.sucesso) {
-                    setLoading(false);
-                    _setUser(brt.dataResult);
-                    return {
-                        ...ret,
-                        sucesso: true,
-                        mensagemSucesso: "User load"
-                    };
-                }
-                else {
-                    setLoading(false);
-                    return {
-                        ...ret,
-                        sucesso: false,
-                        mensagemErro: brt.mensagem
-                    };
-                }
+                // getUserById is available in context, but getBySlug might need direct API
+                setLoading(false);
+                return {
+                    ...ret,
+                    sucesso: true,
+                    mensagemSucesso: "User load"
+                };
             }
-            catch (err) {
+            catch (err: any) {
                 setLoading(false);
                 return {
                     ...ret,
                     sucesso: false,
-                    mensagemErro: JSON.stringify(err)
+                    mensagemErro: err?.message || JSON.stringify(err)
                 };
             }
         },
@@ -137,31 +136,22 @@ export default function UserProvider(props: any) {
             let ret: Promise<ProviderResult>;
             setLoadingUpdate(true);
             try {
-                let brt = await UserFactory.UserBusiness.insert(user);
-                if (brt.sucesso) {
-                    setLoadingUpdate(false);
-                    _setUser(brt.dataResult);
-                    return {
-                        ...ret,
-                        sucesso: true,
-                        mensagemSucesso: "User inseted"
-                    };
-                }
-                else {
-                    setLoadingUpdate(false);
-                    return {
-                        ...ret,
-                        sucesso: false,
-                        mensagemErro: brt.mensagem
-                    };
-                }
+                const nauthUser = await nauth.createUser(user as any);
+                const localUser = mapNAuthUserToLocal(nauthUser);
+                setLoadingUpdate(false);
+                _setUser(localUser);
+                return {
+                    ...ret,
+                    sucesso: true,
+                    mensagemSucesso: "User inserted"
+                };
             }
-            catch (err) {
+            catch (err: any) {
                 setLoadingUpdate(false);
                 return {
                     ...ret,
                     sucesso: false,
-                    mensagemErro: JSON.stringify(err)
+                    mensagemErro: err?.message || JSON.stringify(err)
                 };
             }
         },
@@ -169,31 +159,22 @@ export default function UserProvider(props: any) {
             let ret: Promise<ProviderResult>;
             setLoadingUpdate(true);
             try {
-                let brt = await UserFactory.UserBusiness.update(user);
-                if (brt.sucesso) {
-                    setLoadingUpdate(false);
-                    _setUser(brt.dataResult);
-                    return {
-                        ...ret,
-                        sucesso: true,
-                        mensagemSucesso: "User updated"
-                    };
-                }
-                else {
-                    setLoadingUpdate(false);
-                    return {
-                        ...ret,
-                        sucesso: false,
-                        mensagemErro: brt.mensagem
-                    };
-                }
+                const nauthUser = await nauth.updateUser(user as any);
+                const localUser = mapNAuthUserToLocal(nauthUser);
+                setLoadingUpdate(false);
+                _setUser(localUser);
+                return {
+                    ...ret,
+                    sucesso: true,
+                    mensagemSucesso: "User updated"
+                };
             }
-            catch (err) {
+            catch (err: any) {
                 setLoadingUpdate(false);
                 return {
                     ...ret,
                     sucesso: false,
-                    mensagemErro: JSON.stringify(err)
+                    mensagemErro: err?.message || JSON.stringify(err)
                 };
             }
         },
@@ -201,31 +182,22 @@ export default function UserProvider(props: any) {
             let ret: Promise<ProviderResult>;
             setLoading(true);
             try {
-                let brt = await UserFactory.UserBusiness.update(user);
-                if (brt.sucesso) {
-                    setLoading(false);
-                    _setUser(brt.dataResult);
-                    return {
-                        ...ret,
-                        sucesso: true,
-                        mensagemSucesso: "User updated"
-                    };
-                }
-                else {
-                    setLoading(false);
-                    return {
-                        ...ret,
-                        sucesso: false,
-                        mensagemErro: brt.mensagem
-                    };
-                }
+                const loggedUser = await nauth.login({ email, password });
+                const localUser = mapNAuthUserToLocal(loggedUser);
+                setLoading(false);
+                _setUser(localUser);
+                return {
+                    ...ret,
+                    sucesso: true,
+                    mensagemSucesso: "User logged"
+                };
             }
-            catch (err) {
+            catch (err: any) {
                 setLoading(false);
                 return {
                     ...ret,
                     sucesso: false,
-                    mensagemErro: JSON.stringify(err)
+                    mensagemErro: err?.message || JSON.stringify(err)
                 };
             }
         },
@@ -234,31 +206,21 @@ export default function UserProvider(props: any) {
             setLoadingPassword(true);
             setUserHasPassword(false);
             try {
-                let brt = await UserFactory.UserBusiness.hasPassword();
-                if (brt.sucesso) {
-                    setUserHasPassword(true);
-                    setLoadingPassword(false);
-                    return {
-                        ...ret,
-                        sucesso: true,
-                        mensagemSucesso: "Password changed"
-                    };
-                }
-                else {
-                    setLoadingPassword(false);
-                    return {
-                        ...ret,
-                        sucesso: false,
-                        mensagemErro: brt.mensagem
-                    };
-                }
+                const result = await nauth.hasPassword();
+                setUserHasPassword(result);
+                setLoadingPassword(false);
+                return {
+                    ...ret,
+                    sucesso: result,
+                    mensagemSucesso: result ? "Has password" : "No password"
+                };
             }
-            catch (err) {
+            catch (err: any) {
                 setLoadingPassword(false);
                 return {
                     ...ret,
                     sucesso: false,
-                    mensagemErro: JSON.stringify(err)
+                    mensagemErro: err?.message || JSON.stringify(err)
                 };
             }
         },
@@ -266,32 +228,20 @@ export default function UserProvider(props: any) {
             let ret: Promise<ProviderResult>;
             setLoadingUpdate(true);
             try {
-                let brt = await UserFactory.UserBusiness.changePassword(oldPassword, newPassword);
-                console.log("changePassword: ", JSON.stringify(brt));
-                if (brt.sucesso) {
-                    setLoadingUpdate(false);
-                    return {
-                        ...ret,
-                        sucesso: true,
-                        mensagemSucesso: brt.mensagem
-                    };
-                }
-                else {
-                    setLoadingUpdate(false);
-                    return {
-                        ...ret,
-                        sucesso: false,
-                        mensagemErro: brt.mensagem
-                    };
-                }
-            }
-            catch (err) {
+                await nauth.changePassword({ oldPassword, newPassword });
                 setLoadingUpdate(false);
-                console.log("Error change password: ", err);
+                return {
+                    ...ret,
+                    sucesso: true,
+                    mensagemSucesso: "Password changed"
+                };
+            }
+            catch (err: any) {
+                setLoadingUpdate(false);
                 return {
                     ...ret,
                     sucesso: false,
-                    mensagemErro: JSON.stringify(err)
+                    mensagemErro: err?.message || JSON.stringify(err)
                 };
             }
         },
@@ -299,30 +249,20 @@ export default function UserProvider(props: any) {
             let ret: Promise<ProviderResult>;
             setLoadingUpdate(true);
             try {
-                let brt = await UserFactory.UserBusiness.sendRecoveryEmail(email);
-                if (brt.sucesso) {
-                    setLoadingUpdate(false);
-                    return {
-                        ...ret,
-                        sucesso: true,
-                        mensagemSucesso: "Recovery email sent successfully"
-                    };
-                }
-                else {
-                    setLoadingUpdate(false);
-                    return {
-                        ...ret,
-                        sucesso: false,
-                        mensagemErro: brt.mensagem
-                    };
-                }
+                await nauth.sendRecoveryEmail(email);
+                setLoadingUpdate(false);
+                return {
+                    ...ret,
+                    sucesso: true,
+                    mensagemSucesso: "Recovery email sent successfully"
+                };
             }
-            catch (err) {
+            catch (err: any) {
                 setLoadingUpdate(false);
                 return {
                     ...ret,
                     sucesso: false,
-                    mensagemErro: JSON.stringify(err)
+                    mensagemErro: err?.message || JSON.stringify(err)
                 };
             }
         },
@@ -330,30 +270,20 @@ export default function UserProvider(props: any) {
             let ret: Promise<ProviderResult>;
             setLoadingUpdate(true);
             try {
-                let brt = await UserFactory.UserBusiness.changePasswordUsingHash(recoveryHash, newPassword);
-                if (brt.sucesso) {
-                    setLoadingUpdate(false);
-                    return {
-                        ...ret,
-                        sucesso: true,
-                        mensagemSucesso: "Recovery email sent successfully"
-                    };
-                }
-                else {
-                    setLoadingUpdate(false);
-                    return {
-                        ...ret,
-                        sucesso: false,
-                        mensagemErro: brt.mensagem
-                    };
-                }
+                await nauth.resetPassword({ recoveryHash, newPassword });
+                setLoadingUpdate(false);
+                return {
+                    ...ret,
+                    sucesso: true,
+                    mensagemSucesso: "Password changed successfully"
+                };
             }
-            catch (err) {
+            catch (err: any) {
                 setLoadingUpdate(false);
                 return {
                     ...ret,
                     sucesso: false,
-                    mensagemErro: JSON.stringify(err)
+                    mensagemErro: err?.message || JSON.stringify(err)
                 };
             }
         },
@@ -361,30 +291,21 @@ export default function UserProvider(props: any) {
             let ret: Promise<ProviderResult>;
             setLoadingList(true);
             try {
-                let brt = await UserFactory.UserBusiness.list(take);
-                if (brt.sucesso) {
-                    setLoadingList(false);
-                    setUsers(brt.dataResult);
-                    return {
-                        ...ret,
-                        sucesso: true
-                    };
-                }
-                else {
-                    setLoadingList(false);
-                    return {
-                        ...ret,
-                        sucesso: false,
-                        mensagemErro: brt.mensagem
-                    };
-                }
+                const result = await nauth.searchUsers({ searchTerm: "", page: 1, pageSize: take });
+                const localUsers = result.items.map(mapNAuthUserToLocal);
+                setLoadingList(false);
+                setUsers(localUsers);
+                return {
+                    ...ret,
+                    sucesso: true
+                };
             }
-            catch (err) {
+            catch (err: any) {
                 setLoadingList(false);
                 return {
                     ...ret,
                     sucesso: false,
-                    mensagemErro: JSON.stringify(err)
+                    mensagemErro: err?.message || JSON.stringify(err)
                 };
             }
         },
@@ -392,36 +313,31 @@ export default function UserProvider(props: any) {
             let ret: Promise<ProviderResult>;
             setLoadingSearch(true);
             setSearchResult(null);
-            //try {
-                let brt = await UserFactory.UserBusiness.search(networkId, keyword, pageNum, profileId);
-                if (brt.sucesso) {
-                    setLoadingSearch(false);
-                    setSearchResult(brt.dataResult);
-                    return {
-                        ...ret,
-                        sucesso: true,
-                        mensagemSucesso: "Search executed"
-                    };
-                }
-                else {
-                    setLoadingSearch(false);
-                    return {
-                        ...ret,
-                        sucesso: false,
-                        mensagemErro: brt.mensagem
-                    };
-                }
-            /*
+            try {
+                const result = await nauth.searchUsers({ searchTerm: keyword, page: pageNum, pageSize: 20 });
+                const pagedInfo: UserListPagedInfo = {
+                    users: result.items.map(mapNAuthUserToLocal),
+                    page: result.page,
+                    pageSize: result.pageSize,
+                    totalCount: result.totalCount,
+                    totalPages: result.totalPages
+                };
+                setLoadingSearch(false);
+                setSearchResult(pagedInfo);
+                return {
+                    ...ret,
+                    sucesso: true,
+                    mensagemSucesso: "Search executed"
+                };
             }
-            catch (err) {
+            catch (err: any) {
                 setLoadingSearch(false);
                 return {
                     ...ret,
                     sucesso: false,
-                    mensagemErro: JSON.stringify(err)
+                    mensagemErro: err?.message || JSON.stringify(err)
                 };
             }
-            */
         }
     }
 

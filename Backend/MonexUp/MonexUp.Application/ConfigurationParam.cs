@@ -9,5 +9,8 @@ namespace MonexUp.Application
     public class ConfigurationParam
     {
         public string ConnectionString { get; set; }
+        public string NAuthApiUrl { get; set; }
+        public string NAuthJwtSecret { get; set; }
+        public string NAuthBucketName { get; set; }
     }
 }

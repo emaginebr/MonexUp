@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Stripe.Climate;
 using System;
 using System.Threading.Tasks;
-using NAuth.Client;
+using NAuth.ACL.Interfaces;
 
 namespace MonexUp.API.Controllers
 {
