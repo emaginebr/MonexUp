@@ -36,11 +36,11 @@ namespace MonexUp.API
             var connectionString = Configuration.GetConnectionString("MonexUpContext");
             if (string.IsNullOrEmpty(connectionString))
             {
-                var host = Configuration["DB_HOST"] ?? Environment.GetEnvironmentVariable("DB_HOST");
-                var port = Configuration["DB_PORT"] ?? Environment.GetEnvironmentVariable("DB_PORT") ?? "5432";
-                var db = Configuration["DB_NAME"] ?? Environment.GetEnvironmentVariable("DB_NAME") ?? "monexup";
-                var user = Configuration["DB_USER"] ?? Environment.GetEnvironmentVariable("DB_USER");
-                var pass = Configuration["DB_PASSWORD"] ?? Environment.GetEnvironmentVariable("DB_PASSWORD");
+                var host = Configuration["POSTGRES_HOST"] ?? Environment.GetEnvironmentVariable("POSTGRES_HOST");
+                var port = Configuration["POSTGRES_PORT"] ?? Environment.GetEnvironmentVariable("POSTGRES_PORT") ?? "5432";
+                var db = Configuration["POSTGRES_DB"] ?? Environment.GetEnvironmentVariable("POSTGRES_DB") ?? "monexup";
+                var user = Configuration["POSTGRES_USER"] ?? Environment.GetEnvironmentVariable("POSTGRES_USER");
+                var pass = Configuration["POSTGRES_PASSWORD"] ?? Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
                 connectionString = $"Host={host};Port={port};Database={db};Username={user};Password={pass}";
             }
 

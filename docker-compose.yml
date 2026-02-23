@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-monexup_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB:-monexup}
+      POSTGRES_DB: ${POSTGRES_DB:-monexup_db}
     ports:
       - "5432:5432"
     volumes:
@@ -16,7 +16,7 @@ services:
       - ./docker/init-databases.sh:/docker-entrypoint-initdb.d/01-init-databases.sh
       - ./submodules/NAuth/nauth.sql:/docker-entrypoint-initdb.d/nauth-schema.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-monexup_user} -d ${POSTGRES_DB:-monexup}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-monexup_user} -d ${POSTGRES_DB:-monexup_db}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -69,9 +69,9 @@ services:
       CHATGPT_IMAGEAPIURL: ${CHATGPT_IMAGEAPIURL:-https://api.openai.com/v1/images/generations}
       CHATGPT_APIKEY: ${CHATGPT_APIKEY}
       CHATGPT_MODEL: ${CHATGPT_MODEL:-gpt-3.5-turbo}
-      S3__ACCESSKEY: ${DO_SPACES_ACCESS_KEY}
-      S3__SECRETKEY: ${DO_SPACES_SECRET_KEY}
-      S3__ENDPOINT: ${DO_SPACES_ENDPOINT}
+      S3__ACCESSKEY: ${S3_ACCESS_KEY}
+      S3__SECRETKEY: ${S3_SECRET_KEY}
+      S3__ENDPOINT: ${S3_ENDPOINT}
     ports:
       - "5001:8080"
     restart: unless-stopped
@@ -88,23 +88,23 @@ services:
     container_name: monexup-api
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
-      DB_HOST: postgres
-      DB_PORT: "5432"
-      DB_NAME: ${DB_NAME:-monexup}
-      DB_USER: ${POSTGRES_USER:-monexup_user}
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: ${POSTGRES_DB:-monexup_db}
+      POSTGRES_USER: ${POSTGRES_USER:-monexup_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       NAuthSetting__ApiUrl: http://nauth-api:80/api
       NAuthSetting__JwtSecret: ${NAUTH_JWT_SECRET}
-      NAuthSetting__BucketName: ${DO_SPACES_BUCKET:-monexup}
-      zTools__ApiURL: http://ztools-api:8080
+      NAuthSetting__BucketName: ${S3_BUCKET:-monexup}
+      ZTOOLS_API_URL: http://ztools-api:8080
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       MAILERSEND_API_TOKEN: ${MAILERSEND_API_TOKEN}
       MAILERSEND_SENDER: ${MAILERSEND_SENDER}
       MAILERSEND_API_URL: ${MAILERSEND_API_URL:-https://api.mailersend.com/v1/email}
-      DO_SPACES_ACCESS_KEY: ${DO_SPACES_ACCESS_KEY}
-      DO_SPACES_SECRET_KEY: ${DO_SPACES_SECRET_KEY}
-      DO_SPACES_BUCKET: ${DO_SPACES_BUCKET:-monexup}
-      DO_SPACES_ENDPOINT: ${DO_SPACES_ENDPOINT}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+      S3_SECRET_KEY: ${S3_SECRET_KEY}
+      S3_BUCKET: ${S3_BUCKET:-monexup}
+      S3_ENDPOINT: ${S3_ENDPOINT}
     ports:
       - "5000:80"
     depends_on:
@@ -128,12 +128,12 @@ services:
     container_name: monexup-bg
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
-      DB_HOST: postgres
-      DB_PORT: "5432"
-      DB_NAME: ${DB_NAME:-monexup}
-      DB_USER: ${POSTGRES_USER:-monexup_user}
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
-      zTools__ApiURL: http://ztools-api:8080
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: ${POSTGRES_DB:-monexup_db}
+      POSTGRES_USER: ${POSTGRES_USER:-monexup_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      ZTOOLS_API_URL: http://ztools-api:8080
     depends_on:
       postgres:
         condition: service_healthy

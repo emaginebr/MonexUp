@@ -24,7 +24,7 @@ namespace MonexUp.Domain.Impl.Services
             _networkFactory = networkFactory;
             _productFactory = productFactory;
             _fileClient = fileClient;
-            _bucketName = configuration["DO_SPACES_BUCKET"] ?? "monexup";
+            _bucketName = configuration["S3_BUCKET"] ?? "monexup";
         }
 
         public async Task<string> GetImageUrlAsync(string fileName)

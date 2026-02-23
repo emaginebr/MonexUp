@@ -10,11 +10,11 @@ public class MonexUpContextFactory : IDesignTimeDbContextFactory<MonexUpContext>
     {
         var optionsBuilder = new DbContextOptionsBuilder<MonexUpContext>();
 
-        var host = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost";
-        var port = Environment.GetEnvironmentVariable("DB_PORT") ?? "5432";
-        var database = Environment.GetEnvironmentVariable("DB_NAME") ?? "monexup";
-        var username = Environment.GetEnvironmentVariable("DB_USER") ?? "postgres";
-        var password = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "";
+        var host = Environment.GetEnvironmentVariable("POSTGRES_HOST") ?? "localhost";
+        var port = Environment.GetEnvironmentVariable("POSTGRES_PORT") ?? "5432";
+        var database = Environment.GetEnvironmentVariable("POSTGRES_DB") ?? "monexup";
+        var username = Environment.GetEnvironmentVariable("POSTGRES_USER") ?? "postgres";
+        var password = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD") ?? "";
 
         optionsBuilder
             .UseLazyLoadingProxies()
