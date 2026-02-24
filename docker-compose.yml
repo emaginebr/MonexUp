@@ -14,7 +14,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./docker/init-databases.sh:/docker-entrypoint-initdb.d/01-init-databases.sh
-      - ./submodules/NAuth/nauth.sql:/docker-entrypoint-initdb.d/nauth-schema.sql
+      - ./submodules/NAuth/nauth.sql:/docker-scripts/nauth-schema.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-monexup_user} -d ${POSTGRES_DB:-monexup_db}"]
       interval: 10s
@@ -35,13 +35,10 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_URLS: http://+:80
-      DB_HOST: postgres
-      DB_PORT: "5432"
-      DB_NAME: ${NAUTH_DB_NAME:-nauth_db}
-      DB_USER: ${POSTGRES_USER:-monexup_user}
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
-      CONNECTION_STRING: "Host=postgres;Port=5432;Database=${NAUTH_DB_NAME:-nauth_db};Username=${POSTGRES_USER:-monexup_user};Password=${POSTGRES_PASSWORD}"
-      JWT_SECRET: ${NAUTH_JWT_SECRET}
+      ConnectionStrings__NAuthContext: "Host=postgres;Port=5432;Database=${NAUTH_DB_NAME:-nauth_db};Username=${POSTGRES_USER:-monexup_user};Password=${POSTGRES_PASSWORD}"
+      NAuth__JwtSecret: ${NAUTH_JWT_SECRET}
+      Logging__LogLevel__Default: Trace
+      zTools__ApiURL: http://ztools-api:8080
     ports:
       - "5004:80"
     depends_on:
@@ -86,25 +83,19 @@ services:
       context: .
       dockerfile: MonexUp.API/Dockerfile.dev
     container_name: monexup-api
+    env_file: .env
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: "5432"
-      POSTGRES_DB: ${POSTGRES_DB:-monexup_db}
-      POSTGRES_USER: ${POSTGRES_USER:-monexup_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      NAuthSetting__ApiUrl: http://nauth-api:80/api
-      NAuthSetting__JwtSecret: ${NAUTH_JWT_SECRET}
-      NAuthSetting__BucketName: ${S3_BUCKET:-monexup}
-      ZTOOLS_API_URL: http://ztools-api:8080
+      # Connection string built from .env individual vars
+      ConnectionStrings__MonexUpContext: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-monexup_db};Username=${POSTGRES_USER:-monexup_user};Password=${POSTGRES_PASSWORD}"
+      # NAuth (Docker service URLs)
+      NAuth__ApiUrl: http://nauth-api:80
+      NAuth__JwtSecret: ${NAUTH_JWT_SECRET}
+      NAuth__BucketName: ${S3_BUCKET:-monexup}
+      # Stripe
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
-      MAILERSEND_API_TOKEN: ${MAILERSEND_API_TOKEN}
-      MAILERSEND_SENDER: ${MAILERSEND_SENDER}
-      MAILERSEND_API_URL: ${MAILERSEND_API_URL:-https://api.mailersend.com/v1/email}
-      S3_ACCESS_KEY: ${S3_ACCESS_KEY}
-      S3_SECRET_KEY: ${S3_SECRET_KEY}
-      S3_BUCKET: ${S3_BUCKET:-monexup}
-      S3_ENDPOINT: ${S3_ENDPOINT}
+      # zTools (Docker service URL)
+      ZTOOLS_API_URL: http://ztools-api:8080
     ports:
       - "5000:80"
     depends_on:
@@ -126,13 +117,12 @@ services:
       context: .
       dockerfile: MonexUp.BackgroundService/Dockerfile
     container_name: monexup-bg
+    env_file: .env
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: "5432"
-      POSTGRES_DB: ${POSTGRES_DB:-monexup_db}
-      POSTGRES_USER: ${POSTGRES_USER:-monexup_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # Connection string built from .env individual vars
+      ConnectionStrings__MonexUpContext: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-monexup_db};Username=${POSTGRES_USER:-monexup_user};Password=${POSTGRES_PASSWORD}"
+      # zTools (Docker service URL)
       ZTOOLS_API_URL: http://ztools-api:8080
     depends_on:
       postgres:

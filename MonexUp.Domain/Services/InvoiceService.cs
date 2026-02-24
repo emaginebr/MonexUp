@@ -172,7 +172,7 @@ namespace MonexUp.Domain.Impl.Services
             }
         }
 
-        public async Task<InvoiceInfo> GetInvoiceInfo(IInvoiceModel invoice)
+        public async Task<InvoiceInfo> GetInvoiceInfo(IInvoiceModel invoice, string token)
         {
             if (invoice == null)
             {
@@ -188,10 +188,10 @@ namespace MonexUp.Domain.Impl.Services
                 DueDate = invoice.DueDate,
                 PaymentDate = invoice.PaymentDate,
                 Status = invoice.Status,
-                Order = await _orderService.GetOrderInfo(invoice.GetOrder(_orderFactory)),
-                User = await _userClient.GetByIdAsync(invoice.UserId, ""),
+                Order = await _orderService.GetOrderInfo(invoice.GetOrder(_orderFactory), token),
+                User = await _userClient.GetByIdAsync(invoice.UserId, token),
                 Seller = invoice.SellerId.HasValue ?
-                    await _userClient.GetByIdAsync(invoice.SellerId.Value, "") : null,
+                    await _userClient.GetByIdAsync(invoice.SellerId.Value, token) : null,
                 Fees = invoice.ListFees(_feeFactory).Select(x => new InvoiceFeeInfo
                 {
                     FeeId = x.FeeId,
@@ -204,7 +204,7 @@ namespace MonexUp.Domain.Impl.Services
             };
         }
 
-        public async Task<InvoiceListPagedResult> Search(long networkId, long? userId, long? sellerId, int pageNum)
+        public async Task<InvoiceListPagedResult> Search(long networkId, long? userId, long? sellerId, int pageNum, string token)
         {
             var model = _invoiceFactory.BuildInvoiceModel();
             int pageCount = 0;
@@ -212,7 +212,7 @@ namespace MonexUp.Domain.Impl.Services
             var invoices = new List<InvoiceInfo>();
             foreach (var x in invoiceModels)
             {
-                invoices.Add(await GetInvoiceInfo(x));
+                invoices.Add(await GetInvoiceInfo(x, token));
             }
             return new InvoiceListPagedResult
             {
@@ -223,13 +223,13 @@ namespace MonexUp.Domain.Impl.Services
             };
         }
 
-        private async Task<StatementInfo> GetStatementInfo(IInvoiceFeeModel fee)
+        private async Task<StatementInfo> GetStatementInfo(IInvoiceFeeModel fee, string token)
         {
             var invoice = _invoiceFactory.BuildInvoiceModel().GetById(fee.InvoiceId, _invoiceFactory);
             var order = invoice.GetOrder(_orderFactory);
             var network = _networkService.GetById(order.NetworkId);
-            var buyer = await _userClient.GetByIdAsync(invoice.UserId, "");
-            var seller = invoice.SellerId.HasValue ? await _userClient.GetByIdAsync(invoice.SellerId.Value, "") : null;
+            var buyer = await _userClient.GetByIdAsync(invoice.UserId, token);
+            var seller = invoice.SellerId.HasValue ? await _userClient.GetByIdAsync(invoice.SellerId.Value, token) : null;
             return new StatementInfo {
                 InvoiceId = fee.InvoiceId,
                 FeeId = fee.FeeId,
@@ -250,14 +250,14 @@ namespace MonexUp.Domain.Impl.Services
             };
         }
 
-        public async Task<StatementListPagedResult> SearchStatement(StatementSearchParam param)
+        public async Task<StatementListPagedResult> SearchStatement(StatementSearchParam param, string token)
         {
             int pageCount = 0;
             var fees = _feeFactory.BuildInvoiceFeeModel().Search(param.NetworkId, param.UserId, param.Ini, param.End, param.PageNum, out pageCount, _feeFactory);
             var statements = new List<StatementInfo>();
             foreach (var fee in fees)
             {
-                statements.Add(await GetStatementInfo(fee));
+                statements.Add(await GetStatementInfo(fee, token));
             }
             return new StatementListPagedResult
             {

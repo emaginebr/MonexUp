@@ -50,7 +50,7 @@ const InvoiceService : IInvoiceService = {
     },
     getBalance: async (token: string, networkId?: number) => {
         let ret: NumberResult;
-        let url: string = "/api/Invoice/getBalance" + ((networkId) ? "?networkId=" + networkId : "");
+        let url: string = "/Invoice/getBalance" + ((networkId) ? "?networkId=" + networkId : "");
         let request = await _httpClient.doGetAuth<NumberResult>(url, token);
         if (request.success) {
             return request.data;

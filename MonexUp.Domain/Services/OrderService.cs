@@ -93,7 +93,7 @@ namespace MonexUp.Domain.Impl.Services
             return _orderFactory.BuildOrderModel().Get(productId, userId, sellerId, status, _orderFactory);
         }
 
-        public async Task<OrderInfo> GetOrderInfo(IOrderModel order)
+        public async Task<OrderInfo> GetOrderInfo(IOrderModel order, string token)
         {
             var items = new List<OrderItemInfo>();
             foreach (var x in order.ListItems(_itemFactory))
@@ -116,8 +116,8 @@ namespace MonexUp.Domain.Impl.Services
                 Status = order.Status,
                 CreatedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt,
-                User = await _userClient.GetByIdAsync(order.UserId, ""),
-                Seller = order.SellerId.HasValue ? await _userClient.GetByIdAsync(order.SellerId.Value, "") : null,
+                User = await _userClient.GetByIdAsync(order.UserId, token),
+                Seller = order.SellerId.HasValue ? await _userClient.GetByIdAsync(order.SellerId.Value, token) : null,
                 Items = items
             };
         }
@@ -132,7 +132,7 @@ namespace MonexUp.Domain.Impl.Services
             return _orderFactory.BuildOrderModel().GetByStripeId(stripeId, _orderFactory);
         }
 
-        public async Task<OrderListPagedResult> Search(long networkId, long? userId, long? sellerId, int pageNum)
+        public async Task<OrderListPagedResult> Search(long networkId, long? userId, long? sellerId, int pageNum, string token)
         {
             var model = _orderFactory.BuildOrderModel();
             int pageCount = 0;
@@ -140,7 +140,7 @@ namespace MonexUp.Domain.Impl.Services
             var orders = new List<OrderInfo>();
             foreach (var x in orderModels)
             {
-                orders.Add(await GetOrderInfo(x));
+                orders.Add(await GetOrderInfo(x, token));
             }
             return new OrderListPagedResult
             {

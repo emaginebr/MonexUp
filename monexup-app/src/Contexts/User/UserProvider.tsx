@@ -3,9 +3,12 @@ import { useNAuth, type UserInfo as NAuthUserInfo, type PagedResult } from "naut
 import IUserProvider from "../../DTO/Contexts/IUserProvider";
 import UserContext from "./UserContext";
 import UserInfo from "../../DTO/Domain/UserInfo";
+import UserNetworkSearchInfo from "../../DTO/Domain/UserNetworkSearchInfo";
 import ProviderResult from "../../DTO/Contexts/ProviderResult";
 import UserListPagedInfo from "../../DTO/Domain/UserListPagedInfo";
 import UserProviderResult from "../../DTO/Contexts/UserProviderResult";
+import { UserRoleEnum } from "../../DTO/Enum/UserRoleEnum";
+import { UserNetworkStatusEnum } from "../../DTO/Enum/UserNetworkStatusEnum";
 
 function mapNAuthUserToLocal(nauthUser: NAuthUserInfo): UserInfo {
     if (!nauthUser) return null;
@@ -32,6 +35,21 @@ function mapNAuthUserToLocal(nauthUser: NAuthUserInfo): UserInfo {
         })) || [],
         createAt: nauthUser.createAt,
         updateAt: nauthUser.updateAt
+    };
+}
+
+function mapNAuthUserToSearchInfo(nauthUser: NAuthUserInfo): UserNetworkSearchInfo {
+    if (!nauthUser) return null;
+    return {
+        userId: nauthUser.userId,
+        networkId: 0,
+        name: nauthUser.name,
+        email: nauthUser.email,
+        profile: "",
+        level: 0,
+        commission: 0,
+        role: nauthUser.isAdmin ? UserRoleEnum.Administrator : UserRoleEnum.User,
+        status: UserNetworkStatusEnum.Active
     };
 }
 
@@ -316,7 +334,7 @@ export default function UserProvider(props: any) {
             try {
                 const result = await nauth.searchUsers({ searchTerm: keyword, page: pageNum, pageSize: 20 });
                 const pagedInfo: UserListPagedInfo = {
-                    users: result.items.map(mapNAuthUserToLocal),
+                    users: result.items.map(mapNAuthUserToSearchInfo),
                     page: result.page,
                     pageSize: result.pageSize,
                     totalCount: result.totalCount,

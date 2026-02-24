@@ -10,6 +10,7 @@ using Stripe.Climate;
 using System;
 using System.Threading.Tasks;
 using NAuth.ACL.Interfaces;
+using MonexUp.API.Extensions;
 
 namespace MonexUp.API.Controllers
 {
@@ -63,7 +64,8 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                return await _invoiceService.Search(param.NetworkId, param.UserId, param.SellerId, param.PageNum);
+                var token = HttpContext.GetBearerToken();
+                return await _invoiceService.Search(param.NetworkId, param.UserId, param.SellerId, param.PageNum, token);
             }
             catch (Exception ex)
             {
@@ -82,7 +84,8 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                return await _invoiceService.SearchStatement(param);
+                var token = HttpContext.GetBearerToken();
+                return await _invoiceService.SearchStatement(param, token);
             }
             catch (Exception ex)
             {
@@ -144,7 +147,7 @@ namespace MonexUp.API.Controllers
                 return new InvoiceResult
                 {
                     Sucesso = true,
-                    Invoice = await _invoiceService.GetInvoiceInfo(await _invoiceService.Checkout(checkoutSessionId))
+                    Invoice = await _invoiceService.GetInvoiceInfo(await _invoiceService.Checkout(checkoutSessionId), HttpContext.GetBearerToken())
                 };
             }
             catch (Exception ex)

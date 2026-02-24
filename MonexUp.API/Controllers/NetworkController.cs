@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NAuth.ACL.Interfaces;
 using System.Threading.Tasks;
+using MonexUp.API.Extensions;
 
 namespace MonexUp.API.Controllers
 {
@@ -76,7 +77,8 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                var newNetwork = await _networkService.Update(network, userSession.UserId);
+                var token = HttpContext.GetBearerToken();
+                var newNetwork = await _networkService.Update(network, userSession.UserId, token);
                 return new NetworkResult()
                 {
                     Network = await _networkService.GetNetworkInfo(newNetwork)
@@ -131,10 +133,11 @@ namespace MonexUp.API.Controllers
                 var userNetworks = _networkService
                     .ListByUser(userSession.UserId)
                     .ToList();
+                var token = HttpContext.GetBearerToken();
                 var userNetworkInfos = new List<UserNetworkInfo>();
                 foreach (var x in userNetworks)
                 {
-                    userNetworkInfos.Add(await _networkService.GetUserNetworkInfo(x));
+                    userNetworkInfos.Add(await _networkService.GetUserNetworkInfo(x, token));
                 }
                 return new UserNetworkListResult()
                 {
@@ -152,6 +155,7 @@ namespace MonexUp.API.Controllers
         {
             try
             {
+                var token = HttpContext.GetBearerToken();
                 var network = _networkService.GetBySlug(networkSlug);
                 if (network == null)
                 {
@@ -166,7 +170,7 @@ namespace MonexUp.API.Controllers
                 var userNetworkInfos = new List<UserNetworkInfo>();
                 foreach (var x in userNetworks)
                 {
-                    userNetworkInfos.Add(await _networkService.GetUserNetworkInfo(x));
+                    userNetworkInfos.Add(await _networkService.GetUserNetworkInfo(x, token));
                 }
                 return new UserNetworkListResult()
                 {
@@ -215,10 +219,11 @@ namespace MonexUp.API.Controllers
                     return StatusCode(401, "Not Authorized");
                 }
 
+                var token = HttpContext.GetBearerToken();
                 var userNetwork = _networkService.GetUserNetwork(networkId, userSession.UserId);
                 return new UserNetworkResult()
                 {
-                    UserNetwork = await _networkService.GetUserNetworkInfo(userNetwork)
+                    UserNetwork = await _networkService.GetUserNetworkInfo(userNetwork, token)
                 };
             }
             catch (Exception ex)
@@ -239,6 +244,7 @@ namespace MonexUp.API.Controllers
                     return StatusCode(401, "Not Authorized");
                 }
 
+                var token = HttpContext.GetBearerToken();
                 var network = _networkService.GetBySlug(networkSlug);
                 if (network == null) {
                     throw new Exception("Network not found");
@@ -247,7 +253,7 @@ namespace MonexUp.API.Controllers
                 var userNetwork = _networkService.GetUserNetwork(network.NetworkId, userSession.UserId);
                 return new UserNetworkResult()
                 {
-                    UserNetwork = await _networkService.GetUserNetworkInfo(userNetwork)
+                    UserNetwork = await _networkService.GetUserNetworkInfo(userNetwork, token)
                 };
             }
             catch (Exception ex)
@@ -278,6 +284,7 @@ namespace MonexUp.API.Controllers
         {
             try
             {
+                var token = HttpContext.GetBearerToken();
                 var network = _networkService.GetBySlug(networkSlug);
                 if (network == null)
                 {
@@ -293,7 +300,7 @@ namespace MonexUp.API.Controllers
 
                 return new UserNetworkResult()
                 {
-                    UserNetwork = await _networkService.GetUserNetworkInfo(userNetwork)
+                    UserNetwork = await _networkService.GetUserNetworkInfo(userNetwork, token)
                 };
             }
             catch (Exception ex)
@@ -340,9 +347,10 @@ namespace MonexUp.API.Controllers
                     return StatusCode(401, "Not Authorized");
                 }
 
+                var token = HttpContext.GetBearerToken();
                 UserNetworkStatusEnum status = (UserNetworkStatusEnum)changeStatus.Status;
 
-                await _networkService.ChangeStatus(changeStatus.NetworkId, changeStatus.UserId, status, userSession.UserId);
+                await _networkService.ChangeStatus(changeStatus.NetworkId, changeStatus.UserId, status, userSession.UserId, token);
 
                 return new StatusResult
                 {
@@ -369,7 +377,8 @@ namespace MonexUp.API.Controllers
                 }
 
 
-                await _networkService.Promote(networkId, userId, userSession.UserId);
+                var token = HttpContext.GetBearerToken();
+                await _networkService.Promote(networkId, userId, userSession.UserId, token);
 
                 return new StatusResult
                 {
@@ -396,7 +405,8 @@ namespace MonexUp.API.Controllers
                 }
 
 
-                await _networkService.Demote(networkId, userId, userSession.UserId);
+                var token = HttpContext.GetBearerToken();
+                await _networkService.Demote(networkId, userId, userSession.UserId, token);
 
                 return new StatusResult
                 {

@@ -40,7 +40,7 @@ namespace MonexUp.Domain.Impl.Services
             _orderItemFactory = orderItemFactory;
         }
 
-        public async Task<SubscriptionInfo> CreateSubscription(long productId, long userId, long? networkId, long? sellerId)
+        public async Task<SubscriptionInfo> CreateSubscription(long productId, long userId, long? networkId, long? sellerId, string token)
         {
             var product = _productFactory.BuildProductModel().GetById(productId, _productFactory);
             if (product == null)
@@ -57,7 +57,7 @@ namespace MonexUp.Domain.Impl.Services
             UserInfo seller = null;
             if (sellerId.HasValue && sellerId.Value > 0)
             {
-                seller = await _userClient.GetByIdAsync(sellerId.Value, "");
+                seller = await _userClient.GetByIdAsync(sellerId.Value, token);
             }
 
             var order = _orderService.Get(productId, userId, sellerId, OrderStatusEnum.Incoming);
@@ -78,11 +78,11 @@ namespace MonexUp.Domain.Impl.Services
                     }
                 });
             }
-            var user = await _userClient.GetByIdAsync(order.UserId, "");
+            var user = await _userClient.GetByIdAsync(order.UserId, token);
             var clientSecret = await _stripeService.CreateSubscription(user, product, network, seller);
             return new SubscriptionInfo()
             {
-                Order = await _orderService.GetOrderInfo(order),
+                Order = await _orderService.GetOrderInfo(order, token),
                 ClientSecret = clientSecret
             };
         }

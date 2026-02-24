@@ -21,15 +21,6 @@ namespace MonexUp.BackgroundService
         public void ConfigureServices(IServiceCollection services)
         {
             var connectionString = Configuration.GetConnectionString("MonexUpContext");
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                var host = Configuration["POSTGRES_HOST"] ?? System.Environment.GetEnvironmentVariable("POSTGRES_HOST");
-                var port = Configuration["POSTGRES_PORT"] ?? System.Environment.GetEnvironmentVariable("POSTGRES_PORT") ?? "5432";
-                var db = Configuration["POSTGRES_DB"] ?? System.Environment.GetEnvironmentVariable("POSTGRES_DB") ?? "monexup";
-                var user = Configuration["POSTGRES_USER"] ?? System.Environment.GetEnvironmentVariable("POSTGRES_USER");
-                var pass = Configuration["POSTGRES_PASSWORD"] ?? System.Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
-                connectionString = $"Host={host};Port={port};Database={db};Username={user};Password={pass}";
-            }
 
             var config = new ConfigurationParam
             {

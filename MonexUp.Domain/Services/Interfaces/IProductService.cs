@@ -19,7 +19,7 @@ namespace MonexUp.Domain.Interfaces.Services
         IProductModel GetByStripeProductId(string stripeProductId);
         IProductModel GetByStripePriceId(string stripePriceId);
         Task<ProductInfo> GetProductInfo(IProductModel product);
-        Task<IProductModel> Insert(ProductInfo product, long userId);
-        Task<IProductModel> Update(ProductInfo product, long userId);
+        Task<IProductModel> Insert(ProductInfo product, long userId, string token);
+        Task<IProductModel> Update(ProductInfo product, long userId, string token);
     }
 }

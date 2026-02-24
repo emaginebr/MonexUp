@@ -1,0 +1,37 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "monexup-app",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["node_modules/react-scripts/bin/react-scripts.js", "start"],
+      "cwd": "monexup-app",
+      "port": 443
+    },
+    {
+      "name": "monexup-api",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "MonexUp.API/MonexUp.API.csproj"],
+      "port": 5004
+    },
+    {
+      "name": "monexup-bg",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "MonexUp.BackgroundService/MonexUp.BackgroundService.csproj"],
+      "port": 32584
+    },
+    {
+      "name": "nauth-api",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "submodules/NAuth/NAuth.API/NAuth.API.csproj"],
+      "port": 8002
+    },
+    {
+      "name": "ztools-api",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "submodules/zTools/zTools.API/zTools.API.csproj"],
+      "port": 9001
+    }
+  ],
+  "autoVerify": false
+}

@@ -36,7 +36,20 @@
       "Bash(git submodule add:*)",
       "Bash(git submodule update:*)",
       "Bash(findstr:*)",
-      "Bash(del \"C:\\\\repos\\\\MonexUp\\\\git_tracked.txt\")"
+      "Bash(del \"C:\\\\repos\\\\MonexUp\\\\git_tracked.txt\")",
+      "Bash(dotnet ef database update:*)",
+      "Bash(docker ps:*)",
+      "Bash(docker.exe ps:*)",
+      "Bash(where.exe:*)",
+      "Bash(dotnet ef migrations list:*)",
+      "Bash(ConnectionStrings__NAuthContext=\"Host=localhost;Port=5432;Database=nauth_db;Username=monexup_user;Password=AVNS_akcvzXVnMkvNKaO10-O\" dotnet ef database update:*)",
+      "Bash(PGPASSWORD=\"AVNS_akcvzXVnMkvNKaO10-O\" psql:*)",
+      "Bash(docker exec:*)",
+      "Bash(where:*)",
+      "Bash(\"/c/Program Files/Docker/Docker/resources/bin/docker.exe\" ps)",
+      "Bash(\"/mnt/c/Program Files/Docker/Docker/resources/bin/docker.exe\" ps)",
+      "Bash(ConnectionStrings__NAuthContext=\"Host=localhost;Port=5432;Database=nauth_db;Username=monexup_user;Password=x\" dotnet ef migrations script:*)",
+      "mcp__Claude_Preview__preview_start"
     ]
   }
 }

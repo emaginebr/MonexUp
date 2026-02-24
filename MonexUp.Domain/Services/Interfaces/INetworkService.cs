@@ -15,14 +15,14 @@ namespace MonexUp.Domain.Interfaces.Services
         INetworkModel GetById(long networkId);
         INetworkModel GetBySlug(string slug);
         IUserNetworkModel GetUserNetwork(long networkId, long userId);
-        Task<UserNetworkInfo> GetUserNetworkInfo(IUserNetworkModel model);
+        Task<UserNetworkInfo> GetUserNetworkInfo(IUserNetworkModel model, string token);
         Task<NetworkInfo> GetNetworkInfo(INetworkModel model);
         INetworkModel Insert(NetworkInsertInfo network, long userId);
-        Task<INetworkModel> Update(NetworkInfo network, long userId);
+        Task<INetworkModel> Update(NetworkInfo network, long userId, string token);
         void RequestAccess(long networkId, long userId, long? referrerId);
-        Task ChangeStatus(long networkId, long userId, UserNetworkStatusEnum status, long managerId);
-        Task Promote(long networkId, long userId, long manegerId);
-        Task Demote(long networkId, long userId, long manegerId);
+        Task ChangeStatus(long networkId, long userId, UserNetworkStatusEnum status, long managerId, string token);
+        Task Promote(long networkId, long userId, long manegerId, string token);
+        Task Demote(long networkId, long userId, long manegerId, string token);
         IList<IUserNetworkModel> ListByUser(long userId);
         IList<IUserNetworkModel> ListByNetwork(long networkId);
 

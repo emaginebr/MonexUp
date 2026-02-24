@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NAuth.ACL.Interfaces;
 using System.Threading.Tasks;
+using MonexUp.API.Extensions;
 
 namespace MonexUp.API.Controllers
 {
@@ -36,7 +37,8 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                var newProfile = await _productService.Insert(product, userSession.UserId);
+                var token = HttpContext.GetBearerToken();
+                var newProfile = await _productService.Insert(product, userSession.UserId, token);
                 return new ProductResult()
                 {
                     Product = await _productService.GetProductInfo(newProfile)
@@ -59,7 +61,8 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                var newProduct = await _productService.Update(product, userSession.UserId);
+                var token = HttpContext.GetBearerToken();
+                var newProduct = await _productService.Update(product, userSession.UserId, token);
                 return new ProductResult()
                 {
                     Product = await _productService.GetProductInfo(newProduct)

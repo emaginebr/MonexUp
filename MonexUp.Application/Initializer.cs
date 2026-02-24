@@ -64,12 +64,7 @@ namespace MonexUp.Application
             #endregion
 
             #region NAuth
-            services.Configure<NAuthSetting>(options =>
-            {
-                options.ApiUrl = config.NAuthApiUrl;
-                options.JwtSecret = config.NAuthJwtSecret;
-                options.BucketName = config.NAuthBucketName;
-            });
+            services.Configure<NAuthSetting>(configuration.GetSection("NAuth"));
             services.AddHttpClient();
             injectDependency(typeof(IUserClient), typeof(UserClient), services, scoped);
             injectDependency(typeof(IRoleClient), typeof(RoleClient), services, scoped);
@@ -85,13 +80,11 @@ namespace MonexUp.Application
             #endregion
 
             #region Service
-            injectDependency(typeof(IImageService), typeof(ImageService), services, scoped);
             injectDependency(typeof(INetworkService), typeof(NetworkService), services, scoped);
             injectDependency(typeof(IProfileService), typeof(ProfileService), services, scoped);
             injectDependency(typeof(IProductService), typeof(ProductService), services, scoped);
             injectDependency(typeof(IOrderService), typeof(OrderService), services, scoped);
             injectDependency(typeof(ISubscriptionService), typeof(SubscriptionService), services, scoped);
-            injectDependency(typeof(IMailerSendService), typeof(MailerSendService), services, scoped);
             injectDependency(typeof(IStripeService), typeof(StripeService), services, scoped);
             injectDependency(typeof(IInvoiceService), typeof(InvoiceService), services, scoped);
             injectDependency(typeof(ITemplateService), typeof(TemplateService), services, scoped);

@@ -26,7 +26,7 @@ namespace MonexUp.Domain.Impl.Services
             _profileFactory = profileFactory;
         }
 
-        private async Task ValidateAccess(long networkId, long userId)
+        private async Task ValidateAccess(long networkId, long userId, string token)
         {
             var networkAccess = _userNetworkFactory.BuildUserNetworkModel().Get(networkId, userId, _userNetworkFactory);
 
@@ -37,7 +37,7 @@ namespace MonexUp.Domain.Impl.Services
 
             if (networkAccess.Role != DTO.User.UserRoleEnum.NetworkManager)
             {
-                var user = await _userClient.GetByIdAsync(userId, "");
+                var user = await _userClient.GetByIdAsync(userId, token);
                 if (user == null)
                 {
                     throw new Exception("User not found");
@@ -49,9 +49,9 @@ namespace MonexUp.Domain.Impl.Services
             }
         }
 
-        public async Task<IUserProfileModel> Insert(UserProfileInfo profile, long userId)
+        public async Task<IUserProfileModel> Insert(UserProfileInfo profile, long userId, string token)
         {
-            await ValidateAccess(profile.NetworkId, userId);
+            await ValidateAccess(profile.NetworkId, userId, token);
 
             if (string.IsNullOrEmpty(profile.Name))
             {
@@ -68,9 +68,9 @@ namespace MonexUp.Domain.Impl.Services
             return model.Insert(_profileFactory);
         }
 
-        public async Task<IUserProfileModel> Update(UserProfileInfo profile, long userId)
+        public async Task<IUserProfileModel> Update(UserProfileInfo profile, long userId, string token)
         {
-            await ValidateAccess(profile.NetworkId, userId);
+            await ValidateAccess(profile.NetworkId, userId, token);
 
             if (string.IsNullOrEmpty(profile.Name))
             {
@@ -88,11 +88,11 @@ namespace MonexUp.Domain.Impl.Services
             return model.Update(_profileFactory);
         }
 
-        public async Task Delete(long profileId, long userId)
+        public async Task Delete(long profileId, long userId, string token)
         {
             var model = _profileFactory.BuildUserProfileModel().GetById(profileId, _profileFactory);
 
-            await ValidateAccess(model.NetworkId, userId);
+            await ValidateAccess(model.NetworkId, userId, token);
 
             int qtdeUser = model.GetUsersCount(model.NetworkId, profileId);
 

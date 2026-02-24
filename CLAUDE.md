@@ -71,8 +71,8 @@ monexup-app/                   → React 18 + TypeScript frontend (CRA)
 - **Factory pattern for models:** Each entity has a domain factory interface (e.g., `IProductDomainFactory`) used to create/update models. Models receive factories in their methods rather than using repositories directly.
 - **DI registration in `MonexUp.Application/Initializer.cs`:** All repositories, services, and factories are registered here via `Configure()`. API uses scoped lifetime; BackgroundService uses transient with `DbContextFactory`.
 - **NAuth for authentication:** Custom auth scheme ("NAuth") registered in `Initializer.cs`. JWT-based with `NAuthSetting` in appsettings.json.
-- **Environment variables for secrets:** Both `Program.cs` files include a `LoadEnvFile()` method that reads `.env` from the project root. `IConfiguration` is used in services (StripeService, MailerSendService, ImageService) to read secrets.
-- **EF Core with PostgreSQL:** Lazy loading enabled via proxies. Connection string built from `DB_*` environment variables when not set in appsettings.
+- **Configuration via appsettings:** All secrets come from `appsettings.{Environment}.json` (Development for local, Docker for containers). No `Environment.GetEnvironmentVariable()` in the code — everything goes through `IConfiguration`. In Docker, `docker-compose.yml` passes env vars (with `__` separator) that ASP.NET Core maps into the configuration hierarchy.
+- **EF Core with PostgreSQL:** Lazy loading enabled via proxies. Connection string via `ConnectionStrings:MonexUpContext` in appsettings.
 
 ### Database (PostgreSQL)
 
@@ -108,6 +108,23 @@ Copy `.env.example` to `.env` and fill in values.
 - Commit message prefixes control version bumps: `major:` / `breaking:`, `feat:` / `feature:`, `fix:` / `patch:`
 - **version-tag.yml** — Auto-creates `v{version}` tags on push to main
 - **create-release.yml** — Creates GitHub releases on major/minor version changes (skips patch-only)
+
+## EF Core Migrations
+
+```bash
+# MonexUp — list / add / apply
+dotnet ef migrations list --project MonexUp.Infra --startup-project MonexUp.API
+dotnet ef migrations add <Name> --project MonexUp.Infra --startup-project MonexUp.API
+dotnet ef database update --project MonexUp.Infra --startup-project MonexUp.API
+
+# NAuth (submodule) — needs connection string via env var
+ConnectionStrings__NAuthContext="Host=localhost;Port=5432;Database=nauth_db;Username=monexup_user;Password=<password>" \
+  dotnet ef database update --project submodules/NAuth/NAuth.Infra --startup-project submodules/NAuth/NAuth.API
+```
+
+## Tool Limitations
+
+- **Docker is NOT accessible** from this CLI environment. Do not attempt to run `docker`, `docker-compose`, or `docker exec` commands. For database operations that require SQL execution, provide the SQL/commands for the user to run manually.
 
 ## Language
 

@@ -20,8 +20,11 @@ import TemplateService from './Impl/TemplateService';
 const httpClientAuth : IHttpClient = HttpClient();
 httpClientAuth.init(process.env.REACT_APP_API_URL);
 
+const httpClientNAuth : IHttpClient = HttpClient();
+httpClientNAuth.init(process.env.REACT_APP_NAUTH_API_URL);
+
 const userServiceImpl : IUserService = UserService;
-userServiceImpl.init(httpClientAuth);
+userServiceImpl.init(httpClientNAuth);
 
 const networkServiceImpl : INetworkService = NetworkService;
 networkServiceImpl.init(httpClientAuth);

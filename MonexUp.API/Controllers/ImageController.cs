@@ -1,9 +1,12 @@
+using Core.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MonexUp.Domain.Interfaces.Services;
+using MonexUp.Domain.Impl.Services;
+using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.DTO.Domain;
 using NAuth.ACL.Interfaces;
+using zTools.ACL.Interfaces;
 using System;
 using System.Threading.Tasks;
 
@@ -14,17 +17,22 @@ namespace MonexUp.API.Controllers
     public class ImageController: ControllerBase
     {
         private readonly IUserClient _userClient;
-        private readonly INetworkService _networkService;
-        private readonly IImageService _imageService;
+        private readonly INetworkDomainFactory _networkFactory;
+        private readonly IProductDomainFactory _productFactory;
+        private readonly IFileClient _fileClient;
+
+        private const string BucketName = "monexup";
 
         public ImageController(
             IUserClient userClient,
-            INetworkService networkService,
-            IImageService imageService
+            INetworkDomainFactory networkFactory,
+            IProductDomainFactory productFactory,
+            IFileClient fileClient
         ) {
             _userClient = userClient;
-            _networkService = networkService;
-            _imageService = imageService;
+            _networkFactory = networkFactory;
+            _productFactory = productFactory;
+            _fileClient = fileClient;
         }
 
         [Authorize]
@@ -43,10 +51,13 @@ namespace MonexUp.API.Controllers
                     return StatusCode(401, "Not Authorized");
                 }
 
-                var fileName = await _imageService.InsertToUserAsync(file.OpenReadStream(), userSession.UserId);
+                var fileName = $"user-{StringUtils.GenerateShortUniqueString()}.jpg";
+                var formFile = new FormFileWrapper(file.OpenReadStream(), fileName, file.ContentType);
+                await _fileClient.UploadFileAsync(BucketName, formFile);
+
                 return new StringResult()
                 {
-                    Value = await _imageService.GetImageUrlAsync(fileName)
+                    Value = await _fileClient.GetFileUrlAsync(BucketName, fileName)
                 };
             }
             catch (Exception ex)
@@ -71,10 +82,22 @@ namespace MonexUp.API.Controllers
                     return StatusCode(401, "Not Authorized");
                 }
 
-                var fileName = await _imageService.InsertToNetworkAsync(file.OpenReadStream(), networkId);
+                var network = _networkFactory.BuildNetworkModel().GetById(networkId, _networkFactory);
+                if (network == null)
+                {
+                    return BadRequest("Network not found");
+                }
+
+                var fileName = $"network-{StringUtils.GenerateShortUniqueString()}.jpg";
+                var formFile = new FormFileWrapper(file.OpenReadStream(), fileName, file.ContentType);
+                await _fileClient.UploadFileAsync(BucketName, formFile);
+
+                network.Image = fileName;
+                network.Update(_networkFactory);
+
                 return new StringResult()
                 {
-                    Value = await _imageService.GetImageUrlAsync(fileName)
+                    Value = await _fileClient.GetFileUrlAsync(BucketName, fileName)
                 };
             }
             catch (Exception ex)
@@ -99,10 +122,22 @@ namespace MonexUp.API.Controllers
                     return StatusCode(401, "Not Authorized");
                 }
 
-                var fileName = await _imageService.InsertToProductAsync(file.OpenReadStream(), productId);
+                var product = _productFactory.BuildProductModel().GetById(productId, _productFactory);
+                if (product == null)
+                {
+                    return BadRequest("Product not found");
+                }
+
+                var fileName = $"product-{StringUtils.GenerateShortUniqueString()}.jpg";
+                var formFile = new FormFileWrapper(file.OpenReadStream(), fileName, file.ContentType);
+                await _fileClient.UploadFileAsync(BucketName, formFile);
+
+                product.Image = fileName;
+                product.Update(_productFactory);
+
                 return new StringResult()
                 {
-                    Value = await _imageService.GetImageUrlAsync(fileName)
+                    Value = await _fileClient.GetFileUrlAsync(BucketName, fileName)
                 };
             }
             catch (Exception ex)

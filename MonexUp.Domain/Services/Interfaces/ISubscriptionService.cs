@@ -9,7 +9,7 @@ namespace MonexUp.Domain.Interfaces.Services
 {
     public interface ISubscriptionService
     {
-        Task<SubscriptionInfo> CreateSubscription(long productId, long userId, long? networkId, long? sellerId);
+        Task<SubscriptionInfo> CreateSubscription(long productId, long userId, long? networkId, long? sellerId, string token);
         //Task<SubscriptionInfo> CreateInvoice(long productId, long userId);
 
     }

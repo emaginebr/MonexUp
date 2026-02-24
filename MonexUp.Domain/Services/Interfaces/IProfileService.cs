@@ -13,8 +13,8 @@ namespace MonexUp.Domain.Interfaces.Services
         IList<IUserProfileModel> ListByNetwork(long networkId);
         IUserProfileModel GetById(long profileId);
         UserProfileInfo GetUserProfileInfo(IUserProfileModel profile);
-        Task<IUserProfileModel> Insert(UserProfileInfo profile, long userId);
-        Task<IUserProfileModel> Update(UserProfileInfo profile, long userId);
-        Task Delete(long profileId, long userId);
+        Task<IUserProfileModel> Insert(UserProfileInfo profile, long userId, string token);
+        Task<IUserProfileModel> Update(UserProfileInfo profile, long userId, string token);
+        Task Delete(long profileId, long userId, string token);
     }
 }

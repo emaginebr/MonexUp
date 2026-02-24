@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MonexUp.API.Extensions;
 
 namespace MonexUp.API.Controllers
 {
@@ -82,7 +83,8 @@ namespace MonexUp.API.Controllers
                         sellerId = seller.UserId;
                     }
                 }
-                var subscription = await _subscriptionService.CreateSubscription(product.ProductId, userSession.UserId, networkId, sellerId);
+                var token = HttpContext.GetBearerToken();
+                var subscription = await _subscriptionService.CreateSubscription(product.ProductId, userSession.UserId, networkId, sellerId, token);
 
                 return new SubscriptionResult()
                 {
@@ -107,10 +109,11 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
+                var token = HttpContext.GetBearerToken();
                 var newOrder = _orderService.Update(order);
                 return new OrderResult()
                 {
-                    Order = await _orderService.GetOrderInfo(newOrder)
+                    Order = await _orderService.GetOrderInfo(newOrder, token)
                 };
             }
             catch (Exception ex)
@@ -130,7 +133,8 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                return await _orderService.Search(param.NetworkId, param.UserId, param.SellerId, param.PageNum);
+                var token = HttpContext.GetBearerToken();
+                return await _orderService.Search(param.NetworkId, param.UserId, param.SellerId, param.PageNum, token);
             }
             catch (Exception ex)
             {
@@ -149,11 +153,12 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
+                var token = HttpContext.GetBearerToken();
                 var orderModels = _orderService.List(param.NetworkId, param.UserId, param.Status).ToList();
                 var orders = new List<OrderInfo>();
                 foreach (var x in orderModels)
                 {
-                    orders.Add(await _orderService.GetOrderInfo(x));
+                    orders.Add(await _orderService.GetOrderInfo(x, token));
                 }
                 return new OrderListResult
                 {
@@ -181,7 +186,7 @@ namespace MonexUp.API.Controllers
                 return new OrderResult
                 {
                     Sucesso = true,
-                    Order = await _orderService.GetOrderInfo(_orderService.GetById(orderId))
+                    Order = await _orderService.GetOrderInfo(_orderService.GetById(orderId), HttpContext.GetBearerToken())
                 };
             }
             catch (Exception ex)

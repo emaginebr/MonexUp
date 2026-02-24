@@ -34,22 +34,10 @@ namespace MonexUp.API
         public void ConfigureServices(IServiceCollection services)
         {
             var connectionString = Configuration.GetConnectionString("MonexUpContext");
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                var host = Configuration["POSTGRES_HOST"] ?? Environment.GetEnvironmentVariable("POSTGRES_HOST");
-                var port = Configuration["POSTGRES_PORT"] ?? Environment.GetEnvironmentVariable("POSTGRES_PORT") ?? "5432";
-                var db = Configuration["POSTGRES_DB"] ?? Environment.GetEnvironmentVariable("POSTGRES_DB") ?? "monexup";
-                var user = Configuration["POSTGRES_USER"] ?? Environment.GetEnvironmentVariable("POSTGRES_USER");
-                var pass = Configuration["POSTGRES_PASSWORD"] ?? Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
-                connectionString = $"Host={host};Port={port};Database={db};Username={user};Password={pass}";
-            }
 
             var config = new ConfigurationParam
             {
-                ConnectionString = connectionString,
-                NAuthApiUrl = Configuration["NAuthSetting:ApiUrl"],
-                NAuthJwtSecret = Configuration["NAuthSetting:JwtSecret"],
-                NAuthBucketName = Configuration["NAuthSetting:BucketName"]
+                ConnectionString = connectionString
             };
             Initializer.Configure(services, config, Configuration);
             services.AddControllers();
@@ -76,7 +64,7 @@ namespace MonexUp.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (env.IsDevelopment() || env.EnvironmentName == "Docker")
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger(c =>

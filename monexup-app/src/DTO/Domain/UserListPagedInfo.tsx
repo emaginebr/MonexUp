@@ -1,7 +1,7 @@
-import UserInfo from "./UserInfo";
+import UserNetworkSearchInfo from "./UserNetworkSearchInfo";
 
 export default interface UserListPagedInfo {
-    users: UserInfo[];
+    users: UserNetworkSearchInfo[];
     page: number;
     pageSize: number;
     totalCount: number;

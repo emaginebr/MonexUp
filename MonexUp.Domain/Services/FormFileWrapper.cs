@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MonexUp.Domain.Impl.Services
 {
-    internal class FormFileWrapper : IFormFile
+    public class FormFileWrapper : IFormFile
     {
         private readonly Stream _stream;
         private readonly string _fileName;

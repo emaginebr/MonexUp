@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using NAuth.ACL.Interfaces;
+using MonexUp.API.Extensions;
 
 namespace MonexUp.API.Controllers
 {
@@ -38,7 +39,8 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                var newProfile = await _profileService.Insert(profile, userSession.UserId);
+                var token = HttpContext.GetBearerToken();
+                var newProfile = await _profileService.Insert(profile, userSession.UserId, token);
                 return new ProfileResult()
                 {
                     Profile = _profileService.GetUserProfileInfo(newProfile)
@@ -61,7 +63,8 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                var newProfile = await _profileService.Update(profile, userSession.UserId);
+                var token = HttpContext.GetBearerToken();
+                var newProfile = await _profileService.Update(profile, userSession.UserId, token);
                 return new ProfileResult()
                 {
                     Profile = _profileService.GetUserProfileInfo(newProfile)
@@ -84,7 +87,8 @@ namespace MonexUp.API.Controllers
                 {
                     return StatusCode(401, "Not Authorized");
                 }
-                await _profileService.Delete(profileId, userSession.UserId);
+                var token = HttpContext.GetBearerToken();
+                await _profileService.Delete(profileId, userSession.UserId, token);
                 return new StatusResult
                 {
                     Sucesso = true,

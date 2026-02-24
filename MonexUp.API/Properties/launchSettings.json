@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "BTCSTXSwap.API": {
+    "MonexUp.API": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
@@ -25,7 +25,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": "true",
-      "applicationUrl": "https://localhost:5004;http://localhost:5003"
+      "applicationUrl": "https://localhost:5034;http://localhost:5033"
     },
     "Docker (1)": {
       "commandName": "Docker",

@@ -43,19 +43,6 @@ public partial class MonexUpContext : DbContext
 
     public virtual DbSet<Withdrawal> Withdrawals { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            var host = Environment.GetEnvironmentVariable("POSTGRES_HOST") ?? "localhost";
-            var port = Environment.GetEnvironmentVariable("POSTGRES_PORT") ?? "5432";
-            var database = Environment.GetEnvironmentVariable("POSTGRES_DB") ?? "monexup";
-            var username = Environment.GetEnvironmentVariable("POSTGRES_USER") ?? "postgres";
-            var password = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD") ?? "";
-            optionsBuilder.UseNpgsql($"Host={host};Port={port};Database={database};Username={username};Password={password}");
-        }
-    }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Invoice>(entity =>

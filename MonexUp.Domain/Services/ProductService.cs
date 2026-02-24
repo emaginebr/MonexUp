@@ -4,6 +4,7 @@ using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Product;
 using NAuth.ACL.Interfaces;
+using zTools.ACL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,22 +17,22 @@ namespace MonexUp.Domain.Impl.Services
         private readonly IUserClient _userClient;
         private readonly IUserNetworkDomainFactory _userNetworkFactory;
         private readonly IProductDomainFactory _productFactory;
-        private readonly IImageService _imageService;
+        private readonly IFileClient _fileClient;
 
         public ProductService(
             IUserClient userClient,
             IUserNetworkDomainFactory userNetworkFactory,
             IProductDomainFactory productFactory,
-            IImageService imageService
+            IFileClient fileClient
         )
         {
             _userClient = userClient;
             _userNetworkFactory = userNetworkFactory;
             _productFactory = productFactory;
-            _imageService = imageService;
+            _fileClient = fileClient;
         }
 
-        private async Task ValidateAccess(long networkId, long userId)
+        private async Task ValidateAccess(long networkId, long userId, string token)
         {
             var networkAccess = _userNetworkFactory.BuildUserNetworkModel().Get(networkId, userId, _userNetworkFactory);
 
@@ -42,7 +43,7 @@ namespace MonexUp.Domain.Impl.Services
 
             if (networkAccess.Role != DTO.User.UserRoleEnum.NetworkManager)
             {
-                var user = await _userClient.GetByIdAsync(userId, "");
+                var user = await _userClient.GetByIdAsync(userId, token);
                 if (user == null)
                 {
                     throw new Exception("User not found");
@@ -72,7 +73,7 @@ namespace MonexUp.Domain.Impl.Services
                 Name = md.Name,
                 Slug = md.Slug,
                 Image = md.Image,
-                ImageUrl = await _imageService.GetImageUrlAsync(md.Image),
+                ImageUrl = await _fileClient.GetFileUrlAsync("monexup", md.Image),
                 Description = md.Description,
                 Price = md.Price,
                 Frequency = md.Frequency,
@@ -97,9 +98,9 @@ namespace MonexUp.Domain.Impl.Services
             return newSlug;
         }
 
-        public async Task<IProductModel> Insert(ProductInfo product, long userId)
+        public async Task<IProductModel> Insert(ProductInfo product, long userId, string token)
         {
-            await ValidateAccess(product.NetworkId, userId);
+            await ValidateAccess(product.NetworkId, userId, token);
 
             if (string.IsNullOrEmpty(product.Name))
             {
@@ -125,9 +126,9 @@ namespace MonexUp.Domain.Impl.Services
             return model.Insert(_productFactory);
         }
 
-        public async Task<IProductModel> Update(ProductInfo product, long userId)
+        public async Task<IProductModel> Update(ProductInfo product, long userId, string token)
         {
-            await ValidateAccess(product.NetworkId, userId);
+            await ValidateAccess(product.NetworkId, userId, token);
 
             if (string.IsNullOrEmpty(product.Name))
             {
