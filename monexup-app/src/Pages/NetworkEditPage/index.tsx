@@ -79,7 +79,7 @@ export default function NetworkEditPage() {
                     });
                 }}
             />
-            <Container>
+            <Container className="mt-4">
                 <Row>
                     <Col md="12">
                         <Card>
@@ -93,7 +93,7 @@ export default function NetworkEditPage() {
                                         </div>
                                         <div className="lc-block d-grid gap-3 d-md-block">
                                             {networkContext.network?.networkId > 0 &&
-                                                <Button variant="primary" className="me-md-2" size="lg" onClick={async (e) => {
+                                                <Button variant="primary" className="me-md-2" onClick={async (e) => {
                                                     e.preventDefault();
                                                     setShowImageModal(true);
                                                 }}>
@@ -112,8 +112,7 @@ export default function NetworkEditPage() {
                                                 <Col sm="10">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
-                                                        <Form.Control type="text" size="lg"
-                                                            placeholder={t('network_edit_name_placeholder')}
+                                                        <Form.Control type="text"                                                            placeholder={t('network_edit_name_placeholder')}
                                                             value={networkContext.network?.name}
                                                             onChange={(e) => {
                                                                 networkContext.setNetwork({
@@ -129,8 +128,7 @@ export default function NetworkEditPage() {
                                                 <Col sm="10">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faCode} fixedWidth /></InputGroup.Text>
-                                                        <Form.Control type="text" size="lg"
-                                                            placeholder={t('network_edit_slug_placeholder')}
+                                                        <Form.Control type="text"                                                            placeholder={t('network_edit_slug_placeholder')}
                                                             value={networkContext.network?.slug}
                                                             onChange={(e) => {
                                                                 networkContext.setNetwork({
@@ -146,8 +144,7 @@ export default function NetworkEditPage() {
                                                 <Col sm="10">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faEnvelope} fixedWidth /></InputGroup.Text>
-                                                        <Form.Control type="email" size="lg"
-                                                            placeholder={t('network_edit_email_placeholder')}
+                                                        <Form.Control type="email"                                                            placeholder={t('network_edit_email_placeholder')}
                                                             value={networkContext.network?.email}
                                                             onChange={(e) => {
                                                                 networkContext.setNetwork({
@@ -163,8 +160,7 @@ export default function NetworkEditPage() {
                                                 <Col sm="4">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faDollar} fixedWidth /></InputGroup.Text>
-                                                        <Form.Control type="number" size="lg"
-                                                            placeholder={t('network_edit_minimal_withdrawal_placeholder')}
+                                                        <Form.Control type="number"                                                            placeholder={t('network_edit_minimal_withdrawal_placeholder')}
                                                             value={networkContext.network?.withdrawalMin}
                                                             onChange={(e) => {
                                                                 networkContext.setNetwork({
@@ -178,8 +174,7 @@ export default function NetworkEditPage() {
                                                 <Col sm="4">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faCalendar} fixedWidth /></InputGroup.Text>
-                                                        <Form.Control type="number" size="lg"
-                                                            placeholder={t('network_edit_withdrawal_period_placeholder')}
+                                                        <Form.Control type="number"                                                            placeholder={t('network_edit_withdrawal_period_placeholder')}
                                                             value={networkContext.network?.withdrawalPeriod}
                                                             onChange={(e) => {
                                                                 networkContext.setNetwork({
@@ -195,8 +190,7 @@ export default function NetworkEditPage() {
                                                 <Col sm="4">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faPercent} fixedWidth /></InputGroup.Text>
-                                                        <Form.Control type="number" size="lg"
-                                                            placeholder={t('network_edit_commission_placeholder')}
+                                                        <Form.Control type="number"                                                            placeholder={t('network_edit_commission_placeholder')}
                                                             value={networkContext.network?.comission}
                                                             onChange={(e) => {
                                                                 networkContext.setNetwork({
@@ -208,10 +202,10 @@ export default function NetworkEditPage() {
                                                 </Col>
                                             </Form.Group>
                                             <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                                <Button variant="outline-secondary" size="lg" onClick={() => {
+                                                <Button variant="outline-secondary" onClick={() => {
                                                     navigate("/admin/dashboard"); // TODO: Consider if this route should be dynamic or translated if it's a label
                                                 }}><FontAwesomeIcon icon={faArrowLeft} fixedWidth /> {t('back_button')}</Button>
-                                                <Button variant="primary" size="lg" onClick={async (e) => {
+                                                <Button variant="primary" onClick={async (e) => {
                                                     let ret = await networkContext.update(networkContext.network);
                                                     if (ret.sucesso) {
                                                         //alert(userContext.user?.id);

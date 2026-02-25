@@ -99,7 +99,7 @@ export default function ProductEditPage() {
                     });
                 }}
             />
-            <Container>
+            <Container className="mt-4">
                 <Row>
                     <Col md={12}>
                         <h3>
@@ -124,7 +124,7 @@ export default function ProductEditPage() {
                                 </div>
                                 <div className="lc-block d-grid gap-3 d-md-block">
                                     {productContext.product?.productId > 0 &&
-                                        <Button variant="primary" className="me-md-2" size="lg" onClick={async (e) => {
+                                        <Button variant="primary" className="me-md-2" onClick={async (e) => {
                                             e.preventDefault();
                                             setShowImageModal(true);
                                         }}>
@@ -143,8 +143,7 @@ export default function ProductEditPage() {
                                         <Col sm="10">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg"
-                                                    placeholder={t('product_edit_name_placeholder')}
+                                                <Form.Control type="text"                                                    placeholder={t('product_edit_name_placeholder')}
                                                     value={productContext.product?.name}
                                                     onChange={(e) => {
                                                         productContext.setProduct({
@@ -161,8 +160,7 @@ export default function ProductEditPage() {
                                             <Col sm="10">
                                                 <InputGroup>
                                                     <InputGroup.Text><FontAwesomeIcon icon={faCode} fixedWidth /></InputGroup.Text>
-                                                    <Form.Control type="text" size="lg"
-                                                        placeholder={t('product_edit_slug_placeholder')}
+                                                    <Form.Control type="text"                                                        placeholder={t('product_edit_slug_placeholder')}
                                                         value={productContext.product?.slug}
                                                         onChange={(e) => {
                                                             productContext.setProduct({
@@ -176,11 +174,10 @@ export default function ProductEditPage() {
                                     }
                                     <Form.Group as={Row} className="mb-3">
                                         <Form.Label column sm="2">{t('product_edit_frequency_label')}:</Form.Label>
-                                        <Col sm="5">
+                                        <Col sm="4">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faCalendar} fixedWidth /></InputGroup.Text>
-                                                <Form.Select size="lg"
-                                                    value={productContext.product?.frequency}
+                                                <Form.Select                                                    value={productContext.product?.frequency}
                                                     onChange={(e) => {
                                                         //alert(e.target.value);
                                                         productContext.setProduct({
@@ -195,12 +192,11 @@ export default function ProductEditPage() {
                                                 </Form.Select>
                                             </InputGroup>
                                         </Col>
-                                        <Form.Label column sm="1">{t('product_edit_price_label')}:</Form.Label>
+                                        <Form.Label column sm="2">{t('product_edit_price_label')}:</Form.Label>
                                         <Col sm="4">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faDollar} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="number" size="lg"
-                                                    placeholder={t('product_edit_price_placeholder')}
+                                                <Form.Control type="number"                                                    placeholder={t('product_edit_price_placeholder')}
                                                     value={productContext.product?.price}
                                                     onChange={(e) => {
                                                         productContext.setProduct({
@@ -216,8 +212,7 @@ export default function ProductEditPage() {
                                         <Col sm="10">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faPercent} fixedWidth /></InputGroup.Text>
-                                                <Form.Select size="lg"
-                                                    value={productContext.product?.status}
+                                                <Form.Select                                                    value={productContext.product?.status}
                                                     onChange={(e) => {
                                                         productContext.setProduct({
                                                             ...productContext.product,
@@ -260,10 +255,10 @@ export default function ProductEditPage() {
                                         />
                                     </div>
                                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                        <Button variant="outline-secondary" size="lg" onClick={() => {
+                                        <Button variant="outline-secondary" onClick={() => {
                                             navigate("/admin/products"); // TODO: Consider if this route should be dynamic or translated if it's a label
                                         }}><FontAwesomeIcon icon={faArrowLeft} fixedWidth /> {t('back_button')}</Button>
-                                        <Button variant="primary" size="lg" onClick={async (e) => {
+                                        <Button variant="primary" onClick={async (e) => {
                                             if (insertMode) {
                                                 productContext.setProduct({
                                                     ...productContext.product,

@@ -71,7 +71,7 @@ export default function PasswordPage() {
                 messageText={messageText}
                 onClose={() => setShowMessage(false)}
             ></MessageToast>
-            <Container>
+            <Container className="mt-4">
                 <Row>
                     <Col md="6" className='offset-md-3'>
                         <Card>
@@ -88,7 +88,7 @@ export default function PasswordPage() {
                                         <Col sm="9">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="email" readOnly={true} disabled={true} size="lg" value={userContext.user?.email} />
+                                                <Form.Control type="email" readOnly={true} disabled={true} value={userContext.user?.email} />
                                             </InputGroup>
                                         </Col>
                                     </Form.Group>
@@ -98,7 +98,7 @@ export default function PasswordPage() {
                                             <Col sm="9">
                                                 <InputGroup>
                                                     <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
-                                                    <Form.Control type="password" size="lg" placeholder={t('password_page_old_password_placeholder')} value={oldPassword} onChange={(e) => {
+                                                    <Form.Control type="password" placeholder={t('password_page_old_password_placeholder')} value={oldPassword} onChange={(e) => {
                                                         setOldPassword(e.target.value);
                                                     }} />
                                                 </InputGroup>
@@ -110,7 +110,7 @@ export default function PasswordPage() {
                                         <Col sm="9">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="password" size="lg" placeholder={t('password_page_new_password_placeholder')} value={newPassword} onChange={(e) => {
+                                                <Form.Control type="password" placeholder={t('password_page_new_password_placeholder')} value={newPassword} onChange={(e) => {
                                                     setNewPassword(e.target.value);
                                                 }} />
                                             </InputGroup>
@@ -121,7 +121,7 @@ export default function PasswordPage() {
                                         <Col sm="9">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="password" size="lg" placeholder={t('password_page_confirm_new_password_placeholder')} value={confirmPassword} onChange={(e) => {
+                                                <Form.Control type="password" placeholder={t('password_page_confirm_new_password_placeholder')} value={confirmPassword} onChange={(e) => {
                                                     setConfirmPassword(e.target.value);
                                                 }} />
                                             </InputGroup>
@@ -134,7 +134,7 @@ export default function PasswordPage() {
                                     }
                                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                                         {userContext.user?.email ?
-                                            <Button variant="primary" disabled={userContext.loadingUpdate} size="lg" onClick={async (e) => {
+                                            <Button variant="primary" disabled={userContext.loadingUpdate} onClick={async (e) => {
                                                 e.preventDefault();
                                                 if (userContext.userHasPassword) {
                                                     if (!oldPassword) {
@@ -168,13 +168,13 @@ export default function PasswordPage() {
                                             </Button>
                                             :
                                             <>
-                                                <Button variant="primary" size="lg" onClick={(e) => {
+                                                <Button variant="primary" onClick={(e) => {
                                                     e.preventDefault();
                                                     navigate("/edit-account");
                                                 }}>
                                                     <FontAwesomeIcon icon={faUserEdit} fixedWidth /> {t('password_page_edit_account_button')}
                                                 </Button>
-                                                <Button variant="primary" size="lg" disabled={true}>
+                                                <Button variant="primary" disabled={true}>
                                                     <FontAwesomeIcon icon={faSave} fixedWidth /> {t('password_page_change_password_button')}
                                                 </Button>
                                             </>

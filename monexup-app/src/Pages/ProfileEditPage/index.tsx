@@ -89,7 +89,7 @@ export default function ProfileEditPage() {
                 messageText={messageText}
                 onClose={() => setShowMessage(false)}
             ></MessageToast>
-            <Container>
+            <Container className="mt-4">
             <Row>
                     <Col md="12">
                         <h3>
@@ -116,8 +116,7 @@ export default function ProfileEditPage() {
                                         <Col sm="10">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg"
-                                                    placeholder={t('yourProfileName')}
+                                                <Form.Control type="text"                                                    placeholder={t('yourProfileName')}
                                                     value={profileContext.profile?.name}
                                                     onChange={(e) => {
                                                         profileContext.setProfile({
@@ -133,7 +132,7 @@ export default function ProfileEditPage() {
                                         <Col sm="5">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faPercent} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="number" size="lg" // Changed type to number for consistency with parseFloat
+                                                <Form.Control type="number"
                                                     placeholder={t('commissionInPercents')}
                                                     value={profileContext.profile?.commission}
                                                     onChange={(e) => {
@@ -144,12 +143,11 @@ export default function ProfileEditPage() {
                                                     }} />
                                             </InputGroup>
                                         </Col>
-                                        <Form.Label column sm="1">{t('level')}:</Form.Label>
-                                        <Col sm="4">
+                                        <Form.Label column sm="2">{t('level')}:</Form.Label>
+                                        <Col sm="3">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faLevelUp} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="number" size="lg"
-                                                    placeholder={t('networkLevelNumber')}
+                                                <Form.Control type="number"                                                    placeholder={t('networkLevelNumber')}
                                                     value={profileContext.profile?.level}
                                                     onChange={(e) => {
                                                         profileContext.setProfile({
@@ -161,10 +159,10 @@ export default function ProfileEditPage() {
                                         </Col>
                                     </Form.Group>
                                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                        <Button variant="outline-secondary" size="lg" onClick={() => {
+                                        <Button variant="outline-secondary" onClick={() => {
                                             navigate("/admin/team-structure");
                                         }}><FontAwesomeIcon icon={faArrowLeft} fixedWidth /> {t('back')}</Button>
-                                        <Button variant="primary" size="lg" onClick={async (e) => {
+                                        <Button variant="primary" onClick={async (e) => {
                                             if (insertMode) {
                                                 //profileContext.profile.networkId = NetworkContext.
                                                 let ret = await profileContext.insert(profileContext.profile);

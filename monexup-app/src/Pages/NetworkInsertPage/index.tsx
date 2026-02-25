@@ -125,7 +125,7 @@ export default function NetworkInsertPage() {
                                                 <Col sm="9">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
-                                                        <Form.Control type="email" size="lg" placeholder={t('login_email_placeholder')} value={email} onChange={(e) => {
+                                                        <Form.Control type="email" placeholder={t('login_email_placeholder')} value={email} onChange={(e) => {
                                                             setEmail(e.target.value);
                                                         }} />
                                                     </InputGroup>
@@ -136,7 +136,7 @@ export default function NetworkInsertPage() {
                                                 <Col sm="9">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
-                                                        <Form.Control type="password" size="lg" placeholder={t('login_password_placeholder')} value={password} onChange={(e) => {
+                                                        <Form.Control type="password" placeholder={t('login_password_placeholder')} value={password} onChange={(e) => {
                                                             setPassword(e.target.value);
                                                         }} />
                                                     </InputGroup>
@@ -148,10 +148,10 @@ export default function NetworkInsertPage() {
                                                 </Col>
                                             </Form.Group>
                                             <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                                <Button variant="outline-secondary" size="lg" onClick={() => {
+                                                <Button variant="outline-secondary" onClick={() => {
                                                     navigate("/recovery-password");
                                                 }}><FontAwesomeIcon icon={faEnvelope} fixedWidth /> {t('login_recovery_password_button')}</Button>
-                                                <Button variant="primary" size="lg" disabled={authContext.loading} onClick={async (e) => {
+                                                <Button variant="primary" disabled={authContext.loading} onClick={async (e) => {
                                                     e.preventDefault();
                                                     if (!email) {
                                                         throwError(t('login_error_email_empty'));
@@ -252,7 +252,7 @@ export default function NetworkInsertPage() {
                                                 </Col>
                                             </Form.Group>
                                             <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                                <Button variant="primary" size="lg" onClick={async (e) => {
+                                                <Button variant="primary" onClick={async (e) => {
                                                     if (!userContext.user?.name) {
                                                         throwError(t('error_name_empty'));
                                                         return;
@@ -342,10 +342,10 @@ export default function NetworkInsertPage() {
                                             </Col>
                                         </Form.Group>
                                         <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                            <Button variant="outline-secondary" size="lg" onClick={() => {
+                                            <Button variant="outline-secondary" onClick={() => {
                                                 setStep(2);
                                             }}><FontAwesomeIcon icon={faArrowLeft} fixedWidth /> {t('back_button')}</Button>
-                                            <Button variant="primary" size="lg" onClick={async (e) => {
+                                            <Button variant="primary" onClick={async (e) => {
                                                 let networkInsert: NetworkInsertInfo;
                                                 let ret = await networkContext.insert({
                                                     ...networkInsert,
@@ -392,7 +392,7 @@ export default function NetworkInsertPage() {
                                     <p>{t('network_insert_success_message_1')}</p>
                                     <p>{t('network_insert_success_message_2')}</p>
                                     <p className="text-center">{t('network_insert_success_lets_start')}</p>
-                                    <Button variant="primary" size="lg" onClick={(e) => {
+                                    <Button variant="primary" onClick={(e) => {
                                         e.preventDefault();
                                         navigate("/admin/dashboard");
                                     }}>{t('network_insert_access_my_network_button')} <FontAwesomeIcon icon={faArrowRight} fixedWidth /></Button>

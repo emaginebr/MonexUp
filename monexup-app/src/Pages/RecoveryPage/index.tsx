@@ -17,7 +17,7 @@ export default function RecoveryPage() {
     const authContext = useContext(AuthContext);
 
     return (
-        <Container>
+        <Container className="mt-4">
             <Row>
                 <Col md="6" className='offset-md-3'>
                     <Card>
@@ -34,14 +34,14 @@ export default function RecoveryPage() {
                                     <Col sm="10">
                                         <InputGroup>
                                             <InputGroup.Text><FontAwesomeIcon icon={faEnvelope} fixedWidth /></InputGroup.Text>
-                                            <Form.Control type="email" placeholder="Your email" size="lg" onChange={(e) => {
+                                            <Form.Control type="email" placeholder="Your email" onChange={(e) => {
                                                 //_setName(e.target.value);
                                             }} />
                                         </InputGroup>
                                     </Col>
                                 </Form.Group>
                                 <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <Button variant="primary" size="lg"><FontAwesomeIcon icon={faEnvelope} fixedWidth /> Send recovery password email</Button>
+                                    <Button variant="primary"><FontAwesomeIcon icon={faEnvelope} fixedWidth /> Send recovery password email</Button>
                                 </div>
                             </Form>
                         </Card.Body>

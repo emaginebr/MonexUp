@@ -89,7 +89,7 @@ export default function UserPage() {
                     });
                 }}
             />
-            <Container>
+            <Container className="mt-4">
                 <Card>
                     <Card.Body>
                         <Row>
@@ -104,7 +104,7 @@ export default function UserPage() {
                                 </div>
                                 <div className="lc-block d-grid gap-3 d-md-block">
                                     {userContext.user?.userId > 0 &&
-                                        <Button variant="primary" className="me-md-2" size="lg" onClick={async (e) => {
+                                        <Button variant="primary" className="me-md-2" onClick={async (e) => {
                                             e.preventDefault();
                                             setShowImageModal(true);
                                         }}>
@@ -124,7 +124,7 @@ export default function UserPage() {
                                             <Col sm="10">
                                                 <InputGroup>
                                                     <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
-                                                    <Form.Control type="text" size="lg" className="readonly"
+                                                    <Form.Control type="text" className="readonly"
                                                         disabled={true} readOnly={true}
                                                         value={userContext.user?.hash}
                                                     />
@@ -137,8 +137,7 @@ export default function UserPage() {
                                         <Col sm="10">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg"
-                                                    placeholder={t("userPage.namePlaceholder")}
+                                                <Form.Control type="text"                                                    placeholder={t("userPage.namePlaceholder")}
                                                     value={userContext.user?.name}
                                                     onChange={(e) => {
                                                         userContext.setUser({
@@ -154,8 +153,7 @@ export default function UserPage() {
                                         <Col sm="10">
                                             <InputGroup>
                                                 <InputGroup.Text><FontAwesomeIcon icon={faEnvelope} fixedWidth /></InputGroup.Text>
-                                                <Form.Control type="text" size="lg"
-                                                    placeholder={t("userPage.emailPlaceholder")}
+                                                <Form.Control type="text"                                                    placeholder={t("userPage.emailPlaceholder")}
                                                     value={userContext.user?.email}
                                                     onChange={(e) => {
                                                         userContext.setUser({
@@ -173,8 +171,7 @@ export default function UserPage() {
                                                 <Col sm="10">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
-                                                        <Form.Control type="password" size="lg"
-                                                            placeholder={t("userPage.passwordPlaceholder")}
+                                                        <Form.Control type="password"                                                            placeholder={t("userPage.passwordPlaceholder")}
                                                             value={userContext.user?.password}
                                                             onChange={(e) => {
                                                                 userContext.setUser({
@@ -190,8 +187,7 @@ export default function UserPage() {
                                                 <Col sm="10">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
-                                                        <Form.Control type="password" size="lg"
-                                                            placeholder={t("userPage.confirmPasswordPlaceholder")}
+                                                        <Form.Control type="password"                                                            placeholder={t("userPage.confirmPasswordPlaceholder")}
                                                             value={confirmPassword}
                                                             onChange={(e) => {
                                                                 setConfirmPassword(e.target.value);
@@ -207,7 +203,7 @@ export default function UserPage() {
                                             <Col sm="4">
                                                 <InputGroup>
                                                     <InputGroup.Text><FontAwesomeIcon icon={faCalendarAlt} fixedWidth /></InputGroup.Text>
-                                                    <Form.Control type="text" size="lg" disabled={true} readOnly={true}
+                                                    <Form.Control type="text" disabled={true} readOnly={true}
                                                         value={userContext.user?.createAt ? Moment(userContext.user?.createAt).format("DD/MM/YYYY") : ""} />
                                                 </InputGroup>
                                             </Col>
@@ -215,17 +211,17 @@ export default function UserPage() {
                                             <Col sm="4">
                                                 <InputGroup>
                                                     <InputGroup.Text><FontAwesomeIcon icon={faCalendarAlt} fixedWidth /></InputGroup.Text>
-                                                    <Form.Control type="text" size="lg" disabled={true} readOnly={true}
+                                                    <Form.Control type="text" disabled={true} readOnly={true}
                                                         value={userContext.user?.updateAt ? Moment(userContext.user?.updateAt).format("DD/MM/YYYY") : ""} />
                                                 </InputGroup>
                                             </Col>
                                         </Form.Group>
                                     }
                                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                        {/* <Button variant="danger" size="lg" onClick={() => {
+                                        {/* <Button variant="danger" onClick={() => {
                                             navigate("/account/login");
                                         }}><FontAwesomeIcon icon={faSignInAlt} fixedWidth /> {t("userPage.signIn")}</Button> */}
-                                        <Button variant="primary" size="lg" onClick={async (e) => {
+                                        <Button variant="primary" onClick={async (e) => {
                                             if (insertMode) {
                                                 if (userContext.user?.password != confirmPassword) {
                                                     throwError(t("userPage.errors.passwordsNotEqual"));
