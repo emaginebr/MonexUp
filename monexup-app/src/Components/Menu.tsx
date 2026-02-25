@@ -77,16 +77,14 @@ export default function Menu() {
   const invoiceContext = useContext(InvoiceContext);
 
   useEffect(() => {
-    authContext.loadUserSession().then((authRet) => {
-      if (authRet.sucesso) {
-        networkContext.listByUser().then((ret) => {
-          if (!ret.sucesso) {
-            throwError(ret.mensagemErro);
-          }
-        });
-      }
-    });
-  }, []);
+    if (!authContext.loading && authContext.sessionInfo) {
+      networkContext.listByUser().then((ret) => {
+        if (!ret.sucesso) {
+          throwError(ret.mensagemErro);
+        }
+      });
+    }
+  }, [authContext.loading]);
   return (
     <>
       <MessageToast
@@ -280,7 +278,7 @@ export default function Menu() {
                       <FontAwesomeIcon icon={faImage} fixedWidth /> {t('change_picture')}
                     </NavDropdown.Item>
                     <NavDropdown.Item onClick={async () => {
-                      navigate("/account/edit-account");
+                      navigate("/admin/edit-account");
                     }}><FontAwesomeIcon icon={faPencil} fixedWidth /> {t('edit_account')}</NavDropdown.Item>
                     <NavDropdown.Item onClick={async () => {
                       navigate("/account/change-password");

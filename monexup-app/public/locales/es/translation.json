@@ -382,7 +382,9 @@
     "signIn": "Iniciar Sesión",
     "errors": {
       "passwordsNotEqual": "La contraseña y la confirmación son diferentes"
-    }
+    },
+    "registrationSuccess": "Cuenta creada con éxito",
+    "updateSuccess": "Usuario actualizado con éxito"
   },
   "userSearchPage": {
     "breadcrumbs": {
@@ -426,5 +428,12 @@
       "userApproved": "Usuario aprobado",
       "userReproved": "Usuario reprobado"
     }
-  }
+  },
+  "recovery_page_title": "Recuperar Contraseña",
+  "recovery_email_sent": "Correo de recuperación enviado. Revisa tu bandeja de entrada.",
+  "back_to_login": "Volver al Inicio de Sesión",
+  "password_page_change_success": "Contraseña cambiada con éxito",
+  "register_already_have_account": "¿Ya tienes una cuenta?",
+  "reset_password_title": "Restablecer Contraseña",
+  "reset_password_success": "Contraseña restablecida con éxito"
 }

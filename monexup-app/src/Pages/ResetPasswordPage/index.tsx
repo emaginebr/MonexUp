@@ -1,18 +1,21 @@
 import { useState } from "react";
-import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
+import Col from "react-bootstrap/esm/Col";
 import Card from 'react-bootstrap/Card';
-import { useNavigate } from "react-router-dom";
-import { ForgotPasswordForm } from 'nauth-react';
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { ResetPasswordForm } from 'nauth-react';
 import MessageToast from "../../Components/MessageToast";
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 import { useTranslation } from "react-i18next";
 
-export default function RecoveryPage() {
+export default function ResetPasswordPage() {
 
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const [queryParams] = useSearchParams();
+
+    const recoveryHash = queryParams.get("hash") || "";
 
     const [dialog, setDialog] = useState<MessageToastEnum>(MessageToastEnum.Error);
     const [showMessage, setShowMessage] = useState<boolean>(false);
@@ -20,8 +23,9 @@ export default function RecoveryPage() {
 
     const handleSuccess = () => {
         setDialog(MessageToastEnum.Success);
-        setMessageText(t('recovery_email_sent') || "Recovery email sent. Check your inbox.");
+        setMessageText(t("reset_password_success") || "Password reset successfully");
         setShowMessage(true);
+        setTimeout(() => navigate("/account/login"), 2000);
     };
 
     const handleError = (error: Error) => {
@@ -44,11 +48,12 @@ export default function RecoveryPage() {
                         <Card>
                             <Card.Header>
                                 <h3 className="text-center">
-                                    {t('recovery_page_title') || 'Recovery Password'}
+                                    {t('reset_password_title') || 'Reset Password'}
                                 </h3>
                             </Card.Header>
                             <Card.Body>
-                                <ForgotPasswordForm
+                                <ResetPasswordForm
+                                    recoveryHash={recoveryHash}
                                     onSuccess={handleSuccess}
                                     onError={handleError}
                                 />

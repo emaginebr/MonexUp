@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartLine, faCog, faUserCog, faUserGroup, faList, faDollar, faBox } from '@fortawesome/free-solid-svg-icons';
+import { faChartLine, faCog, faUser, faUserCog, faUserGroup, faList, faDollar, faBox } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from 'react-i18next';
 import NetworkContext from '../Contexts/Network/NetworkContext';
 import { UserRoleEnum } from '../DTO/Enum/UserRoleEnum';
@@ -40,6 +40,13 @@ export default function AdminSidebar({ show, onClose }: AdminSidebarProps) {
         >
           <FontAwesomeIcon icon={faChartLine} fixedWidth />
           <span>Dashboard</span>
+        </div>
+        <div
+          className={`mnx-sidebar-link ${isActive('/admin/edit-account') ? 'active' : ''}`}
+          onClick={() => handleNav('/admin/edit-account')}
+        >
+          <FontAwesomeIcon icon={faUser} fixedWidth />
+          <span>{t('edit_account')}</span>
         </div>
 
         {networkContext.currentRole >= UserRoleEnum.NetworkManager && (

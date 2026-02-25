@@ -382,7 +382,9 @@
     "signIn": "Sign In",
     "errors": {
       "passwordsNotEqual": "Password and confirmation are different"
-    }
+    },
+    "registrationSuccess": "Account created successfully",
+    "updateSuccess": "User updated successfully"
   },
   "userSearchPage": {
     "breadcrumbs": {
@@ -426,5 +428,12 @@
       "userApproved": "User approved",
       "userReproved": "User reproved"
     }
-  }
+  },
+  "recovery_page_title": "Recovery Password",
+  "recovery_email_sent": "Recovery email sent. Check your inbox.",
+  "back_to_login": "Back to Login",
+  "password_page_change_success": "Password changed successfully",
+  "register_already_have_account": "Already have an account?",
+  "reset_password_title": "Reset Password",
+  "reset_password_success": "Password reset successfully"
 }

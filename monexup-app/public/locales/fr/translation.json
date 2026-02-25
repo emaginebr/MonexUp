@@ -382,7 +382,9 @@
     "signIn": "Se Connecter",
     "errors": {
       "passwordsNotEqual": "Le mot de passe et la confirmation sont différents"
-    }
+    },
+    "registrationSuccess": "Compte créé avec succès",
+    "updateSuccess": "Utilisateur mis à jour avec succès"
   },
   "userSearchPage": {
     "breadcrumbs": {
@@ -426,5 +428,12 @@
       "userApproved": "Utilisateur approuvé",
       "userReproved": "Utilisateur rejeté"
     }
-  }
+  },
+  "recovery_page_title": "Récupération du Mot de Passe",
+  "recovery_email_sent": "E-mail de récupération envoyé. Vérifiez votre boîte de réception.",
+  "back_to_login": "Retour à la Connexion",
+  "password_page_change_success": "Mot de passe modifié avec succès",
+  "register_already_have_account": "Vous avez déjà un compte ?",
+  "reset_password_title": "Réinitialiser le Mot de Passe",
+  "reset_password_success": "Mot de passe réinitialisé avec succès"
 }

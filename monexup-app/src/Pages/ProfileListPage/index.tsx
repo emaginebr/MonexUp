@@ -4,18 +4,14 @@ import { useTranslation } from "react-i18next";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faDollar, faEdit, faPlus, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Table from "react-bootstrap/esm/Table";
 import { Link, useNavigate } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
-import Dropdown from 'react-bootstrap/Dropdown';
 import ProfileContext from "../../Contexts/Profile/ProfileContext";
 import NetworkContext from "../../Contexts/Network/NetworkContext";
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 import MessageToast from "../../Components/MessageToast";
-import ProductContext from "../../Contexts/Product/ProductContext";
 
 export default function ProfileListPage() {
 
@@ -94,25 +90,10 @@ export default function ProfileListPage() {
                         </h3>
                     </Col>
                     <Col md="4" className="text-end">
-                        {/*
-                        <InputGroup className="pull-right">
-                            <Dropdown>
-                                <Dropdown.Toggle variant="danger" id="dropdown-basic">
-                                    Filter by: All Status
-                                </Dropdown.Toggle>
-
-                                <Dropdown.Menu>
-                                    <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                                    <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                                    <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-                                </Dropdown.Menu>
-                            </Dropdown>
-                            <Button variant="primary" onClick={(e) => {
-                                e.preventDefault();
-                                navigate("/admin/team-structure/new");
-                            }}><FontAwesomeIcon icon={faPlus} fixedWidth /> New</Button>
-                        </InputGroup>
-                        */}
+                        <Button variant="primary" onClick={(e) => {
+                            e.preventDefault();
+                            navigate("/admin/team-structure/new");
+                        }}><FontAwesomeIcon icon={faPlus} fixedWidth /> {t("new")}</Button>
                     </Col>
                 </Row>
                 <Row className="py-4">

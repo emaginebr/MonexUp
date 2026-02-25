@@ -1,0 +1,14 @@
+// ============================================================
+// NAuth-React Style Overrides
+// Maps nauth-react Tailwind CSS variables to MonexUp brand
+// ============================================================
+
+:root {
+  // Brand color mapping (MonexUp orange)
+  --primary: 24.6 95.2% 53.1%;          // #f97316
+  --primary-foreground: 0 0% 100%;       // white on primary
+  --ring: 24.6 95.2% 53.1%;             // focus ring = orange
+
+  // Border radius compatible with Bootstrap
+  --radius: 0.375rem;
+}

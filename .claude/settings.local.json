@@ -49,7 +49,9 @@
       "Bash(\"/c/Program Files/Docker/Docker/resources/bin/docker.exe\" ps)",
       "Bash(\"/mnt/c/Program Files/Docker/Docker/resources/bin/docker.exe\" ps)",
       "Bash(ConnectionStrings__NAuthContext=\"Host=localhost;Port=5432;Database=nauth_db;Username=monexup_user;Password=x\" dotnet ef migrations script:*)",
-      "mcp__Claude_Preview__preview_start"
+      "mcp__Claude_Preview__preview_start",
+      "Skill(readme-generator)",
+      "Skill(readme-generator:*)"
     ]
   }
 }

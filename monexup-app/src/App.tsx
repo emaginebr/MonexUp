@@ -1,11 +1,14 @@
 import { Routes, Route, Outlet } from "react-router-dom";
 import { NAuthProvider } from 'nauth-react';
 import 'nauth-react/styles';
+import './styles/nauth-overrides.scss';
 import Menu from "./Components/Menu";
 import AdminLayout from "./Components/AdminLayout";
 import ContextBuilder from './Contexts/Utils/ContextBuilder';
 import AuthProvider from './Contexts/Auth/AuthProvider';
-import UserPage from './Pages/UserPage';
+import EditAccountPage from './Pages/EditAccountPage';
+import NewAccountPage from './Pages/NewAccountPage';
+import ResetPasswordPage from './Pages/ResetPasswordPage';
 import PasswordPage from './Pages/PasswordPage';
 import LoginPage from './Pages/LoginPage';
 import RecoveryPage from './Pages/RecoveryPage';
@@ -106,10 +109,11 @@ function App() {
           <Route path="account">
             <Route index element={<LoginPage />} />
             <Route path="login" element={<LoginPage />} />
-            <Route path="edit-account" element={<UserPage />} />
-            <Route path="new-account" element={<UserPage />} />
+            <Route path="edit-account" element={<EditAccountPage />} />
+            <Route path="new-account" element={<NewAccountPage />} />
             <Route path="recovery-password" element={<RecoveryPage />} />
             <Route path="change-password" element={<PasswordPage />} />
+            <Route path="reset-password" element={<ResetPasswordPage />} />
           </Route>
         </Route>
         <Route path="admin" element={<LayoutAdmin />}>
@@ -135,6 +139,7 @@ function App() {
             <Route path="new" element={<ProfileEditPage />} />
             <Route path=":profileId" element={<ProfileEditPage />} />
           </Route>
+          <Route path="edit-account" element={<EditAccountPage />} />
         </Route>
         <Route path="@" element={<LayoutUser />}>
           <Route path=":sellerSlug">
@@ -142,10 +147,11 @@ function App() {
             <Route path="account">
               <Route index element={<LoginPage />} />
               <Route path="login" element={<LoginPage />} />
-              <Route path="edit-account" element={<UserPage />} />
-              <Route path="new-account" element={<UserPage />} />
+              <Route path="edit-account" element={<EditAccountPage />} />
+              <Route path="new-account" element={<NewAccountPage />} />
               <Route path="recovery-password" element={<RecoveryPage />} />
               <Route path="change-password" element={<PasswordPage />} />
+              <Route path="reset-password" element={<ResetPasswordPage />} />
             </Route>
             <Route path=":productSlug" element={<ProductPage />} />
           </Route>
@@ -158,10 +164,11 @@ function App() {
           <Route path="account">
             <Route index element={<LoginPage />} />
             <Route path="login" element={<LoginPage />} />
-            <Route path="edit-account" element={<UserPage />} />
-            <Route path="new-account" element={<UserPage />} />
+            <Route path="edit-account" element={<EditAccountPage />} />
+            <Route path="new-account" element={<NewAccountPage />} />
             <Route path="recovery-password" element={<RecoveryPage />} />
             <Route path="change-password" element={<PasswordPage />} />
+            <Route path="reset-password" element={<ResetPasswordPage />} />
           </Route>
           <Route path=":productSlug" element={<ProductPage />} />
           <Route path="@">
