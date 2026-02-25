@@ -15,7 +15,7 @@ export default function Footer() {
     const authContext = useContext(AuthContext);
 
     return (
-        <footer className="bg-dark text-light">
+        <footer className="bg-dark text-light mnx-footer">
             <Container className="py-5">
                 <Row>
                     <Col md={3}>

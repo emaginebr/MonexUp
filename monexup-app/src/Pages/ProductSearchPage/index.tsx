@@ -128,7 +128,7 @@ export default function ProductSearchPage() {
                             </nav>
                         </h3>
                     </Col>
-                    <Col md="6" style={{ textAlign: "right" }}>
+                    <Col md="6" className="text-end">
                         <InputGroup className="pull-right">
                             <Form.Control
                                 placeholder={t('product_search_placeholder_keyword')}
@@ -148,7 +148,7 @@ export default function ProductSearchPage() {
                                 </Dropdown.Menu>
                             </Dropdown>
                             */}
-                            <Button variant="success" onClick={() => {
+                            <Button variant="primary" onClick={() => {
                                 productContext.setProduct(null);
                                 navigate("/admin/products/new");
                             }}><FontAwesomeIcon icon={faPlus} fixedWidth />&nbsp;{t('product_search_button_new_product')}</Button>
@@ -157,12 +157,13 @@ export default function ProductSearchPage() {
                 </Row>
                 <Row className="py-4">
                     <Col md="12">
-                        <Table striped bordered hover>
+                        <div className="table-responsive">
+                        <Table striped hover>
                             <thead>
                                 <tr>
                                     <th>{t('table_header_product')}</th>
                                     <th>{t('table_header_frequency')}</th>
-                                    <th style={{ textAlign: "right" }}>{t('table_header_price')}</th>
+                                    <th className="text-end">{t('table_header_price')}</th>
                                     <th>{t('table_header_status')}</th>
                                     {networkContext.currentRole >= UserRoleEnum.NetworkManager &&
                                         <th>{t('table_header_actions')}</th>
@@ -193,7 +194,7 @@ export default function ProductSearchPage() {
                                                 }
                                             </td>
                                             <td>{showFrequency(product.frequency)}</td>
-                                            <td style={{ textAlign: "right" }}>R$ {product.price}</td>
+                                            <td className="text-end">R$ {product.price}</td>
                                             <td>{showStatus(product.status)}</td>
                                             {networkContext.currentRole >= UserRoleEnum.NetworkManager &&
                                             <td>
@@ -210,6 +211,7 @@ export default function ProductSearchPage() {
                                 })}
                             </tbody>
                         </Table>
+                        </div>
                     </Col>
                 </Row>
                 {!productContext.loadingSearch && productContext.searchResult &&

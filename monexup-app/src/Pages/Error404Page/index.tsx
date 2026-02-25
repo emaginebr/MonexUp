@@ -12,17 +12,13 @@ export default function Error404Page() {
 
     return (
 
-        <div className="page-wrap d-flex flex-row align-items-center py-5">
+        <div className="d-flex flex-row align-items-center justify-content-center" style={{ minHeight: 'calc(100vh - var(--mnx-navbar-height))' }}>
             <Container>
                 <Row className="justify-content-center">
                     <Col md={6} className="text-center">
-                        <Card>
-                            <CardBody>
-                                <span className="display-1 d-block">404</span>
-                                <div className="mb-4 lead">{t('error404_message')}</div>
-                                <Link to="/" className="btn btn-link">{t('error404_back_to_home')}</Link>
-                            </CardBody>
-                        </Card>
+                        <span className="display-1 d-block fw-bold text-graphite">404</span>
+                        <div className="mb-4 lead" style={{ color: 'var(--mnx-text-secondary)' }}>{t('error404_message')}</div>
+                        <Link to="/" className="btn btn-primary">{t('error404_back_to_home')}</Link>
                     </Col>
                 </Row>
             </Container>

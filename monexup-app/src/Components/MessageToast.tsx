@@ -68,9 +68,9 @@ export default function MessageToast(param: IMessageToastParam) {
           {param.messageText}
           {param.dialog == MessageToastEnum.Confirmation &&
             <div className="mt-2 pt-2 border-top">
-              <Button variant="success" size="sm" onClick={param.onYes}>Yes</Button>
+              <Button variant="primary" size="sm" onClick={param.onYes}>Yes</Button>
               &nbsp;
-              <Button variant="danger" size="sm" onClick={param.onNo}>No</Button>
+              <Button variant="outline-secondary" size="sm" onClick={param.onNo}>No</Button>
             </div>
           }
         </Toast.Body>

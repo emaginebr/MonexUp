@@ -20,7 +20,8 @@ export default function StatementPart(param: IStatementParam) {
 
     return (
         <>
-            <Table striped bordered hover>
+            <div className="table-responsive">
+            <Table striped hover>
                 <thead>
                     <tr>
                         <th>-</th>
@@ -29,7 +30,7 @@ export default function StatementPart(param: IStatementParam) {
                         <th>{t('statement_product')}</th>
                         <th>{t('statement_buyer')}</th>
                         <th>{t('statement_seller')}</th>
-                        <th style={{ textAlign: "right" }}>{t('statement_amount')}</th>
+                        <th className="text-end">{t('statement_amount')}</th>
                         <th>{t('statement_paid_at')}</th>
                     </tr>
                 </thead>
@@ -54,7 +55,7 @@ export default function StatementPart(param: IStatementParam) {
                                 <td>{statement.description}</td>
                                 <td>{statement.buyerName}</td>
                                 <td>{statement.sellerName}</td>
-                                <td style={{ textAlign: "right" }}>R$ {statement.amount}</td>
+                                <td className="text-end">R$ {statement.amount}</td>
                                 <td>{statement.paidAt}</td>
                             </tr>
                         );
@@ -68,6 +69,7 @@ export default function StatementPart(param: IStatementParam) {
                     }
                 </tbody>
             </Table>
+            </div>
             {!param.loading && param.StatementResult &&
                 <Row>
                     <Col md={12} className="text-center">

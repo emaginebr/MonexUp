@@ -6,9 +6,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import AuthContext from '../Contexts/Auth/AuthContext';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import Alert from 'react-bootstrap/Alert';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faWarning } from '@fortawesome/free-solid-svg-icons/faWarning'
 import { faBitcoinSign, faBoltLightning, faBox, faBrazilianRealSign, faBuilding, faCancel, faCheck, faCheckCircle, faCircle, faCircleUser, faClose, faCog, faCoins, faDollar, faEthernet, faFileWord, faHome, faLock, faPencil, faSearch, faSignInAlt, faUser, faUserAlt, faUserCircle, faUserCog, faUserFriends, faUserGear, faUserGraduate, faUserGroup, faUserMd } from '@fortawesome/free-solid-svg-icons';
 import MessageToast from './MessageToast';
 import { MessageToastEnum } from '../DTO/Enum/MessageToastEnum';
@@ -22,8 +20,6 @@ import TemplateContext from '../Contexts/Template/TemplateContext';
 
 
 export default function MenuNetwork() {
-
-  const [showAlert, setShowAlert] = useState<boolean>(true);
 
   const [showMessage, setShowMessage] = useState<boolean>(false);
   const [messageText, setMessageText] = useState<string>("");
@@ -64,7 +60,7 @@ export default function MenuNetwork() {
         messageText={messageText}
         onClose={() => setShowMessage(false)}
       ></MessageToast>
-      <Navbar expand="lg" className="navbar-dark bg-dark">
+      <Navbar expand="lg" className="navbar-dark mnx-navbar">
         <Container>
           <Link className='navbar-brand' to={"/" + networkSlug}>
             {networkContext.loading ? <Skeleton width={140} /> : networkContext.network?.name}
@@ -139,7 +135,7 @@ export default function MenuNetwork() {
                   :
                   <>
                     <Nav.Item>
-                      <Button variant="danger" onClick={async () => { // Apply t() to button text
+                      <Button variant="primary" onClick={async () => {
                         navigate("/" + networkSlug + "/account/login");
                       }}>
                         <FontAwesomeIcon icon={faSignInAlt} fixedWidth /> {t('sign_in')}
@@ -151,13 +147,6 @@ export default function MenuNetwork() {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      {showAlert &&
-        <Container className="mt-3">
-          <Alert key="danger" variant="danger" onClose={() => setShowAlert(false)} dismissible>
-            <FontAwesomeIcon icon={faWarning} /> {t('trial_version_warning')}
-          </Alert>
-        </Container>
-      }
     </>
   );
 }

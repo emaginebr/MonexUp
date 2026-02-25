@@ -6,9 +6,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../Contexts/Auth/AuthContext';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import Alert from 'react-bootstrap/Alert';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faWarning } from '@fortawesome/free-solid-svg-icons/faWarning'
 import { faBitcoinSign, faBoltLightning, faBox, faBrazilianRealSign, faBuilding, faCancel, faCheck, faCheckCircle, faCircle, faCircleUser, faClose, faCog, faCoins, faDollar, faEthernet, faFileWord, faHome, faImage, faLock, faPencil, faPhoneAlt, faPhotoVideo, faSearch, faSignInAlt, faUser, faUserAlt, faUserCircle, faUserCog, faUserFriends, faUserGear, faUserGraduate, faUserGroup, faUserMd } from '@fortawesome/free-solid-svg-icons';
 import MessageToast from './MessageToast';
 import { MessageToastEnum } from '../DTO/Enum/MessageToastEnum';
@@ -23,7 +21,6 @@ import { MenuLanguage } from './Functions';
 
 export default function Menu() {
 
-  const [showAlert, setShowAlert] = useState<boolean>(true);
   const [showImageModal, setShowImageModal] = useState<boolean>(false);
 
   const [showMessage, setShowMessage] = useState<boolean>(false);
@@ -103,9 +100,11 @@ export default function Menu() {
         show={showImageModal}
         onClose={() => setShowImageModal(false)}
       />
-      <Navbar expand="lg" className="navbar-dark bg-dark mb-3 border-bottom">
+      <Navbar expand="lg" className="navbar-dark mnx-navbar">
         <Container>
-          <Link className='navbar-brand' to="/">{process.env.REACT_APP_PROJECT_NAME}</Link>
+          <Link className='navbar-brand' to="/">
+            <img src={process.env.PUBLIC_URL + '/logo.png'} alt="MonexUp" style={{ height: '32px' }} />
+          </Link>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto"> {/* Apply t() to link texts */}
@@ -298,9 +297,9 @@ export default function Menu() {
                   :
                   <>
                     <Nav.Item>
-                      <Button variant="danger" onClick={async () => {
+                      <Button variant="primary" onClick={async () => {
                         navigate("/account/login");
-                      }}> {/* Use t() for button text */}
+                      }}>
                         <FontAwesomeIcon icon={faSignInAlt} fixedWidth /> {t('sign_in')}
                       </Button>
                     </Nav.Item>
@@ -310,13 +309,6 @@ export default function Menu() {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      {showAlert &&
-        <Container>
-          <Alert key="danger" variant="danger" onClose={() => setShowAlert(false)} dismissible>
-            <FontAwesomeIcon icon={faWarning} /> {t('trial_version_warning')}
-          </Alert>
-        </Container>
-      }
     </>
   );
 }

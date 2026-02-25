@@ -108,7 +108,7 @@ const MenuLanguage = () => {
                     style={{ width: "21px", height: "21px" }} 
                 />
             </>
-        } id="basic-nav-dropdown">
+        } id="language-nav-dropdown" align="end">
             {supportedLanguages.map(lang => (
                 <NavDropdown.Item key={lang.code} onClick={() => changeLanguage(lang.code)}>
                     <img 

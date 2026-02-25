@@ -7,7 +7,7 @@ import AuthContext from "../../Contexts/Auth/AuthContext";
 import Button from "react-bootstrap/esm/Button";
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faArrowRight, faCancel, faEnvelope, faLock, faPercent, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faArrowRight, faCancel, faCheck, faCreditCard, faEnvelope, faGlobe, faLock, faPercent, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from "react-router-dom";
 import InputGroup from 'react-bootstrap/InputGroup';
 import UserContext from "../../Contexts/User/UserContext";
@@ -87,16 +87,27 @@ export default function NetworkInsertPage() {
                 onClose={() => setShowMessage(false)}
             ></MessageToast>
             <Container>
-                <Row>
-                    <Col md={12} className="text-center">
-                        <ul id="progressbar" className="text-center align-items-center">
-                            <li className="active" id="step1"><div className="d-none d-md-block">{t('network_insert_step_register_user')}</div></li>
-                            <li className={step > 1 ? "active" : ""} id="step2"><div className="d-none d-md-block">{t('network_insert_step_register_network')}</div></li>
-                            <li className={step > 2 ? "active" : ""} id="step3"><div className="d-none d-md-block">{t('network_insert_step_payment')}</div></li>
-                            <li className={step > 3 ? "active" : ""} id="step4"><div className="d-none d-md-block">{t('network_insert_step_done')}</div></li>
-                        </ul>
-                    </Col>
-                </Row>
+                <div className="mnx-wizard">
+                    {[
+                        { key: 1, icon: faUser,       label: t('network_insert_step_register_user') },
+                        { key: 2, icon: faGlobe,      label: t('network_insert_step_register_network') },
+                        { key: 3, icon: faCreditCard, label: t('network_insert_step_payment') },
+                        { key: 4, icon: faCheck,      label: t('network_insert_step_done') },
+                    ].map((s) => (
+                        <div
+                            key={s.key}
+                            className={`mnx-wizard-step${step === s.key ? ' active' : ''}${step > s.key ? ' completed' : ''}`}
+                        >
+                            <div className="mnx-wizard-step-circle">
+                                {step > s.key
+                                    ? <FontAwesomeIcon icon={faCheck} />
+                                    : <FontAwesomeIcon icon={s.icon} />
+                                }
+                            </div>
+                            <div className="mnx-wizard-step-label">{s.label}</div>
+                        </div>
+                    ))}
+                </div>
             </Container>
             {step == 1 &&
                 <>
@@ -137,10 +148,10 @@ export default function NetworkInsertPage() {
                                                 </Col>
                                             </Form.Group>
                                             <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                                <Button variant="danger" size="lg" onClick={() => {
+                                                <Button variant="outline-secondary" size="lg" onClick={() => {
                                                     navigate("/recovery-password");
                                                 }}><FontAwesomeIcon icon={faEnvelope} fixedWidth /> {t('login_recovery_password_button')}</Button>
-                                                <Button variant="success" size="lg" disabled={authContext.loading} onClick={async (e) => {
+                                                <Button variant="primary" size="lg" disabled={authContext.loading} onClick={async (e) => {
                                                     e.preventDefault();
                                                     if (!email) {
                                                         throwError(t('login_error_email_empty'));
@@ -184,8 +195,7 @@ export default function NetworkInsertPage() {
                                                 <Col sm="10">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
-                                                        <Form.Control type="text" size="lg"
-                                                            placeholder={t('form_placeholder_your_name')}
+                                                        <Form.Control type="text"                                                             placeholder={t('form_placeholder_your_name')}
                                                             value={userContext.user?.name}
                                                             onChange={(e) => {
                                                                 userContext.setUser({
@@ -201,8 +211,7 @@ export default function NetworkInsertPage() {
                                                 <Col sm="10">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faEnvelope} fixedWidth /></InputGroup.Text>
-                                                        <Form.Control type="text" size="lg"
-                                                            placeholder={t('form_placeholder_your_email')}
+                                                        <Form.Control type="text"                                                             placeholder={t('form_placeholder_your_email')}
                                                             value={userContext.user?.email}
                                                             onChange={(e) => {
                                                                 userContext.setUser({
@@ -218,8 +227,7 @@ export default function NetworkInsertPage() {
                                                 <Col sm="10">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
-                                                        <Form.Control type="password" size="lg"
-                                                            placeholder={t('form_placeholder_your_password')}
+                                                        <Form.Control type="password"                                                             placeholder={t('form_placeholder_your_password')}
                                                             value={userContext.user?.password}
                                                             onChange={(e) => {
                                                                 userContext.setUser({
@@ -235,8 +243,7 @@ export default function NetworkInsertPage() {
                                                 <Col sm="10">
                                                     <InputGroup>
                                                         <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
-                                                        <Form.Control type="password" size="lg"
-                                                            placeholder={t('form_placeholder_confirm_your_password')}
+                                                        <Form.Control type="password"                                                             placeholder={t('form_placeholder_confirm_your_password')}
                                                             value={confirmPassword}
                                                             onChange={(e) => {
                                                                 setConfirmPassword(e.target.value);
@@ -245,7 +252,7 @@ export default function NetworkInsertPage() {
                                                 </Col>
                                             </Form.Group>
                                             <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                                <Button variant="success" size="lg" onClick={async (e) => {
+                                                <Button variant="primary" size="lg" onClick={async (e) => {
                                                     if (!userContext.user?.name) {
                                                         throwError(t('error_name_empty'));
                                                         return;
@@ -299,8 +306,7 @@ export default function NetworkInsertPage() {
                                             <Col sm="10">
                                                 <InputGroup>
                                                     <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
-                                                    <Form.Control type="text" size="lg"
-                                                        placeholder={t('network_edit_name_placeholder')}
+                                                    <Form.Control type="text"                                                         placeholder={t('network_edit_name_placeholder')}
                                                         value={networkName}
                                                         onChange={(e) => {
                                                             setNetworkName(e.target.value);
@@ -313,8 +319,7 @@ export default function NetworkInsertPage() {
                                             <Col sm="10">
                                                 <InputGroup>
                                                     <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
-                                                    <Form.Control type="email" size="lg"
-                                                        placeholder={t('network_insert_network_email_placeholder')}
+                                                    <Form.Control type="email"                                                         placeholder={t('network_insert_network_email_placeholder')}
                                                         value={networkEmail}
                                                         onChange={(e) => {
                                                             setNetworkEmail(e.target.value);
@@ -327,8 +332,7 @@ export default function NetworkInsertPage() {
                                             <Col sm="4">
                                                 <InputGroup>
                                                     <InputGroup.Text><FontAwesomeIcon icon={faPercent} fixedWidth /></InputGroup.Text>
-                                                    <Form.Control type="number" size="lg"
-                                                        placeholder={t('network_edit_commission_placeholder')}
+                                                    <Form.Control type="number"                                                         placeholder={t('network_edit_commission_placeholder')}
                                                         value={networkCommission}
                                                         onChange={(e) => {
                                                             setNetworkCommission(parseFloat(e.target.value));
@@ -338,10 +342,10 @@ export default function NetworkInsertPage() {
                                             </Col>
                                         </Form.Group>
                                         <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                            <Button variant="danger" size="lg" onClick={() => {
+                                            <Button variant="outline-secondary" size="lg" onClick={() => {
                                                 setStep(2);
                                             }}><FontAwesomeIcon icon={faArrowLeft} fixedWidth /> {t('back_button')}</Button>
-                                            <Button variant="success" size="lg" onClick={async (e) => {
+                                            <Button variant="primary" size="lg" onClick={async (e) => {
                                                 let networkInsert: NetworkInsertInfo;
                                                 let ret = await networkContext.insert({
                                                     ...networkInsert,

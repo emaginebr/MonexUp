@@ -93,7 +93,7 @@ export default function ProfileListPage() {
                             </nav>
                         </h3>
                     </Col>
-                    <Col md="4" style={{ textAlign: "right" }}>
+                    <Col md="4" className="text-end">
                         {/*
                         <InputGroup className="pull-right">
                             <Dropdown>
@@ -117,13 +117,14 @@ export default function ProfileListPage() {
                 </Row>
                 <Row className="py-4">
                     <Col md="12">
-                        <Table striped bordered hover>
+                        <div className="table-responsive">
+                        <Table striped hover>
                             <thead>
                                 <tr>
                                     <th>{t("profileListPage.profileName")}</th>
-                                    <th style={{ textAlign: "right" }}>{t("profileListPage.level")}</th>
-                                    <th style={{ textAlign: "right" }}>{t("profileListPage.commission")} (%)</th>
-                                    <th style={{ textAlign: "right" }}>{t("profileListPage.members")}</th>
+                                    <th className="text-end">{t("profileListPage.level")}</th>
+                                    <th className="text-end">{t("profileListPage.commission")} (%)</th>
+                                    <th className="text-end">{t("profileListPage.members")}</th>
                                     <th>{t("profileListPage.actions")}</th>
                                 </tr>
                             </thead>
@@ -144,9 +145,9 @@ export default function ProfileListPage() {
                                     return (
                                         <tr>
                                             <td><Link to={"/admin/team-structure/" + profile.profileId}>{profile.name}</Link></td>
-                                            <td style={{ textAlign: "right" }}>{profile.level}</td>
-                                            <td style={{ textAlign: "right" }}>{profile.commission}%</td>
-                                            <td style={{ textAlign: "right" }}>{profile.members}</td>
+                                            <td className="text-end">{profile.level}</td>
+                                            <td className="text-end">{profile.commission}%</td>
+                                            <td className="text-end">{profile.members}</td>
                                             <td>
                                                 <Link to={"/admin/team-structure/" + profile.profileId}>
                                                     <FontAwesomeIcon icon={faEdit} fixedWidth />
@@ -161,6 +162,7 @@ export default function ProfileListPage() {
                                 })}
                             </tbody>
                         </Table>
+                        </div>
                     </Col>
                 </Row>
             </Container>

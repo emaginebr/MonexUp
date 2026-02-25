@@ -7,48 +7,42 @@ export default function CountPart() {
     const { t } = useTranslation();
 
     return (
-        <div className="row row-cols-1 row-cols-md-2 justify-content-center row-cols-lg-3 py-4 g-4 counter-RANDOMID">
+        <div className="row row-cols-1 row-cols-md-3 g-3 mb-3">
             <div className="col">
-                <div className="card card-body shadow">
-                    <div className="d-inline-flex align-items-center" style={{ minHeight: "128px" }}>
-                        <div className="me-2">
-                            <div className="bg-light p-3 rounded-circle">
-                                <FontAwesomeIcon icon={faBox} fixedWidth size="2x" />
-                            </div>
+                <div className="mnx-stat-card">
+                    <div className="d-flex align-items-center gap-3">
+                        <div className="mnx-stat-card-icon orange">
+                            <FontAwesomeIcon icon={faBox} />
                         </div>
                         <div>
-                            <span className="fw-bold display-5 mb-5">7</span>
-                            <p className="lead"><span><b>{t('dashboard_count_sales')}</b></span> {t('dashboard_count_done')}</p>
+                            <div className="mnx-stat-card-value">7</div>
+                            <div className="mnx-stat-card-label">{t('dashboard_count_sales')} {t('dashboard_count_done')}</div>
                         </div>
                     </div>
                 </div>
             </div>
             <div className="col">
-                <div className="card card-body shadow">
-                    <div className="d-inline-flex align-items-center" style={{ minHeight: "128px" }}>
-                        <div className="me-2">
-                            <div className="bg-light p-3 rounded-circle">
-                                <FontAwesomeIcon icon={faUser} fixedWidth size="2x" />
-                            </div>
+                <div className="mnx-stat-card">
+                    <div className="d-flex align-items-center gap-3">
+                        <div className="mnx-stat-card-icon blue">
+                            <FontAwesomeIcon icon={faUser} />
                         </div>
                         <div>
-                            <span className="fw-bold display-5 mb-5">6</span>
-                            <p className="lead"><b>{t('dashboard_count_customers')}</b> {t('dashboard_count_added')}</p>
+                            <div className="mnx-stat-card-value">6</div>
+                            <div className="mnx-stat-card-label">{t('dashboard_count_customers')} {t('dashboard_count_added')}</div>
                         </div>
                     </div>
                 </div>
             </div>
             <div className="col">
-                <div className="card card-body shadow">
-                    <div className="d-inline-flex align-items-center" style={{ minHeight: "128px" }}>
-                        <div className="me-2">
-                            <div className="bg-light p-3 rounded-circle">
-                                <FontAwesomeIcon icon={faDollar} fixedWidth size="2x" />
-                            </div>
+                <div className="mnx-stat-card">
+                    <div className="d-flex align-items-center gap-3">
+                        <div className="mnx-stat-card-icon green">
+                            <FontAwesomeIcon icon={faDollar} />
                         </div>
                         <div>
-                            <span className="fw-bold display-5 mb-5">15</span>
-                            <p className="lead"><b>{t('dashboard_count_paid')}</b> {t('dashboard_count_invoices')}</p>
+                            <div className="mnx-stat-card-value">15</div>
+                            <div className="mnx-stat-card-label">{t('dashboard_count_paid')} {t('dashboard_count_invoices')}</div>
                         </div>
                     </div>
                 </div>

@@ -168,7 +168,7 @@ export default function OrderSearchPage() {
                             </nav>
                         </h3>
                     </Col>
-                    <Col md="6" style={{ textAlign: "right" }}>
+                    <Col md="6" className="text-end">
                         {/*}
                         <InputGroup className="pull-right">
                             <Dropdown>
@@ -188,11 +188,12 @@ export default function OrderSearchPage() {
                 </Row>
                 <Row className="py-4">
                     <Col md="12">
-                        <Table striped bordered hover>
+                        <div className="table-responsive">
+                        <Table striped hover>
                             <thead>
                                 <tr>
                                     <th>{t('table_header_product')}</th>
-                                    <th style={{ textAlign: "right" }}>{t('table_header_price')}</th>
+                                    <th className="text-end">{t('table_header_price')}</th>
                                     <th>{t('table_header_buyer')}</th>
                                     <th>{t('table_header_seller')}</th>
                                     <th>{t('table_header_last_change')}</th>
@@ -217,7 +218,7 @@ export default function OrderSearchPage() {
                                     return (
                                         <tr>
                                             <td>{showProducts(order)}</td>
-                                            <td style={{ textAlign: "right" }}>R$ {showTotal(order)}</td>
+                                            <td className="text-end">R$ {showTotal(order)}</td>
                                             <td>{order.user?.name}</td>
                                             <td>{order.seller?.name}</td>
                                             <td><Moment fromNow ago interval={60000}>{order.updatedAt}</Moment></td>
@@ -233,6 +234,7 @@ export default function OrderSearchPage() {
 
                             </tbody>
                         </Table>
+                        </div>
                     </Col>
                 </Row>
                 {!orderContext.loadingSearch && orderContext.searchResult &&

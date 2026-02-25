@@ -174,7 +174,7 @@ export default function InvoiceSearchPage() {
                     </Col>
                     <Col md="6" className="d-flex justify-content-end">
                         <InputGroup className="w-auto">
-                            <Button variant={invoiceContext.loadingUpdate ? "danger" : "success"} size="sm" onClick={async () => {
+                            <Button variant="primary" size="sm" onClick={async () => {
                                 let ret = await invoiceContext.syncronize();
                                 if (!ret.sucesso) {
                                     throwError(ret.mensagemErro);
@@ -197,11 +197,12 @@ export default function InvoiceSearchPage() {
                 </Row>
                 <Row className="py-4">
                     <Col md="12">
-                        <Table striped bordered hover>
+                        <div className="table-responsive">
+                        <Table striped hover>
                             <thead>
                                 <tr>
                                     <th>{t('table_header_product')}</th>
-                                    <th style={{ textAlign: "right" }}>{t('table_header_price')}</th>
+                                    <th className="text-end">{t('table_header_price')}</th>
                                     <th>{t('table_header_buyer')}</th>
                                     <th>{t('table_header_seller')}</th>
                                     <th>{t('table_header_due_date')}</th>
@@ -238,7 +239,7 @@ export default function InvoiceSearchPage() {
                                             return (
                                                 <tr>
                                                     <td>{showProducts(invoice.order)}</td>
-                                                    <td style={{ textAlign: "right" }}>R$ {showTotal(invoice.order)}</td>
+                                                    <td className="text-end">R$ {showTotal(invoice.order)}</td>
                                                     <td>{invoice.user?.name}</td>
                                                     <td>{invoice.seller?.name}</td>
                                                     <td><Moment format="DD/MM/YYYY" interval={0}>{invoice.dueDate}</Moment></td>
@@ -257,6 +258,7 @@ export default function InvoiceSearchPage() {
 
                             </tbody>
                         </Table>
+                        </div>
                     </Col>
                 </Row>
                 {!invoiceContext.loadingSearch && invoiceContext.searchResult &&

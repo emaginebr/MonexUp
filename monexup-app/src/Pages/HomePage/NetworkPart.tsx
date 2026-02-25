@@ -22,11 +22,11 @@ export default function NetworkPart(param: INetworkParam) {
 
     return (
         <>
-            <section className="py-4 py-lg-6 bg-light">
+            <section className="mnx-section" style={{ background: '#fff' }}>
                 <Container>
                     <Row className="mb-4">
                         <Col md={12} className="text-center">
-                            <h4 className="display-2 mb-0">{t('home_networkpart_title')}</h4>
+                            <h2 className="mnx-section-title">{t('home_networkpart_title')}</h2>
                         </Col>
                     </Row>
                     {param.loading &&

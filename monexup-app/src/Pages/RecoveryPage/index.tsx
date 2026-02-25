@@ -41,7 +41,7 @@ export default function RecoveryPage() {
                                     </Col>
                                 </Form.Group>
                                 <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <Button variant="danger" size="lg"><FontAwesomeIcon icon={faEnvelope} fixedWidth /> Send recovery password email</Button>
+                                    <Button variant="primary" size="lg"><FontAwesomeIcon icon={faEnvelope} fixedWidth /> Send recovery password email</Button>
                                 </div>
                             </Form>
                         </Card.Body>

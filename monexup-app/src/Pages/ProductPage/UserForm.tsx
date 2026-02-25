@@ -99,7 +99,7 @@ export default function UserForm(param: IUserParam) {
                             </InputGroup>
                         </Form.Group>
                         <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <Button variant="danger" onClick={() => {
+                            <Button variant="outline-secondary" onClick={() => {
                                 navigate({
                                     pathname: "/account/login",
                                     search: createSearchParams({
@@ -107,7 +107,7 @@ export default function UserForm(param: IUserParam) {
                                     }).toString()
                                 });
                             }}><FontAwesomeIcon icon={faRightFromBracket} fixedWidth /> {t('sign_in_button')}</Button>
-                            <Button variant="success" onClick={async (e) => {
+                            <Button variant="primary" onClick={async (e) => {
                                 if (!userContext.user?.name) {
                                     param.onThrowError(t('error_name_empty'));
                                     return;

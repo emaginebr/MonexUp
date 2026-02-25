@@ -360,10 +360,10 @@ export default function SellerAddPage() {
                                         </Col>
                                     </Form.Group> */}
                                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                        <Button variant="danger" size="lg" onClick={() => {
+                                        <Button variant="outline-secondary" size="lg" onClick={() => {
                                             navigate(networkSlug ? "/" + networkSlug : "/");
                                         }}><FontAwesomeIcon icon={faArrowLeft} fixedWidth /> {t("buttons.back")}</Button>
-                                        <Button variant="success" size="lg" onClick={async (e) => {
+                                        <Button variant="primary" size="lg" onClick={async (e) => {
                                             e.preventDefault();
 
                                             if (!user.password) {

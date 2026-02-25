@@ -83,7 +83,7 @@ export default function RequestAccessPage() {
                             {t("requestAccessPage.everythingReady")}
                         </p>
                         <div className="lc-block d-grid gap-3 d-md-block">
-                            <Button variant="success" size="lg" className="me-md-2" onClick={(e) => {
+                            <Button variant="primary" size="lg" className="me-md-2" onClick={(e) => {
                                 e.preventDefault();
                                 navigate("/admin/dashboard");
                             }}><FontAwesomeIcon icon={faBoltLightning} fixedWidth />{t("requestAccessPage.goToDashboard")}</Button>
@@ -219,7 +219,7 @@ export default function RequestAccessPage() {
                                         }
 
                                         <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                            <Button variant="success" size="lg" onClick={async (e) => {
+                                            <Button variant="primary" size="lg" onClick={async (e) => {
                                                 e.preventDefault();
                                                 let ret = await networkContext.requestAccess(networkContext.network?.networkId);
                                                 if (ret.sucesso) {
@@ -236,7 +236,7 @@ export default function RequestAccessPage() {
                                                     <FontAwesomeIcon icon={faCheck} fixedWidth /> {t("requestAccessPage.yesIWantToJoin")}
                                                 </>
                                                 }</Button>
-                                            <Button variant="danger" size="lg" onClick={(e) => {
+                                            <Button variant="outline-secondary" size="lg" onClick={(e) => {
                                                 e.preventDefault();
                                                 navigate("/" + networkContext.network?.slug);
                                             }}><FontAwesomeIcon icon={faClose} fixedWidth /> {t("requestAccessPage.noGoBack")} </Button>

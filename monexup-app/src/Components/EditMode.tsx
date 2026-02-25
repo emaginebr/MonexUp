@@ -482,7 +482,7 @@ const EditMode: React.FC<IEditModeProps> & {
                         </Button>
                     </div>
                     <div className="lc-block text-center mb-1">
-                        <Button variant="success" onClick={(e) => {
+                        <Button variant="primary" onClick={(e) => {
                             e.preventDefault();
                             templateContext.setPart(part);
                             setShowModal(true);

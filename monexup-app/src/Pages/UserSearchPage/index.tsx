@@ -124,7 +124,7 @@ export default function UserSearchPage() {
                             </nav>
                         </h3>
                     </Col>
-                    <Col md="6" style={{ textAlign: "right" }}>
+                    <Col md="6" className="text-end">
                         <InputGroup className="pull-right">
                             <Form.Control
                                 placeholder={t("userSearchPage.searchPlaceholder")}
@@ -150,13 +150,14 @@ export default function UserSearchPage() {
                 </Row>
                 <Row className="py-4">
                     <Col md="12">
-                        <Table striped bordered hover>
+                        <div className="table-responsive">
+                        <Table striped hover>
                             <thead>
                                 <tr>
                                     <th>{t("userSearchPage.tableHeaders.seller")}</th>
                                     <th>{t("userSearchPage.tableHeaders.profile")}</th>
                                     <th>{t("userSearchPage.tableHeaders.role")}</th>
-                                    <th style={{ textAlign: "right" }}>{t("userSearchPage.tableHeaders.commission")} (%)</th>
+                                    <th className="text-end">{t("userSearchPage.tableHeaders.commission")} (%)</th>
                                     <th>{t("userSearchPage.tableHeaders.status")}</th>
                                     <th>{t("userSearchPage.tableHeaders.actions")}</th>
                                 </tr>
@@ -180,7 +181,7 @@ export default function UserSearchPage() {
                                             <td>{user.name}</td>
                                             <td>{user.profile}</td>
                                             <td>{showRole(user.role)}</td>
-                                            <td style={{ textAlign: "right" }}>{user.commission}%</td>
+                                            <td className="text-end">{user.commission}%</td>
                                             <td>{showStatus(user.status)}</td>
                                             <td>
                                                 <>
@@ -197,7 +198,7 @@ export default function UserSearchPage() {
                                                     }}>
                                                         <FontAwesomeIcon icon={faArrowUp} fixedWidth /> Promove
                                                     </a>
-                                                    <a href="#" className="text-danger" onClick={async (e) => {
+                                                    <a href="#" className="text-primary" onClick={async (e) => {
                                                         e.preventDefault();
                                                         let ret = await networkContext.demote(networkContext.network?.networkId, user.userId);
                                                         if (ret.sucesso) {
@@ -230,7 +231,7 @@ export default function UserSearchPage() {
                                                 }
                                                 {user.status == UserNetworkStatusEnum.Inactive &&
                                                     <>
-                                                        <a href="#" className="text-danger" onClick={async (e) => {
+                                                        <a href="#" className="text-primary" onClick={async (e) => {
                                                             e.preventDefault();
                                                             let ret = await networkContext.changeStatus(networkContext.network?.networkId, user.userId, UserNetworkStatusEnum.Active);
                                                             if (ret.sucesso) {
@@ -243,7 +244,7 @@ export default function UserSearchPage() {
                                                         }}>
                                                             <FontAwesomeIcon icon={faCheck} fixedWidth /> {t("userSearchPage.actions.reactivate")}
                                                         </a>
-                                                        <a href="#" className="text-danger" onClick={async (e) => {
+                                                        <a href="#" className="text-primary" onClick={async (e) => {
                                                             e.preventDefault();
                                                             let ret = await networkContext.changeStatus(networkContext.network?.networkId, user.userId, UserNetworkStatusEnum.Blocked);
                                                             if (ret.sucesso) {
@@ -273,7 +274,7 @@ export default function UserSearchPage() {
                                                         }}>
                                                             <FontAwesomeIcon icon={faCheck} fixedWidth /> {t("userSearchPage.actions.approve")}
                                                         </a>
-                                                        <a href="#" className="text-danger" onClick={async (e) => {
+                                                        <a href="#" className="text-primary" onClick={async (e) => {
                                                             e.preventDefault();
                                                             let ret = await networkContext.changeStatus(networkContext.network?.networkId, user.userId, UserNetworkStatusEnum.Inactive);
                                                             if (ret.sucesso) {
@@ -290,7 +291,7 @@ export default function UserSearchPage() {
                                                 }
                                                 {user.status == UserNetworkStatusEnum.Blocked &&
                                                     <>
-                                                        <a href="#" className="text-danger" onClick={async (e) => {
+                                                        <a href="#" className="text-primary" onClick={async (e) => {
                                                             e.preventDefault();
                                                             let ret = await networkContext.changeStatus(networkContext.network?.networkId, user.userId, UserNetworkStatusEnum.Active);
                                                             if (ret.sucesso) {
@@ -311,6 +312,7 @@ export default function UserSearchPage() {
                                 })}
                             </tbody>
                         </Table>
+                        </div>
                     </Col>
                 </Row>
                 {!userContext.loadingSearch && userContext.searchResult &&

@@ -10,39 +10,30 @@ export default function Header() {
     let navigate = useNavigate();
 
     return (
-        <>
-            <div className="container py-5 my-4 bg-light text-dark text-center">
+        <section className="mnx-hero">
+            <div className="container">
                 <div className="row justify-content-center mb-4">
-
-                    <div className="lc-block col-xl-8">
-                        <h1 className="display-2 fw-bold">
+                    <div className="col-xl-8">
+                        <h1 className="display-4 fw-bold mb-4">
                             <Trans i18nKey="header_main_title">
-                                Connect. Sell. Grow. Be part, here your sales boost the success of <span className="text-danger">everyone</span>.
+                                Connect. Sell. Grow. Be part, here your sales boost the success of <span className="text-accent">everyone</span>.
                             </Trans>
                         </h1>
                     </div>
-
-
                 </div>
                 <div className="row justify-content-center mb-4">
-
-                    <div className="lc-block col-xl-6 lh-lg">
-                        <div>
-                            <p>{t('header_subtitle')}</p>
-                        </div>
+                    <div className="col-xl-6 lh-lg">
+                        <p className="lead">{t('header_subtitle')}</p>
                     </div>
-
                 </div>
-                <div className="row pb-4">
-                    <div className="col-md-12">
-                        <div className="lc-block d-grid gap-3 d-md-block">
-                            <Button variant="danger" size="lg" className="me-md-2" onClick={() => {
-                                navigate("/new-seller");
-                            }}><FontAwesomeIcon icon={faBoltLightning} fixedWidth />{t('be_a_representative')}</Button>
-                        </div>
+                <div className="row justify-content-center">
+                    <div className="col-auto">
+                        <Button variant="primary" size="lg" className="px-5 py-3" onClick={() => {
+                            navigate("/new-seller");
+                        }}><FontAwesomeIcon icon={faBoltLightning} fixedWidth /> {t('be_a_representative')}</Button>
                     </div>
                 </div>
             </div>
-        </>
+        </section>
     );
 }

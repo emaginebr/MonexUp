@@ -60,13 +60,14 @@ export default function NetworkListPage() {
                 </Row>
                 <Row className="py-4">
                     <Col md="12">
-                        <Table striped bordered hover>
+                        <div className="table-responsive">
+                        <Table striped hover>
                             <thead>
                                 <tr>
                                     <th>{t('network_list_header_network')}</th>
-                                    <th style={{ textAlign: "right" }}>{t('network_list_header_commission')}</th>
+                                    <th className="text-end">{t('network_list_header_commission')}</th>
                                     <th>{t('network_list_header_owner')}</th>
-                                    <th style={{ textAlign: "right" }}>{t('network_list_header_members')}</th>
+                                    <th className="text-end">{t('network_list_header_members')}</th>
                                     <th>{t('network_list_header_actions')}</th>
                                 </tr>
                             </thead>
@@ -92,9 +93,9 @@ export default function NetworkListPage() {
                                                 navigate("/admin/dashboard");
 
                                             }}>{network.network.name}</a></td>
-                                            <td style={{ textAlign: "right" }}>{network.network.comission}%</td>
+                                            <td className="text-end">{network.network.comission}%</td>
                                             <td>{t('unknown')}</td>
-                                            <td style={{ textAlign: "right" }}>{network.network.qtdyUsers}/{network.network.maxUsers}</td>
+                                            <td className="text-end">{network.network.qtdyUsers}/{network.network.maxUsers}</td>
                                             <td>
                                                 <Link to={"/" + network.network.slug}>
                                                     <FontAwesomeIcon icon={faSearch} fixedWidth />
@@ -108,6 +109,7 @@ export default function NetworkListPage() {
                                 })}
                             </tbody>
                         </Table>
+                        </div>
                     </Col>
                 </Row>
             </Container>

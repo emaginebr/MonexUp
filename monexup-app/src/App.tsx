@@ -1,8 +1,8 @@
-import './App.css';
-import { Routes, Route, Outlet, Link } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
 import { NAuthProvider } from 'nauth-react';
 import 'nauth-react/styles';
 import Menu from "./Components/Menu";
+import AdminLayout from "./Components/AdminLayout";
 import ContextBuilder from './Contexts/Utils/ContextBuilder';
 import AuthProvider from './Contexts/Auth/AuthProvider';
 import UserPage from './Pages/UserPage';
@@ -44,6 +44,17 @@ function Layout() {
     <div>
       <Menu />
       <Outlet />
+    </div>
+  );
+}
+
+function LayoutAdmin() {
+  return (
+    <div>
+      <Menu />
+      <AdminLayout>
+        <Outlet />
+      </AdminLayout>
     </div>
   );
 }
@@ -100,30 +111,29 @@ function App() {
             <Route path="recovery-password" element={<RecoveryPage />} />
             <Route path="change-password" element={<PasswordPage />} />
           </Route>
-          <Route path="admin">
-            <Route index element={<DashboardPage />} />
-            <Route path="dashboard" element={<DashboardPage />} />
-            <Route path="network" element={<NetworkEditPage />} />
-            <Route path="teams" element={<UserSearchPage />} />
-            <Route path="teams">
-              <Route index element={<UserSearchPage />} />
-              <Route path=":pageNum" element={<UserSearchPage />} />
-            </Route>
-            <Route path="orders" element={<OrderSearchPage />} />
-            <Route path="invoices" element={<InvoiceSearchPage />} />
-            <Route path="products">
-              <Route index element={<ProductSearchPage />} />
-              <Route path="new" element={<ProductEditPage />} />
-              <Route path=":productId" element={<ProductEditPage />} />
-            </Route>
-            <Route path="p">
-              <Route path=":id" element={<ProductPage />} />
-            </Route>
-            <Route path="team-structure">
-              <Route index element={<ProfileListPage />} />
-              <Route path="new" element={<ProfileEditPage />} />
-              <Route path=":profileId" element={<ProfileEditPage />} />
-            </Route>
+        </Route>
+        <Route path="admin" element={<LayoutAdmin />}>
+          <Route index element={<DashboardPage />} />
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="network" element={<NetworkEditPage />} />
+          <Route path="teams">
+            <Route index element={<UserSearchPage />} />
+            <Route path=":pageNum" element={<UserSearchPage />} />
+          </Route>
+          <Route path="orders" element={<OrderSearchPage />} />
+          <Route path="invoices" element={<InvoiceSearchPage />} />
+          <Route path="products">
+            <Route index element={<ProductSearchPage />} />
+            <Route path="new" element={<ProductEditPage />} />
+            <Route path=":productId" element={<ProductEditPage />} />
+          </Route>
+          <Route path="p">
+            <Route path=":id" element={<ProductPage />} />
+          </Route>
+          <Route path="team-structure">
+            <Route index element={<ProfileListPage />} />
+            <Route path="new" element={<ProfileEditPage />} />
+            <Route path=":profileId" element={<ProfileEditPage />} />
           </Route>
         </Route>
         <Route path="@" element={<LayoutUser />}>

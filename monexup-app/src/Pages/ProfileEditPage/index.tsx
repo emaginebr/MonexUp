@@ -161,10 +161,10 @@ export default function ProfileEditPage() {
                                         </Col>
                                     </Form.Group>
                                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                        <Button variant="danger" size="lg" onClick={() => {
+                                        <Button variant="outline-secondary" size="lg" onClick={() => {
                                             navigate("/admin/team-structure");
                                         }}><FontAwesomeIcon icon={faArrowLeft} fixedWidth /> {t('back')}</Button>
-                                        <Button variant="success" size="lg" onClick={async (e) => {
+                                        <Button variant="primary" size="lg" onClick={async (e) => {
                                             if (insertMode) {
                                                 //profileContext.profile.networkId = NetworkContext.
                                                 let ret = await profileContext.insert(profileContext.profile);

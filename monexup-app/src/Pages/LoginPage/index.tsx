@@ -50,59 +50,48 @@ export default function LoginPage() {
 
     return (
         <>
-              <MessageToast
-                    dialog={MessageToastEnum.Error}
-                    showMessage={showMessage}
-                    messageText={messageText}
-                    onClose={() => setShowMessage(false)}
-                ></MessageToast>
-        <Container>
-            <Row>
-                <Col md="8" className='offset-md-2'>
+            <MessageToast
+                dialog={MessageToastEnum.Error}
+                showMessage={showMessage}
+                messageText={messageText}
+                onClose={() => setShowMessage(false)}
+            />
+            <div className="mnx-auth-page">
+                <div className="mnx-auth-card">
                     <Card>
-                        <Card.Header>
-                            <h3 className="text-center">{t('login_title')}</h3>
-                        </Card.Header>
                         <Card.Body>
+                            <div className="auth-logo">
+                                <img src={process.env.PUBLIC_URL + '/logo.jpg'} alt="MonexUp" />
+                            </div>
+                            <h3 className="auth-title">{t('login_title')}</h3>
+                            <p className="auth-subtitle">{t('login_instruction')}</p>
                             <Form>
-                                <div className="text-center mb-3">
-                                    {t('login_instruction')}
+                                <Form.Group className="mb-3">
+                                    <Form.Label>{t('login_email_label')}</Form.Label>
+                                    <InputGroup>
+                                        <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
+                                        <Form.Control type="email" placeholder={t('login_email_placeholder')} value={email} onChange={(e) => {
+                                            setEmail(e.target.value);
+                                        }} />
+                                    </InputGroup>
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>{t('login_password_label')}</Form.Label>
+                                    <InputGroup>
+                                        <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
+                                        <Form.Control type="password" placeholder={t('login_password_placeholder')} value={password} onChange={(e) => {
+                                            setPassword(e.target.value);
+                                        }} />
+                                    </InputGroup>
+                                </Form.Group>
+                                <div className="d-flex justify-content-between align-items-center mb-4">
+                                    <Form.Check type="checkbox" label={t('login_remember_password_label')} />
+                                    <a href="#" onClick={(e) => { e.preventDefault(); navigate("/account/recovery-password"); }} className="text-decoration-none" style={{ color: 'var(--mnx-orange)' }}>
+                                        {t('login_recovery_password') || 'Recovery Password?'}
+                                    </a>
                                 </div>
-                                <Form.Group as={Row} className="mb-3">
-                                    <Form.Label column sm="3">{t('login_email_label')}:</Form.Label>
-                                    <Col sm="9">
-                                        <InputGroup>
-                                            <InputGroup.Text><FontAwesomeIcon icon={faUser} fixedWidth /></InputGroup.Text>
-                                            <Form.Control type="email" size="lg" placeholder={t('login_email_placeholder')} value={email} onChange={(e) => {
-                                                setEmail(e.target.value);
-                                            }} />
-                                        </InputGroup>
-                                    </Col>
-                                </Form.Group>
-                                <Form.Group as={Row} className="mb-3">
-                                    <Form.Label column sm="3">{t('login_password_label')}:</Form.Label>
-                                    <Col sm="9">
-                                        <InputGroup>
-                                            <InputGroup.Text><FontAwesomeIcon icon={faLock} fixedWidth /></InputGroup.Text>
-                                            <Form.Control type="password" size="lg" placeholder={t('login_password_placeholder')} value={password} onChange={(e) => {
-                                                setPassword(e.target.value);
-                                            }} />
-                                        </InputGroup>
-                                    </Col>
-                                </Form.Group>
-                                <Form.Group as={Row} className="mb-3">
-                                    <Col sm="9" className="offset-sm-3">
-                                        <Form.Check type="checkbox" label={t('login_remember_password_label')} />
-                                    </Col>
-                                </Form.Group>
-                                <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <Button variant="secondary" size="lg" onClick={() => {
-                                        navigate("/account/recovery-password");
-                                    }}><FontAwesomeIcon icon={faEnvelope} fixedWidth /> Recovery Password?</Button>
-                                    <Button variant="danger" size="lg" onClick={() => { {/* TODO: Translate "Recovery Password?" */}
-                                        navigate("/account/new-account");
-                                    }}><FontAwesomeIcon icon={faUserAlt} fixedWidth /> {t('login_create_account_button')}</Button>
-                                    <Button variant="success" size="lg" disabled={authContext.loading} onClick={async (e) => {
+                                <div className="d-grid mb-3">
+                                    <Button variant="primary" disabled={authContext.loading} onClick={async (e) => {
                                         e.preventDefault();
                                         if (!email) {
                                             throwError(t('login_error_email_empty'));
@@ -112,7 +101,7 @@ export default function LoginPage() {
                                             throwError(t('login_error_password_empty'));
                                             return;
                                         }
-                                        let ret = await authContext.loginWithEmail(email, password);  
+                                        let ret = await authContext.loginWithEmail(email, password);
                                         if (ret.sucesso) {
                                             let netRet = await networkContext.listByUser();
                                             if (netRet.sucesso) {
@@ -121,7 +110,7 @@ export default function LoginPage() {
                                             else {
                                                 throwError(ret.mensagemErro);
                                             }
-                                        }  
+                                        }
                                         else {
                                             throwError(ret.mensagemErro);
                                         }
@@ -129,12 +118,17 @@ export default function LoginPage() {
                                         <FontAwesomeIcon icon={faSignInAlt} fixedWidth /> {authContext.loading ? t('loading') : t('login_button')}
                                     </Button>
                                 </div>
+                                <div className="auth-footer">
+                                    {t('login_no_account') || "Don't have an account?"}{' '}
+                                    <a href="#" onClick={(e) => { e.preventDefault(); navigate("/account/new-account"); }}>
+                                        {t('login_create_account_button')}
+                                    </a>
+                                </div>
                             </Form>
                         </Card.Body>
                     </Card>
-                </Col>
-            </Row>
-        </Container>
+                </div>
+            </div>
         </>
     );
 }

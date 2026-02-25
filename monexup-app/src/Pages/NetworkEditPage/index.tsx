@@ -208,10 +208,10 @@ export default function NetworkEditPage() {
                                                 </Col>
                                             </Form.Group>
                                             <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                                <Button variant="danger" size="lg" onClick={() => {
+                                                <Button variant="outline-secondary" size="lg" onClick={() => {
                                                     navigate("/admin/dashboard"); // TODO: Consider if this route should be dynamic or translated if it's a label
                                                 }}><FontAwesomeIcon icon={faArrowLeft} fixedWidth /> {t('back_button')}</Button>
-                                                <Button variant="success" size="lg" onClick={async (e) => {
+                                                <Button variant="primary" size="lg" onClick={async (e) => {
                                                     let ret = await networkContext.update(networkContext.network);
                                                     if (ret.sucesso) {
                                                         //alert(userContext.user?.id);

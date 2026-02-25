@@ -134,7 +134,7 @@ export default function PasswordPage() {
                                     }
                                     <div className="d-grid gap-2 d-md-flex justify-content-md-end">
                                         {userContext.user?.email ?
-                                            <Button variant="success" disabled={userContext.loadingUpdate} size="lg" onClick={async (e) => {
+                                            <Button variant="primary" disabled={userContext.loadingUpdate} size="lg" onClick={async (e) => {
                                                 e.preventDefault();
                                                 if (userContext.userHasPassword) {
                                                     if (!oldPassword) {
@@ -168,13 +168,13 @@ export default function PasswordPage() {
                                             </Button>
                                             :
                                             <>
-                                                <Button variant="danger" size="lg" onClick={(e) => {
+                                                <Button variant="primary" size="lg" onClick={(e) => {
                                                     e.preventDefault();
                                                     navigate("/edit-account");
                                                 }}>
                                                     <FontAwesomeIcon icon={faUserEdit} fixedWidth /> {t('password_page_edit_account_button')}
                                                 </Button>
-                                                <Button variant="success" size="lg" disabled={true}>
+                                                <Button variant="primary" size="lg" disabled={true}>
                                                     <FontAwesomeIcon icon={faSave} fixedWidth /> {t('password_page_change_password_button')}
                                                 </Button>
                                             </>

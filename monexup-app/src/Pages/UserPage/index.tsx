@@ -225,7 +225,7 @@ export default function UserPage() {
                                         {/* <Button variant="danger" size="lg" onClick={() => {
                                             navigate("/account/login");
                                         }}><FontAwesomeIcon icon={faSignInAlt} fixedWidth /> {t("userPage.signIn")}</Button> */}
-                                        <Button variant="success" size="lg" onClick={async (e) => {
+                                        <Button variant="primary" size="lg" onClick={async (e) => {
                                             if (insertMode) {
                                                 if (userContext.user?.password != confirmPassword) {
                                                     throwError(t("userPage.errors.passwordsNotEqual"));

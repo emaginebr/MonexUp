@@ -26,13 +26,11 @@ export default function UserPart(param: IUserParam) {
 
     return (
         <>
-            <section className="bg-light py-5">
+            <section className="mnx-section" style={{ background: 'var(--mnx-bg-page)' }}>
                 <Container className="mb-3">
                     <Row>
                         <Col md={12} className="text-center">
-                            <div className="lc-block mb-1">
-                                <h2 className="display-2 mb-0"><b>{t('home_userpart_title')}</b></h2>
-                            </div>
+                            <h2 className="mnx-section-title">{t('home_userpart_title')}</h2>
                         </Col>
                     </Row>
                     <Row className="pt-4">

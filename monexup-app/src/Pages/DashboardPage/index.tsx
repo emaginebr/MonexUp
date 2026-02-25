@@ -114,137 +114,63 @@ export default function DashboardPage() {
                 messageText={messageText}
                 onClose={() => setShowMessage(false)}
             ></MessageToast>
-            <Container>
-                {networkContext.currentRole != UserRoleEnum.User &&
-                    <Row>
-                        <Col md={8}>
-                            <CountPart />
-                        </Col>
-                        <Col md={4}>
-                            <Card bg="danger" text="light">
-                                <Card.Header>{t('dashboard_current_balance')}</Card.Header>
-                                <Card.Body style={{ textAlign: "center" }}>
-                                    <Card.Text>
-                                        <p className="fw-bold display-5 text-right">
-                                            {invoiceContext.loadingBalance ?
-                                                <Skeleton />
-                                                :
-                                                <>
-                                                    <small>R$</small>{invoiceContext.balance}
-                                                </>
-                                            }
-                                        </p>
-                                        {networkContext.currentRole == UserRoleEnum.Seller &&
-                                            <>
-                                                {invoiceContext.loadingAvailableBalance ?
-                                                    <Skeleton />
-                                                    :
-                                                    <span>{t('dashboard_amount_released_for_withdrawal')} <small>R$</small>{invoiceContext.availableBalance}</span>
-                                                }
-                                            </>
-                                        }
-                                    </Card.Text>
-                                    <Button variant="danger" disabled>{t('dashboard_withdrawal')} <FontAwesomeIcon icon={faArrowRight} fixedWidth /></Button>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    </Row>
-                }
-            </Container>
-            <Container>
-                <Row>
-                    <Col md={networkContext.currentRole != UserRoleEnum.User ? 8 : 12}>
-                        <Tabs
-                            defaultActiveKey="balance"
-                            id="uncontrolled-tab-example"
-                            className="mb-3"
-                        >
-                            <Tab eventKey="balance" title={
-                                <>
-                                    <FontAwesomeIcon icon={faDollar} fixedWidth />&nbsp;{t('dashboard_statement')}
-                                </>
-                            }>
-                                <StatementPart
-                                    loading={invoiceContext.loadingSearch}
-                                    StatementResult={invoiceContext.statementResult}
-                                    onChangePage={(pagenum: number) => {
-                                        searchStatements(pagenum);
-                                    }} />
-                            </Tab>
-                            <Tab eventKey="order" title={t('dashboard_orders_tab')} disabled>
-                                Tab content for Profile
-                            </Tab>
-                        </Tabs>
-
+            <div className="mnx-page-header">
+                <h2>Dashboard</h2>
+            </div>
+            {networkContext.currentRole != UserRoleEnum.User &&
+                <Row className="mb-4">
+                    <Col lg={8}>
+                        <CountPart />
                     </Col>
-                    {networkContext.currentRole != UserRoleEnum.User &&
-                        <Col md={4} className="py-4">
-                            <ListGroup>
-                                {networkContext.currentRole >= UserRoleEnum.NetworkManager &&
-                                    <>
-                                        <ListGroup.Item variant="primary">
-                                            <FontAwesomeIcon icon={faUserGroup} fixedWidth /> {t('dashboard_networks_title')}
-                                        </ListGroup.Item>
-                                        <ListGroup.Item action onClick={() => {
-                                            navigate("/admin/network");
-                                        }}>
-                                            <div className="ms-2 me-auto">
-                                                <FontAwesomeIcon icon={faCog} fixedWidth /> {t('preferences')}
-                                            </div>
-                                        </ListGroup.Item>
-                                        <ListGroup.Item action onClick={() => {
-                                            navigate("/admin/team-structure");
-                                        }}>
-                                            <div className="ms-2 me-auto">
-                                                <FontAwesomeIcon icon={faUserCog} fixedWidth /> {t('team_structure')}
-                                            </div>
-                                        </ListGroup.Item>
-                                        <ListGroup.Item action onClick={() => {
-                                            navigate("/admin/teams");
-                                        }}>
-                                            {/*<Badge bg="primary" pill style={{ float: "right" }}>7</Badge>*/}
-                                            <div className="ms-2 me-auto">
-                                                <FontAwesomeIcon icon={faUserGroup} fixedWidth /> {t('teams')}
-                                            </div>
-                                        </ListGroup.Item>
-                                    </>
+                    <Col lg={4}>
+                        <div className="mnx-balance-card">
+                            <div className="balance-label">{t('dashboard_current_balance')}</div>
+                            <div className="balance-value">
+                                {invoiceContext.loadingBalance ?
+                                    <Skeleton />
+                                    :
+                                    <><small>R$</small>{invoiceContext.balance}</>
                                 }
-                                {networkContext.currentRole >= UserRoleEnum.Seller &&
-                                    <>
-                                        <ListGroup.Item variant="primary">
-                                            <FontAwesomeIcon icon={faBox} fixedWidth /> {t('finances')}
-                                        </ListGroup.Item>
-                                        <ListGroup.Item action onClick={() => {
-                                            navigate("/admin/orders");
-                                        }}>
-                                            {/*<Badge bg="primary" pill style={{ float: "right" }}>7</Badge>*/}
-                                            <div className="ms-2 me-auto">
-                                                <FontAwesomeIcon icon={faList} fixedWidth /> {t('orders')}
-                                            </div>
-                                        </ListGroup.Item>
-                                        <ListGroup.Item action onClick={() => {
-                                            navigate("/admin/invoices");
-                                        }}>
-                                            {/*<Badge bg="primary" pill style={{ float: "right" }}>7</Badge>*/}
-                                            <div className="ms-2 me-auto">
-                                                <FontAwesomeIcon icon={faDollar} fixedWidth /> {t('invoices')}
-                                            </div>
-                                        </ListGroup.Item>
-                                        <ListGroup.Item action onClick={() => {
-                                            navigate("/admin/products");
-                                        }}>
-                                            {/*<Badge bg="primary" pill style={{ float: "right" }}>7</Badge>*/}
-                                            <div className="ms-2 me-auto">
-                                                <FontAwesomeIcon icon={faBox} fixedWidth /> {t('products')}
-                                            </div>
-                                        </ListGroup.Item>
-                                    </>
-                                }
-                            </ListGroup>
-                        </Col>
-                    }
+                            </div>
+                            {networkContext.currentRole == UserRoleEnum.Seller &&
+                                <div className="balance-available">
+                                    {invoiceContext.loadingAvailableBalance ?
+                                        <Skeleton />
+                                        :
+                                        <span>{t('dashboard_amount_released_for_withdrawal')} <small>R$</small>{invoiceContext.availableBalance}</span>
+                                    }
+                                </div>
+                            }
+                            <Button variant="outline-light" size="sm" disabled>{t('dashboard_withdrawal')} <FontAwesomeIcon icon={faArrowRight} fixedWidth /></Button>
+                        </div>
+                    </Col>
                 </Row>
-            </Container>
+            }
+            <Row>
+                <Col md={12}>
+                    <Tabs
+                        defaultActiveKey="balance"
+                        id="uncontrolled-tab-example"
+                        className="mb-3"
+                    >
+                        <Tab eventKey="balance" title={
+                            <>
+                                <FontAwesomeIcon icon={faDollar} fixedWidth />&nbsp;{t('dashboard_statement')}
+                            </>
+                        }>
+                            <StatementPart
+                                loading={invoiceContext.loadingSearch}
+                                StatementResult={invoiceContext.statementResult}
+                                onChangePage={(pagenum: number) => {
+                                    searchStatements(pagenum);
+                                }} />
+                        </Tab>
+                        <Tab eventKey="order" title={t('dashboard_orders_tab')} disabled>
+                            Tab content for Profile
+                        </Tab>
+                    </Tabs>
+                </Col>
+            </Row>
         </>
     );
 
