@@ -51,7 +51,12 @@
       "Bash(ConnectionStrings__NAuthContext=\"Host=localhost;Port=5432;Database=nauth_db;Username=monexup_user;Password=x\" dotnet ef migrations script:*)",
       "mcp__Claude_Preview__preview_start",
       "Skill(readme-generator)",
-      "Skill(readme-generator:*)"
+      "Skill(readme-generator:*)",
+      "Bash(git submodule status)",
+      "Bash(git fetch --tags)",
+      "Bash(git pull origin main)",
+      "Bash(git add submodules/NAuth)",
+      "Bash(git commit:*)"
     ]
   }
 }

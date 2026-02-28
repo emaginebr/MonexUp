@@ -122,6 +122,10 @@ ConnectionStrings__NAuthContext="Host=localhost;Port=5432;Database=nauth_db;User
   dotnet ef database update --project submodules/NAuth/NAuth.Infra --startup-project submodules/NAuth/NAuth.API
 ```
 
+## Submodules
+
+- **Do NOT modify submodule code.** The submodules (`submodules/NAuth`, `submodules/zTools`) are managed in their own repositories. If a change is needed in a submodule, inform the user so they can make the change in the original repository. Here you may only update the submodule pointer (i.e., `git submodule update` or advance to a newer commit).
+
 ## Tool Limitations
 
 - **Docker is NOT accessible** from this CLI environment. Do not attempt to run `docker`, `docker-compose`, or `docker exec` commands. For database operations that require SQL execution, provide the SQL/commands for the user to run manually.

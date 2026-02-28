@@ -36,9 +36,9 @@ services:
       ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_URLS: http://+:80
       ConnectionStrings__NAuthContext: "Host=postgres;Port=5432;Database=${NAUTH_DB_NAME:-nauth_db};Username=${POSTGRES_USER:-monexup_user};Password=${POSTGRES_PASSWORD}"
+      zTools__ApiURL: ${ZTOOLS_API_URL}
       NAuth__JwtSecret: ${NAUTH_JWT_SECRET}
       Logging__LogLevel__Default: Trace
-      zTools__ApiURL: http://ztools-api:8080
     ports:
       - "5004:80"
     depends_on:
@@ -88,14 +88,14 @@ services:
       ASPNETCORE_ENVIRONMENT: Docker
       # Connection string built from .env individual vars
       ConnectionStrings__MonexUpContext: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-monexup_db};Username=${POSTGRES_USER:-monexup_user};Password=${POSTGRES_PASSWORD}"
+      # zTools (Docker service URL)
+      zTools__ApiURL: ${ZTOOLS_API_URL}
       # NAuth (Docker service URLs)
       NAuth__ApiUrl: http://nauth-api:80
       NAuth__JwtSecret: ${NAUTH_JWT_SECRET}
       NAuth__BucketName: ${S3_BUCKET:-monexup}
       # Stripe
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
-      # zTools (Docker service URL)
-      ZTOOLS_API_URL: http://ztools-api:8080
     ports:
       - "5000:80"
     depends_on:
