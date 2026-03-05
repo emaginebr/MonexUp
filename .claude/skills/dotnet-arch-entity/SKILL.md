@@ -1,269 +1,262 @@
 ---
 name: dotnet-arch-entity
-description: Guides the implementation of a new entity following the Clean Architecture pattern of this project. Covers all layers from DTO to Database, including EF Core Code First, AutoMapper profiles, Repository pattern, Domain services, and DI registration. Use when creating or modifying entities, adding new tables, or scaffolding CRUD features.
+description: Guides the implementation of a new entity following Clean Architecture in a .NET 8 project. Covers all layers from DTO to Database, including EF Core Code First, mapping, Repository pattern, Domain services, DI registration, and Controller. Use when creating or modifying entities, adding new tables, or scaffolding CRUD features.
 allowed-tools: Read, Grep, Glob, Bash, Write, Edit, Task
 ---
 
 # .NET Clean Architecture — Entity Implementation Guide
 
-You are an expert assistant that helps developers create or modify entities following the exact architecture patterns of this NNews project. You guide the user through ALL required layers.
+You are an expert assistant that helps developers create or modify entities following Clean Architecture patterns in .NET 8 projects. You guide the user through ALL required layers.
 
 ## Input
 
 The user will describe the entity to create or modify: `$ARGUMENTS`
 
-Before generating code, read existing files (use Category as primary reference) to match current patterns exactly.
+Before generating code:
+1. **Read the solution structure** — Identify all projects/layers (API, Domain, Infra, DTO, Application, etc.)
+2. **Find an existing entity** — Use it as the primary reference to match patterns exactly (naming, namespaces, mapping approach, DI style)
+3. **Read the DbContext** — Understand database provider (PostgreSQL, SQL Server, etc.), column naming conventions, and existing configurations
+4. **Read the DI setup** — Find where services/repositories are registered (Program.cs, Startup.cs, Initializer.cs, etc.)
+5. **Identify the mapping strategy** — AutoMapper profiles, manual mapping methods, or Mapster
 
 ---
 
 ## Architecture & Data Flow
 
 ```
-Controller → Service → Repository → DbContext → PostgreSQL
+Controller → Service → Repository → DbContext → Database
 ```
 
-**Mapping chain:** EF Entity ↔ Domain Model ↔ DTO (two AutoMapper profiles per entity)
+**Typical mapping chain:** EF Entity ↔ Domain Model ↔ DTO
 
-**Projects:**
-- `NNews.DTO` — Public API contracts (DTOs)
-- `NNews.Domain` — Entity interfaces, models, enums, services
-- `NNews.Infra.Interfaces` — Repository contracts
-- `NNews.Infra` — EF Core entities, DbContext, repositories, AutoMapper profiles
-- `NNews.Application` — DI registration (Initializer.cs)
-- `NNews.API` — Controllers
+**Common layered project structure:**
+
+| Layer | Responsibility |
+|-------|---------------|
+| **DTO** | Public API contracts (request/response objects) |
+| **Domain** | Entity interfaces, models, business logic, service interfaces |
+| **Infra.Interfaces** | Repository contracts (optional — may live in Domain) |
+| **Infra** | EF Core entities, DbContext, repositories, mapping profiles |
+| **Application** | DI/IoC registration, cross-cutting concerns |
+| **API** | Controllers, middleware, filters |
+
+> **Adapt to the project:** Not all projects have every layer. Some combine Domain + Application, others have no separate Infra.Interfaces. Always match what already exists.
 
 ---
 
 ## Step-by-Step Implementation
 
-### Step 1: DTO — `NNews.DTO/{Entity}Info.cs`
+### Step 1: DTO
+
+Create the data transfer object(s) for the entity.
 
 ```csharp
-namespace NNews.DTO
+namespace {DtoNamespace}
 {
     public class {Entity}Info
     {
         public long {Entity}Id { get; set; }
-        public string Title { get; set; }
-        // Nullable types for optional fields (DateTime?, long?)
+        public string Name { get; set; }
+        // Add fields based on user requirements
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }
 }
 ```
 
-Create `{Entity}InsertedInfo` (no Id) and `{Entity}UpdatedInfo` (with Id) if insert/update shapes differ.
+- Create separate DTOs if insert/update shapes differ: `{Entity}InsertInfo` (no Id), `{Entity}UpdateInfo` (with Id)
+- Use nullable types for optional fields (`DateTime?`, `long?`)
+- Match the naming convention of existing DTOs in the project
 
-### Step 2: Domain Interface — `NNews.Domain/Entities/Interfaces/I{Entity}Model.cs`
+### Step 2: Domain Model
 
-```csharp
-namespace NNews.Domain.Entities.Interfaces
-{
-    public interface I{Entity}Model
-    {
-        long {Entity}Id { get; }
-        string Title { get; }
-        DateTime CreatedAt { get; }
-        DateTime UpdatedAt { get; }
-        // Read-only properties only. Mutations via methods:
-        void Update(string title);
-    }
-}
-```
+Create the domain entity. Adapt the pattern to what the project uses:
 
-### Step 3: Domain Model — `NNews.Domain/Entities/{Entity}Model.cs`
-
-Key patterns (see `CategoryModel.cs` as reference):
-- **Private setters** on all properties
-- **Private parameterless constructor** (for mapper)
-- **Factory methods:** `Create(...)` for new, `Reconstruct(...)` from persistence
-- **Validation** in private `Set{Prop}` methods
-- **`UpdateTimestamp()`** called on every mutation
-- **`Equals`/`GetHashCode`** by Id
+**Pattern A — Rich Domain Model (private setters, factory methods):**
 
 ```csharp
-using NNews.Domain.Entities.Interfaces;
-
-namespace NNews.Domain.Entities
+namespace {DomainNamespace}.Entities
 {
-    public class {Entity}Model : I{Entity}Model
+    public class {Entity}Model
     {
         public long {Entity}Id { get; private set; }
-        public string Title { get; private set; }
+        public string Name { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
 
-        private {Entity}Model() { Title = string.Empty; }
+        private {Entity}Model() { Name = string.Empty; }
 
-        public {Entity}Model(string title) : this()
+        public static {Entity}Model Create(string name)
         {
-            SetTitle(title);
-            CreatedAt = DateTime.UtcNow;
+            return new {Entity}Model
+            {
+                Name = name,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+        }
+
+        public void Update(string name)
+        {
+            Name = name;
             UpdatedAt = DateTime.UtcNow;
         }
-
-        public static {Entity}Model Create(string title) => new(title);
-
-        public static {Entity}Model Reconstruct(long id, string title, DateTime createdAt, DateTime updatedAt)
-            => new() { {Entity}Id = id, Title = title, CreatedAt = createdAt, UpdatedAt = updatedAt };
-
-        public void Update(string title) { SetTitle(title); UpdatedAt = DateTime.UtcNow; }
-
-        private void SetTitle(string title)
-        {
-            if (string.IsNullOrWhiteSpace(title))
-                throw new ArgumentException("Title cannot be null or empty.", nameof(title));
-            Title = title.Trim();
-        }
-
-        public override bool Equals(object? obj) =>
-            obj is {Entity}Model other && {Entity}Id != 0 && other.{Entity}Id != 0 && {Entity}Id == other.{Entity}Id;
-        public override int GetHashCode() => {Entity}Id.GetHashCode();
     }
 }
 ```
 
-### Step 4: EF Entity — `NNews.Infra/Context/{Entity}.cs`
+**Pattern B — Anemic Model (public setters, simple POCO):**
 
 ```csharp
-namespace NNews.Infra.Context;
-
-public partial class {Entity}
+namespace {DomainNamespace}.Entities
 {
-    public long {Entity}Id { get; set; }
-    public string Title { get; set; } = null!;
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
-    // Navigation properties: virtual, collections as new List<>()
-    public virtual ICollection<Article> Articles { get; set; } = new List<Article>();
+    public class {Entity}Model
+    {
+        public long {Entity}Id { get; set; }
+        public string Name { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+    }
 }
 ```
 
-Convention: `partial class`, public setters, `virtual` navigation properties.
+- If the project uses **interfaces** for models (e.g., `I{Entity}Model`), create the interface too
+- Match whichever pattern already exists in the project
 
-### Step 5: DbContext — Modify `NNews.Infra/Context/NNewsContext.cs`
+### Step 3: EF Entity
 
-Add DbSet and configure in `OnModelCreating`:
+Create the Entity Framework entity if the project separates EF entities from domain models:
+
+```csharp
+namespace {InfraNamespace}.Context
+{
+    public partial class {Entity}
+    {
+        public long {Entity}Id { get; set; }
+        public string Name { get; set; } = null!;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+
+        // Navigation properties
+        public virtual ICollection<RelatedEntity> RelatedEntities { get; set; } = new List<RelatedEntity>();
+    }
+}
+```
+
+> If the project uses the domain model directly as EF entity (no separate class), skip this step.
+
+### Step 4: DbContext Configuration
+
+Add `DbSet` and configure the entity in `OnModelCreating`:
 
 ```csharp
 // Add DbSet
 public virtual DbSet<{Entity}> {Entity}s { get; set; }
 
-// Inside OnModelCreating:
+// Inside OnModelCreating — adapt conventions to match existing entities:
 modelBuilder.Entity<{Entity}>(entity =>
 {
-    entity.HasKey(e => e.{Entity}Id).HasName("{entities}_pkey");
-    entity.ToTable("{entities}");  // snake_case plural
+    entity.HasKey(e => e.{Entity}Id);
+    entity.ToTable("{table_name}"); // Match project's table naming convention
 
     entity.Property(e => e.{Entity}Id)
-        .HasDefaultValueSql("nextval('{entity}_id_seq'::regclass)")
-        .HasColumnName("{entity}_id");
-    entity.Property(e => e.CreatedAt)
-        .HasColumnType("timestamp without time zone")
-        .HasColumnName("created_at");
-    entity.Property(e => e.UpdatedAt)
-        .HasColumnType("timestamp without time zone")
-        .HasColumnName("updated_at");
-    entity.Property(e => e.Title)
+        .HasColumnName("{entity_id_column}");
+    entity.Property(e => e.Name)
         .HasMaxLength(240)
-        .HasColumnName("title");
+        .HasColumnName("{name_column}");
+    entity.Property(e => e.CreatedAt)
+        .HasColumnName("{created_at_column}");
+    entity.Property(e => e.UpdatedAt)
+        .HasColumnName("{updated_at_column}");
+
+    // Foreign keys, indexes, etc.
 });
 ```
 
-Convention: snake_case table/columns, PostgreSQL sequences, `timestamp without time zone`, `DeleteBehavior.ClientSetNull` for FKs.
+**Common conventions to detect:**
+- Table naming: `snake_case` vs `PascalCase` vs plural vs singular
+- Column naming: `snake_case` (`created_at`) vs `PascalCase` (`CreatedAt`)
+- Primary key: auto-increment, sequences (`nextval`), or GUID
+- Timestamps: `timestamp without time zone` (PostgreSQL) vs `datetime2` (SQL Server)
+- FK behavior: `DeleteBehavior.Cascade` vs `ClientSetNull` vs `Restrict`
 
-### Step 6: Migration
+### Step 5: Migration
 
 ```bash
-dotnet ef migrations add Add{Entity}Table --project NNews.Infra --startup-project NNews.API
-dotnet ef database update --project NNews.Infra --startup-project NNews.API
+dotnet ef migrations add Add{Entity}Table --project {InfraProject} --startup-project {ApiProject}
+dotnet ef database update --project {InfraProject} --startup-project {ApiProject}
 ```
 
-### Step 7: Repository Interface — `NNews.Infra.Interfaces/Repository/I{Entity}Repository.cs`
+### Step 6: Repository Interface
 
 ```csharp
-namespace NNews.Infra.Interfaces.Repository
+namespace {RepoInterfaceNamespace}
 {
-    public interface I{Entity}Repository<TModel>
+    public interface I{Entity}Repository
     {
-        IEnumerable<TModel> ListAll();
-        TModel GetById(int id);
-        TModel Insert(TModel entity);
-        TModel Update(TModel entity);
-        void Delete(int id);
+        IEnumerable<{Model}> ListAll();
+        {Model} GetById(long id);
+        {Model} Insert({Model} entity);
+        {Model} Update({Model} entity);
+        void Delete(long id);
     }
 }
 ```
 
-Convention: Generic `<TModel>`. For pagination: `(IEnumerable<TModel> Items, int TotalCount)` tuples.
+- Match the project's generic constraints if used (e.g., `I{Entity}Repository<TModel>`, `I{Entity}Repository<TModel, TFactory>`)
+- Add pagination signatures if the project uses them: `(IEnumerable<T> Items, int TotalCount)`
 
-### Step 8: Repository Implementation — `NNews.Infra/Repository/{Entity}Repository.cs`
-
-Key patterns (see `CategoryRepository.cs`):
-- Inject `NNewsContext` + `IMapper`
-- **Reads:** `AsNoTracking()`, map EF → Domain via `_mapper.Map<{Entity}Model>(...)`
-- **Insert:** `DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified)` for timestamps
-- **Update:** Fetch tracked entity, mutate properties, `SaveChanges()`
-- **Delete:** Fetch, remove, `SaveChanges()`, throw `KeyNotFoundException` if not found
+### Step 7: Repository Implementation
 
 ```csharp
-using AutoMapper;
-using NNews.Domain.Entities;
-using NNews.Domain.Entities.Interfaces;
-using NNews.Infra.Context;
-using NNews.Infra.Interfaces.Repository;
-
-namespace NNews.Infra.Repository
+namespace {InfraNamespace}.Repository
 {
-    public class {Entity}Repository : I{Entity}Repository<I{Entity}Model>
+    public class {Entity}Repository : I{Entity}Repository
     {
-        private readonly NNewsContext _context;
-        private readonly IMapper _mapper;
+        private readonly {DbContextType} _context;
 
-        public {Entity}Repository(NNewsContext context, IMapper mapper)
+        public {Entity}Repository({DbContextType} context)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _context = context;
         }
 
-        public IEnumerable<I{Entity}Model> ListAll()
+        public IEnumerable<{Model}> ListAll()
         {
-            var entities = _context.{Entity}s.AsNoTracking().OrderBy(e => e.Title).ToList();
-            return _mapper.Map<IEnumerable<{Entity}Model>>(entities);
+            return _context.{Entity}s
+                .AsNoTracking()
+                .OrderBy(e => e.Name)
+                .ToList();
         }
 
-        public I{Entity}Model GetById(int id)
+        public {Model} GetById(long id)
         {
-            var entity = _context.{Entity}s.AsNoTracking()
-                .FirstOrDefault(e => e.{Entity}Id == id)
-                ?? throw new KeyNotFoundException($"{Entity} with ID {id} not found.");
-            return _mapper.Map<{Entity}Model>(entity);
+            return _context.{Entity}s
+                .AsNoTracking()
+                .FirstOrDefault(e => e.{Entity}Id == id);
         }
 
-        public I{Entity}Model Insert(I{Entity}Model model)
+        public {Model} Insert({Model} model)
         {
-            var entity = _mapper.Map<{Entity}>(model);
-            entity.CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
-            entity.UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
-            _context.{Entity}s.Add(entity);
+            _context.{Entity}s.Add(model);
             _context.SaveChanges();
-            return _mapper.Map<{Entity}Model>(entity);
+            return model;
         }
 
-        public I{Entity}Model Update(I{Entity}Model model)
+        public {Model} Update({Model} model)
         {
-            var existing = _context.{Entity}s.FirstOrDefault(e => e.{Entity}Id == model.{Entity}Id)
-                ?? throw new KeyNotFoundException($"{Entity} with ID {model.{Entity}Id} not found.");
-            existing.Title = model.Title;
-            existing.UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
+            var existing = _context.{Entity}s.Find(model.{Entity}Id);
+            if (existing == null) throw new KeyNotFoundException($"{Entity} not found.");
+            // Update properties
+            existing.Name = model.Name;
+            existing.UpdatedAt = DateTime.UtcNow;
             _context.SaveChanges();
-            return _mapper.Map<{Entity}Model>(existing);
+            return existing;
         }
 
-        public void Delete(int id)
+        public void Delete(long id)
         {
-            var entity = _context.{Entity}s.FirstOrDefault(e => e.{Entity}Id == id)
-                ?? throw new KeyNotFoundException($"{Entity} with ID {id} not found.");
+            var entity = _context.{Entity}s.Find(id);
+            if (entity == null) throw new KeyNotFoundException($"{Entity} not found.");
             _context.{Entity}s.Remove(entity);
             _context.SaveChanges();
         }
@@ -271,225 +264,247 @@ namespace NNews.Infra.Repository
 }
 ```
 
-### Step 9: AutoMapper Profiles — `NNews.Infra/Mapping/Profiles/`
+- If the project uses **AutoMapper** in repositories, inject `IMapper` and map EF ↔ Domain
+- If the project uses **manual mapping** (DbToModel/ModelToDb methods), follow that pattern
+- Match reads with `AsNoTracking()` if that's the convention
+- Match timestamp handling for the database provider
 
-**Two profiles per entity:**
+### Step 8: Mapping (if applicable)
 
-**`{Entity}Profile.cs`** (EF Entity ↔ Domain Model):
+If the project uses **AutoMapper**, create profiles:
+
+**EF Entity ↔ Domain Model profile:**
 ```csharp
-using AutoMapper;
-using NNews.Domain.Entities;
-using NNews.Infra.Context;
-
-namespace NNews.Infra.Mapping.Profiles
+public class {Entity}Profile : Profile
 {
-    public class {Entity}Profile : Profile
+    public {Entity}Profile()
     {
-        public {Entity}Profile()
-        {
-            CreateMap<{Entity}, {Entity}Model>()
-                .ConstructUsing(src => {Entity}Model.Reconstruct(
-                    src.{Entity}Id, src.Title, src.CreatedAt, src.UpdatedAt));
-
-            CreateMap<{Entity}Model, {Entity}>()
-                .ForMember(dest => dest.Articles, opt => opt.Ignore()); // Ignore navigation props
-        }
+        CreateMap<{EfEntity}, {DomainModel}>();
+        CreateMap<{DomainModel}, {EfEntity}>()
+            .ForMember(dest => dest.NavigationProp, opt => opt.Ignore());
     }
 }
 ```
 
-**`{Entity}DtoProfile.cs`** (Domain Model ↔ DTO):
+**Domain Model ↔ DTO profile:**
 ```csharp
-using AutoMapper;
-using NNews.Domain.Entities;
-using NNews.Domain.Entities.Interfaces;
-using NNews.DTO;
-
-namespace NNews.Infra.Mapping.Profiles
+public class {Entity}DtoProfile : Profile
 {
-    public class {Entity}DtoProfile : Profile
+    public {Entity}DtoProfile()
     {
-        public {Entity}DtoProfile()
-        {
-            CreateMap<{Entity}Model, {Entity}Info>();
-            CreateMap<I{Entity}Model, {Entity}Info>();
-
-            CreateMap<{Entity}Info, {Entity}Model>()
-                .ConstructUsing(src => src.{Entity}Id > 0
-                    ? {Entity}Model.Reconstruct(src.{Entity}Id, src.Title, src.CreatedAt, src.UpdatedAt)
-                    : {Entity}Model.Create(src.Title));
-        }
+        CreateMap<{DomainModel}, {Entity}Info>();
+        CreateMap<{Entity}Info, {DomainModel}>();
     }
 }
 ```
 
-Convention: `ConstructUsing` with factory methods. `Ignore()` navigation props. Map both concrete and interface.
+> Skip if the project uses manual mapping or has no separate EF entities.
 
-### Step 10: Service Interface — `NNews.Domain/Services/Interfaces/I{Entity}Service.cs`
+### Step 9: Service Interface
 
 ```csharp
-using NNews.DTO;
-
-namespace NNews.Domain.Services.Interfaces
+namespace {ServiceNamespace}.Interfaces
 {
     public interface I{Entity}Service
     {
         IList<{Entity}Info> ListAll();
-        {Entity}Info GetById(int id);
-        {Entity}Info Insert({Entity}Info entity);
-        {Entity}Info Update({Entity}Info entity);
-        void Delete(int id);
+        {Entity}Info GetById(long id);
+        {Entity}Info Insert({Entity}Info dto);
+        {Entity}Info Update({Entity}Info dto);
+        void Delete(long id);
     }
 }
 ```
 
-Convention: Services receive/return **DTOs**, not domain models.
+- Services receive/return **DTOs**, not domain models (unless the project does otherwise)
+- Match the existing service interface patterns
 
-### Step 11: Service Implementation — `NNews.Domain/Services/{Entity}Service.cs`
-
-Key patterns (see `CategoryService.cs`):
-- Inject repository (`I{Entity}Repository<I{Entity}Model>`) + `IMapper`
-- Map: DTO → Domain Model → Repository → Domain Model → DTO
-- Validation in service, not repository
-- Throw `ArgumentException` for invalid input, `InvalidOperationException` for business rules
+### Step 10: Service Implementation
 
 ```csharp
-using AutoMapper;
-using NNews.Domain.Entities;
-using NNews.Domain.Entities.Interfaces;
-using NNews.Domain.Services.Interfaces;
-using NNews.DTO;
-using NNews.Infra.Interfaces.Repository;
-
-namespace NNews.Domain.Services
+namespace {ServiceNamespace}
 {
     public class {Entity}Service : I{Entity}Service
     {
-        private readonly I{Entity}Repository<I{Entity}Model> _repository;
-        private readonly IMapper _mapper;
+        private readonly I{Entity}Repository _repository;
 
-        public {Entity}Service(I{Entity}Repository<I{Entity}Model> repository, IMapper mapper)
+        public {Entity}Service(I{Entity}Repository repository)
         {
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _repository = repository;
         }
 
-        public IList<{Entity}Info> ListAll() => _mapper.Map<IList<{Entity}Info>>(_repository.ListAll());
-        public {Entity}Info GetById(int id) => _mapper.Map<{Entity}Info>(_repository.GetById(id));
+        public IList<{Entity}Info> ListAll()
+        {
+            // Map from domain/EF to DTO (adapt mapping strategy)
+            return _repository.ListAll().Select(e => new {Entity}Info
+            {
+                {Entity}Id = e.{Entity}Id,
+                Name = e.Name,
+                CreatedAt = e.CreatedAt,
+                UpdatedAt = e.UpdatedAt
+            }).ToList();
+        }
+
+        public {Entity}Info GetById(long id)
+        {
+            var entity = _repository.GetById(id);
+            if (entity == null) throw new KeyNotFoundException("{Entity} not found");
+            // Map and return
+        }
 
         public {Entity}Info Insert({Entity}Info dto)
         {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
-            // Add validation here
-            var model = _mapper.Map<{Entity}Model>(dto);
-            return _mapper.Map<{Entity}Info>(_repository.Insert(model));
+            // Validate input
+            // Map DTO → Domain, insert, map back
         }
 
         public {Entity}Info Update({Entity}Info dto)
         {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
-            // Add validation here
-            var model = _mapper.Map<{Entity}Model>(dto);
-            return _mapper.Map<{Entity}Info>(_repository.Update(model));
+            // Validate input
+            // Map DTO → Domain, update, map back
         }
 
-        public void Delete(int id) => _repository.Delete(id);
+        public void Delete(long id) => _repository.Delete(id);
     }
 }
 ```
 
-### Step 12: DI Registration — Modify `NNews.Application/Initializer.cs`
+- If the project uses `IMapper`, inject it and use `_mapper.Map<>()` instead of manual mapping
+- Add validation in the service (or use FluentValidation if the project has it)
+- Match error handling patterns (Exception types, error messages)
 
-Add three entries:
+### Step 11: DI Registration
+
+Find the DI registration file and add entries for the new repository and service:
 
 ```csharp
-// Repository region:
-injectDependency(typeof(I{Entity}Repository<I{Entity}Model>), typeof({Entity}Repository), services, scoped);
+// Repository
+services.AddScoped<I{Entity}Repository, {Entity}Repository>();
 
-// AutoMapper region:
-services.AddAutoMapper(cfg => { }, typeof({Entity}Profile).Assembly);
-services.AddAutoMapper(cfg => { }, typeof({Entity}DtoProfile).Assembly);
+// Service
+services.AddScoped<I{Entity}Service, {Entity}Service>();
 
-// Service region:
-injectDependency(typeof(I{Entity}Service), typeof({Entity}Service), services, scoped);
+// AutoMapper (if not already scanning the assembly)
+services.AddAutoMapper(typeof({Entity}Profile).Assembly);
 ```
 
-### Step 13: Controller — `NNews.API/Controllers/{Entity}Controller.cs`
+- Match the lifetime used by the project (Scoped, Transient, Singleton)
+- Match the registration style (generic `AddScoped`, custom helper method, etc.)
 
-Key patterns (see `CategoryController.cs`):
-- Inject `I{Entity}Service`, `IUserClient`, `ILogger`
-- `[Authorize]` on write endpoints, `IUserClient.GetUserInSession()` for auth check
-- Error handling: `KeyNotFoundException` → 404, `ArgumentException` → 400, generic → 500
-- `CreatedAtAction` for POST responses
+### Step 12: Controller
 
 ```csharp
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using NAuth.ACL.Interfaces;
-using NNews.Domain.Services.Interfaces;
-using NNews.DTO;
-
-namespace NNews.API.Controllers
+namespace {ApiNamespace}.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class {Entity}Controller : ControllerBase
     {
         private readonly I{Entity}Service _service;
-        private readonly IUserClient _userClient;
-        private readonly ILogger<{Entity}Controller> _logger;
 
-        public {Entity}Controller(I{Entity}Service service, IUserClient userClient, ILogger<{Entity}Controller> logger)
+        public {Entity}Controller(I{Entity}Service service)
         {
-            _service = service ?? throw new ArgumentNullException(nameof(service));
-            _userClient = userClient ?? throw new ArgumentNullException(nameof(userClient));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _service = service;
         }
 
-        [HttpGet] [Authorize]
-        public IActionResult GetAll() { /* auth + _service.ListAll() */ }
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            return Ok(_service.ListAll());
+        }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id) { /* _service.GetById(id), 404 on KeyNotFound */ }
+        public IActionResult GetById(long id)
+        {
+            try
+            {
+                return Ok(_service.GetById(id));
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+        }
 
-        [HttpPost] [Authorize]
-        public IActionResult Insert([FromBody] {Entity}Info dto) { /* auth + validate + CreatedAtAction */ }
+        [HttpPost]
+        public IActionResult Insert([FromBody] {Entity}Info dto)
+        {
+            try
+            {
+                var result = _service.Insert(dto);
+                return CreatedAtAction(nameof(GetById), new { id = result.{Entity}Id }, result);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
-        [HttpPut] [Authorize]
-        public IActionResult Update([FromBody] {Entity}Info dto) { /* auth + validate + Ok */ }
+        [HttpPut]
+        public IActionResult Update([FromBody] {Entity}Info dto)
+        {
+            try
+            {
+                return Ok(_service.Update(dto));
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+        }
 
-        [HttpDelete("{id}")] [Authorize]
-        public IActionResult Delete(int id) { /* auth + NoContent, 404 on KeyNotFound */ }
+        [HttpDelete("{id}")]
+        public IActionResult Delete(long id)
+        {
+            try
+            {
+                _service.Delete(id);
+                return NoContent();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+        }
     }
 }
 ```
+
+- Match the existing route convention (`[Route("api/[controller]")]` vs `[Route("[controller]")]`)
+- Match auth patterns (`[Authorize]`, user session retrieval, role checks)
+- Match error response format (plain string, custom error DTO, etc.)
+- Match HTTP verb conventions (POST for insert, PUT for update, etc.)
 
 ---
 
 ## Checklist
 
-| # | Layer | Action | File |
-|---|-------|--------|------|
-| 1 | DTO | Create | `NNews.DTO/{Entity}Info.cs` |
-| 2 | Domain | Create | `NNews.Domain/Entities/Interfaces/I{Entity}Model.cs` |
-| 3 | Domain | Create | `NNews.Domain/Entities/{Entity}Model.cs` |
-| 4 | Infra | Create | `NNews.Infra/Context/{Entity}.cs` |
-| 5 | Infra | Modify | `NNews.Infra/Context/NNewsContext.cs` |
-| 6 | Infra | Run | `dotnet ef migrations add Add{Entity}Table` |
-| 7 | Infra.Interfaces | Create | `NNews.Infra.Interfaces/Repository/I{Entity}Repository.cs` |
-| 8 | Infra | Create | `NNews.Infra/Repository/{Entity}Repository.cs` |
-| 9 | Infra | Create | `NNews.Infra/Mapping/Profiles/{Entity}Profile.cs` |
-| 10 | Infra | Create | `NNews.Infra/Mapping/Profiles/{Entity}DtoProfile.cs` |
-| 11 | Domain | Create | `NNews.Domain/Services/Interfaces/I{Entity}Service.cs` |
-| 12 | Domain | Create | `NNews.Domain/Services/{Entity}Service.cs` |
-| 13 | Application | Modify | `NNews.Application/Initializer.cs` (3 registrations) |
-| 14 | API | Create | `NNews.API/Controllers/{Entity}Controller.cs` |
+| # | Layer | Action | Description |
+|---|-------|--------|-------------|
+| 1 | DTO | Create | `{Entity}Info.cs` (and Insert/Update variants if needed) |
+| 2 | Domain | Create | `{Entity}Model.cs` (and interface if project uses them) |
+| 3 | Infra | Create | EF Entity `{Entity}.cs` (if separate from domain model) |
+| 4 | Infra | Modify | DbContext — add `DbSet` and `OnModelCreating` configuration |
+| 5 | Infra | Run | `dotnet ef migrations add Add{Entity}Table` |
+| 6 | Domain/Infra | Create | `I{Entity}Repository.cs` interface |
+| 7 | Infra | Create | `{Entity}Repository.cs` implementation |
+| 8 | Infra | Create | Mapping profiles (if AutoMapper is used) |
+| 9 | Domain | Create | `I{Entity}Service.cs` interface |
+| 10 | Domain | Create | `{Entity}Service.cs` implementation |
+| 11 | Application | Modify | DI registration (repository, service, mapper) |
+| 12 | API | Create | `{Entity}Controller.cs` |
+
+---
 
 ## Response Guidelines
 
-1. **Read existing files first** to match current patterns exactly
+1. **Read existing files first** — Find an existing complete entity and use it as the reference for all layers
 2. **Follow the order** — DTO → Domain → Infra → Application → API
-3. **Use Category** as primary reference (simplest complete example)
+3. **Match all conventions** exactly — naming, namespaces, folder structure, code style
 4. **Run migrations** after modifying DbContext
-5. **Match conventions**: snake_case DB, PascalCase C#, factory methods, private setters
-6. **PostgreSQL**: `timestamp without time zone`, `DateTime.SpecifyKind(..., Unspecified)`, sequences
+5. **Detect and match** the database provider conventions (column naming, timestamps, key generation)
+6. **Adapt mapping strategy** — AutoMapper, manual mapping, or whatever the project uses
+7. **Match DI patterns** — registration style and service lifetimes
+8. **Match error handling** — exception types, response format, HTTP status codes
