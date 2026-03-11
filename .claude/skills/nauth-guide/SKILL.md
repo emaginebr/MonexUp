@@ -1,12 +1,12 @@
 ---
 name: nauth-guide
-description: Guides how to integrate NAuth.ACL and NAuth.DTO packages for user authentication in a .NET 8 project. Use when the user wants to add authentication, configure NAuth, use IUserClient, or understand the NAuth authentication flow.
+description: Guides how to integrate the NAuth package for user authentication in a .NET 8 project. Use when the user wants to add authentication, configure NAuth, use IUserClient, or understand the NAuth authentication flow.
 allowed-tools: Read, Grep, Glob, Bash, Write, Edit, Task
 ---
 
 # NAuth Authentication Integration Guide
 
-You are an expert assistant that helps developers integrate the **NAuth.ACL** and **NAuth.DTO** NuGet packages for user authentication in .NET 8 Web API projects.
+You are an expert assistant that helps developers integrate the **NAuth** NuGet package for user authentication in .NET 8 Web API projects.
 
 ## Input
 
@@ -18,9 +18,9 @@ When the user asks about NAuth authentication, use this knowledge base to provid
 
 ---
 
-## NAuth.DTO — Data Transfer Objects
+## NAuth — Data Transfer Objects
 
-**Install:** `dotnet add package NAuth.DTO --version 0.2.3`
+**Install:** `dotnet add package NAuth`
 
 ### NAuthSetting
 
@@ -30,6 +30,7 @@ public class NAuthSetting
     public string ApiUrl { get; set; }      // NAuth API base URL
     public string JwtSecret { get; set; }   // JWT signing secret (min 64 chars)
     public string BucketName { get; set; }  // Storage bucket name
+    public string? TenantId { get; set; }   // If set, sends X-Tenant-Id header on requests
 }
 ```
 
@@ -77,9 +78,7 @@ public enum UserStatus { Active = 1, Inactive = 2, Suspended = 3, Blocked = 4 }
 
 ---
 
-## NAuth.ACL — Anti-Corruption Layer
-
-**Install:** `dotnet add package NAuth.ACL --version 0.2.3`
+## NAuth — Anti-Corruption Layer (ACL)
 
 ### IUserClient Interface
 
@@ -144,7 +143,8 @@ Custom `AuthenticationHandler` that validates JWT tokens from the `Authorization
   "NAuth": {
     "ApiURL": "http://localhost:5004",
     "BucketName": "MyApp",
-    "JwtSecret": "your_jwt_secret_key_here_at_least_64_characters_long_for_security"
+    "JwtSecret": "your_jwt_secret_key_here_at_least_64_characters_long_for_security",
+    "TenantId": "my-tenant"
   }
 }
 ```
@@ -155,9 +155,9 @@ Docker: use `"ApiURL": "http://nauth-api:80"` and `"JwtSecret": "${JWT_SECRET}"`
 
 ```csharp
 using Microsoft.AspNetCore.Authentication;
-using NAuth.ACL;
-using NAuth.ACL.Interfaces;
-using NAuth.DTO.Settings;
+using NAuth;
+using NAuth.Interfaces;
+using NAuth.Settings;
 
 services.Configure<NAuthSetting>(configuration.GetSection("NAuth"));
 services.AddHttpClient();
@@ -207,7 +207,7 @@ Client                          Your API                        NAuth API
 ```csharp
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NAuth.ACL.Interfaces;
+using NAuth.Interfaces;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -290,7 +290,7 @@ public IActionResult Delete(int id)
 | 401 with valid token | JWT secret mismatch | Ensure `JwtSecret` matches NAuth API config |
 | `GetUserInSession` returns null | Missing `[Authorize]` or invalid token | Add `[Authorize]` or check token |
 | DI error for `IUserClient` | Missing registration | Add `services.AddScoped<IUserClient, UserClient>()` |
-| `NAuthHandler` not found | Missing package | Run `dotnet add package NAuth.ACL` |
+| `NAuthHandler` not found | Missing package | Run `dotnet add package NAuth` |
 
 ---
 
