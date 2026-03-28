@@ -1,7 +1,6 @@
 import OrderInfo from "../Domain/OrderInfo";
-import StatusRequest from "./StatusRequest";
 
-export default interface OrderListPagedResult extends StatusRequest {
+export default interface OrderListPagedResult {
   orders: OrderInfo[];
   pageNum: number;
   pageCount: number;

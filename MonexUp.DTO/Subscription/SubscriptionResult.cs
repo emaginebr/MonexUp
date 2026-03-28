@@ -1,4 +1,3 @@
-﻿using MonexUp.DTO.Domain;
 using MonexUp.DTO.Order;
 using System;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MonexUp.DTO.Subscription
 {
-    public class SubscriptionResult: StatusResult
+    public class SubscriptionResult
     {
         [JsonPropertyName("order")]
         public OrderInfo Order { get; set; }

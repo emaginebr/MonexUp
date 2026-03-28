@@ -1,5 +1,6 @@
 import UserInfo from "../../DTO/Domain/UserInfo";
 import StatusRequest from "../../DTO/Services/StatusRequest";
+import ApiResponse from "../../DTO/Services/ApiResponse";
 import UserListPagedResult from "../../DTO/Services/UserListPagedResult";
 import UserListResult from "../../DTO/Services/UserListResult";
 import UserResult from "../../DTO/Services/UserResult";
@@ -19,7 +20,7 @@ export default interface IUserService {
     hasPassword: (token: string) => Promise<StatusRequest>;
     changePassword: (oldPassword: string, newPassword: string, token: string) => Promise<StatusRequest>;
     sendRecoveryEmail: (email: string) => Promise<StatusRequest>;
-    changePasswordUsingHash: (recoveryHash: string, newPassword: string) => Promise<StatusRequest>; 
+    changePasswordUsingHash: (recoveryHash: string, newPassword: string) => Promise<StatusRequest>;
     list: (take: number) => Promise<UserListResult>;
-    search: (networkId: number, keyword: string, pageNum: number, token: string, profileId?: number) => Promise<UserListPagedResult>;
+    search: (networkId: number, keyword: string, pageNum: number, token: string, profileId?: number) => Promise<ApiResponse<UserListPagedResult>>;
 }

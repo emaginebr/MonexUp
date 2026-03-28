@@ -1,5 +1,5 @@
 import AuthSession from "../Domain/AuthSession";
-import { LanguageEnum } from "../Enum/LanguageEnum";
+import { LanguageEnum } from "../../packages/template";
 import ProviderResult from "./ProviderResult";
 
 

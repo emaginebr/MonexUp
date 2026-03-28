@@ -1,0 +1,24 @@
+# Development Dockerfile
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY ["Template.API/Template.API.csproj", "Template.API/"]
+COPY ["MonexUp.Application/MonexUp.Application.csproj", "MonexUp.Application/"]
+COPY ["MonexUp.Domain/MonexUp.Domain.csproj", "MonexUp.Domain/"]
+COPY ["MonexUp.Infra.Interfaces/MonexUp.Infra.Interfaces.csproj", "MonexUp.Infra.Interfaces/"]
+COPY ["MonexUp.DTO/MonexUp.DTO.csproj", "MonexUp.DTO/"]
+COPY ["MonexUp.Infra/MonexUp.Infra.csproj", "MonexUp.Infra/"]
+RUN dotnet restore "Template.API/Template.API.csproj"
+COPY . .
+WORKDIR "/src/Template.API"
+RUN dotnet build "Template.API.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "Template.API.csproj" -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+ENV ASPNETCORE_ENVIRONMENT=Docker
+ENV ASPNETCORE_URLS=http://+:80
+WORKDIR /app
+EXPOSE 80
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "Template.API.dll"]

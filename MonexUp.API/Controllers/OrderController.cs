@@ -46,7 +46,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpGet("createSubscription/{productSlug}")]
-        public async Task<ActionResult<SubscriptionResult>> CreateSubscription(
+        public async Task<IActionResult> CreateSubscription(
             string productSlug,
             [FromQuery] string networkSlug,
             [FromQuery] string sellerSlug
@@ -57,7 +57,7 @@ namespace MonexUp.API.Controllers
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
 
                 var product = _productService.GetBySlug(productSlug);
@@ -86,11 +86,11 @@ namespace MonexUp.API.Controllers
                 var token = HttpContext.GetBearerToken();
                 var subscription = await _subscriptionService.CreateSubscription(product.ProductId, userSession.UserId, networkId, sellerId, token);
 
-                return new SubscriptionResult()
+                return Ok(new SubscriptionResult()
                 {
                     Order = subscription.Order,
                     ClientSecret = subscription.ClientSecret
-                };
+                });
             }
             catch (Exception ex)
             {
@@ -100,21 +100,18 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("update")]
-        public async Task<ActionResult<OrderResult>> Update([FromBody] OrderInfo order)
+        public async Task<IActionResult> Update([FromBody] OrderInfo order)
         {
             try
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
                 var token = HttpContext.GetBearerToken();
                 var newOrder = _orderService.Update(order);
-                return new OrderResult()
-                {
-                    Order = await _orderService.GetOrderInfo(newOrder, token)
-                };
+                return Ok(await _orderService.GetOrderInfo(newOrder, token));
             }
             catch (Exception ex)
             {
@@ -124,17 +121,17 @@ namespace MonexUp.API.Controllers
 
         [HttpPost("search")]
         [Authorize]
-        public async Task<ActionResult<OrderListPagedResult>> Search([FromBody] OrderSearchParam param)
+        public async Task<IActionResult> Search([FromBody] OrderSearchParam param)
         {
             try
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
                 var token = HttpContext.GetBearerToken();
-                return await _orderService.Search(param.NetworkId, param.UserId, param.SellerId, param.PageNum, token);
+                return Ok(await _orderService.Search(param.NetworkId, param.UserId, param.SellerId, param.PageNum, token));
             }
             catch (Exception ex)
             {
@@ -144,14 +141,14 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("list")]
-        public async Task<ActionResult<OrderListResult>> List([FromBody] OrderParam param)
+        public async Task<IActionResult> List([FromBody] OrderParam param)
         {
             try
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
                 var token = HttpContext.GetBearerToken();
                 var orderModels = _orderService.List(param.NetworkId, param.UserId, param.Status).ToList();
@@ -160,11 +157,7 @@ namespace MonexUp.API.Controllers
                 {
                     orders.Add(await _orderService.GetOrderInfo(x, token));
                 }
-                return new OrderListResult
-                {
-                    Sucesso = true,
-                    Orders = orders
-                };
+                return Ok(orders);
             }
             catch (Exception ex)
             {
@@ -174,20 +167,16 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpGet("getById/{orderId}")]
-        public async Task<ActionResult<OrderResult>> GetById(long orderId)
+        public async Task<IActionResult> GetById(long orderId)
         {
             try
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
-                return new OrderResult
-                {
-                    Sucesso = true,
-                    Order = await _orderService.GetOrderInfo(_orderService.GetById(orderId), HttpContext.GetBearerToken())
-                };
+                return Ok(await _orderService.GetOrderInfo(_orderService.GetById(orderId), HttpContext.GetBearerToken()));
             }
             catch (Exception ex)
             {

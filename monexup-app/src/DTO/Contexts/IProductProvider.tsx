@@ -2,7 +2,6 @@ import ProductInfo from "../Domain/ProductInfo";
 import ProductListPagedInfo from "../Domain/ProductListPagedInfo";
 import ProductSearchParam from "../Domain/ProductSearchParam";
 import UserProfileInfo from "../Domain/UserProfileInfo";
-import ProductResult from "../Services/ProductResult";
 import ProductProviderResult from "./ProductProviderResult";
 import ProviderResult from "./ProviderResult";
 

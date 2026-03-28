@@ -1,4 +1,3 @@
-﻿using MonexUp.DTO.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MonexUp.DTO.Invoice
 {
-    public class StatementListPagedResult: StatusResult
+    public class StatementListPagedResult
     {
         [JsonPropertyName("statements")]
         public IList<StatementInfo> Statements { get; set; }

@@ -1,12 +1,7 @@
-﻿using MonexUp.Domain.Impl.Services;
 using MonexUp.Domain.Interfaces.Services;
-using MonexUp.DTO.Domain;
 using MonexUp.DTO.Invoice;
-using MonexUp.DTO.Network;
-using MonexUp.DTO.Order;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Stripe.Climate;
 using System;
 using System.Threading.Tasks;
 using NAuth.ACL.Interfaces;
@@ -22,7 +17,7 @@ namespace MonexUp.API.Controllers
         private readonly IInvoiceService _invoiceService;
 
         public InvoiceController(
-            IInvoiceService invoiceService, 
+            IInvoiceService invoiceService,
             IUserClient userClient
         )
         {
@@ -32,20 +27,17 @@ namespace MonexUp.API.Controllers
 
         [HttpGet("syncronize")]
         [Authorize]
-        public async Task<ActionResult<StatusResult>> Syncronize()
+        public async Task<IActionResult> Syncronize()
         {
             try
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
                 await _invoiceService.Syncronize();
-                return new StatusResult()
-                {
-                    Sucesso = true,
-                };
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -55,17 +47,17 @@ namespace MonexUp.API.Controllers
 
         [HttpPost("search")]
         [Authorize]
-        public async Task<ActionResult<InvoiceListPagedResult>> Search([FromBody] InvoiceSearchParam param)
+        public async Task<IActionResult> Search([FromBody] InvoiceSearchParam param)
         {
             try
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
                 var token = HttpContext.GetBearerToken();
-                return await _invoiceService.Search(param.NetworkId, param.UserId, param.SellerId, param.PageNum, token);
+                return Ok(await _invoiceService.Search(param.NetworkId, param.UserId, param.SellerId, param.PageNum, token));
             }
             catch (Exception ex)
             {
@@ -75,17 +67,17 @@ namespace MonexUp.API.Controllers
 
         [HttpPost("searchStatement")]
         [Authorize]
-        public async Task<ActionResult<StatementListPagedResult>> searchStatement([FromBody] StatementSearchParam param)
+        public async Task<IActionResult> searchStatement([FromBody] StatementSearchParam param)
         {
             try
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
                 var token = HttpContext.GetBearerToken();
-                return await _invoiceService.SearchStatement(param, token);
+                return Ok(await _invoiceService.SearchStatement(param, token));
             }
             catch (Exception ex)
             {
@@ -95,20 +87,17 @@ namespace MonexUp.API.Controllers
 
         [HttpGet("getBalance")]
         [Authorize]
-        public ActionResult<NumberResult> GetBalance([FromQuery] long networkId)
+        public IActionResult GetBalance([FromQuery] long networkId)
         {
             try
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
                 long? newNetworkId = (networkId > 0) ? networkId : 0;
-                return new NumberResult{
-                    Sucesso = true,
-                    Value = _invoiceService.GetBalance(newNetworkId, newNetworkId.HasValue ? null : userSession.UserId)
-                };
+                return Ok(_invoiceService.GetBalance(newNetworkId, newNetworkId.HasValue ? null : userSession.UserId));
             }
             catch (Exception ex)
             {
@@ -118,20 +107,16 @@ namespace MonexUp.API.Controllers
 
         [HttpGet("getAvailableBalance")]
         [Authorize]
-        public ActionResult<NumberResult> GetAvailableBalance()
+        public IActionResult GetAvailableBalance()
         {
             try
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
-                return new NumberResult
-                {
-                    Sucesso = true,
-                    Value = _invoiceService.GetAvailableBalance(userSession.UserId)
-                };
+                return Ok(_invoiceService.GetAvailableBalance(userSession.UserId));
             }
             catch (Exception ex)
             {
@@ -140,15 +125,11 @@ namespace MonexUp.API.Controllers
         }
 
         [HttpGet("checkout/{checkoutSessionId}")]
-        public async Task<ActionResult<InvoiceResult>> Checkout(string checkoutSessionId)
+        public async Task<IActionResult> Checkout(string checkoutSessionId)
         {
             try
             {
-                return new InvoiceResult
-                {
-                    Sucesso = true,
-                    Invoice = await _invoiceService.GetInvoiceInfo(await _invoiceService.Checkout(checkoutSessionId), HttpContext.GetBearerToken())
-                };
+                return Ok(await _invoiceService.GetInvoiceInfo(await _invoiceService.Checkout(checkoutSessionId), HttpContext.GetBearerToken()));
             }
             catch (Exception ex)
             {

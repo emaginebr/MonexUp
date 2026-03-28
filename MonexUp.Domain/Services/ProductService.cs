@@ -173,7 +173,6 @@ namespace MonexUp.Domain.Impl.Services
             }
             return new ProductListPagedResult
             {
-                Sucesso = true,
                 Products = products,
                 PageNum = param.PageNum,
                 PageCount = pageCount

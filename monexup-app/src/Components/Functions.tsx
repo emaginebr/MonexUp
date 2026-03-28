@@ -1,5 +1,5 @@
 import UserNetworkInfo from "../DTO/Domain/UserNetworkInfo";
-import { LanguageEnum } from "../DTO/Enum/LanguageEnum";
+import { LanguageEnum } from "../packages/template";
 import { UserRoleEnum } from "../DTO/Enum/UserRoleEnum";
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { useTranslation } from 'react-i18next';

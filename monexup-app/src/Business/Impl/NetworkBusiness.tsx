@@ -25,20 +25,20 @@ const NetworkBusiness: INetworkBusiness = {
           };
         }
         let retServ = await _networkService.insert(network, session.token);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.network,
+            dataResult: retServ.data,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
-      /*  
+      /*
       } catch {
         throw new Error("Failed to insert");
       }
@@ -56,17 +56,17 @@ const NetworkBusiness: INetworkBusiness = {
           };
         }
         let retServ = await _networkService.update(network, session.token);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.network,
+            dataResult: retServ.data,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -77,17 +77,17 @@ const NetworkBusiness: INetworkBusiness = {
     try {
         let ret: BusinessResult<NetworkInfo[]>;
         let retServ = await _networkService.listAll();
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.networks,
+            dataResult: retServ.data,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -106,17 +106,17 @@ const NetworkBusiness: INetworkBusiness = {
           };
         }
         let retServ = await _networkService.listByUser(session.token);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.userNetworks,
+            dataResult: retServ.data,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -127,17 +127,17 @@ const NetworkBusiness: INetworkBusiness = {
     try {
         let ret: BusinessResult<UserNetworkInfo[]>;
         let retServ = await _networkService.listByNetwork(networkSlug);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.userNetworks,
+            dataResult: retServ.data,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -156,17 +156,17 @@ const NetworkBusiness: INetworkBusiness = {
           };
         }
         let retServ = await _networkService.getById(networkId, session.token);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.network,
+            dataResult: retServ.data,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -177,17 +177,17 @@ const NetworkBusiness: INetworkBusiness = {
     try {
         let ret: BusinessResult<NetworkInfo>;
         let retServ = await _networkService.getBySlug(networkSlug);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.network,
+            dataResult: retServ.data,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -206,17 +206,17 @@ const NetworkBusiness: INetworkBusiness = {
           };
         }
         let retServ = await _networkService.getUserNetwork(networkId, session.token);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.userNetwork,
+            dataResult: retServ.data,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -235,17 +235,17 @@ const NetworkBusiness: INetworkBusiness = {
           };
         }
         let retServ = await _networkService.getUserNetworkBySlug(networkSlug, session.token);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.userNetwork,
+            dataResult: retServ.data,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -256,17 +256,17 @@ const NetworkBusiness: INetworkBusiness = {
     try {
         let ret: BusinessResult<UserNetworkInfo>;
         let retServ = await _networkService.getSellerBySlug(networkSlug, userSlug);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.userNetwork,
+            dataResult: retServ.data,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -285,17 +285,17 @@ const NetworkBusiness: INetworkBusiness = {
           };
         }
         let retServ = await _networkService.requestAccess(networkId, session.token, referrerId);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.sucesso,
+            dataResult: true,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -314,17 +314,17 @@ const NetworkBusiness: INetworkBusiness = {
           };
         }
         let retServ = await _networkService.changeStatus(networkId, userId, status, session.token);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.sucesso,
+            dataResult: true,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -343,17 +343,17 @@ const NetworkBusiness: INetworkBusiness = {
           };
         }
         let retServ = await _networkService.promote(networkId, userId, session.token);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.sucesso,
+            dataResult: true,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -372,17 +372,17 @@ const NetworkBusiness: INetworkBusiness = {
           };
         }
         let retServ = await _networkService.demote(networkId, userId, session.token);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.sucesso,
+            dataResult: true,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {

@@ -26,13 +26,13 @@ const InvoiceBusiness: IInvoiceBusiness = {
         };
       }
       let retServ = await _invoiceService.search(networkId, userId, sellerId, pageNum, session.token);
-      if (retServ.sucesso) {
+      if (retServ.success) {
         let orderPaged: InvoiceListPagedInfo;
         orderPaged = {
           ...orderPaged,
-          invoices: retServ.invoices,
-          pageNum: retServ.pageNum,
-          pageCount: retServ.pageCount
+          invoices: retServ.data.invoices,
+          pageNum: retServ.data.pageNum,
+          pageCount: retServ.data.pageCount
         }
         return {
           ...ret,
@@ -43,7 +43,7 @@ const InvoiceBusiness: IInvoiceBusiness = {
         return {
           ...ret,
           sucesso: false,
-          mensagem: retServ.mensagem
+          mensagem: retServ.messageError
         };
       }
     } catch {
@@ -62,13 +62,13 @@ const InvoiceBusiness: IInvoiceBusiness = {
         };
       }
       let retServ = await _invoiceService.searchStatement(param, session.token);
-      if (retServ.sucesso) {
+      if (retServ.success) {
         let orderPaged: StatementListPagedInfo;
         orderPaged = {
           ...orderPaged,
-          statements: retServ.statements,
-          pageNum: retServ.pageNum,
-          pageCount: retServ.pageCount
+          statements: retServ.data.statements,
+          pageNum: retServ.data.pageNum,
+          pageCount: retServ.data.pageCount
         }
         return {
           ...ret,
@@ -79,7 +79,7 @@ const InvoiceBusiness: IInvoiceBusiness = {
         return {
           ...ret,
           sucesso: false,
-          mensagem: retServ.mensagem
+          mensagem: retServ.messageError
         };
       }
     } catch {
@@ -98,17 +98,17 @@ const InvoiceBusiness: IInvoiceBusiness = {
         };
       }
       let retServ = await _invoiceService.getBalance(session.token, networkId);
-      if (retServ.sucesso) {
+      if (retServ.success) {
         return {
           ...ret,
-          dataResult: retServ.value,
+          dataResult: retServ.data,
           sucesso: true
         };
       } else {
         return {
           ...ret,
           sucesso: false,
-          mensagem: retServ.mensagem
+          mensagem: retServ.messageError
         };
       }
     } catch {
@@ -127,17 +127,17 @@ const InvoiceBusiness: IInvoiceBusiness = {
         };
       }
       let retServ = await _invoiceService.getAvailableBalance(session.token);
-      if (retServ.sucesso) {
+      if (retServ.success) {
         return {
           ...ret,
-          dataResult: retServ.value,
+          dataResult: retServ.data,
           sucesso: true
         };
       } else {
         return {
           ...ret,
           sucesso: false,
-          mensagem: retServ.mensagem
+          mensagem: retServ.messageError
         };
       }
     } catch {
@@ -156,17 +156,17 @@ const InvoiceBusiness: IInvoiceBusiness = {
         };
       }
       let retServ = await _invoiceService.syncronize(session.token);
-      if (retServ.sucesso) {
+      if (retServ.success) {
         return {
           ...ret,
-          dataResult: retServ.sucesso,
+          dataResult: true,
           sucesso: true
         };
       } else {
         return {
           ...ret,
           sucesso: false,
-          mensagem: retServ.mensagem
+          mensagem: retServ.messageError
         };
       }
     } catch {
@@ -177,17 +177,17 @@ const InvoiceBusiness: IInvoiceBusiness = {
     try {
       let ret: BusinessResult<InvoiceInfo>;
       let retServ = await _invoiceService.checkout(checkoutSessionId);
-      if (retServ.sucesso) {
+      if (retServ.success) {
         return {
           ...ret,
-          dataResult: retServ.invoice,
+          dataResult: retServ.data,
           sucesso: true
         };
       } else {
         return {
           ...ret,
           sucesso: false,
-          mensagem: retServ.mensagem
+          mensagem: retServ.messageError
         };
       }
     } catch {

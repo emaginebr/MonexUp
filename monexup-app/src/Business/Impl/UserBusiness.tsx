@@ -2,8 +2,6 @@ import BusinessResult from "../../DTO/Business/BusinessResult";
 import AuthSession from "../../DTO/Domain/AuthSession";
 import UserInfo from "../../DTO/Domain/UserInfo";
 import UserListPagedInfo from "../../DTO/Domain/UserListPagedInfo";
-import UserListPagedResult from "../../DTO/Services/UserListPagedResult";
-import UserNetworkListResult from "../../DTO/Services/UserNetworkListResult";
 import IUserService from "../../Services/Interfaces/IUserService";
 import AuthFactory from "../Factory/AuthFactory";
 import IUserBusiness from "../Interfaces/IUserBusiness";
@@ -303,15 +301,15 @@ const UserBusiness: IUserBusiness = {
         };
       }
       let retServ = await _userService.search(networkId, keyword, pageNum, session.token, profileId);
-      if (retServ.sucesso) {
+      if (retServ.success) {
         let dataResult: UserListPagedInfo;
         return {
           ...ret,
           dataResult: {
             ...dataResult,
-            users: retServ.users,
-            pageNum: retServ.pageNum,
-            pageCount: retServ.pageCount
+            users: retServ.data.users,
+            pageNum: retServ.data.pageNum,
+            pageCount: retServ.data.pageCount
           },
           sucesso: true
         };
@@ -319,7 +317,7 @@ const UserBusiness: IUserBusiness = {
         return {
           ...ret,
           sucesso: false,
-          mensagem: retServ.mensagem
+          mensagem: retServ.messageError
         };
       }
     /*

@@ -1,5 +1,3 @@
-﻿using MonexUp.DTO.Domain;
-using MonexUp.DTO.Product;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MonexUp.DTO.Order
 {
-    public class OrderListPagedResult: StatusResult
+    public class OrderListPagedResult
     {
         [JsonPropertyName("orders")]
         public IList<OrderInfo> Orders { get; set; }

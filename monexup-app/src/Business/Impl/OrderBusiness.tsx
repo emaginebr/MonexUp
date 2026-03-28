@@ -24,17 +24,17 @@ const OrderBusiness: IOrderBusiness = {
           };
         }
         let retServ = await _orderService.createSubscription(productSlug, session.token, networkSlug, sellerSlug);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.clientSecret,
+            dataResult: retServ.data.clientSecret,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -54,17 +54,17 @@ const OrderBusiness: IOrderBusiness = {
           };
         }
         let retServ = await _orderService.createInvoice(productSlug, session.token);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.clientSecret,
+            dataResult: retServ.data.clientSecret,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -83,13 +83,13 @@ const OrderBusiness: IOrderBusiness = {
         };
       }
       let retServ = await _orderService.search(networkId, userId, sellerId, pageNum, session.token);
-      if (retServ.sucesso) {
+      if (retServ.success) {
         let orderPaged: OrderListPagedInfo;
         orderPaged = {
           ...orderPaged,
-          orders: retServ.orders,
-          pageNum: retServ.pageNum,
-          pageCount: retServ.pageCount
+          orders: retServ.data.orders,
+          pageNum: retServ.data.pageNum,
+          pageCount: retServ.data.pageCount
         }
         return {
           ...ret,
@@ -100,7 +100,7 @@ const OrderBusiness: IOrderBusiness = {
         return {
           ...ret,
           sucesso: false,
-          mensagem: retServ.mensagem
+          mensagem: retServ.messageError
         };
       }
     } catch {
@@ -119,17 +119,17 @@ const OrderBusiness: IOrderBusiness = {
         };
       }
       let retServ = await _orderService.getById(orderId, session.token);
-      if (retServ.sucesso) {
+      if (retServ.success) {
         return {
           ...ret,
-          dataResult: retServ.order,
+          dataResult: retServ.data,
           sucesso: true
         };
       } else {
         return {
           ...ret,
           sucesso: false,
-          mensagem: retServ.mensagem
+          mensagem: retServ.messageError
         };
       }
     } catch {

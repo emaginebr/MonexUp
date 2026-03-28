@@ -1,15 +1,10 @@
-﻿using DB.Infra.Context;
-using MonexUp.Domain.Impl.Services;
 using MonexUp.Domain.Interfaces.Services;
-using MonexUp.DTO.Domain;
-using MonexUp.DTO.Network;
 using MonexUp.DTO.Profile;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using NAuth.ACL.Interfaces;
 using MonexUp.API.Extensions;
 
@@ -30,21 +25,18 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("insert")]
-        public async Task<ActionResult<ProfileResult>> Insert([FromBody] UserProfileInfo profile)
+        public async Task<IActionResult> Insert([FromBody] UserProfileInfo profile)
         {
             try
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
                 var token = HttpContext.GetBearerToken();
                 var newProfile = await _profileService.Insert(profile, userSession.UserId, token);
-                return new ProfileResult()
-                {
-                    Profile = _profileService.GetUserProfileInfo(newProfile)
-                };
+                return Ok(_profileService.GetUserProfileInfo(newProfile));
             }
             catch (Exception ex)
             {
@@ -54,21 +46,18 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("update")]
-        public async Task<ActionResult<ProfileResult>> Update([FromBody] UserProfileInfo profile)
+        public async Task<IActionResult> Update([FromBody] UserProfileInfo profile)
         {
             try
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
                 var token = HttpContext.GetBearerToken();
                 var newProfile = await _profileService.Update(profile, userSession.UserId, token);
-                return new ProfileResult()
-                {
-                    Profile = _profileService.GetUserProfileInfo(newProfile)
-                };
+                return Ok(_profileService.GetUserProfileInfo(newProfile));
             }
             catch (Exception ex)
             {
@@ -78,22 +67,18 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpGet("delete/{profileId}")]
-        public async Task<ActionResult<StatusResult>> Delete(long profileId)
+        public async Task<IActionResult> Delete(long profileId)
         {
             try
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
                 var token = HttpContext.GetBearerToken();
                 await _profileService.Delete(profileId, userSession.UserId, token);
-                return new StatusResult
-                {
-                    Sucesso = true,
-                    Mensagem = "Profile successfully deleted"
-                };
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -103,23 +88,19 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpGet("listByNetwork/{networkId}")]
-        public ActionResult<ProfileListResult> ListByNetwork(long networkId)
+        public IActionResult ListByNetwork(long networkId)
         {
             try
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
-                return new ProfileListResult
-                {
-                    Sucesso = true,
-                    Profiles = _profileService.ListByNetwork(networkId)
+                return Ok(_profileService.ListByNetwork(networkId)
                     .OrderBy(x => x.Level)
                     .Select(x => _profileService.GetUserProfileInfo(x))
-                    .ToList()
-                };
+                    .ToList());
             }
             catch (Exception ex)
             {
@@ -129,20 +110,16 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpGet("getById/{profileId}")]
-        public ActionResult<ProfileResult> GetById(long profileId)
+        public IActionResult GetById(long profileId)
         {
             try
             {
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
-                return new ProfileResult
-                {
-                    Sucesso = true,
-                    Profile = _profileService.GetUserProfileInfo(_profileService.GetById(profileId))
-                };
+                return Ok(_profileService.GetUserProfileInfo(_profileService.GetById(profileId)));
             }
             catch (Exception ex)
             {

@@ -110,6 +110,31 @@ services:
       - monexup-network
 
   # ===========================================
+  # Template API - Template management service
+  # ===========================================
+  template-api:
+    build:
+      context: .
+      dockerfile: Template.API/Dockerfile.dev
+    container_name: template-api
+    env_file: .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      ConnectionStrings__MonexUpContext: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-monexup_db};Username=${POSTGRES_USER:-monexup_user};Password=${POSTGRES_PASSWORD}"
+      NAuth__ApiUrl: http://nauth-api:80
+      NAuth__JwtSecret: ${NAUTH_JWT_SECRET}
+    ports:
+      - "5002:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nauth-api:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - monexup-network
+
+  # ===========================================
   # MonexUp BackgroundService
   # ===========================================
   monexup-bg:

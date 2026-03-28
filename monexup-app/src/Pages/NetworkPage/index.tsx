@@ -4,19 +4,11 @@ import AuthContext from "../../Contexts/Auth/AuthContext";
 import NetworkContext from "../../Contexts/Network/NetworkContext";
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 import MessageToast from "../../Components/MessageToast";
-import Plan3ColsPart from "../_WebParts/Plan3ColsPart";
-import TeamPart from "../_WebParts/TeamPart";
-import Hero01Part from "../_WebParts/Hero01Part";
-import EditMode from "../../Components/EditMode";
-import TemplateContext from "../../Contexts/Template/TemplateContext";
-import { strToPartEnum, WebsitePartEnum } from "../../Components/TemplateUtils";
-import TemplatePartInfo from "../../DTO/Domain/TemplatePartInfo";
-import Hero02Part from "../_WebParts/Hero02Part";
+import { Plan3ColsPart, TeamPart, Hero01Part, EditMode, TemplateContext, strToPartEnum, WebsitePartEnum, Hero02Part, ProductListPart, Plan4ColsPart } from "../../packages/template";
+import TemplatePartInfo from "../../packages/template/DTO/TemplatePartInfo";
 import SkeletonPage from "../../Components/SkeletonPage";
 import ProductContext from "../../Contexts/Product/ProductContext";
-import ProductListPart from "../_WebParts/ProductListPart";
 import ProductSearchParam from "../../DTO/Domain/ProductSearchParam";
-import Plan4ColsPart from "../_WebParts/Plan4ColsPart";
 
 export default function NetworkPage() {
 

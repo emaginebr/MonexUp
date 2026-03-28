@@ -25,20 +25,20 @@ const ProductBusiness: IProductBusiness = {
           };
         }
         let retServ = await _productService.insert(product, session.token);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.product,
+            dataResult: retServ.data,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
-      /*  
+      /*
       } catch {
         throw new Error("Failed to insert");
       }
@@ -56,17 +56,17 @@ const ProductBusiness: IProductBusiness = {
           };
         }
         let retServ = await _productService.update(product, session.token);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.product,
+            dataResult: retServ.data,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -85,13 +85,13 @@ const ProductBusiness: IProductBusiness = {
           };
         }
         let retServ = await _productService.search(param, session.token);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           let search: ProductListPagedInfo;
           search = {
             ...search,
-            pageNum: retServ.pageNum,
-            pageCount: retServ.pageCount,
-            products: retServ.products
+            pageNum: retServ.data.pageNum,
+            pageCount: retServ.data.pageCount,
+            products: retServ.data.products
           };
           return {
             ...ret,
@@ -102,7 +102,7 @@ const ProductBusiness: IProductBusiness = {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -113,17 +113,17 @@ const ProductBusiness: IProductBusiness = {
     try {
         let ret: BusinessResult<ProductInfo[]>;
         let retServ = await _productService.listByNetwork(networkId);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.products,
+            dataResult: retServ.data,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -134,17 +134,17 @@ const ProductBusiness: IProductBusiness = {
     try {
         let ret: BusinessResult<ProductInfo[]>;
         let retServ = await _productService.listByNetworkSlug(networkSlug);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.products,
+            dataResult: retServ.data,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -163,17 +163,17 @@ const ProductBusiness: IProductBusiness = {
           };
         }
         let retServ = await _productService.getById(productId, session.token);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.product,
+            dataResult: retServ.data,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -184,17 +184,17 @@ const ProductBusiness: IProductBusiness = {
     try {
         let ret: BusinessResult<ProductInfo>;
         let retServ = await _productService.getBySlug(productSlug);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.product,
+            dataResult: retServ.data,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {

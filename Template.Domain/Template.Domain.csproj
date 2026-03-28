@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Template.DTO\Template.DTO.csproj" />
+    <ProjectReference Include="..\Template.Infra.Interfaces\Template.Infra.Interfaces.csproj" />
+  </ItemGroup>
+
+</Project>

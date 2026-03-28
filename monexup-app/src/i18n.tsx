@@ -2,7 +2,7 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import HttpApi from 'i18next-http-backend';
-import { LanguageEnum } from './DTO/Enum/LanguageEnum';
+import { LanguageEnum } from './packages/template';
 
 // This utility function maps your LanguageEnum to i18next standard codes
 // and helps select the correct flag.

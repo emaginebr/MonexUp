@@ -1,13 +1,8 @@
 import BusinessResult from "../../DTO/Business/BusinessResult";
 import AuthSession from "../../DTO/Domain/AuthSession";
-import NetworkInfo from "../../DTO/Domain/NetworkInfo";
-import NetworkInsertInfo from "../../DTO/Domain/NetworkInsertInfo";
-import UserNetworkInfo from "../../DTO/Domain/UserNetworkInfo";
 import UserProfileInfo from "../../DTO/Domain/UserProfileInfo";
-import INetworkService from "../../Services/Interfaces/INetworkService";
 import IProfileService from "../../Services/Interfaces/IProfileService";
 import AuthFactory from "../Factory/AuthFactory";
-import INetworkBusiness from "../Interfaces/INetworkBusiness";
 import IProfileBusiness from "../Interfaces/IProfileBusiness";
 
 let _profileService: IProfileService;
@@ -28,20 +23,20 @@ const ProfileBusiness: IProfileBusiness = {
           };
         }
         let retServ = await _profileService.insert(profile, session.token);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.profile,
+            dataResult: retServ.data,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
-      /*  
+      /*
       } catch {
         throw new Error("Failed to insert");
       }
@@ -59,17 +54,17 @@ const ProfileBusiness: IProfileBusiness = {
           };
         }
         let retServ = await _profileService.update(profile, session.token);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.profile,
+            dataResult: retServ.data,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -88,17 +83,17 @@ const ProfileBusiness: IProfileBusiness = {
           };
         }
         let retServ = await _profileService.delete(profileId, session.token);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.sucesso,
+            dataResult: true,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -117,17 +112,17 @@ const ProfileBusiness: IProfileBusiness = {
           };
         }
         let retServ = await _profileService.listByNetwork(networkId, session.token);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.profiles,
+            dataResult: retServ.data,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {
@@ -146,17 +141,17 @@ const ProfileBusiness: IProfileBusiness = {
           };
         }
         let retServ = await _profileService.getById(profileId, session.token);
-        if (retServ.sucesso) {
+        if (retServ.success) {
           return {
             ...ret,
-            dataResult: retServ.profile,
+            dataResult: retServ.data,
             sucesso: true
           };
         } else {
           return {
             ...ret,
             sucesso: false,
-            mensagem: retServ.mensagem
+            mensagem: retServ.messageError
           };
         }
       } catch {

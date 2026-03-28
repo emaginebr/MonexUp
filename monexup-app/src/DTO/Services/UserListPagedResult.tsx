@@ -1,7 +1,6 @@
 import UserNetworkSearchInfo from "../Domain/UserNetworkSearchInfo";
-import StatusRequest from "./StatusRequest";
 
-export default interface UserListPagedResult extends StatusRequest {
+export default interface UserListPagedResult {
   users: UserNetworkSearchInfo[];
   pageNum: number;
   pageCount: number;

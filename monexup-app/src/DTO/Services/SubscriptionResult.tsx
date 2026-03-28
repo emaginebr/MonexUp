@@ -1,7 +1,6 @@
 import OrderInfo from "../Domain/OrderInfo";
-import StatusRequest from "./StatusRequest";
 
-export default interface SubscriptionResult extends StatusRequest {
-    order : OrderInfo;
+export default interface SubscriptionResult {
+    order: OrderInfo;
     clientSecret: string;
 }

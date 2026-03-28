@@ -13,11 +13,8 @@ import SubscriptionForm from "./SubscriptionForm";
 import NetworkFooter from "../NetworkPage/NetworkFooter";
 import UserContext from "../../Contexts/User/UserContext";
 import UserForm from "./UserForm";
-import TemplateContext from "../../Contexts/Template/TemplateContext";
-import { strToPartEnum, WebsitePartEnum } from "../../Components/TemplateUtils";
-import TemplatePartInfo from "../../DTO/Domain/TemplatePartInfo";
-import EditMode from "../../Components/EditMode";
-import Product01Part from "../_WebParts/Product01Part";
+import { TemplateContext, strToPartEnum, WebsitePartEnum, EditMode, Product01Part } from "../../packages/template";
+import TemplatePartInfo from "../../packages/template/DTO/TemplatePartInfo";
 import SkeletonPage from "../../Components/SkeletonPage";
 
 export default function ProductPage() {
@@ -133,10 +130,10 @@ export default function ProductPage() {
                             </Col>
                             <Col md={4}>
                                 {authContext.sessionInfo ?
-                                    <SubscriptionForm 
-                                        productSlug={productSlug} 
+                                    <SubscriptionForm
+                                        productSlug={productSlug}
                                         networkSlug={networkSlug}
-                                        sellerSlug={sellerSlug} 
+                                        sellerSlug={sellerSlug}
                                     />
                                     :
                                     <UserForm url={getUrl()} onSuccess={(msgSuccess) => {

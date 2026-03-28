@@ -216,7 +216,6 @@ namespace MonexUp.Domain.Impl.Services
             }
             return new InvoiceListPagedResult
             {
-                Sucesso = true,
                 Invoices = invoices,
                 PageNum = pageNum,
                 PageCount = pageCount

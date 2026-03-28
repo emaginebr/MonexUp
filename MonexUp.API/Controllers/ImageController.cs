@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MonexUp.Domain.Impl.Services;
 using MonexUp.Domain.Interfaces.Factory;
-using MonexUp.DTO.Domain;
 using NAuth.ACL.Interfaces;
 using zTools.ACL.Interfaces;
 using System;
@@ -37,7 +36,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("uploadImageUser")]
-        public async Task<ActionResult<StringResult>> UploadImageUser(IFormFile file)
+        public async Task<IActionResult> UploadImageUser(IFormFile file)
         {
             try
             {
@@ -48,17 +47,14 @@ namespace MonexUp.API.Controllers
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
 
                 var fileName = $"user-{StringUtils.GenerateShortUniqueString()}.jpg";
                 var formFile = new FormFileWrapper(file.OpenReadStream(), fileName, file.ContentType);
                 await _fileClient.UploadFileAsync(BucketName, formFile);
 
-                return new StringResult()
-                {
-                    Value = await _fileClient.GetFileUrlAsync(BucketName, fileName)
-                };
+                return Ok(await _fileClient.GetFileUrlAsync(BucketName, fileName));
             }
             catch (Exception ex)
             {
@@ -68,7 +64,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("uploadImageNetwork")]
-        public async Task<ActionResult<StringResult>> UploadImageNetwork([FromForm] long networkId, IFormFile file)
+        public async Task<IActionResult> UploadImageNetwork([FromForm] long networkId, IFormFile file)
         {
             try
             {
@@ -79,7 +75,7 @@ namespace MonexUp.API.Controllers
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
 
                 var network = _networkFactory.BuildNetworkModel().GetById(networkId, _networkFactory);
@@ -95,10 +91,7 @@ namespace MonexUp.API.Controllers
                 network.Image = fileName;
                 network.Update(_networkFactory);
 
-                return new StringResult()
-                {
-                    Value = await _fileClient.GetFileUrlAsync(BucketName, fileName)
-                };
+                return Ok(await _fileClient.GetFileUrlAsync(BucketName, fileName));
             }
             catch (Exception ex)
             {
@@ -108,7 +101,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("uploadImageProduct")]
-        public async Task<ActionResult<StringResult>> UploadImageProduct([FromForm] long productId, IFormFile file)
+        public async Task<IActionResult> UploadImageProduct([FromForm] long productId, IFormFile file)
         {
             try
             {
@@ -119,7 +112,7 @@ namespace MonexUp.API.Controllers
                 var userSession = _userClient.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
 
                 var product = _productFactory.BuildProductModel().GetById(productId, _productFactory);
@@ -135,10 +128,7 @@ namespace MonexUp.API.Controllers
                 product.Image = fileName;
                 product.Update(_productFactory);
 
-                return new StringResult()
-                {
-                    Value = await _fileClient.GetFileUrlAsync(BucketName, fileName)
-                };
+                return Ok(await _fileClient.GetFileUrlAsync(BucketName, fileName));
             }
             catch (Exception ex)
             {

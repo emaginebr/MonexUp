@@ -1,4 +1,3 @@
-﻿using MonexUp.DTO.Domain;
 using MonexUp.DTO.Network;
 using System;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MonexUp.DTO.User
 {
-    public class UserListPagedResult: StatusResult
+    public class UserListPagedResult
     {
         [JsonPropertyName("users")]
         public IList<UserNetworkSearchInfo> Users { get; set; }

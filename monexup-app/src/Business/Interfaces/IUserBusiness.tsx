@@ -1,8 +1,6 @@
 import BusinessResult from "../../DTO/Business/BusinessResult";
 import UserInfo from "../../DTO/Domain/UserInfo";
 import UserListPagedInfo from "../../DTO/Domain/UserListPagedInfo";
-import UserListPagedResult from "../../DTO/Services/UserListPagedResult";
-import UserNetworkListResult from "../../DTO/Services/UserNetworkListResult";
 import IUserService from "../../Services/Interfaces/IUserService";
 
 export default interface IUserBusiness {

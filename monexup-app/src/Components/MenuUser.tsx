@@ -15,7 +15,7 @@ import NetworkContext from '../Contexts/Network/NetworkContext';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import UserContext from '../Contexts/User/UserContext';
-import TemplateContext from '../Contexts/Template/TemplateContext';
+import { TemplateContext } from '../packages/template';
 import { MenuLanguage } from './Functions';
 import { useTranslation } from 'react-i18next';
 

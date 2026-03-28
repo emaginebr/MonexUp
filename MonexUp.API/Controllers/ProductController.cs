@@ -28,21 +28,18 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("insert")]
-        public async Task<ActionResult<ProductResult>> Insert([FromBody] ProductInfo product)
+        public async Task<IActionResult> Insert([FromBody] ProductInfo product)
         {
             try
             {
                 var userSession = _userService.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
                 var token = HttpContext.GetBearerToken();
                 var newProfile = await _productService.Insert(product, userSession.UserId, token);
-                return new ProductResult()
-                {
-                    Product = await _productService.GetProductInfo(newProfile)
-                };
+                return Ok(await _productService.GetProductInfo(newProfile));
             }
             catch (Exception ex)
             {
@@ -52,21 +49,18 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("update")]
-        public async Task<ActionResult<ProductResult>> Update([FromBody] ProductInfo product)
+        public async Task<IActionResult> Update([FromBody] ProductInfo product)
         {
             try
             {
                 var userSession = _userService.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
                 var token = HttpContext.GetBearerToken();
                 var newProduct = await _productService.Update(product, userSession.UserId, token);
-                return new ProductResult()
-                {
-                    Product = await _productService.GetProductInfo(newProduct)
-                };
+                return Ok(await _productService.GetProductInfo(newProduct));
             }
             catch (Exception ex)
             {
@@ -75,7 +69,7 @@ namespace MonexUp.API.Controllers
         }
 
         [HttpPost("search")]
-        public async Task<ActionResult<ProductListPagedResult>> Search([FromBody] ProductSearchParam param)
+        public async Task<IActionResult> Search([FromBody] ProductSearchParam param)
         {
             try
             {
@@ -95,7 +89,7 @@ namespace MonexUp.API.Controllers
                         param.UserId = user.UserId;
                     }
                 }
-                return await _productService.Search(param);
+                return Ok(await _productService.Search(param));
             }
             catch (Exception ex)
             {
@@ -104,7 +98,7 @@ namespace MonexUp.API.Controllers
         }
 
         [HttpGet("listByNetwork/{networkId}")]
-        public async Task<ActionResult<ProductListResult>> ListByNetwork(long networkId)
+        public async Task<IActionResult> ListByNetwork(long networkId)
         {
             try
             {
@@ -115,11 +109,7 @@ namespace MonexUp.API.Controllers
                 {
                     products.Add(await _productService.GetProductInfo(x));
                 }
-                return new ProductListResult
-                {
-                    Sucesso = true,
-                    Products = products
-                };
+                return Ok(products);
             }
             catch (Exception ex)
             {
@@ -128,7 +118,7 @@ namespace MonexUp.API.Controllers
         }
 
         [HttpGet("listByNetworkSlug/{networkSlug}")]
-        public async Task<ActionResult<ProductListResult>> ListByNetworkSlug(string networkSlug)
+        public async Task<IActionResult> ListByNetworkSlug(string networkSlug)
         {
             try
             {
@@ -145,11 +135,7 @@ namespace MonexUp.API.Controllers
                 {
                     products.Add(await _productService.GetProductInfo(x));
                 }
-                return new ProductListResult
-                {
-                    Sucesso = true,
-                    Products = products
-                };
+                return Ok(products);
             }
             catch (Exception ex)
             {
@@ -159,20 +145,16 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpGet("getById/{productId}")]
-        public async Task<ActionResult<ProductResult>> GetById(long productId)
+        public async Task<IActionResult> GetById(long productId)
         {
             try
             {
                 var userSession = _userService.GetUserInSession(HttpContext);
                 if (userSession == null)
                 {
-                    return StatusCode(401, "Not Authorized");
+                    return Unauthorized();
                 }
-                return new ProductResult
-                {
-                    Sucesso = true,
-                    Product = await _productService.GetProductInfo(_productService.GetById(productId))
-                };
+                return Ok(await _productService.GetProductInfo(_productService.GetById(productId)));
             }
             catch (Exception ex)
             {
@@ -181,15 +163,11 @@ namespace MonexUp.API.Controllers
         }
 
         [HttpGet("getBySlug/{productSlug}")]
-        public async Task<ActionResult<ProductResult>> GetBySlug(string productSlug)
+        public async Task<IActionResult> GetBySlug(string productSlug)
         {
             try
             {
-                return new ProductResult
-                {
-                    Sucesso = true,
-                    Product = await _productService.GetProductInfo(_productService.GetBySlug(productSlug))
-                };
+                return Ok(await _productService.GetProductInfo(_productService.GetBySlug(productSlug)));
             }
             catch (Exception ex)
             {

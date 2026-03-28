@@ -16,7 +16,7 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { MenuLanguage } from './Functions';
 import { useTranslation } from 'react-i18next';
-import TemplateContext from '../Contexts/Template/TemplateContext';
+import { TemplateContext } from '../packages/template';
 
 
 export default function MenuNetwork() {

@@ -9,17 +9,10 @@ import UserContext from "../../Contexts/User/UserContext";
 import Skeleton from "react-loading-skeleton";
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 import MessageToast from "../../Components/MessageToast";
-import PlanPart from "../_WebParts/Plan3ColsPart";
-import ProfilePart from "../_WebParts/ProfilePart";
-import NetworkFooter from "../NetworkPage/NetworkFooter";
-import ProductListPart from "../_WebParts/ProductListPart";
+import { ProfilePart, ProductListPart, TemplateContext, strToPartEnum, WebsitePartEnum, EditMode, Plan3ColsPart } from "../../packages/template";
 import ProductContext from "../../Contexts/Product/ProductContext";
 import ProductSearchParam from "../../DTO/Domain/ProductSearchParam";
-import TemplateContext from "../../Contexts/Template/TemplateContext";
-import { strToPartEnum, WebsitePartEnum } from "../../Components/TemplateUtils";
-import TemplatePartInfo from "../../DTO/Domain/TemplatePartInfo";
-import EditMode from "../../Components/EditMode";
-import Plan3ColsPart from "../_WebParts/Plan3ColsPart";
+import TemplatePartInfo from "../../packages/template/DTO/TemplatePartInfo";
 import SkeletonPage from "../../Components/SkeletonPage";
 
 export default function SellerPage() {

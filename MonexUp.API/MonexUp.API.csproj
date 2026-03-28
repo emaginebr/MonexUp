@@ -42,6 +42,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NAuth" Version="0.4.2" />
+    <PackageReference Include="NAuth" Version="0.5.8" />
   </ItemGroup>
 </Project>

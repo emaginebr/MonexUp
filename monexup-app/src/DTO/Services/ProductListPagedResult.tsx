@@ -1,7 +1,6 @@
 import ProductInfo from "../Domain/ProductInfo";
-import StatusRequest from "./StatusRequest";
 
-export default interface ProductListPagedResult extends StatusRequest {
+export default interface ProductListPagedResult {
     products: ProductInfo[];
     pageNum: number;
     pageCount: number;

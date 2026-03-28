@@ -22,17 +22,17 @@ const ImageBusiness: IImageBusiness = {
         };
       }
       let retServ = await _imageService.uploadImageUser(file, session.token);
-      if (retServ.sucesso) {
+      if (retServ.success) {
         return {
           ...ret,
-          dataResult: retServ.value,
+          dataResult: retServ.data,
           sucesso: true
         };
       } else {
         return {
           ...ret,
           sucesso: false,
-          mensagem: retServ.mensagem
+          mensagem: retServ.messageError
         };
       }
     } catch {
@@ -51,17 +51,17 @@ const ImageBusiness: IImageBusiness = {
         };
       }
       let retServ = await _imageService.uploadImageNetwork(networkId, file, session.token);
-      if (retServ.sucesso) {
+      if (retServ.success) {
         return {
           ...ret,
-          dataResult: retServ.value,
+          dataResult: retServ.data,
           sucesso: true
         };
       } else {
         return {
           ...ret,
           sucesso: false,
-          mensagem: retServ.mensagem
+          mensagem: retServ.messageError
         };
       }
     } catch {
@@ -80,17 +80,17 @@ const ImageBusiness: IImageBusiness = {
         };
       }
       let retServ = await _imageService.uploadImageProduct(productId, file, session.token);
-      if (retServ.sucesso) {
+      if (retServ.success) {
         return {
           ...ret,
-          dataResult: retServ.value,
+          dataResult: retServ.data,
           sucesso: true
         };
       } else {
         return {
           ...ret,
           sucesso: false,
-          mensagem: retServ.mensagem
+          mensagem: retServ.messageError
         };
       }
     } catch {

@@ -40,7 +40,7 @@ import InvoiceSearchPage from './Pages/InvoiceSearchPage';
 import NetworkFooter from './Pages/NetworkPage/NetworkFooter';
 import MenuUser from './Components/MenuUser';
 import ImageProvider from './Contexts/Image/ImageProvider';
-import TemplateProvider from './Contexts/Template/TemplateProvider';
+import { TemplateProvider } from './packages/template';
 
 function Layout() {
   return (
