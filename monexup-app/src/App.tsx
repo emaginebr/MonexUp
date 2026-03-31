@@ -18,7 +18,6 @@ import NetworkPage from './Pages/NetworkPage';
 import DashboardPage from './Pages/DashboardPage';
 import NetworkEditPage from './Pages/NetworkEditPage';
 import NetworkListPage from './Pages/NetworkListPage';
-import ProductEditPage from './Pages/ProductEditPage';
 import ProductPage from './Pages/ProductPage';
 import NetworkInsertPage from './Pages/NetworkInsertPage';
 import NetworkProvider from './Contexts/Network/NetworkProvider';
@@ -27,7 +26,6 @@ import ProfileListPage from './Pages/ProfileListPage';
 import ProfileEditPage from './Pages/ProfileEditPage';
 import UserSearchPage from './Pages/UserSearchPage';
 import ProductProvider from './Contexts/Product/ProductProvider';
-import ProductSearchPage from './Pages/ProductSearchPage';
 import MenuNetwork from './Components/MenuNetwork';
 import RequestAccessPage from './Pages/RequestAccessPage';
 import OrderProvider from './Contexts/Order/OrderProvider';
@@ -126,14 +124,6 @@ function App() {
           </Route>
           <Route path="orders" element={<OrderSearchPage />} />
           <Route path="invoices" element={<InvoiceSearchPage />} />
-          <Route path="products">
-            <Route index element={<ProductSearchPage />} />
-            <Route path="new" element={<ProductEditPage />} />
-            <Route path=":productId" element={<ProductEditPage />} />
-          </Route>
-          <Route path="p">
-            <Route path=":id" element={<ProductPage />} />
-          </Route>
           <Route path="team-structure">
             <Route index element={<ProfileListPage />} />
             <Route path="new" element={<ProfileEditPage />} />

@@ -4,7 +4,7 @@ import ProviderResult from '../../DTO/Contexts/ProviderResult';
 import IAuthProvider from '../../DTO/Contexts/IAuthProvider';
 import AuthContext from './AuthContext';
 import AuthSession from '../../DTO/Domain/AuthSession';
-import { LanguageEnum } from '../../packages/template';
+import { LanguageEnum } from '../../DTO/Enum/LanguageEnum';
 
 export default function AuthProvider(props: any) {
 

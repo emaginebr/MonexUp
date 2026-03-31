@@ -42,9 +42,10 @@ function getCatchValue<T>(error: any, path: string) : ApiResponse<T> {
 const HttpClient  = () : IHttpClient => {
   let axiosIntance : AxiosInstance;
   return {
-    init: (baseUrl: string) => {
+    init: (baseUrl: string, defaultHeaders?: Record<string, string>) => {
       axiosIntance = axios.create({
         baseURL: baseUrl,
+        headers: defaultHeaders,
       });
     },
     setLogoff: (logoffCallback: () => void) => {
@@ -111,6 +112,27 @@ const HttpClient  = () : IHttpClient => {
           };
         })
         .catch((error) => {        
+          ret = getCatchValue<T>(error, path);
+        });
+      return ret;
+    },
+    doDeleteAuth: async function <T>(path: string, tokenAuth: string): Promise<ApiResponse<T>> {
+      let ret: ApiResponse<T>;
+      await axiosIntance.delete(path, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + tokenAuth
+        }
+      })
+        .then((response) => {
+          ret = {
+            data: response.data,
+            httpStatus: response.status.toString(),
+            success: true,
+            ...ret
+          };
+        })
+        .catch((error) => {
           ret = getCatchValue<T>(error, path);
         });
       return ret;

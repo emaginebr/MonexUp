@@ -25,8 +25,6 @@ public partial class MonexUpContext : DbContext
 
     public virtual DbSet<OrderItem> OrderItems { get; set; }
 
-    public virtual DbSet<Product> Products { get; set; }
-
     public virtual DbSet<UserDocument> UserDocuments { get; set; }
 
     public virtual DbSet<UserNetwork> UserNetworks { get; set; }
@@ -176,49 +174,6 @@ public partial class MonexUpContext : DbContext
                 .HasForeignKey(d => d.OrderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_order_item");
-        });
-
-        modelBuilder.Entity<Product>(entity =>
-        {
-            entity.HasKey(e => e.ProductId).HasName("products_pkey");
-
-            entity.ToTable("products");
-
-            entity.Property(e => e.ProductId).HasColumnName("product_id");
-            entity.Property(e => e.Description).HasColumnName("description");
-            entity.Property(e => e.Frequency)
-                .HasDefaultValue(0)
-                .HasColumnName("frequency");
-            entity.Property(e => e.Image)
-                .HasMaxLength(150)
-                .HasColumnName("image");
-            entity.Property(e => e.Limit)
-                .HasDefaultValue(0)
-                .HasColumnName("limit");
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(120)
-                .HasColumnName("name");
-            entity.Property(e => e.NetworkId).HasColumnName("network_id");
-            entity.Property(e => e.Price).HasColumnName("price");
-            entity.Property(e => e.Slug)
-                .IsRequired()
-                .HasMaxLength(140)
-                .HasColumnName("slug");
-            entity.Property(e => e.Status)
-                .HasDefaultValue(1)
-                .HasColumnName("status");
-            entity.Property(e => e.StripePriceId)
-                .HasMaxLength(120)
-                .HasColumnName("stripe_price_id");
-            entity.Property(e => e.StripeProductId)
-                .HasMaxLength(120)
-                .HasColumnName("stripe_product_id");
-
-            entity.HasOne(d => d.Network).WithMany(p => p.Products)
-                .HasForeignKey(d => d.NetworkId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_network_product");
         });
 
         modelBuilder.Entity<UserDocument>(entity =>

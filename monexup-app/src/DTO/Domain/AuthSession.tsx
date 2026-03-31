@@ -1,4 +1,4 @@
-import { LanguageEnum } from "../../packages/template";
+import { LanguageEnum } from "../Enum/LanguageEnum";
 
 export default interface AuthSession {
   userId: number;

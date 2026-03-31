@@ -54,7 +54,7 @@ namespace MonexUp.Application
             injectDependency(typeof(INetworkRepository<INetworkModel, INetworkDomainFactory>), typeof(NetworkRepository), services, scoped);
             injectDependency(typeof(IOrderRepository<IOrderModel, IOrderDomainFactory>), typeof(OrderRepository), services, scoped);
             injectDependency(typeof(IOrderItemRepository<IOrderItemModel, IOrderItemDomainFactory>), typeof(OrderItemRepository), services, scoped);
-            injectDependency(typeof(IProductRepository<IProductModel, IProductDomainFactory>), typeof(ProductRepository), services, scoped);
+            injectDependency(typeof(IProductRepository<IProductModel, IProductDomainFactory>), typeof(LofnProductRepository), services, scoped);
             injectDependency(typeof(IUserNetworkRepository<IUserNetworkModel, IUserNetworkDomainFactory>), typeof(UserNetworkRepository), services, scoped);
             injectDependency(typeof(IUserProfileRepository<IUserProfileModel, IUserProfileDomainFactory>), typeof(UserProfileRepository), services, scoped);
             #endregion

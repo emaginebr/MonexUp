@@ -78,7 +78,7 @@ monexup-app/                   → React 18 + TypeScript frontend (CRA)
 
 Entity Framework Core 9.x with Npgsql. Context: `DB.Infra/Context/MonexUpContext.cs`.
 
-Key entities: Users, Networks, UserNetworks (junction), Products, Orders, OrderItems, Invoices, InvoiceFees, Withdrawals, Templates/TemplatePages/TemplateParts/TemplateVars, UserProfiles.
+Key entities: Users, Networks, UserNetworks (junction), Orders, OrderItems, Invoices, InvoiceFees, Withdrawals, UserProfiles. Products are managed by the external Lofn API via `LofnProductRepository`.
 
 ### Frontend structure
 
@@ -88,6 +88,24 @@ Key entities: Users, Networks, UserNetworks (junction), Products, Orders, OrderI
 - **UI:** Bootstrap 5 + Material-UI 6 + FontAwesome
 - **Mobile:** Capacitor 7 for Android builds
 - **Env vars:** React CRA convention — prefix with `REACT_APP_` (e.g., `REACT_APP_STRIPE_PUBLISHABLE_KEY`)
+
+### Lofn Integration (Products/E-commerce)
+
+Products are managed by the separate **Lofn** project (external API). The backend `LofnProductRepository` calls Lofn's GraphQL and REST API, replacing direct database access. The frontend calls Lofn API directly for product reads. See `docs/LOFN_INTEGRATION.md` for details.
+
+- **Backend config:** `Lofn:ApiURL` in appsettings.json
+- **Frontend env var:** `REACT_APP_LOFN_API_URL` — URL of the Lofn API
+- **Header:** All requests include `X-Tenant-Id: monexup`
+- **Do NOT add product CRUD code to this backend** — it belongs in the Lofn project
+- **Stripe integration** still lives in MonexUp (StripeService) but reads/writes product data via Lofn
+
+### Dedalo Integration (Templates/CMS)
+
+Templates are managed by the separate **Dedalo** project (external API). The frontend `packages/template` package calls Dedalo's REST API for website pages, content parts, and variables. See `docs/DEDALO_INTEGRATION.md` for details.
+
+- **Frontend env var:** `REACT_APP_DEDALO_API_URL` — URL of the Dedalo API
+- **Header:** All requests include `X-Tenant-Id: monexup`
+- **Do NOT add template/CMS code to this backend** — it belongs in the Dedalo project
 
 ## Environment Variables
 
@@ -99,6 +117,8 @@ All secrets are in `.env` at the repo root (gitignored). Key variables:
 - `MAILERSEND_API_TOKEN`, `MAILERSEND_SENDER` — Email service
 - `DO_SPACES_ACCESS_KEY`, `DO_SPACES_SECRET_KEY`, `DO_SPACES_BUCKET`, `DO_SPACES_ENDPOINT` — DigitalOcean Spaces (S3-compatible storage)
 - `SSL_CERT_PASSWORD` — SSL certificate for Kestrel (production only)
+- `REACT_APP_DEDALO_API_URL` — Dedalo CMS API URL (frontend, in `monexup-app/.env`)
+- `REACT_APP_LOFN_API_URL` — Lofn e-commerce API URL (frontend, in `monexup-app/.env`)
 
 Copy `.env.example` to `.env` and fill in values.
 

@@ -38,9 +38,7 @@ export default function NetworkPage() {
         let param: ProductSearchParam;
         param = {
             ...param,
-            networkId: 0,
             networkSlug: networkSlug,
-            userId: 0,
             keyword: "",
             onlyActive: true,
             pageNum: pageNum
@@ -92,7 +90,7 @@ export default function NetworkPage() {
                     <>
                         <EditMode part={part} isEditing={templateContext.editMode} acceptableParts={ACCEPTABLE_PARTS}>
                             <Plan3ColsPart
-                                loading={productContext.loadingList}
+                                loading={productContext.loadingSearch}
                                 products={productContext.searchResult?.products}
                                 isEditing={templateContext.editMode}
                                 variables={templateContext.page?.variables}
@@ -107,7 +105,7 @@ export default function NetworkPage() {
                     <>
                         <EditMode part={part} isEditing={templateContext.editMode} acceptableParts={ACCEPTABLE_PARTS}>
                             <Plan4ColsPart
-                                loading={productContext.loadingList}
+                                loading={productContext.loadingSearch}
                                 products={productContext.searchResult?.products}
                                 isEditing={templateContext.editMode}
                                 variables={templateContext.page?.variables}
@@ -170,7 +168,7 @@ export default function NetworkPage() {
                 });
             }
         });
-        templateContext.getNetworkPage(networkSlug, "network-home", authContext.language).then((ret) => {
+        templateContext.getNetworkPage(networkSlug, "network-home").then((ret) => {
             if (!ret.sucesso) {
                 throwError(ret.mensagemErro);
                 return;

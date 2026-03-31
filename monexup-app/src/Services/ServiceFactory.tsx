@@ -31,8 +31,14 @@ networkServiceImpl.init(httpClientAuth);
 const profileServiceImpl : IProfileService = ProfileService;
 profileServiceImpl.init(httpClientAuth);
 
+// Initialize product package (Lofn API)
+const httpClientLofn: IHttpClient = HttpClient();
+httpClientLofn.init(
+  process.env.REACT_APP_LOFN_API_URL || process.env.REACT_APP_API_URL,
+  { 'X-Tenant-Id': 'monexup' }
+);
 const productServiceImpl : IProductService = ProductService;
-productServiceImpl.init(httpClientAuth);
+productServiceImpl.init(httpClientLofn);
 
 const orderServiceImpl : IOrderService = OrderService;
 orderServiceImpl.init(httpClientAuth);
@@ -43,10 +49,13 @@ invoiceServiceImpl.init(httpClientAuth);
 const imageServiceImpl : IImageService = ImageService;
 imageServiceImpl.init(httpClientAuth);
 
-// Initialize template package
-const httpClientTemplate: IHttpClient = HttpClient();
-httpClientTemplate.init(process.env.REACT_APP_TEMPLATE_API_URL || process.env.REACT_APP_API_URL);
-TemplateFactory.init(httpClientTemplate);
+// Initialize template package (Dedalo API)
+const httpClientDedalo: IHttpClient = HttpClient();
+httpClientDedalo.init(
+  process.env.REACT_APP_DEDALO_API_URL || process.env.REACT_APP_API_URL,
+  { 'X-Tenant-Id': 'monexup' }
+);
+TemplateFactory.init(httpClientDedalo);
 
 const ServiceFactory = {
   UserService: userServiceImpl,

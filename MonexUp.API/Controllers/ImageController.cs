@@ -17,7 +17,6 @@ namespace MonexUp.API.Controllers
     {
         private readonly IUserClient _userClient;
         private readonly INetworkDomainFactory _networkFactory;
-        private readonly IProductDomainFactory _productFactory;
         private readonly IFileClient _fileClient;
 
         private const string BucketName = "monexup";
@@ -25,12 +24,10 @@ namespace MonexUp.API.Controllers
         public ImageController(
             IUserClient userClient,
             INetworkDomainFactory networkFactory,
-            IProductDomainFactory productFactory,
             IFileClient fileClient
         ) {
             _userClient = userClient;
             _networkFactory = networkFactory;
-            _productFactory = productFactory;
             _fileClient = fileClient;
         }
 
@@ -90,43 +87,6 @@ namespace MonexUp.API.Controllers
 
                 network.Image = fileName;
                 network.Update(_networkFactory);
-
-                return Ok(await _fileClient.GetFileUrlAsync(BucketName, fileName));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
-        [Authorize]
-        [HttpPost("uploadImageProduct")]
-        public async Task<IActionResult> UploadImageProduct([FromForm] long productId, IFormFile file)
-        {
-            try
-            {
-                if (file == null || file.Length == 0)
-                {
-                    return BadRequest("No file uploaded");
-                }
-                var userSession = _userClient.GetUserInSession(HttpContext);
-                if (userSession == null)
-                {
-                    return Unauthorized();
-                }
-
-                var product = _productFactory.BuildProductModel().GetById(productId, _productFactory);
-                if (product == null)
-                {
-                    return BadRequest("Product not found");
-                }
-
-                var fileName = $"product-{StringUtils.GenerateShortUniqueString()}.jpg";
-                var formFile = new FormFileWrapper(file.OpenReadStream(), fileName, file.ContentType);
-                await _fileClient.UploadFileAsync(BucketName, formFile);
-
-                product.Image = fileName;
-                product.Update(_productFactory);
 
                 return Ok(await _fileClient.GetFileUrlAsync(BucketName, fileName));
             }

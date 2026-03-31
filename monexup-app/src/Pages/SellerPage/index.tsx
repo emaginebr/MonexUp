@@ -46,8 +46,6 @@ export default function SellerPage() {
         let param: ProductSearchParam;
         param = {
             ...param,
-            networkId: 0,
-            userId: 0,
             networkSlug: networkSlug,
             userSlug: sellerSlug,
             keyword: "",
@@ -89,7 +87,7 @@ export default function SellerPage() {
                     <>
                         <EditMode part={part} isEditing={templateContext.editMode} acceptableParts={ACCEPTABLE_PARTS}>
                             <Plan3ColsPart
-                                loading={productContext.loadingList}
+                                loading={productContext.loadingSearch}
                                 products={productContext.searchResult?.products}
                                 isEditing={templateContext.editMode}
                                 variables={templateContext.page?.variables}
@@ -121,7 +119,7 @@ export default function SellerPage() {
 
     useEffect(() => {
         if (networkSlug) {
-            templateContext.getNetworkPage(networkSlug, PAGE_SLUG, authContext.language).then((ret) => {
+            templateContext.getNetworkPage(networkSlug, PAGE_SLUG).then((ret) => {
                 if (!ret.sucesso) {
                     throwError(ret.mensagemErro);
                     return;

@@ -89,7 +89,7 @@ export default function ProductPage() {
                     throwError(ret.mensagemErro);
                 }
             });
-            templateContext.getNetworkPage(networkSlug, "network-product", authContext.language).then((ret) => {
+            templateContext.getNetworkPage(networkSlug, "network-product").then((ret) => {
                 if (!ret.sucesso) {
                     throwError(ret.mensagemErro);
                     return;
