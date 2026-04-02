@@ -34,7 +34,7 @@ dotnet publish MonexUp.API/MonexUp.API.csproj -c Release
 ```bash
 cd monexup-app
 npm install
-npm start          # Dev server on port 443
+npm start          # Dev server on port 3000
 npm run build      # Production build
 npm test           # Jest tests
 ```
@@ -117,7 +117,6 @@ All secrets are in `.env` at the repo root (gitignored). Key variables:
 - `REACT_APP_PROXYPAY_TENANT_ID` — ProxyPay Tenant ID (frontend, in `monexup-app/.env`)
 - `MAILERSEND_API_TOKEN`, `MAILERSEND_SENDER` — Email service
 - `DO_SPACES_ACCESS_KEY`, `DO_SPACES_SECRET_KEY`, `DO_SPACES_BUCKET`, `DO_SPACES_ENDPOINT` — DigitalOcean Spaces (S3-compatible storage)
-- `SSL_CERT_PASSWORD` — SSL certificate for Kestrel (production only)
 - `REACT_APP_DEDALO_API_URL` — Dedalo CMS API URL (frontend, in `monexup-app/.env`)
 - `REACT_APP_LOFN_API_URL` — Lofn e-commerce API URL (frontend, in `monexup-app/.env`)
 

@@ -12,8 +12,6 @@
     <EmbeddedResource Remove="DTOs\**" />
     <None Remove="DTOs\**" />
     <None Remove="DTO\" />
-    <None Remove="monexup.com.pfx" />
-    <None Remove="nochainswap.org.pfx" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,11 +35,7 @@
     <Compile Remove="Controllers\OriginalController.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="monexup.com.pfx" />
-  </ItemGroup>
-
-  <ItemGroup>
+<ItemGroup>
     <PackageReference Include="NAuth" Version="0.5.8" />
   </ItemGroup>
 </Project>
