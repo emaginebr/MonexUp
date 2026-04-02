@@ -4,7 +4,7 @@ using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Order;
 using MonexUp.DTO.Product;
 using NAuth.ACL.Interfaces;
-using Stripe.Climate;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -125,11 +125,6 @@ namespace MonexUp.Domain.Impl.Services
         public IList<IOrderModel> List(long networkId, long userId, OrderStatusEnum? status)
         {
             return _orderFactory.BuildOrderModel().List(networkId, userId, status, _orderFactory).ToList();
-        }
-
-        public IOrderModel GetByStripeId(string stripeId)
-        {
-            return _orderFactory.BuildOrderModel().GetByStripeId(stripeId, _orderFactory);
         }
 
         public async Task<OrderListPagedResult> Search(long networkId, long? userId, long? sellerId, int pageNum, string token)

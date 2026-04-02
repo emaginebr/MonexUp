@@ -57,7 +57,8 @@
       "Bash(git pull origin main)",
       "Bash(git add submodules/NAuth)",
       "Bash(git commit:*)",
-      "Bash(head -50 /c/repos/MonexUp/MonexUp.Infra/Mapping/Profiles/*.cs)"
+      "Bash(head -50 /c/repos/MonexUp/MonexUp.Infra/Mapping/Profiles/*.cs)",
+      "Bash(xargs grep:*)"
     ]
   }
 }

@@ -124,17 +124,5 @@ namespace MonexUp.API.Controllers
             }
         }
 
-        [HttpGet("checkout/{checkoutSessionId}")]
-        public async Task<IActionResult> Checkout(string checkoutSessionId)
-        {
-            try
-            {
-                return Ok(await _invoiceService.GetInvoiceInfo(await _invoiceService.Checkout(checkoutSessionId), HttpContext.GetBearerToken()));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
     }
 }

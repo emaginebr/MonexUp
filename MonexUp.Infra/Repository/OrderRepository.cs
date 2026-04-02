@@ -35,7 +35,6 @@ namespace DB.Infra.Repository
             md.CreatedAt = row.CreatedAt;
             md.UpdatedAt = row.UpdatedAt;
             md.Status = (OrderStatusEnum) row.Status;
-            md.StripeId = row.StripeId;
             return md;
         }
 
@@ -48,7 +47,6 @@ namespace DB.Infra.Repository
             row.CreatedAt = md.CreatedAt;
             row.UpdatedAt = md.UpdatedAt;
             row.Status = (int)md.Status;
-            row.StripeId = md.StripeId;
         }
 
         public IEnumerable<IOrderModel> Search(long networkId, long? userId, long? sellerId, int pageNum, out int pageCount, IOrderDomainFactory factory)
@@ -129,14 +127,5 @@ namespace DB.Infra.Repository
             return DbToModel(factory, row);
         }
 
-        public IOrderModel GetByStripeId(string stripeId, IOrderDomainFactory factory)
-        {
-            var row = _ccsContext.Orders
-                .Where(x => x.StripeId == stripeId)
-                .FirstOrDefault();
-            if (row == null)
-                return null;
-            return DbToModel(factory, row);
-        }
     }
 }

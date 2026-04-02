@@ -30,7 +30,6 @@ namespace MonexUp.Domain.Impl.Models
         public DateTime DueDate { get; set; }
         public DateTime? PaymentDate { get; set; }
         public InvoiceStatusEnum Status { get; set; }
-        public string StripeId { get; set; }
 
         public IOrderModel GetOrder(IOrderDomainFactory factory)
         {
@@ -76,9 +75,5 @@ namespace MonexUp.Domain.Impl.Models
             return _repositoryInvoice.GetById(id, factory);
         }
 
-        public IInvoiceModel GetByStripeId(string stripeId, IInvoiceDomainFactory factory)
-        {
-            return _repositoryInvoice.GetByStripeId(stripeId, factory);
-        }
     }
 }

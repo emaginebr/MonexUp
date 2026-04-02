@@ -25,7 +25,6 @@ namespace MonexUp.Domain.Interfaces.Models
         DateTime? PaymentDate { get; set; }
 
         InvoiceStatusEnum Status { get; set; }
-        string StripeId { get; set; }
 
         IOrderModel GetOrder(IOrderDomainFactory factory);
         IList<IInvoiceFeeModel> ListFees(IInvoiceFeeDomainFactory factory);
@@ -36,6 +35,5 @@ namespace MonexUp.Domain.Interfaces.Models
         IEnumerable<IInvoiceModel> Search(long networkId, long? userId, long? sellerId, int pageNum, out int pageCount, IInvoiceDomainFactory factory);
         //IEnumerable<IInvoiceModel> List(long networkId, long orderId, long userId, InvoiceStatusEnum? status, IInvoiceDomainFactory factory);
         IInvoiceModel GetById(long id, IInvoiceDomainFactory factory);
-        IInvoiceModel GetByStripeId(string stripeId, IInvoiceDomainFactory factory);
     }
 }

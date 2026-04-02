@@ -32,7 +32,6 @@ namespace MonexUp.Domain.Impl.Models
         public OrderStatusEnum Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public string StripeId { get; set; }
 
         public IList<IOrderItemModel> ListItems(IOrderItemDomainFactory factory)
         {
@@ -66,11 +65,6 @@ namespace MonexUp.Domain.Impl.Models
         public IOrderModel Get(long productId, long userId, long? sellerId, OrderStatusEnum status, IOrderDomainFactory factory)
         {
             return _repositoryOrder.Get(productId, userId, sellerId, (int)status, factory);
-        }
-
-        public IOrderModel GetByStripeId(string stripeId, IOrderDomainFactory factory)
-        {
-            return _repositoryOrder.GetByStripeId(stripeId, factory);
         }
 
         public IEnumerable<IOrderModel> Search(long networkId, long? userId, long? sellerId, int pageNum, out int pageCount, IOrderDomainFactory factory)

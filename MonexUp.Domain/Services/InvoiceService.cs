@@ -24,7 +24,7 @@ namespace MonexUp.Domain.Impl.Services
         private readonly IProductDomainFactory _productFactory;
         private readonly IOrderService _orderService;
         private readonly INetworkService _networkService;
-        private readonly IStripeService _stripeService;
+        private readonly IProxyPayService _proxyPayService;
 
         private const double PLATAFORM_FEE = 0.02;
 
@@ -38,7 +38,7 @@ namespace MonexUp.Domain.Impl.Services
             IProductDomainFactory productFactory,
             IOrderService orderService,
             INetworkService networkService,
-            IStripeService stripeService
+            IProxyPayService proxyPayService
         )
         {
             _invoiceFactory = invoiceFactory;
@@ -50,7 +50,7 @@ namespace MonexUp.Domain.Impl.Services
             _productFactory = productFactory;
             _orderService = orderService;
             _networkService = networkService;
-            _stripeService = stripeService;
+            _proxyPayService = proxyPayService;
         }
 
         private void ValidateIsNoHaveCommissionPaid(IInvoiceModel invoice)
@@ -131,45 +131,9 @@ namespace MonexUp.Domain.Impl.Services
             return newInvoice;
         }
 
-        public IInvoiceModel ProcessInvoice(IInvoiceModel invoiceStripe)
-        {
-            var invoice = _invoiceFactory.BuildInvoiceModel().GetByStripeId(invoiceStripe.StripeId, _invoiceFactory);
-            if (invoice != null)
-            {
-                if (invoice.Status != invoiceStripe.Status)
-                {
-                    if (invoiceStripe.Status == InvoiceStatusEnum.Paid)
-                    {
-                        invoice.PaymentDate = invoiceStripe.PaymentDate;
-                        return Pay(invoice);
-                    }
-                    invoice.Status = invoiceStripe.Status;
-                    var newInvoice = invoice.Update(_invoiceFactory);
-                    CalculateFee(newInvoice);
-                    return newInvoice;
-                }
-                return invoice;
-            }
-            return Insert(invoiceStripe);
-        }
-
-        public async Task<IInvoiceModel> Checkout(string checkoutSessionId)
-        {
-            var invoice = await _stripeService.Checkout(checkoutSessionId);
-            if (invoice == null)
-            {
-                throw new Exception("Invoice is empty");
-            }
-            return ProcessInvoice(invoice);
-        }
-
         public async Task Syncronize()
         {
-            var invoicesStripe = await _stripeService.ListInvoices();
-            foreach (var invoiceStripe in invoicesStripe)
-            {
-                ProcessInvoice(invoiceStripe);
-            }
+            await _proxyPayService.SyncPendingInvoices();
         }
 
         public async Task<InvoiceInfo> GetInvoiceInfo(IInvoiceModel invoice, string token)

@@ -1,5 +1,5 @@
 ---
-name: react-arch
+name: react-architecture
 description: Create the complete frontend architecture for a new entity in the React application. Generates DTO types, Service (interface + implementation), Business (interface + implementation + factory), Context, Provider, and registers everything in ServiceFactory and App.tsx. Use this skill when the user asks to create a new entity, feature module, or domain area in the frontend.
 ---
 

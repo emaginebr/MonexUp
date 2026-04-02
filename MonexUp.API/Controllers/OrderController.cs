@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Order;
-using MonexUp.DTO.Subscription;
+using MonexUp.DTO.Payment;
 using NAuth.ACL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -22,7 +22,7 @@ namespace MonexUp.API.Controllers
         private readonly ISubscriptionService _subscriptionService;
         private readonly INetworkService _networkService;
         private readonly IProductService _productService;
-        private readonly IStripeService _stripeService;
+        private readonly IProxyPayService _proxyPayService;
         private readonly IProductDomainFactory _productFactory;
 
         public OrderController(
@@ -31,7 +31,7 @@ namespace MonexUp.API.Controllers
             ISubscriptionService subscriptionService,
             INetworkService networkService,
             IProductService productService,
-            IStripeService stripeService,
+            IProxyPayService proxyPayService,
             IProductDomainFactory productFactory
         )
         {
@@ -40,14 +40,15 @@ namespace MonexUp.API.Controllers
             _subscriptionService = subscriptionService;
             _networkService = networkService;
             _productService = productService;
-            _stripeService = stripeService;
+            _proxyPayService = proxyPayService;
             _productFactory = productFactory;
         }
 
         [Authorize]
-        [HttpGet("createSubscription/{productSlug}")]
-        public async Task<IActionResult> CreateSubscription(
+        [HttpPost("createPixPayment/{productSlug}")]
+        public async Task<IActionResult> CreatePixPayment(
             string productSlug,
+            [FromBody] PixPaymentRequest request,
             [FromQuery] string networkSlug,
             [FromQuery] string sellerSlug
         )
@@ -60,11 +61,17 @@ namespace MonexUp.API.Controllers
                     return Unauthorized();
                 }
 
+                if (string.IsNullOrWhiteSpace(request?.DocumentId))
+                {
+                    return BadRequest(new PixPaymentResult { Sucesso = false, Mensagem = "CPF é obrigatório" });
+                }
+
                 var product = _productService.GetBySlug(productSlug);
                 if (product == null)
                 {
-                    throw new Exception("Product not found");
+                    return BadRequest(new PixPaymentResult { Sucesso = false, Mensagem = "Produto não encontrado" });
                 }
+
                 long? networkId = null;
                 if (!string.IsNullOrEmpty(networkSlug))
                 {
@@ -74,6 +81,7 @@ namespace MonexUp.API.Controllers
                         networkId = network.NetworkId;
                     }
                 }
+
                 long? sellerId = null;
                 if (!string.IsNullOrEmpty(sellerSlug))
                 {
@@ -83,14 +91,39 @@ namespace MonexUp.API.Controllers
                         sellerId = seller.UserId;
                     }
                 }
-                var token = HttpContext.GetBearerToken();
-                var subscription = await _subscriptionService.CreateSubscription(product.ProductId, userSession.UserId, networkId, sellerId, token);
 
-                return Ok(new SubscriptionResult()
+                var token = HttpContext.GetBearerToken();
+                var result = await _subscriptionService.CreatePixPayment(
+                    product.ProductId, userSession.UserId, networkId, sellerId, request.DocumentId, token
+                );
+
+                if (!result.Sucesso)
                 {
-                    Order = subscription.Order,
-                    ClientSecret = subscription.ClientSecret
-                });
+                    return BadRequest(result);
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new PixPaymentResult { Sucesso = false, Mensagem = ex.Message });
+            }
+        }
+
+        [Authorize]
+        [HttpGet("checkPixStatus/{proxyPayInvoiceId}")]
+        public async Task<IActionResult> CheckPixStatus(string proxyPayInvoiceId)
+        {
+            try
+            {
+                var userSession = _userClient.GetUserInSession(HttpContext);
+                if (userSession == null)
+                {
+                    return Unauthorized();
+                }
+
+                var status = await _proxyPayService.CheckQRCodeStatus(proxyPayInvoiceId);
+                return Ok(status);
             }
             catch (Exception ex)
             {

@@ -39,6 +39,8 @@ import NetworkFooter from './Pages/NetworkPage/NetworkFooter';
 import MenuUser from './Components/MenuUser';
 import ImageProvider from './Contexts/Image/ImageProvider';
 import { TemplateProvider } from './packages/template';
+import { ProxyPayProvider } from 'proxypay-react';
+import CheckoutSuccessPage from './Pages/CheckoutSuccessPage';
 
 function Layout() {
   return (
@@ -80,6 +82,12 @@ function LayoutUser() {
   );
 }
 
+const proxyPayConfig = {
+  baseUrl: process.env.REACT_APP_PROXYPAY_API_URL || '',
+  clientId: process.env.REACT_APP_PROXYPAY_CLIENT_ID || '',
+  tenantId: process.env.REACT_APP_PROXYPAY_TENANT_ID || 'monexup'
+};
+
 const nauthConfig = {
   apiUrl: process.env.REACT_APP_NAUTH_API_URL || process.env.REACT_APP_API_URL || '',
   enableFingerprinting: true,
@@ -94,11 +102,13 @@ function App() {
   ]);
 
   return (
+    <ProxyPayProvider config={proxyPayConfig}>
     <NAuthProvider config={nauthConfig}>
     <ContextContainer>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
+          <Route path="checkout/success" element={<CheckoutSuccessPage />} />
           <Route path="new-seller" element={<SellerAddPage />} />
           <Route path="network">
             <Route index element={<NetworkInsertPage />} />
@@ -175,6 +185,7 @@ function App() {
       </Routes>
     </ContextContainer>
     </NAuthProvider>
+    </ProxyPayProvider>
   );
 }
 

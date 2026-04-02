@@ -34,7 +34,6 @@ namespace DB.Infra.Repository
             md.DueDate = row.DueDate;
             md.PaymentDate = row.PaymentDate;
             md.Status = (InvoiceStatusEnum) row.Status;
-            md.StripeId = row.StripeId;
             return md;
         }
 
@@ -48,7 +47,6 @@ namespace DB.Infra.Repository
             row.DueDate = md.DueDate;
             row.PaymentDate = md.PaymentDate;
             row.Status = (int) md.Status;
-            row.StripeId = md.StripeId;
         }
 
         public IInvoiceModel Insert(IInvoiceModel model, IInvoiceDomainFactory factory)
@@ -115,12 +113,5 @@ namespace DB.Infra.Repository
             return DbToModel(factory, row);
         }
 
-        public IInvoiceModel GetByStripeId(string stripeId, IInvoiceDomainFactory factory)
-        {
-            var row = _ccsContext.Invoices.Where(x => x.StripeId == stripeId).FirstOrDefault();
-            if (row == null)
-                return null;
-            return DbToModel(factory, row);
-        }
     }
 }

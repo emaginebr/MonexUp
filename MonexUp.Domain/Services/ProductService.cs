@@ -188,14 +188,5 @@ namespace MonexUp.Domain.Impl.Services
                 .ToList();
         }
 
-        public IProductModel GetByStripeProductId(string stripeProductId)
-        {
-            return _productFactory.BuildProductModel().GetByStripeProductId(stripeProductId, _productFactory);
-        }
-
-        public IProductModel GetByStripePriceId(string stripePriceId)
-        {
-            return _productFactory.BuildProductModel().GetByStripePriceId(stripePriceId, _productFactory);
-        }
     }
 }
