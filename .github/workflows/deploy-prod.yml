@@ -1,0 +1,90 @@
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy via SSH
+      uses: appleboy/ssh-action@v1
+      with:
+        host: ${{ secrets.PROD_SSH_HOST }}
+        username: ${{ secrets.PROD_SSH_USER }}
+        password: ${{ secrets.PROD_SSH_PASSWORD }}
+        port: ${{ secrets.PROD_SSH_PORT }}
+        script: |
+          set -e
+
+          DEPLOY_DIR="/opt/monexup"
+          REPO_URL="https://github.com/${{ github.repository }}.git"
+          BRANCH="main"
+
+          # Clone or update repository
+          if [ -d "$DEPLOY_DIR" ]; then
+            echo "Updating existing repository..."
+            cd "$DEPLOY_DIR"
+            git fetch origin
+            git reset --hard "origin/$BRANCH"
+            git clean -fd
+            git submodule update --init --recursive
+          else
+            echo "Cloning repository..."
+            git clone --branch "$BRANCH" --single-branch --recurse-submodules "$REPO_URL" "$DEPLOY_DIR"
+            cd "$DEPLOY_DIR"
+          fi
+
+          # Inject .env.prod from GitHub Secrets
+          cat > .env.prod <<'ENVEOF'
+          POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+          NAUTH_DB_NAME=${{ secrets.NAUTH_DB_NAME }}
+          NAUTH_JWT_SECRET=${{ secrets.NAUTH_JWT_SECRET }}
+          PROXYPAY_API_URL=${{ secrets.PROXYPAY_API_URL }}
+          PROXYPAY_CLIENT_ID=${{ secrets.PROXYPAY_CLIENT_ID }}
+          PROXYPAY_TENANT_ID=${{ secrets.PROXYPAY_TENANT_ID }}
+          LOFN_API_URL=${{ secrets.LOFN_API_URL }}
+          MAILERSEND_API_TOKEN=${{ secrets.MAILERSEND_API_TOKEN }}
+          MAILERSEND_SENDER=${{ secrets.MAILERSEND_SENDER }}
+          S3_ACCESS_KEY=${{ secrets.S3_ACCESS_KEY }}
+          S3_SECRET_KEY=${{ secrets.S3_SECRET_KEY }}
+          S3_BUCKET=${{ secrets.S3_BUCKET }}
+          S3_ENDPOINT=${{ secrets.S3_ENDPOINT }}
+          CHATGPT_APIKEY=${{ secrets.CHATGPT_APIKEY }}
+          REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}
+          REACT_APP_NAUTH_API_URL=${{ secrets.REACT_APP_NAUTH_API_URL }}
+          REACT_APP_PROXYPAY_API_URL=${{ secrets.REACT_APP_PROXYPAY_API_URL }}
+          REACT_APP_PROXYPAY_CLIENT_ID=${{ secrets.REACT_APP_PROXYPAY_CLIENT_ID }}
+          REACT_APP_PROXYPAY_TENANT_ID=${{ secrets.REACT_APP_PROXYPAY_TENANT_ID }}
+          REACT_APP_LOFN_API_URL=${{ secrets.REACT_APP_LOFN_API_URL }}
+          REACT_APP_DEDALO_API_URL=${{ secrets.REACT_APP_DEDALO_API_URL }}
+          ENVEOF
+
+          # Remove leading whitespace from .env.prod
+          sed -i 's/^[[:space:]]*//' .env.prod
+
+          # Create external network if it doesn't exist
+          docker network inspect monexup-external >/dev/null 2>&1 || docker network create monexup-external
+
+          # Deploy with docker compose
+          docker compose --env-file .env.prod -f docker-compose-prod.yml down
+          docker compose --env-file .env.prod -f docker-compose-prod.yml up --build -d
+
+          # Wait and verify
+          echo "Waiting for services to start..."
+          sleep 10
+          docker compose --env-file .env.prod -f docker-compose-prod.yml ps
+
+          echo "Deployment completed successfully."
+
+    - name: Summary
+      run: |
+        echo "## Production Deployment" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- Server: \`${{ secrets.PROD_SSH_HOST }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "- Branch: \`main\`" >> $GITHUB_STEP_SUMMARY
+        echo "- Commit: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "- Triggered by: \`${{ github.event_name }}\`" >> $GITHUB_STEP_SUMMARY

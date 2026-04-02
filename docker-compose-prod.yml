@@ -1,26 +1,23 @@
 services:
   # ===========================================
-  # PostgreSQL - Shared database instance
+  # PostgreSQL - Database (internal only)
   # ===========================================
   postgres:
     image: postgres:16-alpine
     container_name: monexup-postgres
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-monexup_user}
+      POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB:-monexup_db}
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./docker/init-databases.sh:/docker-entrypoint-initdb.d/01-init-databases.sh
-      - ./submodules/NAuth/nauth.sql:/docker-scripts/nauth-schema.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-monexup_user} -d ${POSTGRES_DB:-monexup_db}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
-    restart: unless-stopped
     networks:
       - monexup-network
 
@@ -32,19 +29,16 @@ services:
       context: ./submodules/NAuth
       dockerfile: Dockerfile
     container_name: nauth-api
+    restart: unless-stopped
     environment:
-      ASPNETCORE_ENVIRONMENT: Docker
+      ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:80
-      ConnectionStrings__NAuthContext: "Host=postgres;Port=5432;Database=${NAUTH_DB_NAME:-nauth_db};Username=${POSTGRES_USER:-monexup_user};Password=${POSTGRES_PASSWORD}"
-      zTools__ApiURL: ${ZTOOLS_API_URL}
+      ConnectionStrings__NAuthContext: "Host=postgres;Port=5432;Database=${NAUTH_DB_NAME:-nauth_db};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      zTools__ApiURL: http://ztools-api:8080
       NAuth__JwtSecret: ${NAUTH_JWT_SECRET}
-      Logging__LogLevel__Default: Trace
-    ports:
-      - "5004:80"
     depends_on:
       postgres:
         condition: service_healthy
-    restart: unless-stopped
     networks:
       - monexup-network
 
@@ -56,8 +50,9 @@ services:
       context: ./submodules/zTools
       dockerfile: Dockerfile
     container_name: ztools-api
+    restart: unless-stopped
     environment:
-      ASPNETCORE_ENVIRONMENT: Docker
+      ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:8080
       MAILERSEND__APIURL: ${MAILERSEND_API_URL:-https://api.mailersend.com/v1/email}
       MAILERSEND__MAILSENDER: ${MAILERSEND_SENDER}
@@ -69,9 +64,6 @@ services:
       S3__ACCESSKEY: ${S3_ACCESS_KEY}
       S3__SECRETKEY: ${S3_SECRET_KEY}
       S3__ENDPOINT: ${S3_ENDPOINT}
-    ports:
-      - "5001:8080"
-    restart: unless-stopped
     networks:
       - monexup-network
 
@@ -81,27 +73,23 @@ services:
   monexup-api:
     build:
       context: .
-      dockerfile: MonexUp.API/Dockerfile.dev
+      dockerfile: MonexUp.API/Dockerfile
     container_name: monexup-api
-    env_file: .env
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
     environment:
-      ASPNETCORE_ENVIRONMENT: Docker
-      # Connection string built from .env individual vars
-      ConnectionStrings__MonexUpContext: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-monexup_db};Username=${POSTGRES_USER:-monexup_user};Password=${POSTGRES_PASSWORD}"
-      # zTools (Docker service URL)
-      zTools__ApiURL: ${ZTOOLS_API_URL}
-      # NAuth (Docker service URLs)
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__MonexUpContext: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-monexup_db};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      zTools__ApiURL: http://ztools-api:8080
       NAuth__ApiUrl: http://nauth-api:80
       NAuth__JwtSecret: ${NAUTH_JWT_SECRET}
       NAuth__BucketName: ${S3_BUCKET:-monexup}
-      # ProxyPay
-      ProxyPay__ApiUrl: ${PROXYPAY_API_URL:-http://localhost:5100}
+      ProxyPay__ApiUrl: ${PROXYPAY_API_URL}
       ProxyPay__ClientId: ${PROXYPAY_CLIENT_ID}
       ProxyPay__TenantId: ${PROXYPAY_TENANT_ID:-monexup}
-      # Lofn
-      Lofn__ApiURL: ${LOFN_API_URL:-http://localhost:5003}
-    ports:
-      - "5000:80"
+      Lofn__ApiURL: ${LOFN_API_URL}
     depends_on:
       postgres:
         condition: service_healthy
@@ -109,7 +97,6 @@ services:
         condition: service_started
       ztools-api:
         condition: service_started
-    restart: unless-stopped
     networks:
       - monexup-network
 
@@ -121,17 +108,14 @@ services:
       context: .
       dockerfile: MonexUp.BackgroundService/Dockerfile
     container_name: monexup-bg
-    env_file: .env
+    restart: unless-stopped
     environment:
-      ASPNETCORE_ENVIRONMENT: Docker
-      # Connection string built from .env individual vars
-      ConnectionStrings__MonexUpContext: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-monexup_db};Username=${POSTGRES_USER:-monexup_user};Password=${POSTGRES_PASSWORD}"
-      # zTools (Docker service URL)
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__MonexUpContext: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-monexup_db};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
       ZTOOLS_API_URL: http://ztools-api:8080
     depends_on:
       postgres:
         condition: service_healthy
-    restart: unless-stopped
     networks:
       - monexup-network
 
@@ -141,21 +125,22 @@ services:
   monexup-app:
     build:
       context: ./monexup-app
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.prod
       args:
-        REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:5000}
-        REACT_APP_NAUTH_API_URL: ${REACT_APP_NAUTH_API_URL:-http://localhost:5000}
-        REACT_APP_PROXYPAY_API_URL: ${REACT_APP_PROXYPAY_API_URL:-http://localhost:5100}
+        REACT_APP_API_URL: ${REACT_APP_API_URL}
+        REACT_APP_NAUTH_API_URL: ${REACT_APP_NAUTH_API_URL}
+        REACT_APP_PROXYPAY_API_URL: ${REACT_APP_PROXYPAY_API_URL}
         REACT_APP_PROXYPAY_CLIENT_ID: ${REACT_APP_PROXYPAY_CLIENT_ID}
         REACT_APP_PROXYPAY_TENANT_ID: ${REACT_APP_PROXYPAY_TENANT_ID:-monexup}
-        REACT_APP_LOFN_API_URL: ${REACT_APP_LOFN_API_URL:-http://localhost:5003}
-        REACT_APP_DEDALO_API_URL: ${REACT_APP_DEDALO_API_URL:-http://localhost:5002}
+        REACT_APP_LOFN_API_URL: ${REACT_APP_LOFN_API_URL}
+        REACT_APP_DEDALO_API_URL: ${REACT_APP_DEDALO_API_URL}
+        REACT_APP_PRODUCTION: "1"
+        REACT_APP_SITE_BASENAME: /
+        REACT_APP_PROJECT_NAME: MonexUp.com
     container_name: monexup-app
-    ports:
-      - "3000:80"
-    depends_on:
-      - monexup-api
     restart: unless-stopped
+    ports:
+      - "80:80"
     networks:
       - monexup-network
 

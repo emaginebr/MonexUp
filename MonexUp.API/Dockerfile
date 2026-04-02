@@ -1,9 +1,8 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-ENV ASPNETCORE_ENVIRONMENT=Docker
 WORKDIR /app
-EXPOSE 443
+EXPOSE 8080
 
 # Build libgdiplus with pango
 RUN apt-get update && apt-get install  -y --allow-unauthenticated \
@@ -19,7 +18,6 @@ RUN make install
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["MonexUp.API/monexup.com.pfx", "MonexUp.API/"]
 COPY ["MonexUp.API/MonexUp.API.csproj", "MonexUp.API/"]
 COPY ["MonexUp.Application/MonexUp.Application.csproj", "MonexUp.Application/"]
 COPY ["MonexUp.Domain/MonexUp.Domain.csproj", "MonexUp.Domain/"]
