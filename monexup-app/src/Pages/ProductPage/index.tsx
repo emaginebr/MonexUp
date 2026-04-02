@@ -9,7 +9,7 @@ import MessageToast from "../../Components/MessageToast";
 import NetworkContext from "../../Contexts/Network/NetworkContext";
 import Skeleton from "react-loading-skeleton";
 import AuthContext from "../../Contexts/Auth/AuthContext";
-import SubscriptionForm from "./SubscriptionForm";
+import PixPaymentForm from "./PixPaymentForm";
 import NetworkFooter from "../NetworkPage/NetworkFooter";
 import UserContext from "../../Contexts/User/UserContext";
 import UserForm from "./UserForm";
@@ -130,10 +130,12 @@ export default function ProductPage() {
                             </Col>
                             <Col md={4}>
                                 {authContext.sessionInfo ?
-                                    <SubscriptionForm
+                                    <PixPaymentForm
                                         productSlug={productSlug}
                                         networkSlug={networkSlug}
                                         sellerSlug={sellerSlug}
+                                        setMessageError={throwError}
+                                        setMessageSuccess={showSuccessMessage}
                                     />
                                     :
                                     <UserForm url={getUrl()} onSuccess={(msgSuccess) => {

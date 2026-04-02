@@ -435,5 +435,18 @@
   "password_page_change_success": "Mot de passe modifié avec succès",
   "register_already_have_account": "Vous avez déjà un compte ?",
   "reset_password_title": "Réinitialiser le Mot de Passe",
-  "reset_password_success": "Mot de passe réinitialisé avec succès"
+  "reset_password_success": "Mot de passe réinitialisé avec succès",
+  "cpf_label": "CPF",
+  "cpf_placeholder": "Entrez votre CPF (chiffres uniquement)",
+  "cpf_invalid": "CPF invalide. Entrez 11 chiffres.",
+  "pix_payment_title": "Paiement PIX",
+  "payment_success": "Paiement confirmé avec succès !",
+  "payment_error": "Erreur lors du traitement du paiement.",
+  "payment_expired": "QR Code expiré. Veuillez réessayer.",
+  "checkout_success_title": "Paiement Confirmé !",
+  "checkout_success_message": "Votre paiement a été traité avec succès.",
+  "back_to_dashboard": "Retour au Tableau de Bord",
+  "continue_to_payment": "Continuer vers le Paiement",
+  "pay_with_pix": "Payer avec PIX",
+  "processing": "Traitement en cours..."
 }

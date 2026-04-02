@@ -11,8 +11,6 @@ public partial class Order
 
     public int Status { get; set; }
 
-    public string StripeId { get; set; }
-
     public long? SellerId { get; set; }
 
     public DateTime CreatedAt { get; set; }

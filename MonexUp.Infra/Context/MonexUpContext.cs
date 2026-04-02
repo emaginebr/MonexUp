@@ -54,9 +54,6 @@ public partial class MonexUpContext : DbContext
             entity.Property(e => e.Status)
                 .HasDefaultValue(1)
                 .HasColumnName("status");
-            entity.Property(e => e.StripeId)
-                .HasMaxLength(120)
-                .HasColumnName("stripe_id");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
             entity.HasOne(d => d.Order).WithMany(p => p.Invoices)
@@ -143,9 +140,6 @@ public partial class MonexUpContext : DbContext
             entity.Property(e => e.Status)
                 .HasDefaultValue(1)
                 .HasColumnName("status");
-            entity.Property(e => e.StripeId)
-                .HasMaxLength(120)
-                .HasColumnName("stripe_id");
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("updated_at");

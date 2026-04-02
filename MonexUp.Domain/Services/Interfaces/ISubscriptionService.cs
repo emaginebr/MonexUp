@@ -1,4 +1,5 @@
-﻿using MonexUp.DTO.Subscription;
+using MonexUp.DTO.Payment;
+using MonexUp.DTO.Subscription;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,6 @@ namespace MonexUp.Domain.Interfaces.Services
     public interface ISubscriptionService
     {
         Task<SubscriptionInfo> CreateSubscription(long productId, long userId, long? networkId, long? sellerId, string token);
-        //Task<SubscriptionInfo> CreateInvoice(long productId, long userId);
-
+        Task<PixPaymentResult> CreatePixPayment(long productId, long userId, long? networkId, long? sellerId, string documentId, string token);
     }
 }

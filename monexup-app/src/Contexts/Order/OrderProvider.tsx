@@ -1,15 +1,12 @@
 import { useState } from "react";
 import ProviderResult from "../../DTO/Contexts/ProviderResult";
-import UserProfileInfo from "../../DTO/Domain/UserProfileInfo";
-import IProfileProvider from "../../DTO/Contexts/IProfileProvider";
-import ProfileFactory from "../../Business/Factory/ProfileFactory";
 import OrderInfo from "../../DTO/Domain/OrderInfo";
 import IOrderProvider from "../../DTO/Contexts/IOrderProvider";
 import OrderContext from "./OrderContext";
 import OrderProviderResult from "../../DTO/Contexts/OrderProviderResult";
 import OrderFactory from "../../Business/Factory/OrderFactory";
-import OrderListPagedResult from "../../DTO/Services/OrderListPagedResult";
 import OrderListPagedInfo from "../../DTO/Domain/OrderListPagedInfo";
+import PixPaymentResult from "../../DTO/Services/SubscriptionResult";
 
 export default function OrderProvider(props: any) {
 
@@ -19,7 +16,7 @@ export default function OrderProvider(props: any) {
 
     const [order, setOrder] = useState<OrderInfo>(null);
     const [searchResult, setSearchResult] = useState<OrderListPagedInfo>(null);
-    const [clientSecret, setClientSecret] = useState<string>("");
+    const [pixPaymentResult, setPixPaymentResult] = useState<PixPaymentResult | null>(null);
 
     const orderProviderValue: IOrderProvider = {
         loading: loading,
@@ -28,21 +25,19 @@ export default function OrderProvider(props: any) {
 
         order: order,
         searchResult: searchResult,
-        clientSecret: clientSecret,
+        pixPaymentResult: pixPaymentResult,
 
-        createSubscription: async (productSlug: string, networkSlug?: string, sellerSlug?: string) => {
+        createPixPayment: async (productSlug: string, documentId: string, networkSlug?: string, sellerSlug?: string) => {
             let ret: Promise<OrderProviderResult>;
             setLoadingUpdate(true);
-            //try {
-            let brt = await OrderFactory.OrderBusiness.createSubscription(productSlug, networkSlug, sellerSlug);
+            let brt = await OrderFactory.OrderBusiness.createPixPayment(productSlug, documentId, networkSlug, sellerSlug);
             if (brt.sucesso) {
                 setLoadingUpdate(false);
-                setClientSecret(brt.dataResult);
+                setPixPaymentResult(brt.dataResult);
                 return {
                     ...ret,
                     sucesso: true,
-                    clientSecret: brt.dataResult,
-                    mensagemSucesso: "Profile added"
+                    mensagemSucesso: "Payment created"
                 };
             }
             else {
@@ -53,57 +48,10 @@ export default function OrderProvider(props: any) {
                     mensagemErro: brt.mensagem
                 };
             }
-            /*
-            }
-            catch (err) {
-                setLoadingUpdate(false);
-                return {
-                    ...ret,
-                    sucesso: false,
-                    mensagemErro: JSON.stringify(err)
-                };
-            }
-            */
-        },
-        createInvoice: async (productSlug: string) => {
-            let ret: Promise<OrderProviderResult>;
-            setLoadingUpdate(true);
-            //try {
-            let brt = await OrderFactory.OrderBusiness.createInvoice(productSlug);
-            if (brt.sucesso) {
-                setLoadingUpdate(false);
-                setClientSecret(brt.dataResult);
-                return {
-                    ...ret,
-                    sucesso: true,
-                    clientSecret: brt.dataResult,
-                    mensagemSucesso: "Profile added"
-                };
-            }
-            else {
-                setLoadingUpdate(false);
-                return {
-                    ...ret,
-                    sucesso: false,
-                    mensagemErro: brt.mensagem
-                };
-            }
-            /*
-            }
-            catch (err) {
-                setLoadingUpdate(false);
-                return {
-                    ...ret,
-                    sucesso: false,
-                    mensagemErro: JSON.stringify(err)
-                };
-            }
-            */
         },
         search: async (networkId: number, userId: number, sellerId: number, pageNum: number) => {
             let ret: Promise<ProviderResult>;
             setLoadingSearch(true);
-            //try {
             let brt = await OrderFactory.OrderBusiness.search(networkId, userId, sellerId, pageNum);
             if (brt.sucesso) {
                 setLoadingSearch(false);
@@ -111,8 +59,7 @@ export default function OrderProvider(props: any) {
                 return {
                     ...ret,
                     sucesso: true,
-                    clientSecret: brt.dataResult,
-                    mensagemSucesso: "Profile added"
+                    mensagemSucesso: "Search completed"
                 };
             }
             else {
@@ -123,22 +70,10 @@ export default function OrderProvider(props: any) {
                     mensagemErro: brt.mensagem
                 };
             }
-            /*
-            }
-            catch (err) {
-                setLoadingUpdate(false);
-                return {
-                    ...ret,
-                    sucesso: false,
-                    mensagemErro: JSON.stringify(err)
-                };
-            }
-            */
         },
         getById: async (orderId: number) => {
             let ret: Promise<OrderProviderResult>;
             setLoading(true);
-            //try {
             let brt = await OrderFactory.OrderBusiness.getById(orderId);
             if (brt.sucesso) {
                 setLoading(false);
@@ -158,17 +93,6 @@ export default function OrderProvider(props: any) {
                     mensagemErro: brt.mensagem
                 };
             }
-            /*
-            }
-            catch (err) {
-                setLoadingUpdate(false);
-                return {
-                    ...ret,
-                    sucesso: false,
-                    mensagemErro: JSON.stringify(err)
-                };
-            }
-            */
         }
     }
 

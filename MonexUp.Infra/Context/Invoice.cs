@@ -21,8 +21,6 @@ public partial class Invoice
 
     public int Status { get; set; }
 
-    public string StripeId { get; set; }
-
     public virtual ICollection<InvoiceFee> InvoiceFees { get; set; } = new List<InvoiceFee>();
 
     public virtual Order Order { get; set; }

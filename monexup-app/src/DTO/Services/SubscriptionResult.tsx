@@ -1,6 +1,15 @@
 import OrderInfo from "../Domain/OrderInfo";
 
-export default interface SubscriptionResult {
+export interface PixQRCodeInfo {
+    invoiceId: string;
+    brCode: string;
+    brCodeBase64: string;
+    expiredAt: string;
+}
+
+export default interface PixPaymentResult {
+    sucesso: boolean;
+    mensagem: string;
     order: OrderInfo;
-    clientSecret: string;
+    qrCode: PixQRCodeInfo;
 }

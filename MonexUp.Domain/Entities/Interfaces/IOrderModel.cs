@@ -14,7 +14,6 @@ namespace MonexUp.Domain.Interfaces.Models
         long NetworkId { get; set; }
         long UserId { get; set; }
         long? SellerId { get; set; }
-        string StripeId { get; set; }
         DateTime CreatedAt { get; set; }
         DateTime UpdatedAt { get; set; }
         OrderStatusEnum Status { get; set; }
@@ -25,7 +24,6 @@ namespace MonexUp.Domain.Interfaces.Models
         IEnumerable<IOrderModel> Search(long networkId, long? userId, long? sellerId, int pageNum, out int pageCount, IOrderDomainFactory factory);
         IOrderModel GetById(long id, IOrderDomainFactory factory);
         IOrderModel Get(long productId, long userId, long? sellerId, OrderStatusEnum status, IOrderDomainFactory factory);
-        IOrderModel GetByStripeId(string stripeId, IOrderDomainFactory factory);
         IOrderModel Insert(IOrderDomainFactory factory);
         IOrderModel Update(IOrderDomainFactory factory);
     }

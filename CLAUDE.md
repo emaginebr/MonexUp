@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-MonexUp is a multi-network marketing (MMN) platform with donation/subscription management, payment processing (Stripe), and multi-level commission tracking. The codebase is a monorepo with a .NET 8.0 backend and a React 18 TypeScript frontend.
+MonexUp is a multi-network marketing (MMN) platform with donation/subscription management, payment processing (ProxyPay/PIX), and multi-level commission tracking. The codebase is a monorepo with a .NET 8.0 backend and a React 18 TypeScript frontend.
 
 ## Build & Run Commands
 
@@ -83,11 +83,11 @@ Key entities: Users, Networks, UserNetworks (junction), Orders, OrderItems, Invo
 ### Frontend structure
 
 - **Auth:** `nauth-react` package
-- **Payment:** `@stripe/react-stripe-js` with embedded checkout
+- **Payment:** `proxypay-react` with PIX QR Code payment
 - **i18n:** `i18next` with languages: pt, en, es, fr (files in `public/locales/{lang}/translation.json`)
 - **UI:** Bootstrap 5 + Material-UI 6 + FontAwesome
 - **Mobile:** Capacitor 7 for Android builds
-- **Env vars:** React CRA convention — prefix with `REACT_APP_` (e.g., `REACT_APP_STRIPE_PUBLISHABLE_KEY`)
+- **Env vars:** React CRA convention — prefix with `REACT_APP_` (e.g., `REACT_APP_PROXYPAY_API_URL`)
 
 ### Lofn Integration (Products/E-commerce)
 
@@ -97,7 +97,7 @@ Products are managed by the separate **Lofn** project (external API). The backen
 - **Frontend env var:** `REACT_APP_LOFN_API_URL` — URL of the Lofn API
 - **Header:** All requests include `X-Tenant-Id: monexup`
 - **Do NOT add product CRUD code to this backend** — it belongs in the Lofn project
-- **Stripe integration** still lives in MonexUp (StripeService) but reads/writes product data via Lofn
+- **Payment integration** lives in MonexUp (ProxyPayService) and reads product data via Lofn
 
 ### Dedalo Integration (Templates/CMS)
 
@@ -112,8 +112,9 @@ Templates are managed by the separate **Dedalo** project (external API). The fro
 All secrets are in `.env` at the repo root (gitignored). Key variables:
 
 - `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` — PostgreSQL connection
-- `STRIPE_SECRET_KEY` — Stripe API (backend)
-- `REACT_APP_STRIPE_PUBLISHABLE_KEY` — Stripe public key (frontend, in `monexup-app/.env`)
+- `REACT_APP_PROXYPAY_API_URL` — ProxyPay API URL (frontend, in `monexup-app/.env`)
+- `REACT_APP_PROXYPAY_CLIENT_ID` — ProxyPay Client ID (frontend, in `monexup-app/.env`)
+- `REACT_APP_PROXYPAY_TENANT_ID` — ProxyPay Tenant ID (frontend, in `monexup-app/.env`)
 - `MAILERSEND_API_TOKEN`, `MAILERSEND_SENDER` — Email service
 - `DO_SPACES_ACCESS_KEY`, `DO_SPACES_SECRET_KEY`, `DO_SPACES_BUCKET`, `DO_SPACES_ENDPOINT` — DigitalOcean Spaces (S3-compatible storage)
 - `SSL_CERT_PASSWORD` — SSL certificate for Kestrel (production only)

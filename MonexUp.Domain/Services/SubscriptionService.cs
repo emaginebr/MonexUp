@@ -1,11 +1,12 @@
 using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
+using MonexUp.DTO.Invoice;
 using MonexUp.DTO.Order;
+using MonexUp.DTO.Payment;
 using MonexUp.DTO.Subscription;
 using NAuth.ACL.Interfaces;
 using NAuth.DTO.User;
-using Stripe.Climate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,35 +18,41 @@ namespace MonexUp.Domain.Impl.Services
     public class SubscriptionService : ISubscriptionService
     {
         private readonly IOrderService _orderService;
-        private readonly IStripeService _stripeService;
+        private readonly IProxyPayService _proxyPayService;
+        private readonly IInvoiceService _invoiceService;
         private readonly IUserClient _userClient;
         private readonly INetworkDomainFactory _networkFactory;
         private readonly IProductDomainFactory _productFactory;
         private readonly IOrderItemDomainFactory _orderItemFactory;
+        private readonly IInvoiceDomainFactory _invoiceFactory;
 
         public SubscriptionService(
             IOrderService orderService,
-            IStripeService stripeService,
+            IProxyPayService proxyPayService,
+            IInvoiceService invoiceService,
             IUserClient userClient,
             INetworkDomainFactory networkFactory,
             IProductDomainFactory productFactory,
-            IOrderItemDomainFactory orderItemFactory
+            IOrderItemDomainFactory orderItemFactory,
+            IInvoiceDomainFactory invoiceFactory
         )
         {
             _orderService = orderService;
-            _stripeService = stripeService;
+            _proxyPayService = proxyPayService;
+            _invoiceService = invoiceService;
             _userClient = userClient;
             _networkFactory = networkFactory;
             _productFactory = productFactory;
             _orderItemFactory = orderItemFactory;
+            _invoiceFactory = invoiceFactory;
         }
 
-        public async Task<SubscriptionInfo> CreateSubscription(long productId, long userId, long? networkId, long? sellerId, string token)
+        public async Task<PixPaymentResult> CreatePixPayment(long productId, long userId, long? networkId, long? sellerId, string documentId, string token)
         {
             var product = _productFactory.BuildProductModel().GetById(productId, _productFactory);
             if (product == null)
             {
-                throw new Exception("Product not found");
+                return new PixPaymentResult { Sucesso = false, Mensagem = "Product not found" };
             }
 
             INetworkModel network = null;
@@ -78,13 +85,45 @@ namespace MonexUp.Domain.Impl.Services
                     }
                 });
             }
+
+            var invoice = _invoiceFactory.BuildInvoiceModel();
+            invoice.OrderId = order.OrderId;
+            invoice.UserId = userId;
+            invoice.SellerId = sellerId;
+            invoice.Price = product.Price;
+            invoice.DueDate = DateTime.UtcNow;
+            invoice.Status = InvoiceStatusEnum.Draft;
+            var newInvoice = _invoiceService.Insert(invoice);
+
             var user = await _userClient.GetByIdAsync(order.UserId, token);
-            var clientSecret = await _stripeService.CreateSubscription(user, product, network, seller);
-            return new SubscriptionInfo()
+            var qrCodeResponse = await _proxyPayService.CreateQRCode(user, product, network, seller, documentId);
+
+            if (!qrCodeResponse.Sucesso)
             {
+                return new PixPaymentResult
+                {
+                    Sucesso = false,
+                    Mensagem = qrCodeResponse.Mensagem ?? "Failed to create QR Code"
+                };
+            }
+
+            return new PixPaymentResult
+            {
+                Sucesso = true,
                 Order = await _orderService.GetOrderInfo(order, token),
-                ClientSecret = clientSecret
+                QrCode = new PixQRCodeInfo
+                {
+                    InvoiceId = qrCodeResponse.InvoiceId,
+                    BrCode = qrCodeResponse.BrCode,
+                    BrCodeBase64 = qrCodeResponse.BrCodeBase64,
+                    ExpiredAt = qrCodeResponse.ExpiredAt
+                }
             };
+        }
+
+        public async Task<SubscriptionInfo> CreateSubscription(long productId, long userId, long? networkId, long? sellerId, string token)
+        {
+            throw new NotSupportedException("Stripe subscriptions are no longer supported. Use CreatePixPayment instead.");
         }
     }
 }

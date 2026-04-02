@@ -435,5 +435,18 @@
   "password_page_change_success": "Contraseña cambiada con éxito",
   "register_already_have_account": "¿Ya tienes una cuenta?",
   "reset_password_title": "Restablecer Contraseña",
-  "reset_password_success": "Contraseña restablecida con éxito"
+  "reset_password_success": "Contraseña restablecida con éxito",
+  "cpf_label": "CPF",
+  "cpf_placeholder": "Ingrese su CPF (solo números)",
+  "cpf_invalid": "CPF inválido. Ingrese 11 dígitos.",
+  "pix_payment_title": "Pago PIX",
+  "payment_success": "Pago confirmado con éxito!",
+  "payment_error": "Error al procesar el pago.",
+  "payment_expired": "Código QR expirado. Intente nuevamente.",
+  "checkout_success_title": "Pago Confirmado!",
+  "checkout_success_message": "Su pago ha sido procesado con éxito.",
+  "back_to_dashboard": "Volver al Panel",
+  "continue_to_payment": "Continuar al Pago",
+  "pay_with_pix": "Pagar con PIX",
+  "processing": "Procesando..."
 }

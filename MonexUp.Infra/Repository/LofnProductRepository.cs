@@ -67,12 +67,6 @@ namespace DB.Infra.Repository
                 md.Image = imageUrl.GetString();
             }
 
-            // Stripe fields (may not be in Lofn response yet - documented gap)
-            md.StripeProductId = product.TryGetProperty("stripeProductId", out var stripeProd) && stripeProd.ValueKind != JsonValueKind.Null
-                ? stripeProd.GetString() : null;
-            md.StripePriceId = product.TryGetProperty("stripePriceId", out var stripePrice) && stripePrice.ValueKind != JsonValueKind.Null
-                ? stripePrice.GetString() : null;
-
             return md;
         }
 
@@ -285,30 +279,5 @@ namespace DB.Infra.Repository
             return false;
         }
 
-        public IProductModel GetByStripeProductId(string stripeProductId, IProductDomainFactory factory)
-        {
-            // Gap: Lofn API doesn't expose Stripe fields yet
-            // This needs to be added to Lofn (see docs/LOFN_INTEGRATION.md)
-            var query = @"query {
-                getProducts {
-                    items { productId storeId slug name description price discount frequency limit status productType featured imageUrl
-                        images { imageId productId image imageUrl sortOrder }
-                    }
-                }
-            }";
-            var data = ExecuteGraphQL(query).GetAwaiter().GetResult();
-            if (data == null) return null;
-
-            // Cannot filter by stripeProductId in GraphQL yet - return null
-            // This is a documented gap
-            return null;
-        }
-
-        public IProductModel GetByStripePriceId(string stripePriceId, IProductDomainFactory factory)
-        {
-            // Gap: Lofn API doesn't expose Stripe fields yet
-            // This needs to be added to Lofn (see docs/LOFN_INTEGRATION.md)
-            return null;
-        }
     }
 }

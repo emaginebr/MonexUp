@@ -32,8 +32,6 @@ namespace MonexUp.Domain.Impl.Models
         public int Frequency { get; set; }
         public int Limit { get; set; }
         public ProductStatusEnum Status { get; set; }
-        public string StripeProductId { get; set; }
-        public string StripePriceId { get; set; }
 
         public IProductModel GetById(long id, IProductDomainFactory factory)
         {
@@ -70,14 +68,5 @@ namespace MonexUp.Domain.Impl.Models
             return _repositoryProduct.ExistSlug(productId, slug);
         }
 
-        public IProductModel GetByStripeProductId(string stripeProductId, IProductDomainFactory factory)
-        {
-            return _repositoryProduct.GetByStripeProductId(stripeProductId, factory);
-        }
-
-        public IProductModel GetByStripePriceId(string stripePriceId, IProductDomainFactory factory)
-        {
-            return _repositoryProduct.GetByStripeProductId(stripePriceId, factory);
-        }
     }
 }

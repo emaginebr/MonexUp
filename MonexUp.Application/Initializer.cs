@@ -22,6 +22,7 @@ using NAuth.DTO.Settings;
 using zTools.ACL;
 using zTools.ACL.Interfaces;
 using zTools.DTO.Settings;
+using MonexUp.Infra.Interfaces.AppServices;
 
 namespace MonexUp.Application
 {
@@ -75,13 +76,18 @@ namespace MonexUp.Application
             injectDependency(typeof(IMailClient), typeof(MailClient), services, scoped);
             #endregion
 
+            #region ProxyPay
+            services.Configure<MonexUp.Infra.Interfaces.AppServices.ProxyPaySetting>(configuration.GetSection("ProxyPay"));
+            injectDependency(typeof(IProxyPayAppService), typeof(MonexUp.Infra.AppServices.ProxyPayAppService), services, scoped);
+            #endregion
+
             #region Service
             injectDependency(typeof(INetworkService), typeof(NetworkService), services, scoped);
             injectDependency(typeof(IProfileService), typeof(ProfileService), services, scoped);
             injectDependency(typeof(IProductService), typeof(ProductService), services, scoped);
             injectDependency(typeof(IOrderService), typeof(OrderService), services, scoped);
             injectDependency(typeof(ISubscriptionService), typeof(SubscriptionService), services, scoped);
-            injectDependency(typeof(IStripeService), typeof(StripeService), services, scoped);
+            injectDependency(typeof(IProxyPayService), typeof(ProxyPayService), services, scoped);
             injectDependency(typeof(IInvoiceService), typeof(InvoiceService), services, scoped);
             #endregion
 
