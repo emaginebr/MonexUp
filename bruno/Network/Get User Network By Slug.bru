@@ -1,0 +1,19 @@
+meta {
+  name: Get User Network By Slug
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/network/getUserNetworkBySlug/:networkSlug
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:path {
+  networkSlug:
+}

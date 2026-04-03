@@ -1,0 +1,30 @@
+meta {
+  name: Update
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/order/update
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "orderId": 1,
+    "networkId": 1,
+    "userId": 1,
+    "sellerId": null,
+    "status": 0,
+    "createdAt": "2026-01-01T00:00:00",
+    "updatedAt": "2026-01-01T00:00:00",
+    "user": null,
+    "seller": null,
+    "items": []
+  }
+}

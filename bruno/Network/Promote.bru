@@ -1,0 +1,20 @@
+meta {
+  name: Promote
+  type: http
+  seq: 13
+}
+
+get {
+  url: {{baseUrl}}/network/promote/:networkId/:userId
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:path {
+  networkId: 1
+  userId: 1
+}

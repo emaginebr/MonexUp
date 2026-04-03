@@ -3,8 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@capacitor/android": "7.2.0",
-    "@capacitor/core": "^7.2.0",
     "@craftjs/core": "^0.2.12",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-brands-svg-icons": "^6.6.0",
@@ -15,7 +13,7 @@
     "@mui/material": "^6.1.4",
     "@mui/styles": "^6.1.4",
     "@stacks/connect": "^7.8.0",
-    "proxypay-react": "^0.1.9",
+    "proxypay-react": "^0.2.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -71,7 +69,6 @@
     ]
   },
   "devDependencies": {
-    "@capacitor/cli": "^7.2.0",
     "sass": "^1.97.3"
   }
 }

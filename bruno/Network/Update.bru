@@ -1,0 +1,32 @@
+meta {
+  name: Update
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/network/update
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "networkId": 1,
+    "slug": "",
+    "imageUrl": "",
+    "name": "",
+    "email": "",
+    "commission": 0,
+    "withdrawalMin": 0,
+    "withdrawalPeriod": 0,
+    "plan": 0,
+    "status": 0,
+    "qtdyUsers": 0,
+    "maxUsers": 0
+  }
+}

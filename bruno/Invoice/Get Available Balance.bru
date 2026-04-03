@@ -1,0 +1,15 @@
+meta {
+  name: Get Available Balance
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/invoice/getAvailableBalance
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

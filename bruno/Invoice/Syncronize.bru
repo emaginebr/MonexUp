@@ -1,0 +1,15 @@
+meta {
+  name: Syncronize
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/invoice/syncronize
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

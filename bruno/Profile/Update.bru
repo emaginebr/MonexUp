@@ -1,0 +1,26 @@
+meta {
+  name: Update
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/profile/update
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "profileId": 1,
+    "networkId": 1,
+    "name": "",
+    "commission": 0,
+    "level": 0,
+    "members": 0
+  }
+}

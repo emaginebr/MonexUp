@@ -1,0 +1,30 @@
+meta {
+  name: Create Pix Payment
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/order/createPixPayment/:productSlug?networkSlug=&sellerSlug=
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:path {
+  productSlug:
+}
+
+params:query {
+  networkSlug:
+  sellerSlug:
+}
+
+body:json {
+  {
+    "documentId": ""
+  }
+}
