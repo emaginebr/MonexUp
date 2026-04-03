@@ -1,0 +1,24 @@
+meta {
+  name: Search
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/invoice/search
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "networkId": 1,
+    "userId": null,
+    "sellerId": null,
+    "pageNum": 1
+  }
+}

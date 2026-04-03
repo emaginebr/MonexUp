@@ -85,7 +85,7 @@ services:
       zTools__ApiURL: http://ztools-api:8080
       NAuth__ApiUrl: http://nauth-api:80
       NAuth__JwtSecret: ${NAUTH_JWT_SECRET}
-      NAuth__BucketName: ${S3_BUCKET:-monexup}
+      NAuth__BucketName: ${NAUTH_BUCKET:-monexup}
       ProxyPay__ApiUrl: ${PROXYPAY_API_URL}
       ProxyPay__ClientId: ${PROXYPAY_CLIENT_ID}
       ProxyPay__TenantId: ${PROXYPAY_TENANT_ID:-monexup}
@@ -127,13 +127,13 @@ services:
       context: ./monexup-app
       dockerfile: Dockerfile.prod
       args:
-        REACT_APP_API_URL: ${REACT_APP_API_URL}
-        REACT_APP_NAUTH_API_URL: ${REACT_APP_NAUTH_API_URL}
-        REACT_APP_PROXYPAY_API_URL: ${REACT_APP_PROXYPAY_API_URL}
-        REACT_APP_PROXYPAY_CLIENT_ID: ${REACT_APP_PROXYPAY_CLIENT_ID}
-        REACT_APP_PROXYPAY_TENANT_ID: ${REACT_APP_PROXYPAY_TENANT_ID:-monexup}
-        REACT_APP_LOFN_API_URL: ${REACT_APP_LOFN_API_URL}
-        REACT_APP_DEDALO_API_URL: ${REACT_APP_DEDALO_API_URL}
+        REACT_APP_API_URL: ${NAUTH_API_URL}
+        REACT_APP_NAUTH_API_URL: ${NAUTH_API_URL}
+        REACT_APP_PROXYPAY_API_URL: ${PROXYPAY_API_URL}
+        REACT_APP_PROXYPAY_CLIENT_ID: ${PROXYPAY_CLIENT_ID}
+        REACT_APP_PROXYPAY_TENANT_ID: ${PROXYPAY_TENANT_ID:-monexup}
+        REACT_APP_LOFN_API_URL: ${LOFN_API_URL}
+        REACT_APP_DEDALO_API_URL: ${DEDALO_API_URL}
         REACT_APP_PRODUCTION: "1"
         REACT_APP_SITE_BASENAME: /
         REACT_APP_PROJECT_NAME: MonexUp.com

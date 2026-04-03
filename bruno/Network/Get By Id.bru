@@ -1,0 +1,19 @@
+meta {
+  name: Get By Id
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/network/getById/:networkId
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:path {
+  networkId: 1
+}

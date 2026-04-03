@@ -29,6 +29,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonexUp.Application", "Mone
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonexUp.BackgroundService", "MonexUp.BackgroundService\MonexUp.BackgroundService.csproj", "{97004F83-762F-47D5-A664-9F2B02058470}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonexUp.UnitTests", "MonexUp.UnitTests\MonexUp.UnitTests.csproj", "{BFA0303E-8CEA-4403-A157-D8E1365746F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonexUp.ApiTests", "MonexUp.ApiTests\MonexUp.ApiTests.csproj", "{E04B6084-6EC9-4EA3-850F-C041454B13A3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,6 +127,30 @@ Global
 		{97004F83-762F-47D5-A664-9F2B02058470}.Release|x64.Build.0 = Release|Any CPU
 		{97004F83-762F-47D5-A664-9F2B02058470}.Release|x86.ActiveCfg = Release|Any CPU
 		{97004F83-762F-47D5-A664-9F2B02058470}.Release|x86.Build.0 = Release|Any CPU
+		{BFA0303E-8CEA-4403-A157-D8E1365746F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFA0303E-8CEA-4403-A157-D8E1365746F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFA0303E-8CEA-4403-A157-D8E1365746F1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BFA0303E-8CEA-4403-A157-D8E1365746F1}.Debug|x64.Build.0 = Debug|Any CPU
+		{BFA0303E-8CEA-4403-A157-D8E1365746F1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BFA0303E-8CEA-4403-A157-D8E1365746F1}.Debug|x86.Build.0 = Debug|Any CPU
+		{BFA0303E-8CEA-4403-A157-D8E1365746F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFA0303E-8CEA-4403-A157-D8E1365746F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFA0303E-8CEA-4403-A157-D8E1365746F1}.Release|x64.ActiveCfg = Release|Any CPU
+		{BFA0303E-8CEA-4403-A157-D8E1365746F1}.Release|x64.Build.0 = Release|Any CPU
+		{BFA0303E-8CEA-4403-A157-D8E1365746F1}.Release|x86.ActiveCfg = Release|Any CPU
+		{BFA0303E-8CEA-4403-A157-D8E1365746F1}.Release|x86.Build.0 = Release|Any CPU
+		{E04B6084-6EC9-4EA3-850F-C041454B13A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E04B6084-6EC9-4EA3-850F-C041454B13A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E04B6084-6EC9-4EA3-850F-C041454B13A3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E04B6084-6EC9-4EA3-850F-C041454B13A3}.Debug|x64.Build.0 = Debug|Any CPU
+		{E04B6084-6EC9-4EA3-850F-C041454B13A3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E04B6084-6EC9-4EA3-850F-C041454B13A3}.Debug|x86.Build.0 = Debug|Any CPU
+		{E04B6084-6EC9-4EA3-850F-C041454B13A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E04B6084-6EC9-4EA3-850F-C041454B13A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E04B6084-6EC9-4EA3-850F-C041454B13A3}.Release|x64.ActiveCfg = Release|Any CPU
+		{E04B6084-6EC9-4EA3-850F-C041454B13A3}.Release|x64.Build.0 = Release|Any CPU
+		{E04B6084-6EC9-4EA3-850F-C041454B13A3}.Release|x86.ActiveCfg = Release|Any CPU
+		{E04B6084-6EC9-4EA3-850F-C041454B13A3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+!.env.prod.example
 
 # Frontend environment (secrets)
 monexup-app/.env.production

@@ -1,0 +1,23 @@
+meta {
+  name: List
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/order/list
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "networkId": 1,
+    "userId": 1,
+    "status": null
+  }
+}

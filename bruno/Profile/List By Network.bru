@@ -1,0 +1,19 @@
+meta {
+  name: List By Network
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/profile/listByNetwork/:networkId
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:path {
+  networkId: 1
+}

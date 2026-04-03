@@ -1,0 +1,16 @@
+meta {
+  name: Get Seller By Slug
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{baseUrl}}/network/getSellerBySlug/:networkSlug/:sellerSlug
+  body: none
+  auth: none
+}
+
+params:path {
+  networkSlug:
+  sellerSlug:
+}

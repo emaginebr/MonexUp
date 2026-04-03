@@ -1,0 +1,19 @@
+meta {
+  name: Get User Network
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/network/getUserNetwork/:networkId
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:path {
+  networkId: 1
+}
