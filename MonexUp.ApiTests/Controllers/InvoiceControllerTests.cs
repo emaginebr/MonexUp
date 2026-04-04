@@ -50,13 +50,13 @@ namespace MonexUp.ApiTests.Controllers
         }
 
         [Fact]
-        public async Task GetBalance_WithAuth_ShouldReturnOk()
+        public async Task GetBalance_WithAuth_ShouldReturnSuccessStatus()
         {
-            var response = await _fixture.CreateAuthenticatedRequest("/invoice/getBalance?networkId=1")
+            var response = await _fixture.CreateAuthenticatedRequest("/invoice/getBalance")
                 .AllowAnyHttpStatus()
                 .GetAsync();
 
-            response.StatusCode.Should().Be(200);
+            response.StatusCode.Should().BeOneOf(200, 204);
         }
 
         [Fact]

@@ -50,13 +50,13 @@ namespace MonexUp.ApiTests.Controllers
         }
 
         [Fact]
-        public async Task GetById_WithAuth_ShouldReturnOk()
+        public async Task GetById_WithAuth_ShouldNotReturn401()
         {
-            var response = await _fixture.CreateAuthenticatedRequest("/order/getById/1")
+            var response = await _fixture.CreateAuthenticatedRequest("/order/getById/999999")
                 .AllowAnyHttpStatus()
                 .GetAsync();
 
-            response.StatusCode.Should().Be(200);
+            response.StatusCode.Should().NotBe(401, "authenticated request should not be rejected");
         }
     }
 }

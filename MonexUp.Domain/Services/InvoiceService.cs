@@ -24,7 +24,6 @@ namespace MonexUp.Domain.Impl.Services
         private readonly IProductDomainFactory _productFactory;
         private readonly IOrderService _orderService;
         private readonly INetworkService _networkService;
-        private readonly IProxyPayService _proxyPayService;
 
         private const double PLATAFORM_FEE = 0.02;
 
@@ -37,8 +36,7 @@ namespace MonexUp.Domain.Impl.Services
             IOrderItemDomainFactory orderItemFactory,
             IProductDomainFactory productFactory,
             IOrderService orderService,
-            INetworkService networkService,
-            IProxyPayService proxyPayService
+            INetworkService networkService
         )
         {
             _invoiceFactory = invoiceFactory;
@@ -50,7 +48,6 @@ namespace MonexUp.Domain.Impl.Services
             _productFactory = productFactory;
             _orderService = orderService;
             _networkService = networkService;
-            _proxyPayService = proxyPayService;
         }
 
         private void ValidateIsNoHaveCommissionPaid(IInvoiceModel invoice)
@@ -129,11 +126,6 @@ namespace MonexUp.Domain.Impl.Services
             var newInvoice = invoice.Update(_invoiceFactory);
             CalculateFee(newInvoice);
             return newInvoice;
-        }
-
-        public async Task Syncronize()
-        {
-            await _proxyPayService.SyncPendingInvoices();
         }
 
         public async Task<InvoiceInfo> GetInvoiceInfo(IInvoiceModel invoice, string token)

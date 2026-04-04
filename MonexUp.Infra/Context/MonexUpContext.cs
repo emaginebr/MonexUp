@@ -37,9 +37,9 @@ public partial class MonexUpContext : DbContext
     {
         modelBuilder.Entity<Invoice>(entity =>
         {
-            entity.HasKey(e => e.InvoiceId).HasName("invoices_pkey");
+            entity.HasKey(e => e.InvoiceId).HasName("monexup_invoices_pkey");
 
-            entity.ToTable("invoices");
+            entity.ToTable("monexup_invoices");
 
             entity.Property(e => e.InvoiceId).HasColumnName("invoice_id");
             entity.Property(e => e.DueDate)
@@ -59,17 +59,17 @@ public partial class MonexUpContext : DbContext
             entity.HasOne(d => d.Order).WithMany(p => p.Invoices)
                 .HasForeignKey(d => d.OrderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_invoice_order");
+                .HasConstraintName("monexup_fk_invoice_order");
         });
 
         modelBuilder.Entity<InvoiceFee>(entity =>
         {
-            entity.HasKey(e => e.FeeId).HasName("pk_invoice_fee");
+            entity.HasKey(e => e.FeeId).HasName("monexup_pk_invoice_fee");
 
-            entity.ToTable("invoice_fees");
+            entity.ToTable("monexup_invoice_fees");
 
             entity.Property(e => e.FeeId)
-                .HasDefaultValueSql("nextval('invoice_commission_commission_id_seq'::regclass)")
+                .HasDefaultValueSql("nextval('monexup_invoice_commission_id_seq'::regclass)")
                 .HasColumnName("fee_id");
             entity.Property(e => e.Amount).HasColumnName("amount");
             entity.Property(e => e.InvoiceId).HasColumnName("invoice_id");
@@ -82,21 +82,21 @@ public partial class MonexUpContext : DbContext
             entity.HasOne(d => d.Invoice).WithMany(p => p.InvoiceFees)
                 .HasForeignKey(d => d.InvoiceId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_fee_invoice");
+                .HasConstraintName("monexup_fk_fee_invoice");
 
             entity.HasOne(d => d.Network).WithMany(p => p.InvoiceFees)
                 .HasForeignKey(d => d.NetworkId)
-                .HasConstraintName("fk_fee_network");
+                .HasConstraintName("monexup_fk_fee_network");
         });
 
         modelBuilder.Entity<Network>(entity =>
         {
-            entity.HasKey(e => e.NetworkId).HasName("networks_pkey");
+            entity.HasKey(e => e.NetworkId).HasName("monexup_networks_pkey");
 
-            entity.ToTable("networks");
+            entity.ToTable("monexup_networks");
 
             entity.Property(e => e.NetworkId)
-                .HasDefaultValueSql("nextval('network_id_seq'::regclass)")
+                .HasDefaultValueSql("nextval('monexup_network_id_seq'::regclass)")
                 .HasColumnName("network_id");
             entity.Property(e => e.Commission).HasColumnName("commission");
             entity.Property(e => e.Email)
@@ -127,9 +127,9 @@ public partial class MonexUpContext : DbContext
 
         modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(e => e.OrderId).HasName("orders_pkey");
+            entity.HasKey(e => e.OrderId).HasName("monexup_orders_pkey");
 
-            entity.ToTable("orders");
+            entity.ToTable("monexup_orders");
 
             entity.Property(e => e.OrderId).HasColumnName("order_id");
             entity.Property(e => e.CreatedAt)
@@ -148,14 +148,14 @@ public partial class MonexUpContext : DbContext
             entity.HasOne(d => d.Network).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.NetworkId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_order_network");
+                .HasConstraintName("monexup_fk_order_network");
         });
 
         modelBuilder.Entity<OrderItem>(entity =>
         {
-            entity.HasKey(e => e.ItemId).HasName("order_items_pkey");
+            entity.HasKey(e => e.ItemId).HasName("monexup_order_items_pkey");
 
-            entity.ToTable("order_items");
+            entity.ToTable("monexup_order_items");
 
             entity.Property(e => e.ItemId).HasColumnName("item_id");
             entity.Property(e => e.OrderId).HasColumnName("order_id");
@@ -167,14 +167,14 @@ public partial class MonexUpContext : DbContext
             entity.HasOne(d => d.Order).WithMany(p => p.OrderItems)
                 .HasForeignKey(d => d.OrderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_order_item");
+                .HasConstraintName("monexup_fk_order_item");
         });
 
         modelBuilder.Entity<UserDocument>(entity =>
         {
-            entity.HasKey(e => e.DocumentId).HasName("user_documents_pkey");
+            entity.HasKey(e => e.DocumentId).HasName("monexup_user_documents_pkey");
 
-            entity.ToTable("user_documents");
+            entity.ToTable("monexup_user_documents");
 
             entity.Property(e => e.DocumentId).HasColumnName("document_id");
             entity.Property(e => e.Base64).HasColumnName("base64");
@@ -186,9 +186,9 @@ public partial class MonexUpContext : DbContext
 
         modelBuilder.Entity<UserNetwork>(entity =>
         {
-            entity.HasKey(e => new { e.UserId, e.NetworkId }).HasName("pk_user_network");
+            entity.HasKey(e => new { e.UserId, e.NetworkId }).HasName("monexup_pk_user_network");
 
-            entity.ToTable("user_networks");
+            entity.ToTable("monexup_user_networks");
 
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.NetworkId).HasColumnName("network_id");
@@ -204,21 +204,21 @@ public partial class MonexUpContext : DbContext
             entity.HasOne(d => d.Network).WithMany(p => p.UserNetworks)
                 .HasForeignKey(d => d.NetworkId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_user_network_network");
+                .HasConstraintName("monexup_fk_user_network_network");
 
             entity.HasOne(d => d.Profile).WithMany(p => p.UserNetworks)
                 .HasForeignKey(d => d.ProfileId)
-                .HasConstraintName("fk_user_network_profile");
+                .HasConstraintName("monexup_fk_user_network_profile");
         });
 
         modelBuilder.Entity<UserProfile>(entity =>
         {
-            entity.HasKey(e => e.ProfileId).HasName("user_profiles_pkey");
+            entity.HasKey(e => e.ProfileId).HasName("monexup_user_profiles_pkey");
 
-            entity.ToTable("user_profiles");
+            entity.ToTable("monexup_user_profiles");
 
             entity.Property(e => e.ProfileId)
-                .HasDefaultValueSql("nextval('profile_id_seq'::regclass)")
+                .HasDefaultValueSql("nextval('monexup_profile_id_seq'::regclass)")
                 .HasColumnName("profile_id");
             entity.Property(e => e.Commission).HasColumnName("commission");
             entity.Property(e => e.Level)
@@ -233,14 +233,14 @@ public partial class MonexUpContext : DbContext
             entity.HasOne(d => d.Network).WithMany(p => p.UserProfiles)
                 .HasForeignKey(d => d.NetworkId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_user_profile_network");
+                .HasConstraintName("monexup_fk_user_profile_network");
         });
 
         modelBuilder.Entity<Withdrawal>(entity =>
         {
-            entity.HasKey(e => e.WithdrawalId).HasName("withdrawals_pkey");
+            entity.HasKey(e => e.WithdrawalId).HasName("monexup_withdrawals_pkey");
 
-            entity.ToTable("withdrawals");
+            entity.ToTable("monexup_withdrawals");
 
             entity.Property(e => e.WithdrawalId).HasColumnName("withdrawal_id");
             entity.Property(e => e.Duedate)
@@ -255,11 +255,11 @@ public partial class MonexUpContext : DbContext
             entity.HasOne(d => d.Network).WithMany(p => p.Withdrawals)
                 .HasForeignKey(d => d.NetworkId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_withdrawal_network");
+                .HasConstraintName("monexup_fk_withdrawal_network");
         });
-        modelBuilder.HasSequence("network_id_seq");
-        modelBuilder.HasSequence("profile_id_seq");
-        modelBuilder.HasSequence("invoice_commission_commission_id_seq");
+        modelBuilder.HasSequence("monexup_network_id_seq");
+        modelBuilder.HasSequence("monexup_profile_id_seq");
+        modelBuilder.HasSequence("monexup_invoice_commission_id_seq");
 
         OnModelCreatingPartial(modelBuilder);
     }

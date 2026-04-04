@@ -15,14 +15,17 @@ namespace MonexUp.API.Controllers
     {
         private readonly IUserClient _userClient;
         private readonly IInvoiceService _invoiceService;
+        private readonly IProxyPayService _proxyPayService;
 
         public InvoiceController(
             IInvoiceService invoiceService,
-            IUserClient userClient
+            IUserClient userClient,
+            IProxyPayService proxyPayService
         )
         {
             _invoiceService = invoiceService;
             _userClient = userClient;
+            _proxyPayService = proxyPayService;
         }
 
         [HttpGet("syncronize")]
@@ -36,7 +39,7 @@ namespace MonexUp.API.Controllers
                 {
                     return Unauthorized();
                 }
-                await _invoiceService.Syncronize();
+                await _proxyPayService.SyncPendingInvoices();
                 return Ok();
             }
             catch (Exception ex)

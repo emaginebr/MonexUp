@@ -10,6 +10,9 @@ namespace MonexUp.ApiTests.Fixtures
         public string AuthToken { get; private set; } = string.Empty;
 
         private IConfiguration _configuration = null!;
+        private string _userAgent = "MonexUp.ApiTests/1.0";
+        private string _deviceFingerprint = "api-test-device";
+        private string _tenant = string.Empty;
 
         public async Task InitializeAsync()
         {
@@ -21,14 +24,21 @@ namespace MonexUp.ApiTests.Fixtures
 
             BaseUrl = _configuration["ApiBaseUrl"] ?? throw new Exception("ApiBaseUrl not configured");
 
+            var authBaseUrl = _configuration["Auth:BaseUrl"] ?? throw new Exception("Auth:BaseUrl not configured");
+            _tenant = _configuration["Auth:Tenant"] ?? throw new Exception("Auth:Tenant not configured");
+            _userAgent = _configuration["Auth:UserAgent"] ?? "MonexUp.ApiTests/1.0";
+            _deviceFingerprint = _configuration["Auth:DeviceFingerprint"] ?? "api-test-device";
             var email = _configuration["Auth:Email"] ?? throw new Exception("Auth:Email not configured");
             var password = _configuration["Auth:Password"] ?? throw new Exception("Auth:Password not configured");
             var loginEndpoint = _configuration["Auth:LoginEndpoint"] ?? "/auth/login";
 
             try
             {
-                var response = await new Url(BaseUrl)
+                var response = await new Url(authBaseUrl)
                     .AppendPathSegment(loginEndpoint)
+                    .WithHeader("X-Tenant-Id", _tenant)
+                    .WithHeader("User-Agent", _userAgent)
+                    .WithHeader("X-Device-Fingerprint", _deviceFingerprint)
                     .WithAutoRedirect(true)
                     .PostJsonAsync(new { email, password })
                     .ReceiveJson<LoginResponse>();
@@ -37,7 +47,7 @@ namespace MonexUp.ApiTests.Fixtures
             }
             catch (FlurlHttpException ex)
             {
-                throw new Exception($"Failed to authenticate for API tests. Status: {ex.StatusCode}. Ensure the API is running at {BaseUrl}", ex);
+                throw new Exception($"Failed to authenticate for API tests. Status: {ex.StatusCode}. Ensure the Auth API is running at {authBaseUrl}", ex);
             }
         }
 
@@ -47,13 +57,19 @@ namespace MonexUp.ApiTests.Fixtures
         {
             return new Url(BaseUrl)
                 .AppendPathSegment(path)
-                .WithOAuthBearerToken(AuthToken);
+                .WithOAuthBearerToken(AuthToken)
+                .WithHeader("X-Tenant-Id", _tenant)
+                .WithHeader("User-Agent", _userAgent)
+                .WithHeader("X-Device-Fingerprint", _deviceFingerprint);
         }
 
         public IFlurlRequest CreateAnonymousRequest(string path)
         {
             return new Url(BaseUrl)
                 .AppendPathSegment(path)
+                .WithHeader("X-Tenant-Id", _tenant)
+                .WithHeader("User-Agent", _userAgent)
+                .WithHeader("X-Device-Fingerprint", _deviceFingerprint)
                 .WithAutoRedirect(true);
         }
 

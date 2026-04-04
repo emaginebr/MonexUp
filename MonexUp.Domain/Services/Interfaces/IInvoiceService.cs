@@ -11,7 +11,6 @@ namespace MonexUp.Domain.Interfaces.Services
 {
     public interface IInvoiceService
     {
-        Task Syncronize();
         void CalculateFee(IInvoiceModel invoice);
         IInvoiceModel Insert(IInvoiceModel invoice);
         IInvoiceModel Pay(IInvoiceModel invoice);

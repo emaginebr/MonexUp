@@ -20,7 +20,6 @@ namespace MonexUp.UnitTests.Services
         private readonly Mock<IProductDomainFactory> _productFactory;
         private readonly Mock<IOrderService> _orderService;
         private readonly Mock<INetworkService> _networkService;
-        private readonly Mock<IProxyPayService> _proxyPayService;
         private readonly InvoiceService _sut;
 
         public InvoiceServiceTests()
@@ -34,7 +33,6 @@ namespace MonexUp.UnitTests.Services
             _productFactory = new Mock<IProductDomainFactory>();
             _orderService = new Mock<IOrderService>();
             _networkService = new Mock<INetworkService>();
-            _proxyPayService = new Mock<IProxyPayService>();
 
             _sut = new InvoiceService(
                 _invoiceFactory.Object,
@@ -45,8 +43,7 @@ namespace MonexUp.UnitTests.Services
                 _orderItemFactory.Object,
                 _productFactory.Object,
                 _orderService.Object,
-                _networkService.Object,
-                _proxyPayService.Object
+                _networkService.Object
             );
         }
 
@@ -326,17 +323,5 @@ namespace MonexUp.UnitTests.Services
             feeModel.Verify(m => m.GetAvailableBalance(userId), Times.Once());
         }
 
-        [Fact]
-        public async Task Syncronize_ShouldDelegateToProxyPayService()
-        {
-            // Arrange
-            _proxyPayService.Setup(s => s.SyncPendingInvoices()).Returns(Task.CompletedTask);
-
-            // Act
-            await _sut.Syncronize();
-
-            // Assert
-            _proxyPayService.Verify(s => s.SyncPendingInvoices(), Times.Once());
-        }
     }
 }
