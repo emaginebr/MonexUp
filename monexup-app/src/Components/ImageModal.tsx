@@ -3,7 +3,6 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import ReactCrop, { Crop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
-import ImageFactory from "../Business/Factory/ImageFactory";
 import ImageContext from "../Contexts/Image/ImageContext";
 
 enum ImageTypeEnum {
@@ -27,12 +26,12 @@ function ImageModal(param: IImageModalParam) {
     const [src, setSrc] = useState<string | null>(null);
     const [crop, setCrop] = useState<Crop>({
         unit: 'px',
-        width: (param.Image == ImageTypeEnum.User) ? 100 : 160,
-        height: (param.Image == ImageTypeEnum.User) ? 100 : 90,
+        width: (param.Image === ImageTypeEnum.User) ? 100 : 160,
+        height: (param.Image === ImageTypeEnum.User) ? 100 : 90,
         x: 25,
         y: 25
     });
-    const [croppedBlob, setCroppedBlob] = useState<Blob | null>(null);
+    const [, setCroppedBlob] = useState<Blob | null>(null);
     const imageRef = useRef<HTMLImageElement | null>(null);
 
     const imageContext = useContext(ImageContext);
@@ -108,26 +107,26 @@ function ImageModal(param: IImageModalParam) {
                 }
                 break;
             case ImageTypeEnum.Network:
-                var ret = await imageContext.uploadImageNetwork(param.networkId, blob);
-                if (ret.sucesso) {
+                var retNetwork = await imageContext.uploadImageNetwork(param.networkId, blob);
+                if (retNetwork.sucesso) {
                     if (param.onSuccess) {
-                        param.onSuccess(ret.url);
+                        param.onSuccess(retNetwork.url);
                     }
                 }
                 else {
-                    if (param.onError) param.onError(ret.mensagemErro);
+                    if (param.onError) param.onError(retNetwork.mensagemErro);
                     return;
                 }
                 break;
             case ImageTypeEnum.Product:
-                var ret = await imageContext.uploadImageProduct(param.productId, blob);
-                if (ret.sucesso) {
+                var retProduct = await imageContext.uploadImageProduct(param.productId, blob);
+                if (retProduct.sucesso) {
                     if (param.onSuccess) {
-                        param.onSuccess(ret.url);
+                        param.onSuccess(retProduct.url);
                     }
                 }
                 else {
-                    if (param.onError) param.onError(ret.mensagemErro);
+                    if (param.onError) param.onError(retProduct.mensagemErro);
                     return;
                 }
                 break;
@@ -146,10 +145,10 @@ function ImageModal(param: IImageModalParam) {
                     {src && (
                         <ReactCrop
                             crop={crop}
-                            aspect={(param.Image == ImageTypeEnum.User) ? 1 : null}
+                            aspect={(param.Image === ImageTypeEnum.User) ? 1 : null}
                             onChange={(newCrop) => setCrop(newCrop)}
                         >
-                            <img src={src} onLoad={onImageLoaded} />
+                            <img src={src} onLoad={onImageLoaded} alt="" />
                         </ReactCrop>
                     )}
                 </div>

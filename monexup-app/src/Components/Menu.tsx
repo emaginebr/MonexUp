@@ -7,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../Contexts/Auth/AuthContext';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBitcoinSign, faBoltLightning, faBox, faBrazilianRealSign, faBuilding, faCancel, faCheck, faCheckCircle, faCircle, faCircleUser, faClose, faCog, faCoins, faDollar, faEthernet, faFileWord, faHome, faImage, faLock, faPencil, faPhoneAlt, faPhotoVideo, faSearch, faSignInAlt, faUser, faUserAlt, faUserCircle, faUserCog, faUserFriends, faUserGear, faUserGraduate, faUserGroup, faUserMd } from '@fortawesome/free-solid-svg-icons';
+import { faBox, faBuilding, faCancel, faCircleUser, faClose, faCog, faDollar, faFileWord, faHome, faImage, faLock, faPencil, faSearch, faSignInAlt, faUser, faUserCog, faUserGear, faUserGroup, faUserMd } from '@fortawesome/free-solid-svg-icons';
 import MessageToast from './MessageToast';
 import { MessageToastEnum } from '../DTO/Enum/MessageToastEnum';
 import { UserRoleEnum } from '../DTO/Enum/UserRoleEnum';
@@ -117,7 +117,7 @@ export default function Menu() {
                     <FontAwesomeIcon icon={faUserGroup} />&nbsp;{t('my_network')}
                   </>
                 } id="basic-nav-dropdown">
-                  {networkContext.currentRole == UserRoleEnum.NetworkManager &&
+                  {networkContext.currentRole === UserRoleEnum.NetworkManager &&
                     <>
                       <NavDropdown.ItemText className='small text-center'>{t('network_manager')}</NavDropdown.ItemText> {/* Or a more generic "Network" key */}
                       <NavDropdown.Item onClick={() => {

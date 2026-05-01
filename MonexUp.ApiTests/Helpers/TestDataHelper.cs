@@ -21,6 +21,40 @@ namespace MonexUp.ApiTests.Helpers
             };
         }
 
+        public static NetworkInfo CreateNetworkInfo(long networkId = 1, string? name = null)
+        {
+            var uniqueId = Guid.NewGuid().ToString("N")[..8];
+            return new NetworkInfo
+            {
+                NetworkId = networkId,
+                Slug = $"test-network-{uniqueId}",
+                Name = name ?? $"Test Network {uniqueId}",
+                Email = $"network-{uniqueId}@test.com",
+                Commission = 10.0,
+                Plan = NetworkPlanEnum.Free,
+                Status = NetworkStatusEnum.Active
+            };
+        }
+
+        public static NetworkRequestInfo CreateNetworkRequestInfo(long networkId = 1, long? referrerId = null)
+        {
+            return new NetworkRequestInfo
+            {
+                NetworkId = networkId,
+                ReferrerId = referrerId
+            };
+        }
+
+        public static NetworkChangeStatusInfo CreateNetworkChangeStatusInfo(long networkId = 1, long userId = 1, int status = 1)
+        {
+            return new NetworkChangeStatusInfo
+            {
+                NetworkId = networkId,
+                UserId = userId,
+                Status = status
+            };
+        }
+
         public static OrderSearchParam CreateOrderSearchParam(long networkId = 1, int pageNum = 1)
         {
             return new OrderSearchParam
@@ -36,6 +70,19 @@ namespace MonexUp.ApiTests.Helpers
             {
                 NetworkId = networkId,
                 UserId = userId
+            };
+        }
+
+        public static OrderInfo CreateOrderInfo(long orderId = 1, long networkId = 1, long userId = 1)
+        {
+            return new OrderInfo
+            {
+                OrderId = orderId,
+                NetworkId = networkId,
+                UserId = userId,
+                Status = OrderStatusEnum.Incoming,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
             };
         }
 

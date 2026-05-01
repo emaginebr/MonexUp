@@ -1,8 +1,7 @@
 import Toast from 'react-bootstrap/Toast';
 import ToastContainer from 'react-bootstrap/ToastContainer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfo, faQuestion, faQuestionCircle, faWarning } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
+import { faInfo, faQuestionCircle, faWarning } from '@fortawesome/free-solid-svg-icons';
 import { MessageToastEnum } from '../DTO/Enum/MessageToastEnum';
 import Button from 'react-bootstrap/esm/Button';
 
@@ -24,7 +23,6 @@ const showTitle = (dialog: MessageToastEnum) => {
           <strong className="me-auto">Error</strong>
         </>
       );
-      break;
     case MessageToastEnum.Success:
       return (
         <>
@@ -32,7 +30,6 @@ const showTitle = (dialog: MessageToastEnum) => {
           <strong className="me-auto">Success</strong>
         </>
       );
-      break;
     case MessageToastEnum.Information:
       return (
         <>
@@ -40,7 +37,6 @@ const showTitle = (dialog: MessageToastEnum) => {
           <strong className="me-auto">Information</strong>
         </>
       );
-      break;
     case MessageToastEnum.Confirmation:
       return (
         <>
@@ -48,7 +44,6 @@ const showTitle = (dialog: MessageToastEnum) => {
           <strong className="me-auto">Confirmation</strong>
         </>
       );
-      break;
   }
 };
 
@@ -66,7 +61,7 @@ export default function MessageToast(param: IMessageToastParam) {
         </Toast.Header>
         <Toast.Body>
           {param.messageText}
-          {param.dialog == MessageToastEnum.Confirmation &&
+          {param.dialog === MessageToastEnum.Confirmation &&
             <div className="mt-2 pt-2 border-top">
               <Button variant="primary" size="sm" onClick={param.onYes}>Yes</Button>
               &nbsp;

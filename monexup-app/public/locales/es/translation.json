@@ -328,6 +328,12 @@
   },
   "sellerAddPage": {
     "title": "Registro de Vendedor",
+    "eyebrow": "Conviértete en representante",
+    "subtitle": "Completa tus datos para empezar a vender, seguir tus comisiones y construir tu red.",
+    "sectionPersonal": "Datos personales",
+    "sectionAddress": "Dirección",
+    "sectionPix": "Cobros",
+    "sectionPassword": "Acceso",
     "registrationNote": "El registro no es obligatorio para realizar intercambios, pero puedes hacerlo de todos modos para acceder a tu historial de transacciones.",
     "nameLabel": "Nombre",
     "namePlaceholder": "Tu nombre",

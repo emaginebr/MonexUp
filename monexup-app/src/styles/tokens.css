@@ -1,0 +1,247 @@
+/* ============================================================================
+   MonexUp — Design Tokens (CSS Variables)
+   Direction: Editorial Brutalist · Dark/Light Split
+   Layer 1: Primitives → Layer 2: Semantic → Layer 3: Component
+   ============================================================================
+   Source of truth mirror of docs/design/tokens.css.
+   ========================================================================== */
+
+:root {
+  /* ──────────────────────────────────────────────────────────────────────
+     LAYER 1 — PRIMITIVES (raw color/space/type scales)
+     ────────────────────────────────────────────────────────────────────── */
+
+  /* Brand orange — derived from logo square (~#E85A1A) with a 50→900 ramp */
+  --color-orange-50:  #FFF3EC;
+  --color-orange-100: #FFE0CC;
+  --color-orange-200: #FFC199;
+  --color-orange-300: #FFA266;
+  --color-orange-400: #FF8033;
+  --color-orange-500: #E85A1A;
+  --color-orange-600: #C64A14;
+  --color-orange-700: #9E3A0F;
+  --color-orange-800: #762B0A;
+  --color-orange-900: #4D1C06;
+
+  /* Charcoal / graphite — dark surfaces */
+  --color-graphite-50:  #F4F4F5;
+  --color-graphite-100: #E4E4E7;
+  --color-graphite-200: #C8C8CE;
+  --color-graphite-300: #9A9AA3;
+  --color-graphite-400: #6B6B75;
+  --color-graphite-500: #3F3F46;
+  --color-graphite-600: #27272A;
+  --color-graphite-700: #1B1B1F;
+  --color-graphite-800: #131317;
+  --color-graphite-900: #0A0A0D;
+
+  /* Off-white / neutral light */
+  --color-neutral-0:   #FFFFFF;
+  --color-neutral-50:  #FAFAF9;
+  --color-neutral-100: #F4F4F2;
+  --color-neutral-200: #E7E7E4;
+  --color-neutral-300: #D4D4D1;
+  --color-neutral-400: #A3A39F;
+
+  /* Semantic states */
+  --color-success-500: #10B981;
+  --color-warn-500:    #F59E0B;
+  --color-error-500:   #EF4444;
+  --color-info-500:    #3B82F6;
+
+  /* Typography stacks */
+  --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-sans:    "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  /* Type scale */
+  --fs-xs:   0.75rem;
+  --fs-sm:   0.875rem;
+  --fs-base: 1rem;
+  --fs-md:   1.125rem;
+  --fs-lg:   1.25rem;
+  --fs-xl:   1.5rem;
+  --fs-2xl:  1.875rem;
+  --fs-3xl:  2.25rem;
+  --fs-4xl:  3rem;
+  --fs-5xl:  3.75rem;
+  --fs-6xl:  4.5rem;
+  --fs-7xl:  5.625rem;
+
+  /* Line heights */
+  --lh-tight:   1.05;
+  --lh-snug:    1.2;
+  --lh-normal:  1.5;
+  --lh-relaxed: 1.7;
+
+  /* Font weights */
+  --fw-light:    300;
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+  --fw-black:    900;
+
+  /* Letter spacing */
+  --ls-tighter: -0.04em;
+  --ls-tight:   -0.02em;
+  --ls-normal:   0em;
+  --ls-wide:     0.04em;
+  --ls-wider:    0.08em;
+
+  /* Spacing scale */
+  --space-0:   0;
+  --space-1:   0.25rem;
+  --space-2:   0.5rem;
+  --space-3:   0.75rem;
+  --space-4:   1rem;
+  --space-5:   1.25rem;
+  --space-6:   1.5rem;
+  --space-8:   2rem;
+  --space-10:  2.5rem;
+  --space-12:  3rem;
+  --space-16:  4rem;
+  --space-20:  5rem;
+  --space-24:  6rem;
+  --space-32:  8rem;
+
+  /* Radius */
+  --radius-none: 0;
+  --radius-sm:   0.25rem;
+  --radius-md:   0.5rem;
+  --radius-lg:   0.75rem;
+  --radius-xl:   1rem;
+  --radius-2xl:  1.5rem;
+  --radius-full: 9999px;
+
+  /* Elevation */
+  --shadow-xs: 0 1px 2px rgba(10, 10, 13, 0.06);
+  --shadow-sm: 0 1px 3px rgba(10, 10, 13, 0.08), 0 1px 2px rgba(10, 10, 13, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(10, 10, 13, 0.10), 0 2px 4px -1px rgba(10, 10, 13, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(10, 10, 13, 0.10), 0 4px 6px -2px rgba(10, 10, 13, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(10, 10, 13, 0.12), 0 10px 10px -5px rgba(10, 10, 13, 0.04);
+
+  /* Brand-glow shadows */
+  --shadow-glow-orange-sm: 0 0 0 0 rgba(232, 90, 26, 0.6), 0 8px 24px -6px rgba(232, 90, 26, 0.45);
+  --shadow-glow-orange-md: 0 0 0 0 rgba(232, 90, 26, 0.6), 0 12px 32px -8px rgba(232, 90, 26, 0.55);
+  --shadow-glow-orange-lg: 0 0 0 0 rgba(232, 90, 26, 0.6), 0 20px 48px -12px rgba(232, 90, 26, 0.65);
+
+  /* Motion */
+  --ease-standard: cubic-bezier(0.2, 0.0, 0.0, 1.0);
+  --ease-emphasized: cubic-bezier(0.2, 0.0, 0, 1.2);
+  --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
+  --duration-fast:   150ms;
+  --duration-normal: 220ms;
+  --duration-slow:   320ms;
+  --duration-slower: 480ms;
+
+  /* Layout */
+  --container-max: 1200px;
+  --container-pad: clamp(1rem, 4vw, 2rem);
+  --grid-gutter:   clamp(1rem, 2vw, 1.5rem);
+
+  /* Focus ring */
+  --ring-color:  var(--color-orange-500);
+  --ring-offset: var(--color-neutral-0);
+  --ring-width:  3px;
+
+  /* ──────────────────────────────────────────────────────────────────────
+     LAYER 2 — SEMANTIC
+     ────────────────────────────────────────────────────────────────────── */
+
+  --surface-page:        var(--color-neutral-50);
+  --surface-canvas:      var(--color-neutral-0);
+  --surface-raised:      var(--color-neutral-0);
+  --surface-sunken:      var(--color-neutral-100);
+  --surface-overlay:     rgba(10, 10, 13, 0.55);
+
+  --content-primary:     var(--color-graphite-900);
+  --content-secondary:   var(--color-graphite-500);
+  --content-tertiary:    var(--color-graphite-400);
+  --content-on-brand:    var(--color-neutral-0);
+  --content-inverse:     var(--color-neutral-50);
+
+  --border-subtle:   var(--color-neutral-200);
+  --border-default:  var(--color-neutral-300);
+  --border-strong:   var(--color-graphite-900);
+
+  --accent:           var(--color-orange-500);
+  --accent-hover:     var(--color-orange-600);
+  --accent-active:    var(--color-orange-700);
+  --accent-soft-bg:   var(--color-orange-50);
+  --accent-soft-fg:   var(--color-orange-700);
+
+  --state-hover-overlay:  rgba(10, 10, 13, 0.04);
+  --state-active-overlay: rgba(10, 10, 13, 0.08);
+
+  /* shadcn/ui mapping (consumed by Button/Card primitives in src/components/ui) */
+  --background:           var(--surface-page);
+  --foreground:           var(--content-primary);
+  --card:                 var(--surface-raised);
+  --card-foreground:      var(--content-primary);
+  --popover:              var(--surface-raised);
+  --popover-foreground:   var(--content-primary);
+  --primary:              var(--accent);
+  --primary-foreground:   var(--content-on-brand);
+  --secondary:            var(--surface-sunken);
+  --secondary-foreground: var(--content-primary);
+  --muted:                var(--surface-sunken);
+  --muted-foreground:     var(--content-secondary);
+  --shadcn-accent:        var(--accent-soft-bg);
+  --shadcn-accent-foreground: var(--accent-soft-fg);
+  --destructive:          var(--color-error-500);
+  --destructive-foreground: var(--color-neutral-0);
+  --input:                var(--border-default);
+  --ring:                 var(--accent);
+  --radius:               var(--radius-lg);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   DARK SURFACE OPT-IN — applied per-section
+   ────────────────────────────────────────────────────────────────────────── */
+.mnx-surface-dark {
+  --surface-page:      var(--color-graphite-900);
+  --surface-canvas:    var(--color-graphite-800);
+  --surface-raised:    var(--color-graphite-700);
+  --surface-sunken:    var(--color-graphite-900);
+
+  --content-primary:   var(--color-neutral-50);
+  --content-secondary: var(--color-graphite-200);
+  --content-tertiary:  var(--color-graphite-300);
+
+  --border-subtle:     rgba(255, 255, 255, 0.08);
+  --border-default:    rgba(255, 255, 255, 0.14);
+  --border-strong:     rgba(255, 255, 255, 0.85);
+
+  --state-hover-overlay:  rgba(255, 255, 255, 0.06);
+  --state-active-overlay: rgba(255, 255, 255, 0.10);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.55), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6),  0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.7),  0 10px 10px -5px rgba(0, 0, 0, 0.4);
+
+  --ring-offset: var(--color-graphite-900);
+}
+
+.mnx-surface-light {
+  --surface-page:      var(--color-neutral-50);
+  --surface-canvas:    var(--color-neutral-0);
+  --content-primary:   var(--color-graphite-900);
+  --content-secondary: var(--color-graphite-500);
+  --content-tertiary:  var(--color-graphite-400);
+  --border-subtle:     var(--color-neutral-200);
+  --border-default:    var(--color-neutral-300);
+  --border-strong:     var(--color-graphite-900);
+  --ring-offset:       var(--color-neutral-0);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast:   0ms;
+    --duration-normal: 0ms;
+    --duration-slow:   0ms;
+    --duration-slower: 0ms;
+  }
+}

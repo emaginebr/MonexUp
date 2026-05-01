@@ -7,11 +7,9 @@ import AuthContext from "../../Contexts/Auth/AuthContext";
 import Button from "react-bootstrap/esm/Button";
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAddressBook, faArrowLeft, faArrowRight, faBitcoinSign, faCalendar, faCalendarAlt, faCancel, faClose, faCode, faDollar, faEnvelope, faEthernet, faIdCard, faLock, faPercent, faPhone, faSave, faSignInAlt, faTrash, faUpload, faUser } from '@fortawesome/free-solid-svg-icons';
-import Table from "react-bootstrap/esm/Table";
-import { Link, useNavigate } from "react-router-dom";
+import { faArrowLeft, faCalendar, faCode, faDollar, faEnvelope, faPercent, faSave, faUpload, faUser } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from "react-router-dom";
 import InputGroup from 'react-bootstrap/InputGroup';
-import UserContext from "../../Contexts/User/UserContext";
 import MessageToast from "../../Components/MessageToast";
 import Moment from 'moment';
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
@@ -88,7 +86,7 @@ export default function NetworkEditPage() {
                                     <Col md={4} className="text-center">
                                         <div className="mb-2">
                                             {networkContext.network?.imageUrl &&
-                                                <img src={networkContext.network?.imageUrl} style={{ width: "100%", height: "auto" }} />
+                                                <img src={networkContext.network?.imageUrl} style={{ width: "100%", height: "auto" }} alt="" />
                                             }
                                         </div>
                                         <div className="lc-block d-grid gap-3 d-md-block">

@@ -328,6 +328,12 @@
   },
   "sellerAddPage": {
     "title": "Inscription du Vendeur",
+    "eyebrow": "Devenez représentant",
+    "subtitle": "Remplissez vos informations pour commencer à vendre, suivre vos commissions et bâtir votre réseau.",
+    "sectionPersonal": "Informations personnelles",
+    "sectionAddress": "Adresse",
+    "sectionPix": "Paiements",
+    "sectionPassword": "Accès au compte",
     "registrationNote": "L'inscription n'est pas obligatoire pour effectuer des échanges, mais vous pouvez le faire pour accéder à votre historique de transactions.",
     "nameLabel": "Nom",
     "namePlaceholder": "Votre nom",

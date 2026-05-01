@@ -1,22 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import AuthContext from "../../Contexts/Auth/AuthContext";
-import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
-import Card from "react-bootstrap/esm/Card";
-import Alert from 'react-bootstrap/Alert';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faWarning, faPlus, faBurn, faFire, faSearch, faDollar, faClock, faBoltLightning, faLock, faFileUpload, faCalendar, faCalendarAlt, faFileWord, faBoxOpen, faSign, faLockOpen, faUserDoctor, faChartLine, faChartPie, faCoins, faArrowRight, faUserGroup, faBox, faCog, faCogs, faUserCog, faList, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faDollar, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import Button from "react-bootstrap/esm/Button";
-import { useNavigate } from "react-router-dom";
-import { faBitcoin, faOpencart } from "@fortawesome/free-brands-svg-icons";
-import CardHeader from "react-bootstrap/esm/CardHeader";
-import CardTitle from "react-bootstrap/esm/CardTitle";
-import CardBody from "react-bootstrap/esm/CardBody";
-import CardText from "react-bootstrap/esm/CardText";
-import Table from "react-bootstrap/esm/Table";
-import ListGroup from 'react-bootstrap/ListGroup';
-import Badge from 'react-bootstrap/Badge';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import NetworkContext from "../../Contexts/Network/NetworkContext";
@@ -38,19 +26,12 @@ export default function DashboardPage() {
 
     const { t } = useTranslation();
 
-    let navigate = useNavigate();
-
     const [dialog, setDialog] = useState<MessageToastEnum>(MessageToastEnum.Error);
     const [showMessage, setShowMessage] = useState<boolean>(false);
     const [messageText, setMessageText] = useState<string>("");
 
     const throwError = (message: string) => {
         setDialog(MessageToastEnum.Error);
-        setMessageText(message);
-        setShowMessage(true);
-    };
-    const showSuccessMessage = (message: string) => {
-        setDialog(MessageToastEnum.Success);
         setMessageText(message);
         setShowMessage(true);
     };
@@ -73,7 +54,7 @@ export default function DashboardPage() {
                 };
                 break;
         }
-        if (networkContext.currentRole != UserRoleEnum.User) {
+        if (networkContext.currentRole !== UserRoleEnum.User) {
             var ret = await invoiceContext.searchStatement(param);
             if (!ret.sucesso) {
                 throwError(ret.mensagemErro);
@@ -117,7 +98,7 @@ export default function DashboardPage() {
             <div className="mnx-page-header">
                 <h2>Dashboard</h2>
             </div>
-            {networkContext.currentRole != UserRoleEnum.User &&
+            {networkContext.currentRole !== UserRoleEnum.User &&
                 <Row className="mb-4">
                     <Col lg={8}>
                         <CountPart />
@@ -132,7 +113,7 @@ export default function DashboardPage() {
                                     <><small>R$</small>{invoiceContext.balance}</>
                                 }
                             </div>
-                            {networkContext.currentRole == UserRoleEnum.Seller &&
+                            {networkContext.currentRole === UserRoleEnum.Seller &&
                                 <div className="balance-available">
                                     {invoiceContext.loadingAvailableBalance ?
                                         <Skeleton />

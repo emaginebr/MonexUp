@@ -7,8 +7,8 @@ import AuthContext from "../../Contexts/Auth/AuthContext";
 import Button from "react-bootstrap/esm/Button";
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faArrowRight, faCancel, faCheck, faCreditCard, faEnvelope, faGlobe, faLock, faPercent, faUser } from '@fortawesome/free-solid-svg-icons';
-import { Link, useNavigate } from "react-router-dom";
+import { faArrowLeft, faArrowRight, faCheck, faCreditCard, faEnvelope, faGlobe, faLock, faPercent, faUser } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from "react-router-dom";
 import InputGroup from 'react-bootstrap/InputGroup';
 import UserContext from "../../Contexts/User/UserContext";
 import MessageToast from "../../Components/MessageToast";
@@ -109,7 +109,7 @@ export default function NetworkInsertPage() {
                     ))}
                 </div>
             </Container>
-            {step == 1 &&
+            {step === 1 &&
                 <>
                     <Container className="mb-5">
                         <Row>
@@ -261,7 +261,7 @@ export default function NetworkInsertPage() {
                                                         throwError(t('error_email_empty'));
                                                         return;
                                                     }
-                                                    if (userContext.user?.password != confirmPassword) {
+                                                    if (userContext.user?.password !== confirmPassword) {
                                                         throwError(t('error_password_confirmation_different'));
                                                         return;
                                                     }
@@ -288,7 +288,7 @@ export default function NetworkInsertPage() {
                     </Container>
                 </>
             }
-            {step == 2 &&
+            {step === 2 &&
                 <Container>
                     <Row>
                         <Col md="12">
@@ -382,7 +382,7 @@ export default function NetworkInsertPage() {
                     </Row>
                 </Container>
             }
-            {step == 4 &&
+            {step === 4 &&
                 <Container>
                     <Row>
                         <Col md="12">

@@ -3,15 +3,12 @@ import Col from "react-bootstrap/esm/Col";
 import { useTranslation } from "react-i18next";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
 import AuthContext from "../../Contexts/Auth/AuthContext";
 import Button from "react-bootstrap/esm/Button";
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBitcoinSign, faBoltLightning, faCheck, faClose, faEnvelope, faLock, faMailBulk, faSave, faSign, faSignIn, faSignInAlt, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
-import Table from "react-bootstrap/esm/Table";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { faBoltLightning, faCheck, faClose } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate, useParams } from "react-router-dom";
 import NetworkContext from "../../Contexts/Network/NetworkContext";
 import Skeleton from "react-loading-skeleton";
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
@@ -169,16 +166,12 @@ export default function RequestAccessPage() {
         switch (status) {
             case UserNetworkStatusEnum.Active:
                 return MessageActive();
-                break;
             case UserNetworkStatusEnum.Inactive:
                 return MessageInactive();
-                break;
             case UserNetworkStatusEnum.Blocked:
                 return MessageBlocked();
-                break;
             case UserNetworkStatusEnum.WaitForApproval:
                 return MessageWaitForApproval();
-                break;
         }
     };
 

@@ -14,6 +14,8 @@ import LoginPage from './Pages/LoginPage';
 import RecoveryPage from './Pages/RecoveryPage';
 import UserProvider from './Contexts/User/UserProvider';
 import HomePage from './Pages/HomePage';
+import HomeHeader from './Pages/HomePage/Header';
+import HomeFooter from './Pages/HomePage/Footer';
 import NetworkPage from './Pages/NetworkPage';
 import DashboardPage from './Pages/DashboardPage';
 import NetworkEditPage from './Pages/NetworkEditPage';
@@ -45,7 +47,7 @@ import CheckoutSuccessPage from './Pages/CheckoutSuccessPage';
 function Layout() {
   return (
     <div>
-      <Menu />
+      <HomeHeader />
       <Outlet />
     </div>
   );
@@ -54,7 +56,7 @@ function Layout() {
 function LayoutAdmin() {
   return (
     <div>
-      <Menu />
+      <HomeHeader />
       <AdminLayout>
         <Outlet />
       </AdminLayout>
@@ -82,6 +84,23 @@ function LayoutUser() {
   );
 }
 
+/**
+ * LayoutMarketing — public marketing shell that reuses the redesigned
+ * dark Header + Footer from the Home route. Used by /new-seller (and
+ * its slug-scoped variants) so the seller signup page matches the new
+ * editorial-brutalist visual language instead of the legacy Bootstrap
+ * <Menu /> chrome.
+ */
+function LayoutMarketing() {
+  return (
+    <div>
+      <HomeHeader />
+      <Outlet />
+      <HomeFooter />
+    </div>
+  );
+}
+
 const proxyPayConfig = {
   baseUrl: process.env.REACT_APP_PROXYPAY_API_URL || '',
   clientId: process.env.REACT_APP_PROXYPAY_CLIENT_ID || '',
@@ -92,7 +111,6 @@ const nauthConfig = {
   apiUrl: process.env.REACT_APP_NAUTH_API_URL || process.env.REACT_APP_API_URL || '',
   enableFingerprinting: true,
   language: 'pt',
-  redirectOnUnauthorized: '/account/login',
 };
 
 function App() {
@@ -106,10 +124,17 @@ function App() {
     <NAuthProvider config={nauthConfig}>
     <ContextContainer>
       <Routes>
+        {/* Marketing-shell routes (Tailwind dark Header/Footer) — keep
+            the seller signup pages OUT of the legacy <Menu /> chrome so they
+            inherit the redesigned home aesthetic. */}
+        <Route element={<LayoutMarketing />}>
+          <Route path="new-seller" element={<SellerAddPage />} />
+          <Route path=":networkSlug/new-seller" element={<SellerAddPage />} />
+          <Route path=":networkSlug/@/:sellerSlug/new-seller" element={<SellerAddPage />} />
+        </Route>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="checkout/success" element={<CheckoutSuccessPage />} />
-          <Route path="new-seller" element={<SellerAddPage />} />
           <Route path="network">
             <Route index element={<NetworkInsertPage />} />
             <Route path="search" element={<NetworkListPage />} />
@@ -159,7 +184,6 @@ function App() {
         </Route>
         <Route path=":networkSlug" element={<LayoutNetwork />}>
           <Route index element={<NetworkPage />} />
-          <Route path="new-seller" element={<SellerAddPage />} />
           <Route path="request-access" element={<RequestAccessPage />} />
           <Route path="account">
             <Route index element={<LoginPage />} />
@@ -174,7 +198,6 @@ function App() {
           <Route path="@">
             <Route path=":sellerSlug">
               <Route index element={<SellerPage />} />
-              <Route path="new-seller" element={<SellerAddPage />} />
               <Route path="request-access" element={<RequestAccessPage />} />
               <Route path=":productSlug" element={<ProductPage />} />
             </Route>

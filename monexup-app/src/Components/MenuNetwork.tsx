@@ -7,7 +7,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import AuthContext from '../Contexts/Auth/AuthContext';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBitcoinSign, faBoltLightning, faBox, faBrazilianRealSign, faBuilding, faCancel, faCheck, faCheckCircle, faCircle, faCircleUser, faClose, faCog, faCoins, faDollar, faEthernet, faFileWord, faHome, faLock, faPencil, faSearch, faSignInAlt, faUser, faUserAlt, faUserCircle, faUserCog, faUserFriends, faUserGear, faUserGraduate, faUserGroup, faUserMd } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle, faCircle, faCircleUser, faClose, faHome, faLock, faPencil, faSignInAlt, faUser } from '@fortawesome/free-solid-svg-icons';
 import MessageToast from './MessageToast';
 import { MessageToastEnum } from '../DTO/Enum/MessageToastEnum';
 import { UserRoleEnum } from '../DTO/Enum/UserRoleEnum';

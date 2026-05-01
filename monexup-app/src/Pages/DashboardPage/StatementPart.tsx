@@ -1,8 +1,8 @@
-import { faCalendar, faDollar } from "@fortawesome/free-solid-svg-icons";
+import { faDollar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Table from "react-bootstrap/esm/Table";
 import StatementListPagedInfo from "../../DTO/Domain/StatementListPagedInfo";
-import Moment from "react-moment";
+import Moment from "../../Components/MomentShim";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import Pagination from 'react-bootstrap/Pagination';
@@ -60,7 +60,7 @@ export default function StatementPart(param: IStatementParam) {
                             </tr>
                         );
                     })}
-                    {!param.loading && param.StatementResult?.statements.length == 0 &&
+                    {!param.loading && param.StatementResult?.statements.length === 0 &&
                         <tr>
                             <td colSpan={8} className="text-center">
                                 {t('statement_no_statement_found')}

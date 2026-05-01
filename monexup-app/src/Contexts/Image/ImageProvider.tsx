@@ -1,5 +1,4 @@
 import { useState } from "react";
-import ProviderResult from "../../DTO/Contexts/ProviderResult";
 import IImageProvider from "../../DTO/Contexts/IImageProvider";
 import ImageContext from "./ImageContext";
 import ImageFactory from "../../Business/Factory/ImageFactory";

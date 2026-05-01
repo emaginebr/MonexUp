@@ -4,13 +4,12 @@ import { useTranslation } from "react-i18next";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowDown, faArrowUp, faCalendar, faCancel, faCheck, faCheckCircle, faClose, faCross, faDollar, faEdit, faEnvelope, faPlus, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowDown, faArrowUp, faCancel, faCheck, faClose, faEnvelope, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Table from "react-bootstrap/esm/Table";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import Dropdown from 'react-bootstrap/Dropdown';
 import Pagination from 'react-bootstrap/Pagination';
 import MessageToast from "../../Components/MessageToast";
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
@@ -22,8 +21,6 @@ import { UserNetworkStatusEnum } from "../../DTO/Enum/UserNetworkStatusEnum";
 export default function UserSearchPage() {
 
     const { t } = useTranslation();
-
-    let navigate = useNavigate();
 
     const userContext = useContext(UserContext);
     const networkContext = useContext(NetworkContext);
@@ -212,7 +209,7 @@ export default function UserSearchPage() {
                                                         <FontAwesomeIcon icon={faArrowDown} fixedWidth /> Demote
                                                     </a>
                                                 </>
-                                                {user.status == UserNetworkStatusEnum.Active &&
+                                                {user.status === UserNetworkStatusEnum.Active &&
                                                     <>
                                                         <a href="#" className="text-danger" onClick={async (e) => {
                                                             e.preventDefault();
@@ -229,7 +226,7 @@ export default function UserSearchPage() {
                                                         </a>
                                                     </>
                                                 }
-                                                {user.status == UserNetworkStatusEnum.Inactive &&
+                                                {user.status === UserNetworkStatusEnum.Inactive &&
                                                     <>
                                                         <a href="#" className="text-primary" onClick={async (e) => {
                                                             e.preventDefault();
@@ -259,7 +256,7 @@ export default function UserSearchPage() {
                                                         </a>
                                                     </>
                                                 }
-                                                {user.status == UserNetworkStatusEnum.WaitForApproval &&
+                                                {user.status === UserNetworkStatusEnum.WaitForApproval &&
                                                     <>
                                                         <a href="#" className="text-success" onClick={async (e) => {
                                                             e.preventDefault();
@@ -289,7 +286,7 @@ export default function UserSearchPage() {
                                                         </a>
                                                     </>
                                                 }
-                                                {user.status == UserNetworkStatusEnum.Blocked &&
+                                                {user.status === UserNetworkStatusEnum.Blocked &&
                                                     <>
                                                         <a href="#" className="text-primary" onClick={async (e) => {
                                                             e.preventDefault();

@@ -1,0 +1,265 @@
+/* ============================================================================
+   MonexUp — Design Tokens (CSS Variables)
+   Direction: Editorial Brutalist · Dark/Light Split
+   Layer 1: Primitives → Layer 2: Semantic → Layer 3: Component
+   ============================================================================
+   Usage:
+   - Primitives are raw values (never reference these in components).
+   - Semantic tokens reference primitives and express intent.
+   - Component tokens reference semantic tokens (add as components emerge).
+   - Light/dark inversion handled via `[data-theme="dark"]` and per-section
+     opt-in classes (.mnx-surface-dark / .mnx-surface-light) so the same page
+     can flip surface intent per section (hero/footer dark, middle light).
+   ========================================================================== */
+
+:root {
+  /* ──────────────────────────────────────────────────────────────────────
+     LAYER 1 — PRIMITIVES (raw color/space/type scales)
+     Never bind UI directly to these. They feed semantic tokens.
+     ────────────────────────────────────────────────────────────────────── */
+
+  /* Brand orange — derived from logo square (~#E85A1A) with a 50→900 ramp */
+  --color-orange-50:  #FFF3EC;
+  --color-orange-100: #FFE0CC;
+  --color-orange-200: #FFC199;
+  --color-orange-300: #FFA266;
+  --color-orange-400: #FF8033;
+  --color-orange-500: #E85A1A;  /* logo brand anchor */
+  --color-orange-600: #C64A14;
+  --color-orange-700: #9E3A0F;
+  --color-orange-800: #762B0A;
+  --color-orange-900: #4D1C06;
+
+  /* Charcoal / graphite — dark surfaces (hero, navbar, footer) */
+  --color-graphite-50:  #F4F4F5;
+  --color-graphite-100: #E4E4E7;
+  --color-graphite-200: #C8C8CE;
+  --color-graphite-300: #9A9AA3;
+  --color-graphite-400: #6B6B75;
+  --color-graphite-500: #3F3F46;
+  --color-graphite-600: #27272A;
+  --color-graphite-700: #1B1B1F;
+  --color-graphite-800: #131317;
+  --color-graphite-900: #0A0A0D;  /* near-black anchor */
+
+  /* Off-white / neutral light — light surfaces (middle sections) */
+  --color-neutral-0:   #FFFFFF;
+  --color-neutral-50:  #FAFAF9;  /* off-white anchor */
+  --color-neutral-100: #F4F4F2;
+  --color-neutral-200: #E7E7E4;
+  --color-neutral-300: #D4D4D1;
+  --color-neutral-400: #A3A39F;
+
+  /* Semantic states (success/warn/error) — kept neutral, decoupled from brand */
+  --color-success-500: #10B981;
+  --color-warn-500:    #F59E0B;
+  --color-error-500:   #EF4444;
+  --color-info-500:    #3B82F6;
+
+  /* Typography stacks */
+  --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-sans:    "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  /* Type scale (modular 1.250 — major third) */
+  --fs-xs:   0.75rem;     /* 12 */
+  --fs-sm:   0.875rem;    /* 14 */
+  --fs-base: 1rem;        /* 16 */
+  --fs-md:   1.125rem;    /* 18 */
+  --fs-lg:   1.25rem;     /* 20 */
+  --fs-xl:   1.5rem;      /* 24 */
+  --fs-2xl:  1.875rem;    /* 30 */
+  --fs-3xl:  2.25rem;     /* 36 */
+  --fs-4xl:  3rem;        /* 48 */
+  --fs-5xl:  3.75rem;     /* 60 */
+  --fs-6xl:  4.5rem;      /* 72 */
+  --fs-7xl:  5.625rem;    /* 90 */
+
+  /* Line heights */
+  --lh-tight:   1.05;
+  --lh-snug:    1.2;
+  --lh-normal:  1.5;
+  --lh-relaxed: 1.7;
+
+  /* Font weights (Inter Variable + Space Grotesk Variable) */
+  --fw-light:    300;
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+  --fw-black:    900;
+
+  /* Letter spacing (display tracking) */
+  --ls-tighter: -0.04em;
+  --ls-tight:   -0.02em;
+  --ls-normal:   0em;
+  --ls-wide:     0.04em;
+  --ls-wider:    0.08em;
+
+  /* Spacing scale (4px base) */
+  --space-0:   0;
+  --space-1:   0.25rem;   /* 4  */
+  --space-2:   0.5rem;    /* 8  */
+  --space-3:   0.75rem;   /* 12 */
+  --space-4:   1rem;      /* 16 */
+  --space-5:   1.25rem;   /* 20 */
+  --space-6:   1.5rem;    /* 24 */
+  --space-8:   2rem;      /* 32 */
+  --space-10:  2.5rem;    /* 40 */
+  --space-12:  3rem;      /* 48 */
+  --space-16:  4rem;      /* 64 */
+  --space-20:  5rem;      /* 80 */
+  --space-24:  6rem;      /* 96 */
+  --space-32:  8rem;      /* 128 */
+
+  /* Radius */
+  --radius-none: 0;
+  --radius-sm:   0.25rem;   /* 4  */
+  --radius-md:   0.5rem;    /* 8  */
+  --radius-lg:   0.75rem;   /* 12 */
+  --radius-xl:   1rem;      /* 16 */
+  --radius-2xl:  1.5rem;    /* 24 */
+  --radius-full: 9999px;
+
+  /* Elevation / shadows (light mode) */
+  --shadow-xs: 0 1px 2px rgba(10, 10, 13, 0.06);
+  --shadow-sm: 0 1px 3px rgba(10, 10, 13, 0.08), 0 1px 2px rgba(10, 10, 13, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(10, 10, 13, 0.10), 0 2px 4px -1px rgba(10, 10, 13, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(10, 10, 13, 0.10), 0 4px 6px -2px rgba(10, 10, 13, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(10, 10, 13, 0.12), 0 10px 10px -5px rgba(10, 10, 13, 0.04);
+
+  /* Brand-glow shadows (for primary CTA on dark surfaces) */
+  --shadow-glow-orange-sm: 0 0 0 0 rgba(232, 90, 26, 0.6), 0 8px 24px -6px rgba(232, 90, 26, 0.45);
+  --shadow-glow-orange-md: 0 0 0 0 rgba(232, 90, 26, 0.6), 0 12px 32px -8px rgba(232, 90, 26, 0.55);
+  --shadow-glow-orange-lg: 0 0 0 0 rgba(232, 90, 26, 0.6), 0 20px 48px -12px rgba(232, 90, 26, 0.65);
+
+  /* Motion */
+  --ease-standard: cubic-bezier(0.2, 0.0, 0.0, 1.0);
+  --ease-emphasized: cubic-bezier(0.2, 0.0, 0, 1.2);
+  --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
+  --duration-fast:   150ms;
+  --duration-normal: 220ms;
+  --duration-slow:   320ms;
+  --duration-slower: 480ms;
+
+  /* Layout */
+  --container-max: 1200px;
+  --container-pad: clamp(1rem, 4vw, 2rem);
+  --grid-gutter:   clamp(1rem, 2vw, 1.5rem);
+
+  /* Focus ring */
+  --ring-color:  var(--color-orange-500);
+  --ring-offset: var(--color-neutral-0);
+  --ring-width:  3px;
+
+  /* ──────────────────────────────────────────────────────────────────────
+     LAYER 2 — SEMANTIC (intent-based; pages and components bind here)
+     Default semantics describe LIGHT surfaces (the page baseline).
+     Sections that opt-in to dark surface override these (see below).
+     ────────────────────────────────────────────────────────────────────── */
+
+  /* Surfaces */
+  --surface-page:        var(--color-neutral-50);
+  --surface-canvas:      var(--color-neutral-0);
+  --surface-raised:      var(--color-neutral-0);
+  --surface-sunken:      var(--color-neutral-100);
+  --surface-overlay:     rgba(10, 10, 13, 0.55);
+
+  /* Content (text on surfaces) */
+  --content-primary:     var(--color-graphite-900);
+  --content-secondary:   var(--color-graphite-500);
+  --content-tertiary:    var(--color-graphite-400);
+  --content-on-brand:    var(--color-neutral-0);
+  --content-inverse:     var(--color-neutral-50);
+
+  /* Borders */
+  --border-subtle:   var(--color-neutral-200);
+  --border-default:  var(--color-neutral-300);
+  --border-strong:   var(--color-graphite-900);
+
+  /* Brand accents */
+  --accent:           var(--color-orange-500);
+  --accent-hover:     var(--color-orange-600);
+  --accent-active:    var(--color-orange-700);
+  --accent-soft-bg:   var(--color-orange-50);
+  --accent-soft-fg:   var(--color-orange-700);
+
+  /* Interactive states */
+  --state-hover-overlay:  rgba(10, 10, 13, 0.04);
+  --state-active-overlay: rgba(10, 10, 13, 0.08);
+
+  /* Component-level (illustrative starter set) */
+  --btn-primary-bg:        var(--accent);
+  --btn-primary-bg-hover:  var(--accent-hover);
+  --btn-primary-fg:        var(--content-on-brand);
+  --btn-primary-shadow:    var(--shadow-glow-orange-md);
+
+  --btn-ghost-bg:        transparent;
+  --btn-ghost-fg:        var(--content-primary);
+  --btn-ghost-border:    var(--border-strong);
+
+  --card-bg:             var(--surface-raised);
+  --card-border:         var(--border-subtle);
+  --card-shadow:         var(--shadow-sm);
+  --card-shadow-hover:   var(--shadow-lg);
+  --card-radius:         var(--radius-xl);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   DARK SURFACE OPT-IN — applied per-section (hero, navbar, footer)
+   Text/border/shadow semantics flip; brand accent stays the same.
+   ────────────────────────────────────────────────────────────────────────── */
+.mnx-surface-dark {
+  --surface-page:      var(--color-graphite-900);
+  --surface-canvas:    var(--color-graphite-800);
+  --surface-raised:    var(--color-graphite-700);
+  --surface-sunken:    var(--color-graphite-900);
+
+  --content-primary:   var(--color-neutral-50);
+  --content-secondary: var(--color-graphite-200);
+  --content-tertiary:  var(--color-graphite-300);
+
+  --border-subtle:     rgba(255, 255, 255, 0.08);
+  --border-default:    rgba(255, 255, 255, 0.14);
+  --border-strong:     rgba(255, 255, 255, 0.85);
+
+  --state-hover-overlay:  rgba(255, 255, 255, 0.06);
+  --state-active-overlay: rgba(255, 255, 255, 0.10);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.55), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6),  0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.7),  0 10px 10px -5px rgba(0, 0, 0, 0.4);
+
+  --ring-offset: var(--color-graphite-900);
+
+  --btn-ghost-fg:     var(--color-neutral-50);
+  --btn-ghost-border: rgba(255, 255, 255, 0.45);
+
+  --card-bg:          var(--color-graphite-700);
+  --card-border:      rgba(255, 255, 255, 0.08);
+  --card-shadow:      var(--shadow-sm);
+}
+
+.mnx-surface-light {
+  /* Explicit light section (in case nested in dark wrapper). Same as :root. */
+  --surface-page:      var(--color-neutral-50);
+  --surface-canvas:    var(--color-neutral-0);
+  --content-primary:   var(--color-graphite-900);
+  --content-secondary: var(--color-graphite-500);
+  --content-tertiary:  var(--color-graphite-400);
+  --border-subtle:     var(--color-neutral-200);
+  --border-default:    var(--color-neutral-300);
+  --border-strong:     var(--color-graphite-900);
+  --ring-offset:       var(--color-neutral-0);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast:   0ms;
+    --duration-normal: 0ms;
+    --duration-slow:   0ms;
+    --duration-slower: 0ms;
+  }
+}

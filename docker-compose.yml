@@ -27,49 +27,25 @@ services:
       - "5000:80"
     restart: unless-stopped
     networks:
-      - monexup-network
+      - emagine-network
 
   # ===========================================
   # MonexUp BackgroundService
   # ===========================================
-  monexup-bg:
-    build:
-      context: .
-      dockerfile: MonexUp.BackgroundService/Dockerfile
-    container_name: monexup-bg
-    env_file: .env
-    environment:
-      ASPNETCORE_ENVIRONMENT: Docker
-      ConnectionStrings__MonexUpContext: ${CONNECTION_STRING}
-      ZTOOLS_API_URL: ${ZTOOLS_API_URL}
-    restart: unless-stopped
-    networks:
-      - monexup-network
-
-  # ===========================================
-  # MonexUp Frontend - React app
-  # ===========================================
-  monexup-app:
-    build:
-      context: ./monexup-app
-      dockerfile: Dockerfile.dev
-      args:
-        REACT_APP_API_URL: http://localhost:5000
-        REACT_APP_NAUTH_API_URL: ${NAUTH_API_URL:-http://localhost:5004}
-        REACT_APP_PROXYPAY_API_URL: ${PROXYPAY_API_URL:-http://localhost:5100}
-        REACT_APP_PROXYPAY_CLIENT_ID: ${PROXYPAY_CLIENT_ID}
-        REACT_APP_PROXYPAY_TENANT_ID: ${PROXYPAY_TENANT_ID:-monexup}
-        REACT_APP_LOFN_API_URL: ${LOFN_API_URL:-http://localhost:5003}
-        REACT_APP_DEDALO_API_URL: ${DEDALO_API_URL:-http://localhost:5002}
-    container_name: monexup-app
-    ports:
-      - "3000:80"
-    depends_on:
-      - monexup-api
-    restart: unless-stopped
-    networks:
-      - monexup-network
+  # monexup-bg:
+  #   build:
+  #     context: .
+  #     dockerfile: MonexUp.BackgroundService/Dockerfile
+  #   container_name: monexup-bg
+  #   env_file: .env
+  #   environment:
+  #     ASPNETCORE_ENVIRONMENT: Docker
+  #     ConnectionStrings__MonexUpContext: ${CONNECTION_STRING}
+  #     ZTOOLS_API_URL: ${ZTOOLS_API_URL}
+  #   restart: unless-stopped
+  #   networks:
+  #     - emagine-network
 
 networks:
-  monexup-network:
-    driver: bridge
+  emagine-network:
+    external: true

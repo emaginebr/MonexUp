@@ -24,7 +24,6 @@ const OrderService: IOrderService = {
         return ret;
     },
     checkPixStatus: async (proxyPayInvoiceId: string, token: string) => {
-        let ret: any;
         let request = await _httpClient.doGetAuth<any>("/Order/checkPixStatus/" + proxyPayInvoiceId, token);
         if (request.success) {
             return request.data;

@@ -26,6 +26,18 @@ namespace MonexUp.ApiTests.Controllers
         }
 
         [Fact]
+        public async Task Search_WithoutAuth_ShouldReturn401()
+        {
+            var param = TestDataHelper.CreateInvoiceSearchParam();
+
+            var response = await _fixture.CreateAnonymousRequest("/invoice/search")
+                .AllowAnyHttpStatus()
+                .PostJsonAsync(param);
+
+            response.StatusCode.Should().Be(401);
+        }
+
+        [Fact]
         public async Task Search_WithAuth_ShouldReturnOk()
         {
             var param = TestDataHelper.CreateInvoiceSearchParam();
@@ -35,6 +47,18 @@ namespace MonexUp.ApiTests.Controllers
                 .PostJsonAsync(param);
 
             response.StatusCode.Should().Be(200);
+        }
+
+        [Fact]
+        public async Task SearchStatement_WithoutAuth_ShouldReturn401()
+        {
+            var param = TestDataHelper.CreateStatementSearchParam();
+
+            var response = await _fixture.CreateAnonymousRequest("/invoice/searchStatement")
+                .AllowAnyHttpStatus()
+                .PostJsonAsync(param);
+
+            response.StatusCode.Should().Be(401);
         }
 
         [Fact]
@@ -50,6 +74,16 @@ namespace MonexUp.ApiTests.Controllers
         }
 
         [Fact]
+        public async Task GetBalance_WithoutAuth_ShouldReturn401()
+        {
+            var response = await _fixture.CreateAnonymousRequest("/invoice/getBalance")
+                .AllowAnyHttpStatus()
+                .GetAsync();
+
+            response.StatusCode.Should().Be(401);
+        }
+
+        [Fact]
         public async Task GetBalance_WithAuth_ShouldReturnSuccessStatus()
         {
             var response = await _fixture.CreateAuthenticatedRequest("/invoice/getBalance")
@@ -57,6 +91,16 @@ namespace MonexUp.ApiTests.Controllers
                 .GetAsync();
 
             response.StatusCode.Should().BeOneOf(200, 204);
+        }
+
+        [Fact]
+        public async Task GetAvailableBalance_WithoutAuth_ShouldReturn401()
+        {
+            var response = await _fixture.CreateAnonymousRequest("/invoice/getAvailableBalance")
+                .AllowAnyHttpStatus()
+                .GetAsync();
+
+            response.StatusCode.Should().Be(401);
         }
 
         [Fact]

@@ -2,24 +2,19 @@ import { useContext, useEffect, useState } from "react";
 import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ProductContext from "../../Contexts/Product/ProductContext";
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 import MessageToast from "../../Components/MessageToast";
 import NetworkContext from "../../Contexts/Network/NetworkContext";
-import Skeleton from "react-loading-skeleton";
 import AuthContext from "../../Contexts/Auth/AuthContext";
 import PixPaymentForm from "./PixPaymentForm";
-import NetworkFooter from "../NetworkPage/NetworkFooter";
-import UserContext from "../../Contexts/User/UserContext";
 import UserForm from "./UserForm";
 import { TemplateContext, strToPartEnum, WebsitePartEnum, EditMode, Product01Part } from "../../packages/template";
 import TemplatePartInfo from "../../packages/template/DTO/TemplatePartInfo";
 import SkeletonPage from "../../Components/SkeletonPage";
 
 export default function ProductPage() {
-
-    let navigate = useNavigate();
 
     let { networkSlug, sellerSlug, productSlug } = useParams();
 
@@ -67,7 +62,6 @@ export default function ProductPage() {
                         <hr />
                     </>
                 );
-                break;
         }
     };
 

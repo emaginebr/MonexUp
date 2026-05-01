@@ -3,13 +3,9 @@ import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faCancel, faDollar, faEdit, faEnvelope, faPlus, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCancel } from '@fortawesome/free-solid-svg-icons';
 import Table from "react-bootstrap/esm/Table";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
-import Dropdown from 'react-bootstrap/Dropdown';
+import { Link, useParams } from "react-router-dom";
 import Pagination from 'react-bootstrap/Pagination';
 import NetworkContext from "../../Contexts/Network/NetworkContext";
 import OrderContext from "../../Contexts/Order/OrderContext";
@@ -19,15 +15,13 @@ import MessageToast from "../../Components/MessageToast";
 import { UserRoleEnum } from "../../DTO/Enum/UserRoleEnum";
 import AuthContext from "../../Contexts/Auth/AuthContext";
 import OrderInfo from "../../DTO/Domain/OrderInfo";
-import Moment from 'react-moment';
+import Moment from '../../Components/MomentShim';
 import { useTranslation } from "react-i18next";
 
 export default function OrderSearchPage() {
 
 
     const { t } = useTranslation();
-
-    let navigate = useNavigate();
 
     const authContext = useContext(AuthContext);
     const networkContext = useContext(NetworkContext);
@@ -44,16 +38,11 @@ export default function OrderSearchPage() {
         setMessageText(message);
         setShowMessage(true);
     };
-    const showSuccessMessage = (message: string) => {
-        setDialog(MessageToastEnum.Success);
-        setMessageText(message);
-        setShowMessage(true);
-    };
 
     const showProducts = (order: OrderInfo) => {
         let ret: string = "";
         if (order.items) {
-            order.items.map((item) => {
+            order.items.forEach((item) => {
                 if (item.product) {
                     ret = ret + item.product.name + " (" + item.quantity + "), ";
                 }
@@ -61,9 +50,9 @@ export default function OrderSearchPage() {
             if (ret.length > 0) {
                 ret = ret.substring(0, ret.length - 2);
             }
-            
+
         }
-        if (ret.length == 0) {
+        if (ret.length === 0) {
             ret = t('product_unknown'); // Reusing existing key
         }
         return ret;
@@ -72,7 +61,7 @@ export default function OrderSearchPage() {
     const showTotal = (order: OrderInfo) => {
         let total: number = 0;
         if (order.items) {
-            order.items.map((item) => {
+            order.items.forEach((item) => {
                 total += item.product.price * item.quantity;
             });
         }

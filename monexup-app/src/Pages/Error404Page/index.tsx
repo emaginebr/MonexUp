@@ -1,5 +1,3 @@
-import Card from "react-bootstrap/esm/Card";
-import CardBody from "react-bootstrap/esm/CardBody";
 import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";

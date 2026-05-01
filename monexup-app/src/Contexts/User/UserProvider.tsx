@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNAuth, type UserInfo as NAuthUserInfo, type PagedResult } from "nauth-react";
+import { useNAuth, type UserInfo as NAuthUserInfo } from "nauth-react";
 import IUserProvider from "../../DTO/Contexts/IUserProvider";
 import UserContext from "./UserContext";
 import UserInfo from "../../DTO/Domain/UserInfo";

@@ -1,12 +1,7 @@
 import { useContext, useEffect, useState } from "react";
-import Col from "react-bootstrap/esm/Col";
-import Container from "react-bootstrap/esm/Container";
-import Row from "react-bootstrap/esm/Row";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import AuthContext from "../../Contexts/Auth/AuthContext";
+import { useParams } from "react-router-dom";
 import NetworkContext from "../../Contexts/Network/NetworkContext";
 import UserContext from "../../Contexts/User/UserContext";
-import Skeleton from "react-loading-skeleton";
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 import MessageToast from "../../Components/MessageToast";
 import { ProfilePart, ProductListPart, TemplateContext, strToPartEnum, WebsitePartEnum, EditMode, Plan3ColsPart } from "../../packages/template";
@@ -21,7 +16,6 @@ export default function SellerPage() {
 
     const PAGE_SLUG = (networkSlug) ? "network-seller" : "seller";
 
-    const authContext = useContext(AuthContext);
     const networkContext = useContext(NetworkContext);
     const userContext = useContext(UserContext);
     const productContext = useContext(ProductContext);
@@ -33,11 +27,6 @@ export default function SellerPage() {
 
     const throwError = (message: string) => {
         setDialog(MessageToastEnum.Error);
-        setMessageText(message);
-        setShowMessage(true);
-    };
-    const showSuccessMessage = (message: string) => {
-        setDialog(MessageToastEnum.Success);
         setMessageText(message);
         setShowMessage(true);
     };
@@ -81,7 +70,6 @@ export default function SellerPage() {
                         <hr />
                     </>
                 );
-                break;
             case WebsitePartEnum.PLAN_3_COLS:
                 return (
                     <>
@@ -96,7 +84,6 @@ export default function SellerPage() {
                         <hr />
                     </>
                 );
-                break;
             case WebsitePartEnum.PRODUCT_LIST_WITH_3_COLS:
                 return (
                     <>
@@ -113,7 +100,6 @@ export default function SellerPage() {
                         <hr />
                     </>
                 );
-                break;
         }
     };
 

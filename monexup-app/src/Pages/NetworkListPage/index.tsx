@@ -3,7 +3,7 @@ import Col from "react-bootstrap/esm/Col";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faDollar, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Table from "react-bootstrap/esm/Table";
 import { Link, useNavigate } from "react-router-dom";
 import Button from 'react-bootstrap/Button';

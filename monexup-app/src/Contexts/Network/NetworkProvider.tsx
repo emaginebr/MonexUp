@@ -1,6 +1,5 @@
 import { useState } from "react";
 import ProviderResult from "../../DTO/Contexts/ProviderResult";
-import UserFactory from "../../Business/Factory/UserFactory";
 import NetworkContext from "./NetworkContext";
 import INetworkProvider from "../../DTO/Contexts/INetworkProvider";
 import NetworkInfo from "../../DTO/Domain/NetworkInfo";

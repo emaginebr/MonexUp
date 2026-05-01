@@ -1,13 +1,9 @@
-import Col from "react-bootstrap/esm/Col";
-import Container from "react-bootstrap/esm/Container";
-import Row from "react-bootstrap/esm/Row";
 import Form from 'react-bootstrap/Form';
-import AuthContext from "../../Contexts/Auth/AuthContext";
 import Button from "react-bootstrap/esm/Button";
 import Card from 'react-bootstrap/Card';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faEnvelope, faLock, faRightFromBracket, faUser, faUserAlt } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faEnvelope, faLock, faRightFromBracket, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { createSearchParams, useNavigate } from "react-router-dom";
@@ -23,11 +19,8 @@ export default function UserForm(param: IUserParam) {
 
     const { t } = useTranslation();
 
-    const [email, setEmail] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
     const [confirmPassword, setConfirmPassword] = useState<string>("");
 
-    const authContext = useContext(AuthContext);
     const userContext = useContext(UserContext);
 
     let navigate = useNavigate();
@@ -116,7 +109,7 @@ export default function UserForm(param: IUserParam) {
                                     param.onThrowError(t('error_email_empty'));
                                     return;
                                 }
-                                if (userContext.user?.password != confirmPassword) {
+                                if (userContext.user?.password !== confirmPassword) {
                                     param.onThrowError(t('error_password_confirmation_different'));
                                     return;
                                 }

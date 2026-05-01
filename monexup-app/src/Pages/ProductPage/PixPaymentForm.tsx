@@ -37,7 +37,6 @@ export default function PixPaymentForm(props: PixPaymentFormProps) {
     };
 
     if (showQrCode && orderContext.pixPaymentResult?.qrCode) {
-        const qr = orderContext.pixPaymentResult.qrCode;
         return (
             <PixPayment
                 customer={{ name: "", documentId: cpf, cellphone: "", email: "" }}

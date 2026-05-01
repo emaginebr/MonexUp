@@ -58,7 +58,12 @@
       "Bash(git add submodules/NAuth)",
       "Bash(git commit:*)",
       "Bash(head -50 /c/repos/MonexUp/MonexUp.Infra/Mapping/Profiles/*.cs)",
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "Bash(mkdir -p .claude)",
+      "Bash(mkdir -p .claude/skills .claude/agents .claude/commands)",
+      "Bash(cp -r __TRACKED_VAR__/skills/. .claude/skills/)",
+      "Bash(cp -r __TRACKED_VAR__/agents/. .claude/agents/)",
+      "Bash(cp -r __TRACKED_VAR__/commands/. .claude/commands/)"
     ]
   }
 }

@@ -19,7 +19,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - monexup-network
+      - emagine-network
 
   # ===========================================
   # NAuth API - Authentication service
@@ -40,7 +40,7 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      - monexup-network
+      - emagine-network
 
   # ===========================================
   # zTools API - Utility microservice
@@ -65,7 +65,7 @@ services:
       S3__SECRETKEY: ${S3_SECRET_KEY}
       S3__ENDPOINT: ${S3_ENDPOINT}
     networks:
-      - monexup-network
+      - emagine-network
 
   # ===========================================
   # MonexUp API - Main application API
@@ -98,7 +98,7 @@ services:
       ztools-api:
         condition: service_started
     networks:
-      - monexup-network
+      - emagine-network
 
   # ===========================================
   # MonexUp BackgroundService
@@ -117,37 +117,12 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      - monexup-network
-
-  # ===========================================
-  # MonexUp Frontend - React app
-  # ===========================================
-  monexup-app:
-    build:
-      context: ./monexup-app
-      dockerfile: Dockerfile.prod
-      args:
-        REACT_APP_API_URL: ${NAUTH_API_URL}
-        REACT_APP_NAUTH_API_URL: ${NAUTH_API_URL}
-        REACT_APP_PROXYPAY_API_URL: ${PROXYPAY_API_URL}
-        REACT_APP_PROXYPAY_CLIENT_ID: ${PROXYPAY_CLIENT_ID}
-        REACT_APP_PROXYPAY_TENANT_ID: ${PROXYPAY_TENANT_ID:-monexup}
-        REACT_APP_LOFN_API_URL: ${LOFN_API_URL}
-        REACT_APP_DEDALO_API_URL: ${DEDALO_API_URL}
-        REACT_APP_PRODUCTION: "1"
-        REACT_APP_SITE_BASENAME: /
-        REACT_APP_PROJECT_NAME: MonexUp.com
-    container_name: monexup-app
-    restart: unless-stopped
-    ports:
-      - "80:80"
-    networks:
-      - monexup-network
+      - emagine-network
 
 volumes:
   postgres_data:
     driver: local
 
 networks:
-  monexup-network:
-    driver: bridge
+  emagine-network:
+    external: true

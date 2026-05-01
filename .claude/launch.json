@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "monexup-app",
-      "runtimeExecutable": "node",
-      "runtimeArgs": ["node_modules/react-scripts/bin/react-scripts.js", "start"],
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
       "cwd": "monexup-app",
       "port": 3000
     },

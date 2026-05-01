@@ -1,0 +1,264 @@
+/* =============================================================================
+   MonexUp — Global stylesheet for the Tailwind/shadcn surface (home route)
+   ----------------------------------------------------------------------------
+   Coexistence with Bootstrap + MUI:
+     - Tailwind preflight is DISABLED in tailwind.config.js so we don't
+       double-reset elements that Bootstrap's Reboot already touches.
+     - All cosmetic resets here are SCOPED to `.mnx-surface-dark` /
+       `.mnx-surface-light` wrappers so they don't bleed into legacy pages.
+   ============================================================================= */
+
+@import "./tokens.css";
+
+/* Variable webfonts (offline + privacy via @fontsource) */
+@import "@fontsource/inter/300.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/inter/800.css";
+@import "@fontsource/space-grotesk/500.css";
+@import "@fontsource/space-grotesk/600.css";
+@import "@fontsource/space-grotesk/700.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* -----------------------------------------------------------------------------
+   Scoped surface defaults
+   ---------------------------------------------------------------------------
+   Bootstrap-driven pages keep their own typography. The home route opts in
+   to MonexUp typography by wrapping itself in `.mnx-surface-dark` or
+   `.mnx-surface-light`. These selectors set a sane baseline INSIDE the
+   wrapper without affecting anything else.
+   ----------------------------------------------------------------------------- */
+.mnx-surface-dark,
+.mnx-surface-light {
+  font-family: var(--font-sans);
+  color: var(--content-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.mnx-surface-dark a,
+.mnx-surface-light a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Tailwind's preflight is disabled (see tailwind.config.js). To keep the
+   default `border` utility usable inside the home surface without forcing
+   every consumer to specify a color, set a sensible base via a low-specificity
+   layer that components can still override with explicit utilities. */
+@layer base {
+  .mnx-surface-dark,
+  .mnx-surface-light {
+    border-color: var(--border-subtle);
+  }
+}
+
+/* Display headline — brutalist tracking for hero */
+.display-headline {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+}
+
+/* Logo lockup ----------------------------------------------------------------- */
+.mnx-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.mnx-mark__square {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  background: var(--color-orange-500);
+  border-radius: 0.25rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  color: #fff;
+  letter-spacing: -0.02em;
+  box-shadow: 0 4px 16px -4px rgba(232, 90, 26, 0.55);
+}
+.mnx-mark__word {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.125rem;
+  letter-spacing: -0.02em;
+}
+
+/* CTA glow ring --------------------------------------------------------------- */
+.cta-primary {
+  position: relative;
+  isolation: isolate;
+}
+.cta-primary::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: radial-gradient(
+    60% 80% at 50% 100%,
+    rgba(232, 90, 26, 0.6),
+    transparent 70%
+  );
+  filter: blur(14px);
+  z-index: -1;
+  opacity: 0.85;
+  transition: opacity var(--duration-normal) var(--ease-standard);
+}
+.cta-primary:hover::after {
+  opacity: 1;
+}
+
+/* Angular divider ------------------------------------------------------------ */
+.angular-divider {
+  height: 80px;
+  background: linear-gradient(
+    170deg,
+    var(--color-graphite-900) 0%,
+    var(--color-graphite-900) 50%,
+    var(--color-neutral-50) 50.5%,
+    var(--color-neutral-50) 100%
+  );
+}
+.angular-divider--up {
+  background: linear-gradient(
+    -10deg,
+    var(--color-graphite-900) 0%,
+    var(--color-graphite-900) 50%,
+    var(--color-neutral-50) 50.5%,
+    var(--color-neutral-50) 100%
+  );
+}
+
+/* Hero canvas grid ----------------------------------------------------------- */
+.hero-grid {
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.04) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(
+    ellipse 80% 60% at 50% 30%,
+    black,
+    transparent 70%
+  );
+  mask-image: radial-gradient(
+    ellipse 80% 60% at 50% 30%,
+    black,
+    transparent 70%
+  );
+}
+
+/* Network node dots ---------------------------------------------------------- */
+.node {
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  background: var(--color-orange-500);
+  box-shadow: 0 0 0 4px rgba(232, 90, 26, 0.18);
+  display: inline-block;
+}
+.node--dim {
+  background: var(--color-graphite-300);
+  box-shadow: 0 0 0 4px rgba(154, 154, 163, 0.15);
+}
+
+/* Auth surface atoms (login / register / recovery) -------------------------- */
+.bg-mesh-auth {
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 30%, rgba(232, 90, 26, 0.22), transparent 65%),
+    radial-gradient(ellipse 55% 45% at 10% 90%, rgba(232, 90, 26, 0.10), transparent 70%),
+    linear-gradient(180deg, #0a0a0d 0%, #131317 100%);
+}
+
+.auth-grid {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 30%, black, transparent 75%);
+  mask-image: radial-gradient(ellipse 70% 55% at 50% 30%, black, transparent 75%);
+}
+
+.auth-card {
+  background: var(--color-neutral-0);
+  border: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-2xl);
+  box-shadow:
+    0 30px 60px -20px rgba(0, 0, 0, 0.55),
+    0 12px 24px -10px rgba(0, 0, 0, 0.45);
+  color: var(--color-graphite-900);
+}
+
+.auth-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  background: var(--color-orange-500);
+  border-radius: var(--radius-md);
+  color: #fff;
+  font: 700 1.5rem / 1 var(--font-display);
+  letter-spacing: -0.02em;
+  box-shadow: 0 8px 24px -6px rgba(232, 90, 26, 0.55);
+}
+
+.trust-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--radius-full);
+  font: 500 var(--fs-xs) var(--font-sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-orange-200);
+  background: rgba(232, 90, 26, 0.10);
+  border: 1px solid rgba(232, 90, 26, 0.30);
+}
+
+.trust-chip .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--color-orange-500);
+  box-shadow: 0 0 0 4px rgba(232, 90, 26, 0.18);
+}
+
+/* Focus ring (visible, brand-tinted, AA contrast) ---------------------------- */
+.mnx-surface-dark :focus-visible,
+.mnx-surface-light :focus-visible {
+  outline: 3px solid var(--color-orange-500);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Reduced motion ------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up,
+  .cta-primary::after,
+  .animate-pulse-glow,
+  html {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Smooth scroll for in-page anchors (only when motion is allowed) ------------ */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}

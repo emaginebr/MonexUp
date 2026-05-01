@@ -7,11 +7,9 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import AuthContext from '../Contexts/Auth/AuthContext';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBitcoinSign, faBoltLightning, faBox, faBrazilianRealSign, faBuilding, faCancel, faCheck, faCheckCircle, faCircle, faCircleUser, faClose, faCog, faCoins, faDollar, faEthernet, faFileWord, faHome, faLock, faPencil, faSearch, faSignInAlt, faUser, faUserAlt, faUserCircle, faUserCog, faUserFriends, faUserGear, faUserGraduate, faUserGroup, faUserMd } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle, faCircle, faCircleUser, faClose, faHome, faLock, faPencil, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 import MessageToast from './MessageToast';
 import { MessageToastEnum } from '../DTO/Enum/MessageToastEnum';
-import { UserRoleEnum } from '../DTO/Enum/UserRoleEnum';
-import NetworkContext from '../Contexts/Network/NetworkContext';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import UserContext from '../Contexts/User/UserContext';
@@ -38,7 +36,6 @@ export default function MenuUser() {
 
   const authContext = useContext(AuthContext);
   const userContext = useContext(UserContext);
-  const networkContext = useContext(NetworkContext);
   const templateContext = useContext(TemplateContext);
 
   useEffect(() => {
@@ -87,7 +84,7 @@ export default function MenuUser() {
           <Navbar.Collapse>
 
             <Nav className="ms-auto justify-content-end">
-              {authContext.sessionInfo && authContext.sessionInfo?.userId == userContext.user?.userId &&
+              {authContext.sessionInfo && authContext.sessionInfo?.userId === userContext.user?.userId &&
                 <>
                   <NavDropdown title={
                     <>

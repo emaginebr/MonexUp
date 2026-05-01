@@ -28,11 +28,6 @@ export default function NetworkPage() {
         setMessageText(message);
         setShowMessage(true);
     };
-    const showSuccessMessage = (message: string) => {
-        setDialog(MessageToastEnum.Success);
-        setMessageText(message);
-        setShowMessage(true);
-    };
 
     const searchProducts = (pageNum: number) => {
         let param: ProductSearchParam;
@@ -70,7 +65,6 @@ export default function NetworkPage() {
                         <hr />
                     </>
                 );
-                break;
             case WebsitePartEnum.HERO02:
                 return (
                     <>
@@ -84,7 +78,6 @@ export default function NetworkPage() {
                         <hr />
                     </>
                 );
-                break;
             case WebsitePartEnum.PLAN_3_COLS:
                 return (
                     <>
@@ -99,7 +92,6 @@ export default function NetworkPage() {
                         <hr />
                     </>
                 );
-                break;
             case WebsitePartEnum.PLAN_4_COLS:
                 return (
                     <>
@@ -114,7 +106,6 @@ export default function NetworkPage() {
                         <hr />
                     </>
                 );
-                break;
             case WebsitePartEnum.PRODUCT_LIST_WITH_3_COLS:
                 return (
                     <>
@@ -131,7 +122,6 @@ export default function NetworkPage() {
                         <hr />
                     </>
                 );
-                break;
             case WebsitePartEnum.TEAM_3_COLS:
                 return (
                     <>
@@ -146,7 +136,6 @@ export default function NetworkPage() {
                         <hr />
                     </>
                 );
-                break;
         }
     };
 
