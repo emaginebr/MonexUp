@@ -161,7 +161,6 @@ function App() {
           <Route path="checkout/success" element={<CheckoutSuccessPage />} />
           <Route path="network">
             <Route index element={<NetworkInsertPage />} />
-            <Route path="search" element={<NetworkListPage />} />
           </Route>
           <Route path="account">
             <Route index element={<LoginPage />} />
@@ -173,14 +172,12 @@ function App() {
             <Route path="reset-password" element={<ResetPasswordPage />} />
           </Route>
         </Route>
-        {/* Dashboard shell — Home header + condensed mini-footer. The
-            redesigned /admin/dashboard does NOT use the legacy <Menu /> +
-            <AdminLayout /> sidebar chrome. Other admin routes still do. */}
-        <Route path="admin" element={<LayoutDashboard />}>
-          <Route index element={<DashboardPage />} />
-          <Route path="dashboard" element={<DashboardPage />} />
+        <Route element={<LayoutAdmin />}>
+          <Route path="network/search" element={<NetworkListPage />} />
         </Route>
         <Route path="admin" element={<LayoutAdmin />}>
+          <Route index element={<DashboardPage />} />
+          <Route path="dashboard" element={<DashboardPage />} />
           <Route path="network" element={<NetworkEditPage />} />
           <Route path="teams">
             <Route index element={<UserSearchPage />} />
