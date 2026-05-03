@@ -3,7 +3,6 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LoginForm } from "nauth-react";
 import type { UserInfo } from "nauth-react";
-import Header from "../HomePage/Header";
 import Footer from "../HomePage/Footer";
 import MessageToast from "../../Components/MessageToast";
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
@@ -71,8 +70,6 @@ export default function LoginPage() {
                 messageText={messageText}
                 onClose={() => setShowMessage(false)}
             />
-            <Header />
-
             <main
                 id="login-main"
                 className="mnx-surface-dark relative overflow-hidden bg-mesh-auth"
@@ -85,26 +82,8 @@ export default function LoginPage() {
 
                 <div className="relative max-w-container mx-auto px-shell py-16 lg:py-24">
                     <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-                        {/* LEFT — editorial copy column */}
-                        <section className="lg:col-span-6 order-2 lg:order-1 animate-fade-up">
-                            <span className="trust-chip">
-                                <span className="dot" aria-hidden="true" />
-                                {t("home_hero_eyebrow")}
-                            </span>
-                            <h1
-                                id="login-heading"
-                                className="display-headline text-mnx-neutral-50 mt-6 text-4xl sm:text-5xl lg:text-6xl"
-                            >
-                                {t("login_title")}
-                                <span className="text-orange-500">.</span>
-                            </h1>
-                            <p className="mt-6 max-w-lg text-graphite-200 text-base lg:text-lg leading-relaxed">
-                                {t("login_instruction")}
-                            </p>
-                        </section>
-
                         {/* RIGHT — login card */}
-                        <section className="lg:col-span-6 order-1 lg:order-2">
+                        <section className="lg:col-span-12">
                             <div className="relative max-w-md mx-auto lg:ml-auto lg:mr-0">
                                 <div
                                     className="absolute -inset-6 bg-orange-500/15 rounded-3xl blur-3xl pointer-events-none"
@@ -115,19 +94,7 @@ export default function LoginPage() {
                                     className="auth-card relative p-8 sm:p-10 animate-fade-up"
                                     aria-label={t("login_title")}
                                 >
-                                    <div className="flex flex-col items-center text-center">
-                                        <div className="auth-mark" aria-hidden="true">
-                                            M.
-                                        </div>
-                                        <h2 className="display-headline mt-6 text-3xl text-graphite-900">
-                                            {t("login_title")}
-                                        </h2>
-                                        <p className="mt-3 text-graphite-500 text-sm leading-relaxed">
-                                            {t("login_instruction")}
-                                        </p>
-                                    </div>
-
-                                    <div className="mt-8">
+                                    <div>
                                         <LoginForm
                                             onSuccess={handleLoginSuccess}
                                             onError={handleLoginError}

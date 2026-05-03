@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MonexUp — Painel (Redesign)</title>
+  <meta name="description" content="MonexUp — Dashboard redesign mockup. KPI cards, balance card, statement table with filters and pagination, condensed footer. Editorial Brutalist · Dark navbar over light dashboard surface." />
+
+  <!-- Tailwind CDN (mockup only — production uses Vite + tailwind.config.snippet.js) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Space Grotesk (display) + Inter (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN config — mirrors tailwind.config.snippet.js -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            orange: {
+              50:'#FFF3EC',100:'#FFE0CC',200:'#FFC199',300:'#FFA266',400:'#FF8033',
+              500:'#E85A1A',600:'#C64A14',700:'#9E3A0F',800:'#762B0A',900:'#4D1C06',
+              DEFAULT:'#E85A1A',
+            },
+            graphite: {
+              50:'#F4F4F5',100:'#E4E4E7',200:'#C8C8CE',300:'#9A9AA3',400:'#6B6B75',
+              500:'#3F3F46',600:'#27272A',700:'#1B1B1F',800:'#131317',900:'#0A0A0D',
+            },
+            neutral: { 0:'#FFFFFF',50:'#FAFAF9',100:'#F4F4F2',200:'#E7E7E4',300:'#D4D4D1',400:'#A3A39F' },
+          },
+          fontFamily: {
+            display: ['"Space Grotesk"','Inter','ui-sans-serif','system-ui'],
+            sans:    ['Inter','ui-sans-serif','system-ui'],
+          },
+          maxWidth: { container: '1200px' },
+          backgroundImage: {
+            'mesh-hero':
+              'radial-gradient(ellipse 80% 60% at 75% 30%, rgba(232,90,26,0.28), transparent 60%),'+
+              'radial-gradient(ellipse 60% 50% at 15% 80%, rgba(232,90,26,0.10), transparent 65%),'+
+              'linear-gradient(180deg, #0A0A0D 0%, #131317 100%)',
+            'mesh-balance':
+              'radial-gradient(ellipse 60% 80% at 85% 20%, rgba(232,90,26,0.30), transparent 60%),'+
+              'radial-gradient(ellipse 40% 60% at 10% 90%, rgba(232,90,26,0.10), transparent 70%),'+
+              'linear-gradient(135deg, #0A0A0D 0%, #131317 100%)',
+            'mesh-footer':
+              'linear-gradient(180deg, #131317 0%, #0A0A0D 100%)',
+          },
+          boxShadow: {
+            'glow-md': '0 12px 32px -8px rgba(232, 90, 26, 0.55)',
+            'glow-lg': '0 20px 48px -12px rgba(232, 90, 26, 0.65)',
+          },
+          keyframes: {
+            'fade-up': { '0%':{opacity:'0',transform:'translateY(12px)'}, '100%':{opacity:'1',transform:'translateY(0)'} },
+          },
+          animation: { 'fade-up': 'fade-up 320ms cubic-bezier(0,0,0.2,1) both' },
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* ============================================================
+       EMBEDDED TOKENS — copied from tokens.css so the file is
+       fully self-contained (no external <link rel="stylesheet">).
+       Only the subset used by this page is included.
+       ============================================================ */
+    :root {
+      /* Brand orange */
+      --color-orange-50:  #FFF3EC;
+      --color-orange-100: #FFE0CC;
+      --color-orange-200: #FFC199;
+      --color-orange-300: #FFA266;
+      --color-orange-400: #FF8033;
+      --color-orange-500: #E85A1A;
+      --color-orange-600: #C64A14;
+      --color-orange-700: #9E3A0F;
+      --color-orange-800: #762B0A;
+      --color-orange-900: #4D1C06;
+
+      /* Graphite (dark surfaces) */
+      --color-graphite-50:  #F4F4F5;
+      --color-graphite-100: #E4E4E7;
+      --color-graphite-200: #C8C8CE;
+      --color-graphite-300: #9A9AA3;
+      --color-graphite-400: #6B6B75;
+      --color-graphite-500: #3F3F46;
+      --color-graphite-600: #27272A;
+      --color-graphite-700: #1B1B1F;
+      --color-graphite-800: #131317;
+      --color-graphite-900: #0A0A0D;
+
+      /* Neutral (light surfaces) */
+      --color-neutral-0:   #FFFFFF;
+      --color-neutral-50:  #FAFAF9;
+      --color-neutral-100: #F4F4F2;
+      --color-neutral-200: #E7E7E4;
+      --color-neutral-300: #D4D4D1;
+      --color-neutral-400: #A3A39F;
+
+      /* Status (decoupled from brand) */
+      --color-success-500: #10B981;
+      --color-success-600: #059669;
+      --color-success-50:  #ECFDF5;
+      --color-warn-500:    #F59E0B;
+      --color-error-500:   #EF4444;
+      --color-info-500:    #3B82F6;
+      --color-info-50:     #EFF6FF;
+
+      /* Type stacks */
+      --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+      --font-sans:    "Inter", ui-sans-serif, system-ui, sans-serif;
+      --font-mono:    "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+      /* Type scale */
+      --fs-xs: 0.75rem; --fs-sm: 0.875rem; --fs-base: 1rem; --fs-md: 1.125rem;
+      --fs-lg: 1.25rem; --fs-xl: 1.5rem; --fs-2xl: 1.875rem; --fs-3xl: 2.25rem;
+      --fs-4xl: 3rem; --fs-5xl: 3.75rem;
+
+      /* Radii */
+      --radius-sm: 0.25rem; --radius-md: 0.5rem; --radius-lg: 0.75rem;
+      --radius-xl: 1rem; --radius-2xl: 1.5rem; --radius-full: 9999px;
+
+      /* Layout */
+      --container-max: 1200px;
+      --container-pad: clamp(1rem, 4vw, 2rem);
+
+      /* Light surface defaults */
+      --surface-page:        var(--color-neutral-50);
+      --surface-canvas:      var(--color-neutral-0);
+      --surface-raised:      var(--color-neutral-0);
+      --surface-sunken:      var(--color-neutral-100);
+
+      --content-primary:     var(--color-graphite-900);
+      --content-secondary:   var(--color-graphite-500);
+      --content-tertiary:    var(--color-graphite-400);
+      --content-on-brand:    var(--color-neutral-0);
+
+      --border-subtle:   var(--color-neutral-200);
+      --border-default:  var(--color-neutral-300);
+
+      --accent:           var(--color-orange-500);
+      --accent-hover:     var(--color-orange-600);
+      --accent-active:    var(--color-orange-700);
+
+      /* Motion */
+      --duration-fast:   150ms;
+      --duration-normal: 220ms;
+      --duration-slow:   320ms;
+      --ease-standard: cubic-bezier(0.2, 0.0, 0.0, 1.0);
+      --ease-out:      cubic-bezier(0.0, 0.0, 0.2, 1);
+
+      /* Shadows */
+      --shadow-xs: 0 1px 2px rgba(10,10,13,0.06);
+      --shadow-sm: 0 1px 3px rgba(10,10,13,0.08), 0 1px 2px rgba(10,10,13,0.04);
+      --shadow-md: 0 4px 6px -1px rgba(10,10,13,0.10), 0 2px 4px -1px rgba(10,10,13,0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(10,10,13,0.10), 0 4px 6px -2px rgba(10,10,13,0.05);
+      --shadow-glow-orange-md: 0 0 0 0 rgba(232,90,26,0.6), 0 12px 32px -8px rgba(232,90,26,0.55);
+    }
+
+    /* Dark surface opt-in (navbar, balance card, footer) */
+    .mnx-surface-dark {
+      --surface-page:      var(--color-graphite-900);
+      --surface-canvas:    var(--color-graphite-800);
+      --surface-raised:    var(--color-graphite-700);
+      --content-primary:   var(--color-neutral-50);
+      --content-secondary: var(--color-graphite-200);
+      --content-tertiary:  var(--color-graphite-300);
+      --border-subtle:     rgba(255,255,255,0.08);
+      --border-default:    rgba(255,255,255,0.14);
+    }
+
+    /* Light surface opt-in (dashboard shell) */
+    .mnx-surface-light {
+      --surface-page:      var(--color-neutral-50);
+      --surface-canvas:    var(--color-neutral-0);
+      --content-primary:   var(--color-graphite-900);
+      --content-secondary: var(--color-graphite-500);
+      --content-tertiary:  var(--color-graphite-400);
+      --border-subtle:     var(--color-neutral-200);
+      --border-default:    var(--color-neutral-300);
+    }
+
+    /* ============================================================
+       BASE
+       ============================================================ */
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      color: var(--content-primary);
+      background: var(--surface-page);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* ============================================================
+       SHARED ATOMS — copied verbatim from home-redesign.html /
+       login-redesign.html so the dashboard inherits the same vocabulary.
+       ============================================================ */
+    .font-display { font-family: var(--font-display); }
+
+    .display-headline {
+      font-family: var(--font-display);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+    }
+
+    /* Logo lockup — same as home/login navbar */
+    .mnx-mark { display: inline-flex; align-items: center; gap: 0.5rem; }
+    .mnx-mark__square {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 2.25rem; height: 2.25rem;
+      background: var(--color-orange-500);
+      border-radius: 0.25rem;
+      font-family: var(--font-display);
+      font-weight: 700; font-size: 1rem; color: #fff;
+      letter-spacing: -0.02em;
+      box-shadow: 0 4px 16px -4px rgba(232,90,26,0.55);
+    }
+    .mnx-mark__word {
+      font-family: var(--font-display);
+      font-weight: 600; font-size: 1.125rem;
+      letter-spacing: -0.02em;
+    }
+    /* Smaller mark for the condensed footer */
+    .mnx-mark--sm .mnx-mark__square { width: 1.75rem; height: 1.75rem; font-size: 0.825rem; }
+    .mnx-mark--sm .mnx-mark__word { font-size: 0.95rem; }
+
+    /* Primary CTA glow — used for "Solicitar saque" button */
+    .cta-primary { position: relative; isolation: isolate; }
+    .cta-primary::after {
+      content: '';
+      position: absolute; inset: -2px;
+      border-radius: inherit;
+      background: radial-gradient(60% 80% at 50% 100%, rgba(232,90,26,0.6), transparent 70%);
+      filter: blur(14px);
+      z-index: -1;
+      opacity: 0.85;
+      transition: opacity var(--duration-normal) var(--ease-standard);
+    }
+    .cta-primary:hover::after { opacity: 1; }
+
+    /* Focus ring (visible, brand-tinted, AA contrast) */
+    :focus-visible {
+      outline: 3px solid var(--color-orange-500);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .animate-fade-up,
+      .cta-primary::after { animation: none !important; transition: none !important; }
+      html { scroll-behavior: auto; }
+    }
+
+    /* ============================================================
+       DASHBOARD-SPECIFIC ATOMS
+       ============================================================ */
+
+    /* Tabular numerics for KPIs / balance / table amounts */
+    .num {
+      font-family: var(--font-display);
+      font-feature-settings: 'tnum' 1, 'lnum' 1;
+      font-variant-numeric: tabular-nums lining-nums;
+      letter-spacing: -0.02em;
+    }
+
+    /* Eyebrow label (above page title) */
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-family: var(--font-sans);
+      font-size: var(--fs-xs);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-orange-700);
+    }
+    .eyebrow::before {
+      content: '';
+      width: 1.25rem; height: 1px;
+      background: var(--color-orange-500);
+    }
+
+    /* Stat card icon chip — 3 color variants matching CountPart.tsx */
+    .stat-chip {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 2.75rem; height: 2.75rem;
+      border-radius: var(--radius-lg);
+      flex-shrink: 0;
+    }
+    .stat-chip--orange { background: var(--color-orange-50);  color: var(--color-orange-700);  }
+    .stat-chip--blue   { background: var(--color-info-50);    color: #1D4ED8;                  }
+    .stat-chip--green  { background: var(--color-success-50); color: var(--color-success-600); }
+
+    /* Trend pill (e.g. +12% vs mês anterior) */
+    .trend-pill {
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      padding: 0.125rem 0.5rem;
+      border-radius: var(--radius-full);
+      font-size: var(--fs-xs);
+      font-weight: 600;
+    }
+    .trend-pill--up   { background: var(--color-success-50); color: var(--color-success-600); }
+    .trend-pill--down { background: #FEF2F2;                color: #B91C1C; }
+    .trend-pill--flat { background: var(--color-graphite-50); color: var(--color-graphite-500); }
+
+    /* Status pill (statement table — green dollar) */
+    .status-pill {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 2rem; height: 2rem;
+      border-radius: var(--radius-full);
+      background: var(--color-success-50);
+      color: var(--color-success-600);
+    }
+
+    /* Subtle grid texture for the dark balance card — same recipe as hero */
+    .balance-grid {
+      background-image:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent 75%);
+    }
+
+    /* Tab bar — flat with bottom border, active tab gets orange underline */
+    .tab-bar {
+      display: flex; align-items: center; gap: 0.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .tab {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      height: 3rem;
+      padding: 0 1rem;
+      font-size: var(--fs-sm);
+      font-weight: 600;
+      color: var(--color-graphite-500);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;          /* sit on top of the bar's bottom border */
+      transition: color var(--duration-fast) var(--ease-standard),
+                  border-color var(--duration-fast) var(--ease-standard);
+    }
+    .tab:hover { color: var(--color-graphite-900); }
+    .tab[aria-selected="true"] {
+      color: var(--color-graphite-900);
+      border-bottom-color: var(--color-orange-500);
+    }
+    .tab[aria-disabled="true"] {
+      color: var(--color-graphite-300);
+      cursor: not-allowed;
+    }
+    .tab[aria-disabled="true"]:hover { color: var(--color-graphite-300); }
+
+    /* Filter chip — search & date range above the table */
+    .filter-input {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      height: 2.5rem;
+      padding: 0 0.75rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+      background: var(--color-neutral-0);
+      color: var(--color-graphite-700);
+      font-size: var(--fs-sm);
+      transition: border-color var(--duration-fast) var(--ease-standard),
+                  box-shadow var(--duration-fast) var(--ease-standard);
+    }
+    .filter-input:hover { border-color: var(--color-graphite-400); }
+    .filter-input:focus-within,
+    .filter-input:focus {
+      outline: none;
+      border-color: var(--color-orange-500);
+      box-shadow: 0 0 0 3px rgba(232,90,26,0.18);
+    }
+    .filter-input input {
+      flex: 1; min-width: 0;
+      border: none; outline: none; background: transparent;
+      color: inherit; font: inherit;
+    }
+    .filter-input input::placeholder { color: var(--color-graphite-400); }
+
+    .filter-chip {
+      display: inline-flex; align-items: center; gap: 0.375rem;
+      height: 2.5rem;
+      padding: 0 0.75rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+      background: var(--color-neutral-0);
+      color: var(--color-graphite-700);
+      font-size: var(--fs-sm);
+      font-weight: 500;
+      transition: border-color var(--duration-fast) var(--ease-standard),
+                  background-color var(--duration-fast) var(--ease-standard);
+    }
+    .filter-chip:hover {
+      border-color: var(--color-graphite-900);
+      background: var(--color-neutral-100);
+    }
+    .filter-chip--active {
+      border-color: var(--color-orange-500);
+      background: var(--color-orange-50);
+      color: var(--color-orange-700);
+    }
+
+    /* Statement table */
+    .stmt-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: var(--fs-sm);
+    }
+    .stmt-table thead th {
+      text-align: left;
+      font-size: var(--fs-xs);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--color-graphite-400);
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--color-neutral-50);
+      white-space: nowrap;
+    }
+    .stmt-table thead th.num-col { text-align: right; }
+    .stmt-table tbody tr { transition: background-color var(--duration-fast) var(--ease-standard); }
+    .stmt-table tbody tr:hover { background: var(--color-neutral-50); }
+    .stmt-table tbody td {
+      padding: 0.875rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--color-graphite-700);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    .stmt-table tbody tr:last-child td { border-bottom: 0; }
+    .stmt-table td.num-col {
+      text-align: right;
+      color: var(--color-graphite-900);
+      font-weight: 600;
+      font-feature-settings: 'tnum' 1, 'lnum' 1;
+      font-variant-numeric: tabular-nums lining-nums;
+    }
+    .stmt-table td .product {
+      display: block;
+      font-weight: 600;
+      color: var(--color-graphite-900);
+    }
+    .stmt-table td .person {
+      display: block;
+      font-weight: 500;
+      color: var(--color-graphite-900);
+    }
+    .stmt-table td .meta {
+      display: block;
+      font-size: var(--fs-xs);
+      color: var(--color-graphite-400);
+      margin-top: 0.125rem;
+    }
+
+    /* Pagination */
+    .pager {
+      display: inline-flex; align-items: center; gap: 0.25rem;
+    }
+    .pager button {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 2.5rem; height: 2.5rem;
+      padding: 0 0.5rem;
+      border-radius: var(--radius-md);
+      font-size: var(--fs-sm);
+      font-weight: 600;
+      color: var(--color-graphite-700);
+      background: transparent;
+      border: 1px solid transparent;
+      transition: background-color var(--duration-fast) var(--ease-standard),
+                  color var(--duration-fast) var(--ease-standard);
+    }
+    .pager button:hover:not(:disabled):not([aria-current="page"]) {
+      background: var(--color-neutral-100);
+    }
+    .pager button[aria-current="page"] {
+      background: var(--color-orange-500);
+      color: #fff;
+      box-shadow: 0 4px 12px -4px rgba(232,90,26,0.55);
+    }
+    .pager button:disabled {
+      color: var(--color-graphite-300);
+      cursor: not-allowed;
+    }
+
+    /* Sparkline (svg) coloring */
+    .spark-fill { fill: rgba(232,90,26,0.18); }
+    .spark-stroke { stroke: var(--color-orange-500); stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* sr-only utility (Tailwind has it, but keep for safety) */
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+  </style>
+</head>
+
+<body class="bg-neutral-50">
+
+<!-- ============================================================
+     1. HEADER / NAVBAR (DARK)
+     Verbatim copy from login-redesign.html / home-redesign.html.
+     The "Painel" link is added to the nav with active state; the
+     "Seja representante" CTA stays orange.
+     ============================================================ -->
+<header class="mnx-surface-dark sticky top-0 z-50 border-b border-white/5 backdrop-blur-md"
+        style="background: rgba(10,10,13,0.85);">
+  <nav class="max-w-container mx-auto px-shell flex items-center justify-between h-16 lg:h-20"
+       aria-label="Primary">
+    <a href="#" class="mnx-mark" aria-label="MonexUp — Home">
+      <span class="mnx-mark__square" aria-hidden="true">M<span class="text-graphite-900">.</span></span>
+      <span class="mnx-mark__word text-neutral-50">
+        monex<span class="bg-orange-500 text-white px-1.5 rounded-sm ml-0.5">up</span>
+      </span>
+    </a>
+
+    <ul class="hidden lg:flex items-center gap-8 text-sm font-medium text-graphite-200">
+      <li><a href="#" class="hover:text-white transition-colors duration-150">Home</a></li>
+      <li><a href="#" class="hover:text-white transition-colors duration-150">Redes</a></li>
+      <li><a href="#" class="hover:text-white transition-colors duration-150">Planos</a></li>
+      <li><a href="#" class="hover:text-white transition-colors duration-150">Sobre</a></li>
+      <li>
+        <a href="#" aria-current="page"
+           class="text-white relative after:content-[''] after:absolute after:left-0 after:-bottom-1.5 after:h-0.5 after:w-full after:bg-orange-500">
+          Painel
+        </a>
+      </li>
+    </ul>
+
+    <div class="flex items-center gap-3">
+      <a href="#" class="hidden sm:inline-flex h-10 items-center px-4 rounded-md text-sm font-medium text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-150">
+        Crie sua rede
+      </a>
+      <a href="#" class="hidden sm:inline-flex h-10 items-center px-4 rounded-md text-sm font-medium text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-150">
+        Entrar
+      </a>
+      <a href="#"
+         class="cta-primary inline-flex h-10 items-center px-5 rounded-md text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-150 shadow-glow-md">
+        Seja um representante
+      </a>
+
+      <button class="lg:hidden inline-flex w-10 h-10 items-center justify-center rounded-md text-graphite-100 hover:bg-white/5"
+              aria-label="Abrir menu" aria-expanded="false">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6"  x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+
+<!-- ============================================================
+     2. PAGE SHELL (LIGHT)
+     The dashboard surface. Light bg-neutral-50, container width,
+     generous vertical padding. Contains: page header, KPIs, balance,
+     tabs, statement table, pagination.
+     ============================================================ -->
+<main role="main" id="dashboard-main"
+      class="mnx-surface-light bg-neutral-50">
+
+  <div class="max-w-container mx-auto px-shell pt-10 pb-16">
+
+    <!-- ========================================================
+         2a. PAGE HEADER BAND
+         ======================================================== -->
+    <section class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10 animate-fade-up"
+             aria-labelledby="page-title">
+      <div>
+        <span class="eyebrow">Painel</span>
+        <h1 id="page-title" class="display-headline mt-3 text-graphite-900 text-4xl sm:text-5xl">
+          Bom dia, Rodrigo.
+        </h1>
+        <p class="mt-3 text-graphite-500 text-base sm:text-md max-w-xl leading-relaxed">
+          Quinta-feira, 1 de maio de 2026
+          <span aria-hidden="true" class="px-2 text-graphite-300">·</span>
+          <span class="font-medium text-graphite-700">Gerente de rede</span>
+          <span aria-hidden="true" class="px-2 text-graphite-300">·</span>
+          Rede Alpha
+        </p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <!-- Filter icon button -->
+        <button type="button"
+                class="inline-flex w-10 h-10 items-center justify-center rounded-md border border-neutral-300 text-graphite-700 hover:border-graphite-900 hover:bg-neutral-100 transition-colors duration-150"
+                aria-label="Filtrar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
+          </svg>
+        </button>
+        <!-- Export icon button -->
+        <button type="button"
+                class="inline-flex w-10 h-10 items-center justify-center rounded-md border border-neutral-300 text-graphite-700 hover:border-graphite-900 hover:bg-neutral-100 transition-colors duration-150"
+                aria-label="Exportar relatório">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </button>
+        <!-- "Sacar saldo" outline button -->
+        <a href="#"
+           class="inline-flex h-10 items-center px-4 rounded-md text-sm font-semibold text-graphite-900 border border-graphite-900 hover:bg-graphite-900 hover:text-white transition-colors duration-150">
+          Sacar saldo
+        </a>
+      </div>
+    </section>
+
+
+    <!-- ========================================================
+         2b. KPI ROW + BALANCE CARD
+         8/4 layout on lg (KPIs span 8 cols, balance 4 cols).
+         Stacks on mobile.
+         ======================================================== -->
+    <section class="grid lg:grid-cols-12 gap-5 mb-10" aria-label="Resumo do mês">
+
+      <!-- KPI grid (3 cards on lg:col-span-8) -->
+      <div class="lg:col-span-8 grid sm:grid-cols-3 gap-5">
+
+        <!-- KPI 1 — Vendas (orange / faBox) -->
+        <article class="bg-white rounded-2xl border border-graphite-100 shadow-sm p-5 hover:shadow-md transition-shadow duration-200"
+                 aria-labelledby="kpi-sales">
+          <div class="flex items-start justify-between">
+            <span class="stat-chip stat-chip--orange" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                <line x1="12" y1="22.08" x2="12" y2="12"/>
+              </svg>
+            </span>
+            <span class="trend-pill trend-pill--up" aria-label="Aumento de 12% comparado ao mês anterior">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">
+                <polyline points="18 15 12 9 6 15"/>
+              </svg>
+              +12%
+            </span>
+          </div>
+          <p id="kpi-sales" class="num text-graphite-900 text-4xl mt-5">7</p>
+          <p class="mt-2 text-xs uppercase tracking-wider font-semibold text-graphite-400">Vendas realizadas</p>
+          <p class="mt-1 text-xs text-graphite-500">vs. mês anterior</p>
+        </article>
+
+        <!-- KPI 2 — Clientes (blue / faUser) -->
+        <article class="bg-white rounded-2xl border border-graphite-100 shadow-sm p-5 hover:shadow-md transition-shadow duration-200"
+                 aria-labelledby="kpi-customers">
+          <div class="flex items-start justify-between">
+            <span class="stat-chip stat-chip--blue" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </span>
+            <span class="trend-pill trend-pill--up" aria-label="Aumento de 8% comparado ao mês anterior">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">
+                <polyline points="18 15 12 9 6 15"/>
+              </svg>
+              +8%
+            </span>
+          </div>
+          <p id="kpi-customers" class="num text-graphite-900 text-4xl mt-5">6</p>
+          <p class="mt-2 text-xs uppercase tracking-wider font-semibold text-graphite-400">Clientes adicionados</p>
+          <p class="mt-1 text-xs text-graphite-500">novos no período</p>
+        </article>
+
+        <!-- KPI 3 — Faturas pagas (green / faDollar) -->
+        <article class="bg-white rounded-2xl border border-graphite-100 shadow-sm p-5 hover:shadow-md transition-shadow duration-200"
+                 aria-labelledby="kpi-invoices">
+          <div class="flex items-start justify-between">
+            <span class="stat-chip stat-chip--green" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="1" x2="12" y2="23"/>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+            </span>
+            <span class="trend-pill trend-pill--up" aria-label="Aumento de 22% comparado ao mês anterior">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">
+                <polyline points="18 15 12 9 6 15"/>
+              </svg>
+              +22%
+            </span>
+          </div>
+          <p id="kpi-invoices" class="num text-graphite-900 text-4xl mt-5">15</p>
+          <p class="mt-2 text-xs uppercase tracking-wider font-semibold text-graphite-400">Faturas pagas</p>
+          <p class="mt-1 text-xs text-graphite-500">conciliadas no PIX</p>
+        </article>
+
+      </div>
+
+
+      <!-- Balance card (dark, lg:col-span-4) -->
+      <article class="mnx-surface-dark relative lg:col-span-4 rounded-2xl overflow-hidden bg-mesh-balance p-6 sm:p-7 text-neutral-50"
+               aria-labelledby="balance-label">
+        <div class="balance-grid absolute inset-0 pointer-events-none" aria-hidden="true"></div>
+
+        <div class="relative">
+          <div class="flex items-start justify-between">
+            <p id="balance-label" class="text-xs uppercase tracking-wider font-semibold text-graphite-300">
+              Saldo atual
+            </p>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[0.65rem] font-semibold uppercase tracking-wider bg-orange-500/15 text-orange-300 border border-orange-500/30"
+                  aria-label="Atualizado há instantes">
+              · Ao vivo
+            </span>
+          </div>
+
+          <p class="num mt-3 flex items-baseline gap-1.5">
+            <span class="text-base text-graphite-300">R$</span>
+            <span class="text-4xl sm:text-5xl font-bold text-neutral-50">18.420<span class="text-graphite-300">,00</span></span>
+          </p>
+
+          <div class="mt-3 pt-3 border-t border-white/10">
+            <p class="text-xs text-graphite-300">Liberado para saque</p>
+            <p class="num mt-1 text-graphite-100">
+              <span class="text-xs text-graphite-300">R$</span>
+              <span class="text-lg font-semibold">4.250,00</span>
+            </p>
+          </div>
+
+          <!-- Sparkline -->
+          <div class="mt-5" aria-hidden="true">
+            <svg viewBox="0 0 200 50" width="100%" height="44" preserveAspectRatio="none">
+              <path class="spark-fill"
+                    d="M0,38 L18,32 L36,34 L54,28 L72,30 L90,22 L108,25 L126,18 L144,14 L162,16 L180,9 L200,11 L200,50 L0,50 Z"/>
+              <path class="spark-stroke"
+                    d="M0,38 L18,32 L36,34 L54,28 L72,30 L90,22 L108,25 L126,18 L144,14 L162,16 L180,9 L200,11"/>
+            </svg>
+            <p class="mt-2 text-xs text-graphite-300">
+              <span class="text-orange-300 font-semibold">+24%</span> nos últimos 30 dias
+            </p>
+          </div>
+
+          <!-- Primary CTA — Solicitar saque -->
+          <a href="#"
+             class="cta-primary mt-6 inline-flex w-full h-12 items-center justify-center px-5 rounded-md text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-200 shadow-glow-md">
+            Solicitar saque
+            <svg class="w-4 h-4 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+    </section>
+
+
+    <!-- ========================================================
+         2c. TABS + STATEMENT TABLE CARD
+         ======================================================== -->
+    <section aria-labelledby="ledger-heading">
+      <h2 id="ledger-heading" class="sr-only">Movimentações</h2>
+
+      <!-- Tab bar -->
+      <div class="tab-bar mb-5" role="tablist" aria-label="Tipo de movimentação">
+        <button type="button" class="tab" role="tab" aria-selected="true" aria-controls="panel-statement" id="tab-statement">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="12" y1="1" x2="12" y2="23"/>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+          Extrato
+        </button>
+        <button type="button" class="tab" role="tab" aria-selected="false" aria-disabled="true" aria-controls="panel-orders" id="tab-orders">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          Pedidos
+          <span class="ml-1 text-[0.65rem] uppercase tracking-wider font-semibold text-graphite-300">em breve</span>
+        </button>
+      </div>
+
+      <!-- Statement panel (card) -->
+      <div id="panel-statement" role="tabpanel" aria-labelledby="tab-statement"
+           class="bg-white rounded-2xl border border-graphite-100 shadow-sm overflow-hidden">
+
+        <!-- Filter bar -->
+        <div class="flex flex-col md:flex-row md:items-center gap-3 p-5 border-b border-neutral-200">
+          <!-- Search -->
+          <label class="filter-input flex-1 max-w-md" aria-label="Buscar no extrato">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-graphite-400" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="search" placeholder="Buscar por produto, comprador, vendedor…" />
+          </label>
+
+          <div class="flex items-center gap-2 flex-wrap">
+            <!-- Date range chip -->
+            <button type="button" class="filter-chip" aria-label="Filtrar por intervalo de datas">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              Abr 1 — Mai 1
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+
+            <!-- Status chip -->
+            <button type="button" class="filter-chip filter-chip--active" aria-label="Filtrar por status: pago" aria-pressed="true">
+              <span class="w-1.5 h-1.5 rounded-full bg-success-500" style="background:#10B981" aria-hidden="true"></span>
+              Pagos
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+
+            <!-- Network chip -->
+            <button type="button" class="filter-chip" aria-label="Filtrar por rede">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+              </svg>
+              Todas as redes
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+          <table class="stmt-table">
+            <caption class="sr-only">Extrato de pagamentos da rede no período selecionado.</caption>
+            <thead>
+              <tr>
+                <th scope="col" aria-label="Status">·</th>
+                <th scope="col">Data de pagamento</th>
+                <th scope="col">Rede</th>
+                <th scope="col">Produto</th>
+                <th scope="col">Comprador</th>
+                <th scope="col">Vendedor</th>
+                <th scope="col" class="num-col">Valor</th>
+                <th scope="col">Pago em</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <span class="status-pill" aria-label="Pago">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <line x1="12" y1="1" x2="12" y2="23"/>
+                      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                  </span>
+                </td>
+                <td>28/04/2026</td>
+                <td>Rede Alpha</td>
+                <td>
+                  <span class="product">Doação Mensal · Plano Ouro</span>
+                  <span class="meta">Recorrência #4521</span>
+                </td>
+                <td>
+                  <span class="person">Marina Reis</span>
+                  <span class="meta">marina@…</span>
+                </td>
+                <td>
+                  <span class="person">Carlos Brito</span>
+                  <span class="meta">Líder · N1</span>
+                </td>
+                <td class="num-col">R$ 480,00</td>
+                <td>28/04 14:32</td>
+              </tr>
+
+              <tr>
+                <td><span class="status-pill" aria-label="Pago"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span></td>
+                <td>27/04/2026</td>
+                <td>Rede Phoenix</td>
+                <td>
+                  <span class="product">Assinatura Pro · Anual</span>
+                  <span class="meta">Plano #PRX-228</span>
+                </td>
+                <td>
+                  <span class="person">Lucas Andrade</span>
+                  <span class="meta">lucas.a@…</span>
+                </td>
+                <td>
+                  <span class="person">João Pereira</span>
+                  <span class="meta">Líder · N2</span>
+                </td>
+                <td class="num-col">R$ 1.068,00</td>
+                <td>27/04 09:14</td>
+              </tr>
+
+              <tr>
+                <td><span class="status-pill" aria-label="Pago"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span></td>
+                <td>25/04/2026</td>
+                <td>Rede Alpha</td>
+                <td>
+                  <span class="product">Doação única · Campanha Maio</span>
+                  <span class="meta">Pedido #8823</span>
+                </td>
+                <td>
+                  <span class="person">Ana Vasquez</span>
+                  <span class="meta">ana.v@…</span>
+                </td>
+                <td>
+                  <span class="person">Marina Reis</span>
+                  <span class="meta">Top seller · N1</span>
+                </td>
+                <td class="num-col">R$ 250,00</td>
+                <td>25/04 18:47</td>
+              </tr>
+
+              <tr>
+                <td><span class="status-pill" aria-label="Pago"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span></td>
+                <td>22/04/2026</td>
+                <td>Rede Solaris</td>
+                <td>
+                  <span class="product">Kit Iniciante · Plano Bronze</span>
+                  <span class="meta">Pedido #8810</span>
+                </td>
+                <td>
+                  <span class="person">Pedro Lima</span>
+                  <span class="meta">pedro.l@…</span>
+                </td>
+                <td>
+                  <span class="person">Laura Souza</span>
+                  <span class="meta">Vendedora · N2</span>
+                </td>
+                <td class="num-col">R$ 149,90</td>
+                <td>22/04 11:02</td>
+              </tr>
+
+              <tr>
+                <td><span class="status-pill" aria-label="Pago"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span></td>
+                <td>20/04/2026</td>
+                <td>Rede Phoenix</td>
+                <td>
+                  <span class="product">Assinatura Pro · Mensal</span>
+                  <span class="meta">Recorrência #4502</span>
+                </td>
+                <td>
+                  <span class="person">Beatriz Costa</span>
+                  <span class="meta">bia.c@…</span>
+                </td>
+                <td>
+                  <span class="person">Carlos Brito</span>
+                  <span class="meta">Líder · N1</span>
+                </td>
+                <td class="num-col">R$ 89,00</td>
+                <td>20/04 06:30</td>
+              </tr>
+
+              <tr>
+                <td><span class="status-pill" aria-label="Pago"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span></td>
+                <td>18/04/2026</td>
+                <td>Rede Alpha</td>
+                <td>
+                  <span class="product">Doação Mensal · Plano Prata</span>
+                  <span class="meta">Recorrência #4498</span>
+                </td>
+                <td>
+                  <span class="person">Roberto Dias</span>
+                  <span class="meta">rdias@…</span>
+                </td>
+                <td>
+                  <span class="person">Marina Reis</span>
+                  <span class="meta">Top seller · N1</span>
+                </td>
+                <td class="num-col">R$ 220,00</td>
+                <td>18/04 21:08</td>
+              </tr>
+
+              <tr>
+                <td><span class="status-pill" aria-label="Pago"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span></td>
+                <td>15/04/2026</td>
+                <td>Rede Nova</td>
+                <td>
+                  <span class="product">Kit Premium · Plano Diamante</span>
+                  <span class="meta">Pedido #8788</span>
+                </td>
+                <td>
+                  <span class="person">Sofia Mendes</span>
+                  <span class="meta">sofia.m@…</span>
+                </td>
+                <td>
+                  <span class="person">João Pereira</span>
+                  <span class="meta">Líder · N1</span>
+                </td>
+                <td class="num-col">R$ 1.480,00</td>
+                <td>15/04 16:55</td>
+              </tr>
+
+              <tr>
+                <td><span class="status-pill" aria-label="Pago"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span></td>
+                <td>12/04/2026</td>
+                <td>Rede Solaris</td>
+                <td>
+                  <span class="product">Doação única · Campanha Abril</span>
+                  <span class="meta">Pedido #8754</span>
+                </td>
+                <td>
+                  <span class="person">Felipe Rocha</span>
+                  <span class="meta">felipe.r@…</span>
+                </td>
+                <td>
+                  <span class="person">Laura Souza</span>
+                  <span class="meta">Vendedora · N2</span>
+                </td>
+                <td class="num-col">R$ 75,00</td>
+                <td>12/04 13:21</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-5 border-t border-neutral-200">
+          <p class="text-xs text-graphite-500">
+            Mostrando <span class="font-semibold text-graphite-900">1–8</span> de
+            <span class="font-semibold text-graphite-900">42</span> lançamentos
+          </p>
+
+          <nav class="pager" aria-label="Paginação do extrato">
+            <button type="button" disabled aria-label="Página anterior">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="15 18 9 12 15 6"/>
+              </svg>
+            </button>
+            <button type="button" aria-current="page" aria-label="Página 1">1</button>
+            <button type="button" aria-label="Página 2">2</button>
+            <button type="button" aria-label="Página 3">3</button>
+            <button type="button" aria-label="Página 4">4</button>
+            <span class="px-2 text-graphite-300" aria-hidden="true">…</span>
+            <button type="button" aria-label="Página 6">6</button>
+            <button type="button" aria-label="Próxima página">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </button>
+          </nav>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+
+<!-- ============================================================
+     3. CONDENSED FOOTER (DARK)
+     Single horizontal strip — distinct from the multi-column home footer.
+     Wordmark left · copyright center · social icons right.
+     ============================================================ -->
+<footer role="contentinfo" class="mnx-surface-dark bg-mesh-footer text-graphite-300 border-t border-white/5">
+  <div class="max-w-container mx-auto px-shell py-6">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+
+      <!-- Left: small wordmark -->
+      <a href="#" class="mnx-mark mnx-mark--sm" aria-label="MonexUp — Home">
+        <span class="mnx-mark__square" aria-hidden="true">M<span class="text-graphite-900">.</span></span>
+        <span class="mnx-mark__word text-neutral-50">
+          monex<span class="bg-orange-500 text-white px-1 rounded-sm ml-0.5">up</span>
+        </span>
+      </a>
+
+      <!-- Center: copyright -->
+      <p class="text-center sm:text-left">
+        © 2026 MonexUp · Todos os direitos reservados
+      </p>
+
+      <!-- Right: social icons -->
+      <ul class="flex items-center gap-2" aria-label="Redes sociais">
+        <li>
+          <a href="#" aria-label="Facebook" class="inline-flex w-8 h-8 items-center justify-center rounded-md text-graphite-300 hover:text-orange-400 hover:bg-white/5 transition-colors duration-150">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+            </svg>
+          </a>
+        </li>
+        <li>
+          <a href="#" aria-label="Twitter" class="inline-flex w-8 h-8 items-center justify-center rounded-md text-graphite-300 hover:text-orange-400 hover:bg-white/5 transition-colors duration-150">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
+            </svg>
+          </a>
+        </li>
+        <li>
+          <a href="#" aria-label="Instagram" class="inline-flex w-8 h-8 items-center justify-center rounded-md text-graphite-300 hover:text-orange-400 hover:bg-white/5 transition-colors duration-150">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+          </a>
+        </li>
+        <li>
+          <a href="#" aria-label="LinkedIn" class="inline-flex w-8 h-8 items-center justify-center rounded-md text-graphite-300 hover:text-orange-400 hover:bg-white/5 transition-colors duration-150">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/>
+              <rect x="2" y="9" width="4" height="12"/>
+              <circle cx="4" cy="4" r="2"/>
+            </svg>
+          </a>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

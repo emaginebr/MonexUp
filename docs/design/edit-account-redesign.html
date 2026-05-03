@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MonexUp — Editar Conta (Redesign)</title>
+  <meta name="description" content="MonexUp — Edit Account redesign mockup. Authenticated 'my account' screen, Editorial Brutalist · Dark/Light Split. Dark hero band with breadcrumb and screen title; light card holds the UserEditForm; aside-driven account sub-navigation for context." />
+
+  <!-- Tailwind CDN (mockup only — production uses Vite + tailwind.config.snippet.js) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Space Grotesk (display) + Inter (body) — same stack as login + home -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Design Tokens (shared with home/login redesigns) -->
+  <link rel="stylesheet" href="./tokens.css" />
+
+  <!-- Tailwind CDN config — mirrors tailwind.config.snippet.js + login mockup -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            orange: {
+              50:'#FFF3EC',100:'#FFE0CC',200:'#FFC199',300:'#FFA266',400:'#FF8033',
+              500:'#E85A1A',600:'#C64A14',700:'#9E3A0F',800:'#762B0A',900:'#4D1C06',
+              DEFAULT:'#E85A1A',
+            },
+            graphite: {
+              50:'#F4F4F5',100:'#E4E4E7',200:'#C8C8CE',300:'#9A9AA3',400:'#6B6B75',
+              500:'#3F3F46',600:'#27272A',700:'#1B1B1F',800:'#131317',900:'#0A0A0D',
+            },
+            neutral: { 0:'#FFFFFF',50:'#FAFAF9',100:'#F4F4F2',200:'#E7E7E4',300:'#D4D4D1',400:'#A3A39F' },
+          },
+          fontFamily: {
+            display: ['"Space Grotesk"','Inter','ui-sans-serif','system-ui'],
+            sans:    ['Inter','ui-sans-serif','system-ui'],
+          },
+          maxWidth: { container: '1200px' },
+          backgroundImage: {
+            'mesh-account':
+              /* Softer than the login mesh — this is an authenticated dashboard band, not a sales surface.
+                 The orange glow is reduced to ~14% so the screen doesn't fight with the form below. */
+              'radial-gradient(ellipse 60% 50% at 80% 30%, rgba(232,90,26,0.18), transparent 65%),'+
+              'radial-gradient(ellipse 50% 40% at 10% 90%, rgba(232,90,26,0.08), transparent 70%),'+
+              'linear-gradient(180deg, #0A0A0D 0%, #131317 100%)',
+            'mesh-footer':
+              'linear-gradient(180deg, #131317 0%, #0A0A0D 100%)',
+          },
+          boxShadow: {
+            'glow-md': '0 12px 32px -8px rgba(232, 90, 26, 0.55)',
+            'glow-lg': '0 20px 48px -12px rgba(232, 90, 26, 0.65)',
+          },
+          keyframes: {
+            'fade-up': { '0%':{opacity:'0',transform:'translateY(12px)'}, '100%':{opacity:'1',transform:'translateY(0)'} },
+          },
+          animation: { 'fade-up': 'fade-up 320ms cubic-bezier(0,0,0.2,1) both' },
+        }
+      }
+    };
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      color: var(--content-primary);
+      background: var(--surface-page);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    .font-display { font-family: var(--font-display); }
+
+    /* ----- shared atoms re-used from home/login redesigns ----- */
+
+    .display-headline {
+      font-family: var(--font-display);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+    }
+
+    .mnx-mark { display: inline-flex; align-items: center; gap: 0.5rem; }
+    .mnx-mark__square {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 2.25rem; height: 2.25rem;
+      background: var(--color-orange-500);
+      border-radius: 0.25rem;
+      font-family: var(--font-display);
+      font-weight: 700; font-size: 1rem; color: #fff;
+      letter-spacing: -0.02em;
+      box-shadow: 0 4px 16px -4px rgba(232,90,26,0.55);
+    }
+    .mnx-mark__word {
+      font-family: var(--font-display);
+      font-weight: 600; font-size: 1.125rem;
+      letter-spacing: -0.02em;
+    }
+
+    .cta-primary { position: relative; isolation: isolate; }
+    .cta-primary::after {
+      content: '';
+      position: absolute; inset: -2px;
+      border-radius: inherit;
+      background: radial-gradient(60% 80% at 50% 100%, rgba(232,90,26,0.6), transparent 70%);
+      filter: blur(14px);
+      z-index: -1;
+      opacity: 0.85;
+      transition: opacity 220ms cubic-bezier(0.2,0,0,1);
+    }
+    .cta-primary:hover::after { opacity: 1; }
+
+    :focus-visible {
+      outline: 3px solid var(--color-orange-500);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .animate-fade-up,
+      .cta-primary::after { animation: none !important; transition: none !important; }
+      html { scroll-behavior: auto; }
+    }
+
+    /* Subtle dotted/grid texture for the dark hero band — same brutalist artifact as the home hero */
+    .account-grid {
+      background-image:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse 70% 55% at 50% 30%, black, transparent 80%);
+    }
+
+    /* ----- EDIT-ACCOUNT-specific atoms ----- */
+
+    /*
+      The page is built on a LIGHT body (the form lives on white cards) but
+      starts with a SHORT dark hero band that carries breadcrumbs + screen
+      title + summary. This anchors the screen visually to the brand without
+      paying the readability cost of placing form inputs on a dark surface.
+    */
+    .account-hero {
+      /* Just enough vertical room for breadcrumbs + title + meta — not a marketing surface. */
+      padding-top: 2.5rem;
+      padding-bottom: 7rem; /* extra so the form card overlaps with -mt-20 on the section below */
+    }
+
+    /*
+      Account sidebar — a small list of sub-pages: "Dados pessoais", "Segurança",
+      "Notificações", "Pagamentos". Active item gets the orange accent + a left
+      bar treatment that echoes the brand square in the navbar. Keyboard focus
+      uses the global :focus-visible ring (no override needed).
+    */
+    .account-nav__item {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--color-graphite-700);
+      border-left: 3px solid transparent;
+      background: transparent;
+      transition: background-color var(--duration-fast) var(--ease-standard),
+                  color var(--duration-fast) var(--ease-standard),
+                  border-color var(--duration-fast) var(--ease-standard);
+    }
+    .account-nav__item:hover {
+      background: var(--color-neutral-100);
+      color: var(--color-graphite-900);
+    }
+    .account-nav__item--active {
+      background: var(--color-orange-50);
+      color: var(--color-orange-700);
+      border-left-color: var(--color-orange-500);
+    }
+    .account-nav__item--active:hover {
+      background: var(--color-orange-100);
+      color: var(--color-orange-700);
+    }
+    .account-nav__icon { width: 1.125rem; height: 1.125rem; flex-shrink: 0; }
+
+    /*
+      Form card — the surface on which UserEditForm renders. Locked to LIGHT
+      surface intent regardless of any parent dark wrapper, because form
+      controls need 4.5:1 contrast and sit best on neutral-0.
+    */
+    .form-card {
+      background: var(--color-neutral-0);
+      border: 1px solid var(--color-neutral-200);
+      border-radius: var(--radius-2xl);
+      box-shadow:
+        0 24px 48px -16px rgba(0, 0, 0, 0.18),
+        0 8px 16px -8px rgba(0, 0, 0, 0.10);
+    }
+
+    /*
+      Form section delimiter — Editorial Brutalist visual cue: a thin orange
+      tick mark + uppercase eyebrow above each subsection inside the card.
+    */
+    .form-section-eyebrow {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-family: var(--font-display);
+      font-size: var(--fs-xs);
+      font-weight: var(--fw-bold);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-orange-700);
+    }
+    .form-section-eyebrow::before {
+      content: '';
+      width: 1.5rem; height: 2px;
+      background: var(--color-orange-500);
+      flex-shrink: 0;
+    }
+
+    /*
+      UserEditForm wrapper preview — `nauth-react` UserEditForm only exposes
+      `className`, NOT the granular `styles.input/.button` slots that
+      LoginForm has. So the page CANNOT recolor the package's internals via
+      props alone; we instead scope a small CSS reset under `.user-edit-form`
+      that targets the package's structural elements (input, label, button)
+      and aligns them to our tokens. This is documented in component-spec.md
+      as a known integration constraint.
+
+      The selectors below are MOCK-ONLY previews of the visual outcome; they
+      describe the contract, not the actual component DOM. The frontend agent
+      should verify the rendered DOM and adapt selectors at integration time.
+    */
+    .form-preview .field-label {
+      display: block;
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--color-graphite-700);
+      margin-bottom: 0.375rem;
+    }
+    .form-preview .field-hint {
+      font-size: var(--fs-xs);
+      color: var(--color-graphite-400);
+      margin-top: 0.375rem;
+    }
+    .form-preview .field-error {
+      display: flex; align-items: center; gap: 0.375rem;
+      font-size: var(--fs-xs);
+      color: var(--color-error-500);
+      margin-top: 0.375rem;
+    }
+    .form-preview .field-input,
+    .form-preview .field-select,
+    .form-preview .field-textarea {
+      display: block;
+      width: 100%;
+      height: 3rem;
+      padding: 0 0.875rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-neutral-300);
+      background: var(--color-neutral-0);
+      color: var(--color-graphite-900);
+      font-size: var(--fs-base);
+      transition: border-color var(--duration-fast) var(--ease-standard),
+                  box-shadow   var(--duration-fast) var(--ease-standard);
+    }
+    .form-preview .field-textarea { height: auto; padding: 0.75rem 0.875rem; min-height: 6rem; }
+    .form-preview .field-input::placeholder,
+    .form-preview .field-textarea::placeholder { color: var(--color-graphite-400); }
+    .form-preview .field-input:hover,
+    .form-preview .field-select:hover,
+    .form-preview .field-textarea:hover { border-color: var(--color-graphite-400); }
+    .form-preview .field-input:focus,
+    .form-preview .field-select:focus,
+    .form-preview .field-textarea:focus {
+      border-color: var(--color-orange-500);
+      box-shadow: 0 0 0 3px rgba(232, 90, 26, 0.18);
+      outline: none;
+    }
+    .form-preview .field-input--error {
+      border-color: var(--color-error-500);
+    }
+    .form-preview .field-input--error:focus {
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18);
+    }
+    .form-preview .field-input[disabled] {
+      background: var(--color-neutral-100);
+      color: var(--color-graphite-400);
+      cursor: not-allowed;
+    }
+
+    /* Primary submit — same vocabulary as the login auth-card submit */
+    .btn-save {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      height: 3rem;
+      padding: 0 1.5rem;
+      border-radius: var(--radius-md);
+      background: var(--color-orange-500);
+      color: #fff;
+      font-weight: var(--fw-semibold);
+      font-size: var(--fs-base);
+      letter-spacing: -0.005em;
+      box-shadow: var(--shadow-glow-orange-md);
+      transition: background-color var(--duration-fast) var(--ease-standard);
+    }
+    .btn-save:hover { background: var(--color-orange-600); }
+
+    /* Secondary cancel — outlined, brutalist tell (graphite-900 border, full-fill on hover) */
+    .btn-cancel {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      height: 3rem;
+      padding: 0 1.5rem;
+      border-radius: var(--radius-md);
+      background: transparent;
+      color: var(--color-graphite-900);
+      border: 1px solid var(--color-graphite-900);
+      font-weight: var(--fw-semibold);
+      font-size: var(--fs-base);
+      transition: background-color var(--duration-fast) var(--ease-standard),
+                  color var(--duration-fast) var(--ease-standard);
+    }
+    .btn-cancel:hover { background: var(--color-graphite-900); color: #fff; }
+
+    /* Ghost / tertiary action (e.g. "Remover foto") */
+    .btn-ghost-danger {
+      display: inline-flex; align-items: center; gap: 0.375rem;
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--color-error-500);
+      background: transparent;
+      transition: color var(--duration-fast) var(--ease-standard);
+    }
+    .btn-ghost-danger:hover { color: #DC2626; }
+
+    /*
+      Avatar uploader — circular dropzone with overlay button. Keep the focus
+      ring on the visible <button>, not the hidden <input type=file>.
+    */
+    .avatar-dropzone {
+      position: relative;
+      width: 8rem; height: 8rem;
+      border-radius: 9999px;
+      background: var(--color-neutral-100);
+      border: 2px dashed var(--color-neutral-300);
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .avatar-dropzone__img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .avatar-dropzone__placeholder {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 2rem;
+      color: var(--color-graphite-400);
+      letter-spacing: -0.02em;
+    }
+    .avatar-edit-btn {
+      position: absolute;
+      right: 0; bottom: 0;
+      width: 2.25rem; height: 2.25rem;
+      border-radius: 9999px;
+      background: var(--color-graphite-900);
+      color: #fff;
+      display: inline-flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 12px -2px rgba(0,0,0,0.45);
+      transition: background-color var(--duration-fast) var(--ease-standard);
+    }
+    .avatar-edit-btn:hover { background: var(--color-orange-500); }
+
+    /*
+      Inline status banner — shown above the form on success/error. Decoupled
+      from MessageToast (the toast covers transient feedback; this banner
+      covers persistent contextual states like "verifique seu email").
+    */
+    .form-banner {
+      display: flex; gap: 0.75rem;
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-md);
+      font-size: var(--fs-sm);
+      line-height: var(--lh-normal);
+    }
+    .form-banner--info {
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      color: #1E40AF;
+    }
+    .form-banner--success {
+      background: #ECFDF5;
+      border: 1px solid #A7F3D0;
+      color: #065F46;
+    }
+    .form-banner__icon {
+      width: 1.25rem; height: 1.25rem;
+      flex-shrink: 0;
+      margin-top: 0.125rem;
+    }
+
+    /* Sticky form action bar at the bottom of the card on >=lg, inline on <lg */
+    .form-actions {
+      display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--color-neutral-200);
+      margin-top: 2rem;
+    }
+    @media (max-width: 640px) {
+      .form-actions { flex-direction: column-reverse; align-items: stretch; }
+      .form-actions .btn-save,
+      .form-actions .btn-cancel { width: 100%; }
+    }
+
+    /* Tiny helper — meta key-value rows on the right column "Resumo da conta" card */
+    .meta-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      gap: 1rem;
+      padding: 0.625rem 0;
+      border-bottom: 1px dashed var(--color-neutral-200);
+      font-size: var(--fs-sm);
+    }
+    .meta-row:last-child { border-bottom: 0; }
+    .meta-row__key { color: var(--color-graphite-500); font-weight: var(--fw-medium); }
+    .meta-row__val { color: var(--color-graphite-900); font-family: var(--font-mono); font-size: var(--fs-xs); }
+  </style>
+</head>
+
+<body class="bg-neutral-50">
+
+<!-- ============================================================
+     SECTION GUIDE — printed at top of mockup so the engineer can
+     scan the screen contract at a glance. Remove on copy to prod.
+     ============================================================ -->
+<div class="bg-graphite-800 text-graphite-200 text-sm border-b border-white/5">
+  <div class="max-w-container mx-auto px-shell py-3 flex items-center justify-between gap-4">
+    <p class="font-display tracking-wide uppercase text-xs">MonexUp · Edit Account redesign · single direction</p>
+    <p class="text-xs text-graphite-400">Dark hero band → light form card → aside sub-nav → MiniFooter (shared with Dashboard)</p>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     HEADER — verbatim copy from monexup-app/src/Pages/HomePage/Header.tsx
+     (logo lockup, primary nav, CTAs, mobile hamburger). Same source as
+     home-redesign.html and login-redesign.html. DO NOT diverge.
+
+     NOTE: this is an authenticated screen, so in the React build the
+     Header should switch to its `authenticated` mode (user menu instead
+     of "Entrar/Cadastre-se"). The mockup keeps the public version for
+     visual parity with the existing redesign suite.
+     ============================================================ -->
+<header class="mnx-surface-dark sticky top-0 z-50 border-b border-white/5 backdrop-blur-md"
+        style="background: rgba(10,10,13,0.85);">
+  <nav class="max-w-container mx-auto px-shell flex items-center justify-between h-16 lg:h-20"
+       aria-label="Primary">
+    <a href="#" class="mnx-mark" aria-label="MonexUp — Home">
+      <span class="mnx-mark__square" aria-hidden="true">M<span class="text-graphite-900">.</span></span>
+      <span class="mnx-mark__word text-neutral-50">
+        monex<span class="bg-orange-500 text-white px-1.5 rounded-sm ml-0.5">up</span>
+      </span>
+    </a>
+
+    <ul class="hidden lg:flex items-center gap-8 text-sm font-medium text-graphite-200">
+      <li><a href="#" class="hover:text-white transition-colors duration-150">Home</a></li>
+      <li><a href="#" class="hover:text-white transition-colors duration-150">Redes</a></li>
+      <li><a href="#" class="hover:text-white transition-colors duration-150">Planos</a></li>
+      <li><a href="#" class="hover:text-white transition-colors duration-150">Sobre</a></li>
+      <li><a href="#" class="hover:text-white transition-colors duration-150">Crie sua rede</a></li>
+      <li><a href="#" class="hover:text-white transition-colors duration-150">Entrar</a></li>
+    </ul>
+
+    <div class="flex items-center gap-3">
+      <a href="#" class="hidden sm:inline-flex h-10 items-center px-4 rounded-md text-sm font-medium text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-150">
+        Crie sua rede
+      </a>
+      <a href="#" class="hidden sm:inline-flex h-10 items-center px-4 rounded-md text-sm font-medium text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-150">
+        Entrar
+      </a>
+      <a href="#"
+         class="cta-primary inline-flex h-10 items-center px-5 rounded-md text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-150 shadow-glow-md">
+        Seja um representante
+      </a>
+
+      <button class="lg:hidden inline-flex w-10 h-10 items-center justify-center rounded-md text-graphite-100 hover:bg-white/5"
+              aria-label="Abrir menu" aria-expanded="false">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6"  x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+
+<!-- ============================================================
+     1. ACCOUNT HERO (DARK)
+     A short dark band — NOT a marketing hero. It carries:
+     - breadcrumbs (Conta › Editar dados)
+     - screen <h1>
+     - one-line context summary
+     - small badge with the user's account status (e.g. "Verificado")
+     The band is intentionally compact (~ 240px on lg) so the form
+     becomes the dominant element on the page.
+     ============================================================ -->
+<section class="mnx-surface-dark relative overflow-hidden bg-mesh-account account-hero"
+         aria-labelledby="account-page-heading">
+  <div class="account-grid absolute inset-0 pointer-events-none" aria-hidden="true"></div>
+
+  <div class="relative max-w-container mx-auto px-shell">
+    <!-- Breadcrumbs -->
+    <nav aria-label="Breadcrumb" class="text-xs uppercase tracking-wider text-graphite-400">
+      <ol class="flex items-center gap-2">
+        <li><a href="#" class="hover:text-white transition-colors duration-150">Conta</a></li>
+        <li aria-hidden="true" class="text-graphite-500">/</li>
+        <li class="text-orange-300">Editar dados</li>
+      </ol>
+    </nav>
+
+    <div class="mt-4 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
+      <div>
+        <h1 id="account-page-heading" class="display-headline text-neutral-50 text-3xl sm:text-4xl lg:text-5xl">
+          Editar conta
+        </h1>
+        <p class="mt-3 max-w-xl text-graphite-200 text-sm sm:text-base leading-relaxed">
+          Atualize seus dados pessoais, foto de perfil e credenciais.
+          Alterações em email ou senha podem exigir uma nova autenticação.
+        </p>
+      </div>
+
+      <!-- Verified status chip — NEVER convey by color alone, includes icon + text -->
+      <span class="inline-flex items-center gap-2 self-start sm:self-end px-3 py-1.5 rounded-full text-xs font-medium tracking-wide uppercase text-orange-200 bg-orange-500/10 border border-orange-500/30">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Conta verificada
+      </span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     2. CONTENT GRID (LIGHT) — the form card overlaps the dark band
+     ============================================================ -->
+<section class="mnx-surface-light bg-neutral-50 pb-20 lg:pb-28"
+         aria-label="Conteúdo da conta">
+  <div class="max-w-container mx-auto px-shell">
+    <!-- 12-col grid: aside (3) · main form (6) · meta (3). On <lg: aside collapses
+         into a horizontal scroll bar above the form; meta moves below. -->
+    <div class="-mt-20 grid lg:grid-cols-12 gap-6 lg:gap-10 items-start">
+
+      <!-- ───── LEFT: ACCOUNT SIDEBAR ───── -->
+      <aside class="lg:col-span-3 lg:sticky lg:top-24 self-start animate-fade-up"
+             aria-label="Navegação da conta">
+        <div class="form-card p-2 sm:p-3">
+          <p class="px-3 pt-3 pb-2 text-xs font-bold uppercase tracking-wider text-graphite-400">
+            Conta
+          </p>
+          <ul class="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible">
+            <li class="flex-shrink-0 lg:flex-shrink">
+              <a href="#" class="account-nav__item account-nav__item--active" aria-current="page">
+                <svg class="account-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/>
+                </svg>
+                Dados pessoais
+              </a>
+            </li>
+            <li class="flex-shrink-0 lg:flex-shrink">
+              <a href="#" class="account-nav__item">
+                <svg class="account-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                </svg>
+                Segurança
+              </a>
+            </li>
+            <li class="flex-shrink-0 lg:flex-shrink">
+              <a href="#" class="account-nav__item">
+                <svg class="account-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M18 16v-5a6 6 0 0 0-12 0v5l-2 2v1h16v-1z"/><path d="M10 21a2 2 0 0 0 4 0"/>
+                </svg>
+                Notificações
+              </a>
+            </li>
+            <li class="flex-shrink-0 lg:flex-shrink">
+              <a href="#" class="account-nav__item">
+                <svg class="account-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/>
+                </svg>
+                Pagamentos
+              </a>
+            </li>
+            <li class="flex-shrink-0 lg:flex-shrink">
+              <a href="#" class="account-nav__item">
+                <svg class="account-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/>
+                </svg>
+                Minha rede
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Help block under the nav — small editorial accent -->
+        <div class="mt-4 hidden lg:block px-4 py-5 rounded-xl border border-dashed border-graphite-300 text-xs text-graphite-500 leading-relaxed">
+          <p class="font-display font-semibold text-graphite-900 text-sm mb-1.5">Precisa de ajuda?</p>
+          <p>Fale com o suporte se algo aqui não bater com seus dados.</p>
+          <a href="mailto:contato@monexup.com" class="mt-3 inline-flex items-center gap-1 font-semibold text-orange-700 hover:text-orange-600 transition-colors">
+            contato@monexup.com
+            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </aside>
+
+
+      <!-- ───── CENTER: FORM CARD ───── -->
+      <article class="lg:col-span-6 form-card p-6 sm:p-8 lg:p-10 animate-fade-up"
+               aria-labelledby="form-section-heading">
+
+        <!-- Card header: title + subtitle -->
+        <header class="flex flex-col gap-1 mb-8">
+          <h2 id="form-section-heading" class="font-display text-2xl font-semibold text-graphite-900">
+            Dados pessoais
+          </h2>
+          <p class="text-sm text-graphite-500">
+            Estas informações aparecem no seu perfil e são usadas para gerar recibos e pagamentos PIX.
+          </p>
+        </header>
+
+        <!--
+          Persistent info banner — informational, not transient. Use this slot
+          for messages that should NOT be a toast (e.g. "verifique seu email
+          para concluir a alteração"). Toggle visibility via React state.
+        -->
+        <div class="form-banner form-banner--info mb-8" role="status">
+          <svg class="form-banner__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/><path d="M12 8v5"/><circle cx="12" cy="16" r=".5" fill="currentColor"/>
+          </svg>
+          <div>
+            <p><strong class="font-semibold">Sua última atualização</strong> foi há 14 dias. Mantenha seus dados sempre atualizados para receber comissões corretamente.</p>
+          </div>
+        </div>
+
+        <!--
+          UserEditForm slot ----------------------------------------------------
+          In production the actual <UserEditForm /> from `nauth-react` is
+          rendered here. The package only exposes `className` (no granular
+          styles slots), so the visual contract below is approximated via
+          a scoped CSS class layer at integration time. See component-spec.md.
+
+          The mockup renders a STYLE PREVIEW with the typical fields the
+          UserEditForm offers (matching `UserInfo`: name, email, birthDate,
+          idDocument, pixKey, phones[], addresses[], password).
+        -->
+        <form class="form-preview space-y-8" aria-label="Formulário de edição de conta (preview)" onsubmit="event.preventDefault();">
+
+          <!-- ─── Avatar uploader ─── -->
+          <section aria-labelledby="form-avatar-heading">
+            <p class="form-section-eyebrow mb-3">Foto de perfil</p>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-5">
+              <div class="avatar-dropzone" role="img" aria-label="Avatar atual: iniciais MR">
+                <!-- When `imageUrl` exists, replace the placeholder with the <img>: -->
+                <!-- <img class="avatar-dropzone__img" src="..." alt="" /> -->
+                <span class="avatar-dropzone__placeholder" aria-hidden="true">MR</span>
+
+                <!-- Edit button anchors a hidden file input. Keep the visible <button>
+                     focusable for keyboard users; the input is screen-reader-friendly
+                     via the button's aria-label. -->
+                <button type="button" class="avatar-edit-btn" aria-label="Alterar foto de perfil">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="flex-1 min-w-0">
+                <h3 id="form-avatar-heading" class="font-display text-base font-semibold text-graphite-900">
+                  Marina Reis
+                </h3>
+                <p class="text-sm text-graphite-500 mt-0.5">PNG ou JPG, até 2 MB. Recomendado 400×400px.</p>
+                <div class="mt-3 flex items-center gap-4">
+                  <button type="button" class="text-sm font-semibold text-orange-700 hover:text-orange-600 transition-colors">
+                    Escolher arquivo
+                  </button>
+                  <span class="w-1 h-1 rounded-full bg-graphite-300" aria-hidden="true"></span>
+                  <button type="button" class="btn-ghost-danger">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                      <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                    </svg>
+                    Remover foto
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ─── Identity ─── -->
+          <section>
+            <p class="form-section-eyebrow mb-3">Identidade</p>
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label class="field-label" for="ea-name">Nome completo</label>
+                <input class="field-input" id="ea-name" type="text" name="name" autocomplete="name" value="Marina Reis" />
+              </div>
+              <div>
+                <label class="field-label" for="ea-birthdate">Data de nascimento</label>
+                <input class="field-input" id="ea-birthdate" type="date" name="birthDate" value="1992-04-18" />
+              </div>
+              <div class="sm:col-span-2">
+                <label class="field-label" for="ea-doc">Documento (CPF / CNPJ)</label>
+                <input class="field-input" id="ea-doc" type="text" name="idDocument" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" value="123.456.789-00" />
+                <p class="field-hint">Necessário para emissão de notas e comprovantes de comissão.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- ─── Contact ─── -->
+          <section>
+            <p class="form-section-eyebrow mb-3">Contato</p>
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label class="field-label" for="ea-email">Email</label>
+                <input class="field-input" id="ea-email" type="email" name="email" autocomplete="email" value="marina.reis@exemplo.com" />
+                <p class="field-hint">Usado para login e recibos. Alteração exige re-autenticação.</p>
+              </div>
+              <div>
+                <label class="field-label" for="ea-phone">Telefone principal</label>
+                <input class="field-input" id="ea-phone" type="tel" name="phone" autocomplete="tel" placeholder="(11) 99999-9999" value="(11) 98123-4567" />
+              </div>
+            </div>
+          </section>
+
+          <!-- ─── Pix ─── -->
+          <section>
+            <p class="form-section-eyebrow mb-3">Pagamentos</p>
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div class="sm:col-span-2">
+                <label class="field-label" for="ea-pix">Chave PIX para receber comissões</label>
+                <input class="field-input" id="ea-pix" type="text" name="pixKey" placeholder="email, CPF, telefone ou aleatória" value="marina.reis@exemplo.com" />
+                <p class="field-hint">A MonexUp usa essa chave para pagar comissões automaticamente via PIX.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- ─── Security (password change) ─── -->
+          <section aria-labelledby="form-security-heading">
+            <p class="form-section-eyebrow mb-3">Segurança</p>
+            <h3 id="form-security-heading" class="sr-only">Alteração de senha</h3>
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label class="field-label" for="ea-current-pwd">Senha atual</label>
+                <input class="field-input" id="ea-current-pwd" type="password" name="currentPassword" autocomplete="current-password" placeholder="••••••••" />
+                <p class="field-hint">Obrigatório apenas para trocar senha ou email.</p>
+              </div>
+              <div>
+                <label class="field-label" for="ea-new-pwd">Nova senha</label>
+                <input class="field-input" id="ea-new-pwd" type="password" name="newPassword" autocomplete="new-password" placeholder="Mínimo 8 caracteres" />
+              </div>
+
+              <!-- Error preview — shown when validation fails -->
+              <div class="sm:col-span-2">
+                <label class="field-label" for="ea-confirm-pwd">Confirmar nova senha</label>
+                <input class="field-input field-input--error" id="ea-confirm-pwd" type="password" name="confirmPassword" autocomplete="new-password" placeholder="Repita a nova senha" aria-invalid="true" aria-describedby="ea-confirm-err" />
+                <p id="ea-confirm-err" class="field-error" role="alert">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12" y2="16.01"/>
+                  </svg>
+                  As senhas não coincidem.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <!-- ─── Action bar ─── -->
+          <div class="form-actions">
+            <button type="button" class="btn-cancel">Cancelar</button>
+            <button type="submit" class="btn-save cta-primary">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 13l4 4L19 7"/>
+              </svg>
+              Salvar alterações
+            </button>
+          </div>
+
+        </form>
+      </article>
+
+
+      <!-- ───── RIGHT: META / SUMMARY ───── -->
+      <aside class="lg:col-span-3 animate-fade-up" aria-label="Resumo da conta">
+
+        <!-- Account summary -->
+        <div class="form-card p-5 sm:p-6">
+          <p class="form-section-eyebrow mb-4">Resumo</p>
+          <dl class="space-y-0">
+            <div class="meta-row">
+              <dt class="meta-row__key">ID</dt>
+              <dd class="meta-row__val">U-04812</dd>
+            </div>
+            <div class="meta-row">
+              <dt class="meta-row__key">Slug</dt>
+              <dd class="meta-row__val">marina-reis</dd>
+            </div>
+            <div class="meta-row">
+              <dt class="meta-row__key">Status</dt>
+              <dd class="text-xs font-semibold text-orange-700">Ativa</dd>
+            </div>
+            <div class="meta-row">
+              <dt class="meta-row__key">Criado em</dt>
+              <dd class="meta-row__val">12/03/2024</dd>
+            </div>
+            <div class="meta-row">
+              <dt class="meta-row__key">Atualizado</dt>
+              <dd class="meta-row__val">17/04/2026</dd>
+            </div>
+          </dl>
+        </div>
+
+        <!-- Danger zone — destructive actions kept off the form to avoid mistaps -->
+        <div class="mt-6 form-card p-5 sm:p-6 border-l-4 border-l-error" style="border-left-color: var(--color-error-500);">
+          <p class="font-display text-sm font-semibold text-graphite-900">Zona de risco</p>
+          <p class="mt-1 text-xs text-graphite-500 leading-relaxed">
+            Ações destrutivas. Confirmação adicional será solicitada.
+          </p>
+          <div class="mt-4 flex flex-col gap-2">
+            <button type="button" class="btn-ghost-danger justify-start">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                <path d="M16 17l5-5-5-5M21 12H9M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              </svg>
+              Sair de todos os dispositivos
+            </button>
+            <button type="button" class="btn-ghost-danger justify-start">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+              </svg>
+              Excluir minha conta
+            </button>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+
+<!--
+============================================================
+SUBTLE VARIATION (NOT RENDERED — DOCUMENTED IN COMMENT)
+============================================================
+Variation B — "Single column" mode, useful when the user lands on
+this screen from a deep link (e.g. password expired). The aside
++ summary collapse, and the form card spans `lg:col-span-8` and
+becomes the only focal element. Visually identical fields and atoms;
+only the grid changes:
+
+  <div class="-mt-20 grid lg:grid-cols-12 gap-10 items-start">
+    <article class="lg:col-start-3 lg:col-span-8 form-card ...">
+      ... same form ...
+    </article>
+  </div>
+
+Use Variation B when the page is opened from `/admin/edit-account?focus=security`
+(re-auth flow) — the sub-nav distracts in that case and should be hidden.
+============================================================
+-->
+
+
+<!-- ============================================================
+     MINI FOOTER (DARK) — REUSES <MiniFooter /> from dashboard-spec.md
+     Single-row condensed footer for post-login screens. Holds:
+     - small wordmark (left)
+     - copyright (center)
+     - 4 social icons (right)
+     This is the SAME contract documented in dashboard-spec.md §7,
+     so we share one component across all authenticated screens
+     (Dashboard, EditAccount, future Account, Network admin, etc.).
+     The full marketing footer (`<Footer />`) is reserved for
+     public-facing pages: home, login, pricing, about.
+
+     Layout: flex flex-col sm:flex-row items-center justify-between gap-4
+     Container: max-w-container px-shell py-6
+     ============================================================ -->
+<footer role="contentinfo" class="mnx-surface-dark bg-mesh-footer text-graphite-300 border-t border-white/5">
+  <div class="max-w-container mx-auto px-shell py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+
+    <!-- Small wordmark — same lockup as the navbar, no eyebrow tagline -->
+    <a href="#" class="mnx-mark" aria-label="MonexUp — Home">
+      <span class="mnx-mark__square" aria-hidden="true">M<span class="text-graphite-900">.</span></span>
+      <span class="mnx-mark__word text-neutral-50">
+        monex<span class="bg-orange-500 text-white px-1.5 rounded-sm ml-0.5">up</span>
+      </span>
+    </a>
+
+    <!-- Copyright — center on >=sm, stacked on <sm -->
+    <p class="text-xs text-graphite-400">
+      © <span id="footer-year">2026</span> MonexUp · Todos os direitos reservados
+    </p>
+
+    <!-- Social icons — 4 icons, 32px hit area each, ≥44px combined with gap -->
+    <ul class="flex items-center gap-1" aria-label="Redes sociais">
+      <li>
+        <a href="#" aria-label="Facebook" class="inline-flex w-10 h-10 items-center justify-center rounded-md hover:bg-white/5 hover:text-orange-400 transition-colors duration-150">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a href="#" aria-label="Twitter" class="inline-flex w-10 h-10 items-center justify-center rounded-md hover:bg-white/5 hover:text-orange-400 transition-colors duration-150">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zM17.083 19.77h1.834L7.084 4.126H5.117z"/>
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a href="#" aria-label="Instagram" class="inline-flex w-10 h-10 items-center justify-center rounded-md hover:bg-white/5 hover:text-orange-400 transition-colors duration-150">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a href="#" aria-label="LinkedIn" class="inline-flex w-10 h-10 items-center justify-center rounded-md hover:bg-white/5 hover:text-orange-400 transition-colors duration-150">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S.02 4.88.02 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8h4.56v14H.22V8zM8 8h4.37v1.92h.06c.61-1.15 2.1-2.36 4.32-2.36C21.39 7.56 22 10.4 22 14.07V22h-4.56v-7.05c0-1.68-.03-3.84-2.34-3.84-2.34 0-2.7 1.83-2.7 3.72V22H8V8z"/>
+          </svg>
+        </a>
+      </li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('footer-year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

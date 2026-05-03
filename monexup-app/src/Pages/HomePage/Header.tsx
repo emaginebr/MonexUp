@@ -1,8 +1,34 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Menu as MenuIcon, X as CloseIcon } from "lucide-react";
+import {
+  Menu as MenuIcon,
+  X as CloseIcon,
+  ChevronDown,
+  UserCircle,
+  LayoutDashboard,
+  Pencil,
+  Lock,
+  LogOut,
+} from "lucide-react";
 import AuthContext from "../../Contexts/Auth/AuthContext";
+import NetworkContext from "../../Contexts/Network/NetworkContext";
+import InvoiceContext from "../../Contexts/Invoice/InvoiceContext";
+import { getLangInfo } from "../../i18n";
+import { LanguageEnum } from "../../DTO/Enum/LanguageEnum";
+import { UserRoleEnum } from "../../DTO/Enum/UserRoleEnum";
+import {
+  Users,
+  Briefcase,
+  Settings,
+  Network as NetworkIcon,
+  FileText,
+  DollarSign,
+  Package,
+  Search,
+  ShieldCheck,
+} from "lucide-react";
+import StatementSearchParam from "../../DTO/Domain/StatementSearchParam";
 
 /**
  * Header — sticky dark navbar for the marketing home.
@@ -24,14 +50,123 @@ const NAV_ITEMS: NavItem[] = [
   { labelKey: "home_features_title", href: "#features" },
 ];
 
+const SUPPORTED_LANGS = [
+  LanguageEnum.Portuguese,
+  LanguageEnum.English,
+  LanguageEnum.Spanish,
+  LanguageEnum.French,
+];
+
 export default function Header() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
+  const networkContext = useContext(NetworkContext);
+  const invoiceContext = useContext(InvoiceContext);
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
+  const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false);
+  const [langOpen, setLangOpen] = useState<boolean>(false);
+  const [myNetworkOpen, setMyNetworkOpen] = useState<boolean>(false);
+  const [networkSelOpen, setNetworkSelOpen] = useState<boolean>(false);
+  const [roleOpen, setRoleOpen] = useState<boolean>(false);
+  const userMenuRef = useRef<HTMLDivElement | null>(null);
+  const langRef = useRef<HTMLDivElement | null>(null);
+  const myNetworkRef = useRef<HTMLDivElement | null>(null);
+  const networkSelRef = useRef<HTMLDivElement | null>(null);
+  const roleRef = useRef<HTMLDivElement | null>(null);
+  const currentLang = getLangInfo(i18n.language);
+  const flagBase = (import.meta as any).env?.BASE_URL ?? "/";
+
+  const changeLanguage = (code: string) => {
+    i18n.changeLanguage(code);
+    setLangOpen(false);
+  };
 
   const closeMobile = () => setMobileOpen(false);
+  const closeUserMenu = () => setUserMenuOpen(false);
   const isAuthenticated = Boolean(authContext.sessionInfo);
+  const userName = authContext.sessionInfo?.name ?? "";
+
+  useEffect(() => {
+    if (!userMenuOpen) return;
+    const onDocClick = (event: MouseEvent) => {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
+        setUserMenuOpen(false);
+      }
+    };
+    const onEsc = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setUserMenuOpen(false);
+    };
+    document.addEventListener("mousedown", onDocClick);
+    document.addEventListener("keydown", onEsc);
+    return () => {
+      document.removeEventListener("mousedown", onDocClick);
+      document.removeEventListener("keydown", onEsc);
+    };
+  }, [userMenuOpen]);
+
+  useEffect(() => {
+    if (!langOpen) return;
+    const onDocClick = (event: MouseEvent) => {
+      if (
+        langRef.current &&
+        !langRef.current.contains(event.target as Node)
+      ) {
+        setLangOpen(false);
+      }
+    };
+    const onEsc = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setLangOpen(false);
+    };
+    document.addEventListener("mousedown", onDocClick);
+    document.addEventListener("keydown", onEsc);
+    return () => {
+      document.removeEventListener("mousedown", onDocClick);
+      document.removeEventListener("keydown", onEsc);
+    };
+  }, [langOpen]);
+
+  useEffect(() => {
+    const cfg: Array<[boolean, React.RefObject<HTMLDivElement>, (v: boolean) => void]> = [
+      [myNetworkOpen, myNetworkRef, setMyNetworkOpen],
+      [networkSelOpen, networkSelRef, setNetworkSelOpen],
+      [roleOpen, roleRef, setRoleOpen],
+    ];
+    const open = cfg.find(([o]) => o);
+    if (!open) return;
+    const [, ref, setter] = open;
+    const onDocClick = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        setter(false);
+      }
+    };
+    const onEsc = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setter(false);
+    };
+    document.addEventListener("mousedown", onDocClick);
+    document.addEventListener("keydown", onEsc);
+    return () => {
+      document.removeEventListener("mousedown", onDocClick);
+      document.removeEventListener("keydown", onEsc);
+    };
+  }, [myNetworkOpen, networkSelOpen, roleOpen]);
+
+  const handleLogout = () => {
+    closeUserMenu();
+    const ret = authContext.logout();
+    if (ret.sucesso) {
+      navigate(0);
+    }
+  };
+
+  const handleNavigate = (path: string) => {
+    closeUserMenu();
+    closeMobile();
+    navigate(path);
+  };
 
   return (
     <header
@@ -50,54 +185,456 @@ export default function Header() {
           />
         </Link>
 
-        <ul className="hidden lg:flex items-center gap-8 text-sm font-medium text-graphite-200">
-          {NAV_ITEMS.map((item) => (
-            <li key={item.labelKey}>
-              <a
-                href={item.href}
-                className="hover:text-white transition-colors duration-fast"
-              >
-                {t(item.labelKey)}
-              </a>
-            </li>
-          ))}
-          <li>
-            <Link
-              to="/network"
-              className="hover:text-white transition-colors duration-fast"
-            >
-              {t("create_your_network")}
-            </Link>
-          </li>
-          {!isAuthenticated && (
-            <li>
-              <Link
-                to="/account/login"
-                className="hover:text-white transition-colors duration-fast"
-              >
-                {t("sign_in")}
-              </Link>
-            </li>
-          )}
-        </ul>
-
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => navigate("/network")}
-            className="inline-flex h-10 items-center px-4 rounded-md text-sm font-medium text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
-          >
-            {t("create_your_network")}
-          </button>
+          {!isAuthenticated && (
+            <>
+              <button
+                type="button"
+                onClick={() => navigate("/network")}
+                className="inline-flex h-10 items-center px-4 rounded-md text-sm font-medium text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+              >
+                {t("create_your_network")}
+              </button>
 
-          {isAuthenticated ? (
+              <button
+                type="button"
+                onClick={() => navigate("/new-seller")}
+                className="cta-primary inline-flex h-10 items-center px-5 rounded-md text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-fast shadow-glow-md"
+              >
+                {t("be_a_representative")}
+              </button>
+            </>
+          )}
+
+          {isAuthenticated && networkContext?.currentRole >= UserRoleEnum.Seller && (
+            <div className="relative" ref={myNetworkRef}>
+              <button
+                type="button"
+                onClick={() => setMyNetworkOpen((o) => !o)}
+                className="inline-flex h-10 items-center gap-2 px-3 rounded-md text-sm font-medium text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                aria-haspopup="menu"
+                aria-expanded={myNetworkOpen}
+              >
+                <Users size={16} />
+                {t("my_network")}
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform duration-fast ${myNetworkOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+              {myNetworkOpen && (
+                <div
+                  role="menu"
+                  className="absolute right-0 mt-2 w-60 rounded-lg border border-white/10 shadow-xl overflow-hidden"
+                  style={{ background: "rgba(15, 15, 19, 0.98)" }}
+                >
+                  {networkContext.currentRole === UserRoleEnum.NetworkManager && (
+                    <>
+                      <p className="px-4 pt-3 pb-2 text-xs uppercase tracking-wider text-graphite-400 text-center">
+                        {t("network_manager")}
+                      </p>
+                      <ul className="pb-1">
+                        <li>
+                          <button
+                            type="button"
+                            role="menuitem"
+                            onClick={() => { setMyNetworkOpen(false); navigate("/admin/network"); }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                          >
+                            <Settings size={16} className="text-graphite-300" />
+                            {t("preferences")}
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            type="button"
+                            role="menuitem"
+                            onClick={() => { setMyNetworkOpen(false); navigate("/admin/team-structure"); }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                          >
+                            <NetworkIcon size={16} className="text-graphite-300" />
+                            {t("team_structure")}
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            type="button"
+                            role="menuitem"
+                            onClick={() => { setMyNetworkOpen(false); navigate("/admin/teams"); }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                          >
+                            <Users size={16} className="text-graphite-300" />
+                            {t("teams")}
+                          </button>
+                        </li>
+                      </ul>
+                      <div className="border-t border-white/5" />
+                    </>
+                  )}
+                  <p className="px-4 pt-3 pb-2 text-xs uppercase tracking-wider text-graphite-400 text-center">
+                    {t("finances")}
+                  </p>
+                  <ul className="py-1">
+                    <li>
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={() => { setMyNetworkOpen(false); navigate("/admin/orders"); }}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                      >
+                        <FileText size={16} className="text-graphite-300" />
+                        {t("orders")}
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={() => { setMyNetworkOpen(false); navigate("/admin/invoices"); }}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                      >
+                        <DollarSign size={16} className="text-graphite-300" />
+                        {t("invoices")}
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={() => { setMyNetworkOpen(false); navigate("/admin/products"); }}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                      >
+                        <Package size={16} className="text-graphite-300" />
+                        {t("products")}
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
+          {isAuthenticated && networkContext?.userNetworks?.length > 0 && (
+            <div className="relative" ref={networkSelRef}>
+              <button
+                type="button"
+                onClick={() => setNetworkSelOpen((o) => !o)}
+                className="inline-flex h-10 items-center gap-2 px-3 rounded-md text-sm font-medium text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast max-w-[14rem]"
+                aria-haspopup="menu"
+                aria-expanded={networkSelOpen}
+              >
+                <Briefcase size={16} className="text-orange-400" />
+                <span className="truncate">
+                  {networkContext.userNetwork?.network?.name ?? t("no_network_selected")}
+                </span>
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform duration-fast ${networkSelOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+              {networkSelOpen && (
+                <div
+                  role="menu"
+                  className="absolute right-0 mt-2 w-72 rounded-lg border border-white/10 shadow-xl overflow-hidden"
+                  style={{ background: "rgba(15, 15, 19, 0.98)" }}
+                >
+                  <p className="px-4 py-3 text-xs uppercase tracking-wider text-graphite-400 border-b border-white/5">
+                    {t("select_network_to_connect")}
+                  </p>
+                  <ul className="py-1 max-h-64 overflow-y-auto">
+                    {networkContext.userNetworks.map((un) => (
+                      <li key={un.networkId}>
+                        <button
+                          type="button"
+                          role="menuitem"
+                          onClick={() => {
+                            networkContext.setUserNetwork(un);
+                            setNetworkSelOpen(false);
+                            navigate("/admin/dashboard");
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                        >
+                          <Users size={16} className="text-graphite-300" />
+                          <span className="truncate">{un.network?.name}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="border-t border-white/5 py-1">
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => { setNetworkSelOpen(false); navigate("/network/search"); }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-orange-300 hover:text-orange-200 hover:bg-orange-500/10 transition-colors duration-fast"
+                    >
+                      <Search size={16} />
+                      {t("search_for_a_network")}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {isAuthenticated && networkContext?.userNetwork && (
+            <div className="relative" ref={roleRef}>
+              <button
+                type="button"
+                onClick={() => setRoleOpen((o) => !o)}
+                className="inline-flex h-10 items-center gap-2 px-3 rounded-md text-sm font-medium text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                aria-haspopup="menu"
+                aria-expanded={roleOpen}
+              >
+                <ShieldCheck size={16} className="text-orange-400" />
+                {t(
+                  networkContext.currentRole === UserRoleEnum.Administrator
+                    ? "administrator"
+                    : networkContext.currentRole === UserRoleEnum.NetworkManager
+                    ? "network_manager"
+                    : networkContext.currentRole === UserRoleEnum.Seller
+                    ? "seller"
+                    : networkContext.currentRole === UserRoleEnum.User
+                    ? "user"
+                    : "no_role"
+                )}
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform duration-fast ${roleOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+              {roleOpen && (
+                <div
+                  role="menu"
+                  className="absolute right-0 mt-2 w-56 rounded-lg border border-white/10 shadow-xl overflow-hidden"
+                  style={{ background: "rgba(15, 15, 19, 0.98)" }}
+                >
+                  <p className="px-4 py-3 text-xs uppercase tracking-wider text-graphite-400 border-b border-white/5">
+                    {t("role_description")}
+                  </p>
+                  <ul className="py-1">
+                    {networkContext.userNetwork.role >= UserRoleEnum.User && (
+                      <li>
+                        <button
+                          type="button"
+                          role="menuitem"
+                          onClick={() => {
+                            networkContext.setCurrentRole(UserRoleEnum.User);
+                            setRoleOpen(false);
+                            navigate("/admin/dashboard");
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                        >
+                          {t("user")}
+                        </button>
+                      </li>
+                    )}
+                    {networkContext.userNetwork.role >= UserRoleEnum.Seller && (
+                      <li>
+                        <button
+                          type="button"
+                          role="menuitem"
+                          onClick={async () => {
+                            networkContext.setCurrentRole(UserRoleEnum.Seller);
+                            setRoleOpen(false);
+                            await invoiceContext.getBalance();
+                            await invoiceContext.getAvailableBalance();
+                            const param: StatementSearchParam = {
+                              userId: networkContext.userNetwork.userId,
+                              pageNum: 1,
+                            } as StatementSearchParam;
+                            await invoiceContext.searchStatement(param);
+                            navigate("/admin/dashboard");
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                        >
+                          {t("seller")}
+                        </button>
+                      </li>
+                    )}
+                    {networkContext.userNetwork.role >= UserRoleEnum.NetworkManager && (
+                      <li>
+                        <button
+                          type="button"
+                          role="menuitem"
+                          onClick={async () => {
+                            networkContext.setCurrentRole(UserRoleEnum.NetworkManager);
+                            setRoleOpen(false);
+                            await invoiceContext.getBalance(networkContext.userNetwork.networkId);
+                            const param: StatementSearchParam = {
+                              networkId: networkContext.userNetwork.networkId,
+                              pageNum: 1,
+                            } as StatementSearchParam;
+                            await invoiceContext.searchStatement(param);
+                            navigate("/admin/dashboard");
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                        >
+                          {t("network_manager")}
+                        </button>
+                      </li>
+                    )}
+                    {networkContext.userNetwork.role >= UserRoleEnum.Administrator && (
+                      <li>
+                        <button
+                          type="button"
+                          role="menuitem"
+                          onClick={() => {
+                            networkContext.setCurrentRole(UserRoleEnum.Administrator);
+                            setRoleOpen(false);
+                            navigate("/admin/dashboard");
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                        >
+                          {t("administrator")}
+                        </button>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="relative" ref={langRef}>
             <button
               type="button"
-              onClick={() => navigate("/admin/dashboard")}
-              className="inline-flex h-10 items-center px-4 rounded-md text-sm font-medium text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+              onClick={() => setLangOpen((open) => !open)}
+              className="inline-flex h-10 items-center gap-2 px-3 rounded-md text-sm font-medium text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+              aria-haspopup="menu"
+              aria-expanded={langOpen}
+              aria-controls="mnx-lang-menu"
+              aria-label={t(currentLang.nameKey)}
             >
-              {t("footer_dashboard")}
+              <img
+                src={`${flagBase}flags/${currentLang.flag}`}
+                alt={t(currentLang.nameKey)}
+                className="w-5 h-5 rounded-sm"
+              />
+              <ChevronDown
+                size={14}
+                className={`transition-transform duration-fast ${
+                  langOpen ? "rotate-180" : ""
+                }`}
+              />
             </button>
+
+            {langOpen && (
+              <div
+                id="mnx-lang-menu"
+                role="menu"
+                className="absolute right-0 mt-2 w-44 rounded-lg border border-white/10 shadow-xl overflow-hidden"
+                style={{ background: "rgba(15, 15, 19, 0.98)" }}
+              >
+                <ul className="py-1">
+                  {SUPPORTED_LANGS.map((code) => {
+                    const info = getLangInfo(code);
+                    return (
+                      <li key={info.code}>
+                        <button
+                          type="button"
+                          role="menuitem"
+                          onClick={() => changeLanguage(info.code)}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                        >
+                          <img
+                            src={`${flagBase}flags/${info.flag}`}
+                            alt={t(info.nameKey)}
+                            className="w-5 h-5 rounded-sm"
+                          />
+                          {t(info.nameKey)}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          {isAuthenticated ? (
+            <div className="relative" ref={userMenuRef}>
+              <button
+                type="button"
+                onClick={() => setUserMenuOpen((open) => !open)}
+                className="inline-flex h-10 items-center gap-2 px-3 rounded-md text-sm font-medium text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                aria-haspopup="menu"
+                aria-expanded={userMenuOpen}
+                aria-controls="mnx-user-menu"
+              >
+                <UserCircle size={18} className="text-orange-400" />
+                <span className="max-w-[10rem] truncate">{userName}</span>
+                <ChevronDown
+                  size={16}
+                  className={`transition-transform duration-fast ${
+                    userMenuOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              {userMenuOpen && (
+                <div
+                  id="mnx-user-menu"
+                  role="menu"
+                  className="absolute right-0 mt-2 w-60 rounded-lg border border-white/10 shadow-xl overflow-hidden"
+                  style={{ background: "rgba(15, 15, 19, 0.98)" }}
+                >
+                  <div className="px-4 py-3 border-b border-white/5">
+                    <p className="text-xs uppercase tracking-wider text-graphite-400">
+                      {t("logged_in_as") || t("user")}
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-white truncate">
+                      {userName}
+                    </p>
+                  </div>
+                  <ul className="py-1">
+                    <li>
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={() => handleNavigate("/admin/dashboard")}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                      >
+                        <LayoutDashboard size={16} className="text-graphite-300" />
+                        {t("footer_dashboard")}
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={() => handleNavigate("/admin/edit-account")}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                      >
+                        <Pencil size={16} className="text-graphite-300" />
+                        {t("edit_account")}
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={() => handleNavigate("/account/change-password")}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                      >
+                        <Lock size={16} className="text-graphite-300" />
+                        {t("change_password")}
+                      </button>
+                    </li>
+                  </ul>
+                  <div className="border-t border-white/5 py-1">
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-orange-300 hover:text-orange-200 hover:bg-orange-500/10 transition-colors duration-fast"
+                    >
+                      <LogOut size={16} />
+                      {t("logout")}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           ) : (
             <button
               type="button"
@@ -108,24 +645,6 @@ export default function Header() {
             </button>
           )}
 
-          <button
-            type="button"
-            onClick={() => navigate(isAuthenticated ? "/request-access" : "/new-seller")}
-            className="cta-primary inline-flex h-10 items-center px-5 rounded-md text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-fast shadow-glow-md"
-          >
-            {t("be_a_representative")}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setMobileOpen((open) => !open)}
-            className="lg:hidden inline-flex w-10 h-10 items-center justify-center rounded-md text-graphite-100 hover:bg-white/5"
-            aria-label={mobileOpen ? "Fechar menu" : "Abrir menu"}
-            aria-expanded={mobileOpen}
-            aria-controls="mnx-mobile-nav"
-          >
-            {mobileOpen ? <CloseIcon size={22} /> : <MenuIcon size={22} />}
-          </button>
         </div>
       </nav>
 
@@ -147,18 +666,63 @@ export default function Header() {
                 </a>
               </li>
             ))}
-            <li>
-              <button
-                type="button"
-                onClick={() => {
-                  closeMobile();
-                  navigate(isAuthenticated ? "/admin/dashboard" : "/account/login");
-                }}
-                className="flex items-center w-full min-h-[44px] px-3 rounded-md text-base text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
-              >
-                {isAuthenticated ? t("footer_dashboard") : t("sign_in")}
-              </button>
-            </li>
+            {isAuthenticated ? (
+              <>
+                <li className="border-t border-white/5 mt-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate("/admin/dashboard")}
+                    className="flex items-center gap-3 w-full min-h-[44px] px-3 rounded-md text-base text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                  >
+                    <LayoutDashboard size={18} />
+                    {t("footer_dashboard")}
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate("/admin/edit-account")}
+                    className="flex items-center gap-3 w-full min-h-[44px] px-3 rounded-md text-base text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                  >
+                    <Pencil size={18} />
+                    {t("edit_account")}
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate("/account/change-password")}
+                    className="flex items-center gap-3 w-full min-h-[44px] px-3 rounded-md text-base text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                  >
+                    <Lock size={18} />
+                    {t("change_password")}
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      closeMobile();
+                      handleLogout();
+                    }}
+                    className="flex items-center gap-3 w-full min-h-[44px] px-3 rounded-md text-base text-orange-300 hover:text-orange-200 hover:bg-orange-500/10 transition-colors duration-fast"
+                  >
+                    <LogOut size={18} />
+                    {t("logout")}
+                  </button>
+                </li>
+              </>
+            ) : (
+              <li>
+                <button
+                  type="button"
+                  onClick={() => handleNavigate("/account/login")}
+                  className="flex items-center w-full min-h-[44px] px-3 rounded-md text-base text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                >
+                  {t("sign_in")}
+                </button>
+              </li>
+            )}
           </ul>
         </div>
       )}

@@ -16,11 +16,13 @@ import IImageService from './Interfaces/IImageService';
 import ImageService from './Impl/ImageService';
 import { TemplateFactory } from '../packages/template';
 
+const TENANT_HEADERS = { 'X-Tenant-Id': process.env.REACT_APP_TENANT_ID || 'monexup' };
+
 const httpClientAuth : IHttpClient = HttpClient();
-httpClientAuth.init(process.env.REACT_APP_API_URL);
+httpClientAuth.init(process.env.REACT_APP_API_URL, TENANT_HEADERS);
 
 const httpClientNAuth : IHttpClient = HttpClient();
-httpClientNAuth.init(process.env.REACT_APP_NAUTH_API_URL);
+httpClientNAuth.init(process.env.REACT_APP_NAUTH_API_URL, TENANT_HEADERS);
 
 const userServiceImpl : IUserService = UserService;
 userServiceImpl.init(httpClientNAuth);
@@ -35,7 +37,7 @@ profileServiceImpl.init(httpClientAuth);
 const httpClientLofn: IHttpClient = HttpClient();
 httpClientLofn.init(
   process.env.REACT_APP_LOFN_API_URL || process.env.REACT_APP_API_URL,
-  { 'X-Tenant-Id': 'monexup' }
+  TENANT_HEADERS
 );
 const productServiceImpl : IProductService = ProductService;
 productServiceImpl.init(httpClientLofn);
@@ -53,7 +55,7 @@ imageServiceImpl.init(httpClientAuth);
 const httpClientDedalo: IHttpClient = HttpClient();
 httpClientDedalo.init(
   process.env.REACT_APP_DEDALO_API_URL || process.env.REACT_APP_API_URL,
-  { 'X-Tenant-Id': 'monexup' }
+  TENANT_HEADERS
 );
 TemplateFactory.init(httpClientDedalo);
 

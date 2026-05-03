@@ -20,6 +20,7 @@ declare namespace NodeJS {
     readonly REACT_APP_SITE_BASENAME?: string;
     readonly REACT_APP_PROJECT_NAME?: string;
     readonly REACT_APP_WEBSITE_NAME?: string;
+    readonly REACT_APP_TENANT_ID?: string;
     readonly REACT_APP_API_URL?: string;
     readonly REACT_APP_NAUTH_API_URL?: string;
     readonly REACT_APP_LOFN_API_URL?: string;
@@ -35,6 +36,7 @@ declare namespace NodeJS {
 }
 
 interface ImportMetaEnv {
+  readonly VITE_TENANT_ID?: string;
   readonly VITE_API_URL?: string;
   readonly VITE_NAUTH_API_URL?: string;
   readonly VITE_LOFN_API_URL?: string;

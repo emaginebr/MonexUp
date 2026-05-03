@@ -148,6 +148,10 @@ export default {
           "radial-gradient(ellipse 80% 60% at 75% 30%, rgba(232, 90, 26, 0.28), transparent 60%)," +
           "radial-gradient(ellipse 60% 50% at 15% 80%, rgba(232, 90, 26, 0.10), transparent 65%)," +
           "linear-gradient(180deg, #0A0A0D 0%, #131317 100%)",
+        "mesh-balance":
+          "radial-gradient(ellipse 60% 80% at 85% 20%, rgba(232, 90, 26, 0.30), transparent 60%)," +
+          "radial-gradient(ellipse 40% 60% at 10% 90%, rgba(232, 90, 26, 0.10), transparent 70%)," +
+          "linear-gradient(135deg, #0A0A0D 0%, #131317 100%)",
         "mesh-footer":
           "linear-gradient(180deg, #131317 0%, #0A0A0D 100%)",
         "angular-divider":

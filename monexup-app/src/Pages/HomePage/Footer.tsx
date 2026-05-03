@@ -35,15 +35,11 @@ export default function Footer() {
               className="mnx-mark mb-5"
               aria-label="MonexUp — Home"
             >
-              <span className="mnx-mark__square" aria-hidden="true">
-                M<span className="text-graphite-900">.</span>
-              </span>
-              <span className="mnx-mark__word text-mnx-neutral-50">
-                monex
-                <span className="bg-orange-500 text-white px-1.5 rounded-sm ml-0.5">
-                  up
-                </span>
-              </span>
+              <img
+                src="/logo.png"
+                alt="MonexUp"
+                className="h-10 lg:h-12 w-auto"
+              />
             </Link>
             <p className="mt-4 text-sm text-graphite-300 leading-relaxed max-w-md">
               {t("footer_description")}{" "}

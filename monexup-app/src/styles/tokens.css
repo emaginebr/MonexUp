@@ -44,9 +44,12 @@
   --color-neutral-400: #A3A39F;
 
   /* Semantic states */
+  --color-success-50:  #ECFDF5;
   --color-success-500: #10B981;
+  --color-success-600: #059669;
   --color-warn-500:    #F59E0B;
   --color-error-500:   #EF4444;
+  --color-info-50:     #EFF6FF;
   --color-info-500:    #3B82F6;
 
   /* Typography stacks */

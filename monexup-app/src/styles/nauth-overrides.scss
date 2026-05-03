@@ -12,3 +12,26 @@
   // Border radius compatible with Bootstrap
   --radius: 0.375rem;
 }
+
+// Force submit buttons inside auth cards to MonexUp brand orange,
+// overriding nauth-react's hardcoded `bg-blue-600` Tailwind classes.
+.auth-card {
+  button[type="submit"],
+  button.bg-blue-600,
+  button.dark\:bg-blue-500 {
+    background-color: #f97316 !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 24px -4px rgba(249, 115, 22, 0.45);
+
+    &:hover:not(:disabled) {
+      background-color: #ea580c !important;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow:
+        0 0 0 2px rgba(249, 115, 22, 0.6),
+        0 6px 24px -4px rgba(249, 115, 22, 0.45);
+    }
+  }
+}

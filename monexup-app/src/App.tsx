@@ -16,6 +16,7 @@ import UserProvider from './Contexts/User/UserProvider';
 import HomePage from './Pages/HomePage';
 import HomeHeader from './Pages/HomePage/Header';
 import HomeFooter from './Pages/HomePage/Footer';
+import MiniFooter from './Components/MiniFooter';
 import NetworkPage from './Pages/NetworkPage';
 import DashboardPage from './Pages/DashboardPage';
 import NetworkEditPage from './Pages/NetworkEditPage';
@@ -101,16 +102,37 @@ function LayoutMarketing() {
   );
 }
 
+/**
+ * LayoutDashboard — post-login shell for the redesigned dashboard.
+ * Reuses the dark Home header (so navigation, user menu and logout stay
+ * consistent with the rest of the app) and pairs it with a slim
+ * `<MiniFooter />` instead of the marketing 4-column footer. Used only
+ * by the `/admin` index and `/admin/dashboard` routes — every other
+ * `/admin/*` route still uses `LayoutAdmin` (sidebar + AdminLayout).
+ */
+function LayoutDashboard() {
+  return (
+    <div>
+      <HomeHeader />
+      <Outlet />
+      <MiniFooter />
+    </div>
+  );
+}
+
+const tenantId = process.env.REACT_APP_TENANT_ID || 'monexup';
+
 const proxyPayConfig = {
   baseUrl: process.env.REACT_APP_PROXYPAY_API_URL || '',
   clientId: process.env.REACT_APP_PROXYPAY_CLIENT_ID || '',
-  tenantId: process.env.REACT_APP_PROXYPAY_TENANT_ID || 'monexup'
+  tenantId: process.env.REACT_APP_PROXYPAY_TENANT_ID || tenantId,
 };
 
 const nauthConfig = {
   apiUrl: process.env.REACT_APP_NAUTH_API_URL || process.env.REACT_APP_API_URL || '',
   enableFingerprinting: true,
   language: 'pt',
+  headers: { 'X-Tenant-Id': tenantId },
 };
 
 function App() {
@@ -131,6 +153,8 @@ function App() {
           <Route path="new-seller" element={<SellerAddPage />} />
           <Route path=":networkSlug/new-seller" element={<SellerAddPage />} />
           <Route path=":networkSlug/@/:sellerSlug/new-seller" element={<SellerAddPage />} />
+          <Route path=":networkSlug/request-access" element={<RequestAccessPage />} />
+          <Route path=":networkSlug/@/:sellerSlug/request-access" element={<RequestAccessPage />} />
         </Route>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
@@ -149,9 +173,14 @@ function App() {
             <Route path="reset-password" element={<ResetPasswordPage />} />
           </Route>
         </Route>
-        <Route path="admin" element={<LayoutAdmin />}>
+        {/* Dashboard shell — Home header + condensed mini-footer. The
+            redesigned /admin/dashboard does NOT use the legacy <Menu /> +
+            <AdminLayout /> sidebar chrome. Other admin routes still do. */}
+        <Route path="admin" element={<LayoutDashboard />}>
           <Route index element={<DashboardPage />} />
           <Route path="dashboard" element={<DashboardPage />} />
+        </Route>
+        <Route path="admin" element={<LayoutAdmin />}>
           <Route path="network" element={<NetworkEditPage />} />
           <Route path="teams">
             <Route index element={<UserSearchPage />} />
@@ -184,7 +213,6 @@ function App() {
         </Route>
         <Route path=":networkSlug" element={<LayoutNetwork />}>
           <Route index element={<NetworkPage />} />
-          <Route path="request-access" element={<RequestAccessPage />} />
           <Route path="account">
             <Route index element={<LoginPage />} />
             <Route path="login" element={<LoginPage />} />
@@ -198,7 +226,6 @@ function App() {
           <Route path="@">
             <Route path=":sellerSlug">
               <Route index element={<SellerPage />} />
-              <Route path="request-access" element={<RequestAccessPage />} />
               <Route path=":productSlug" element={<ProductPage />} />
             </Route>
             <Route index element={<Error404Page />} />

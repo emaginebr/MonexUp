@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MonexUp — Crie sua Rede (Redesign)</title>
+  <meta name="description" content="MonexUp — Network creation page redesign mockup. Dark mesh shell, orange-glow wizard, editorial split on Step 1 with login/register tabs, focused card on Step 2, payment placeholder on Step 3, celebration on Step 4." />
+
+  <!-- Tailwind CDN (mockup only — production uses Vite + tailwind.config.snippet.js) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Space Grotesk (display) + Inter (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Design Tokens (shared with home/login mockups) -->
+  <link rel="stylesheet" href="./tokens.css" />
+
+  <!-- Tailwind CDN config — mirrors tailwind.config.snippet.js -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            orange: {
+              50:'#FFF3EC',100:'#FFE0CC',200:'#FFC199',300:'#FFA266',400:'#FF8033',
+              500:'#E85A1A',600:'#C64A14',700:'#9E3A0F',800:'#762B0A',900:'#4D1C06',
+              DEFAULT:'#E85A1A',
+            },
+            graphite: {
+              50:'#F4F4F5',100:'#E4E4E7',200:'#C8C8CE',300:'#9A9AA3',400:'#6B6B75',
+              500:'#3F3F46',600:'#27272A',700:'#1B1B1F',800:'#131317',900:'#0A0A0D',
+            },
+            neutral: { 0:'#FFFFFF',50:'#FAFAF9',100:'#F4F4F2',200:'#E7E7E4',300:'#D4D4D1',400:'#A3A39F' },
+          },
+          fontFamily: {
+            display: ['"Space Grotesk"','Inter','ui-sans-serif','system-ui'],
+            sans:    ['Inter','ui-sans-serif','system-ui'],
+          },
+          maxWidth: { container: '1200px' },
+          backgroundImage: {
+            'mesh-hero':
+              'radial-gradient(ellipse 80% 60% at 75% 30%, rgba(232,90,26,0.28), transparent 60%),'+
+              'radial-gradient(ellipse 60% 50% at 15% 80%, rgba(232,90,26,0.10), transparent 65%),'+
+              'linear-gradient(180deg, #0A0A0D 0%, #131317 100%)',
+            'mesh-auth':
+              'radial-gradient(ellipse 70% 55% at 50% 30%, rgba(232,90,26,0.22), transparent 65%),'+
+              'radial-gradient(ellipse 55% 45% at 10% 90%, rgba(232,90,26,0.10), transparent 70%),'+
+              'linear-gradient(180deg, #0A0A0D 0%, #131317 100%)',
+            'mesh-footer':
+              'linear-gradient(180deg, #131317 0%, #0A0A0D 100%)',
+          },
+          boxShadow: {
+            'glow-md': '0 12px 32px -8px rgba(232, 90, 26, 0.55)',
+            'glow-lg': '0 20px 48px -12px rgba(232, 90, 26, 0.65)',
+          },
+          keyframes: {
+            'fade-up': { '0%':{opacity:'0',transform:'translateY(12px)'}, '100%':{opacity:'1',transform:'translateY(0)'} },
+            'pulse-glow': { '0%,100%':{opacity:'0.85'}, '50%':{opacity:'1'} },
+          },
+          animation: {
+            'fade-up': 'fade-up 320ms cubic-bezier(0,0,0.2,1) both',
+            'pulse-glow': 'pulse-glow 2.4s ease-in-out infinite',
+          },
+        }
+      }
+    };
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      color: var(--content-primary);
+      background: var(--surface-page);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    .font-display { font-family: var(--font-display); }
+
+    /* ----- Shared atoms (verbatim from globals.css / login-redesign.html) ----- */
+    .display-headline {
+      font-family: var(--font-display);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+    }
+
+    .mnx-mark { display: inline-flex; align-items: center; gap: 0.5rem; }
+    .mnx-mark__square {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 2.25rem; height: 2.25rem;
+      background: var(--color-orange-500); border-radius: 0.25rem;
+      font-family: var(--font-display); font-weight: 700; font-size: 1rem;
+      color: #fff; letter-spacing: -0.02em;
+      box-shadow: 0 4px 16px -4px rgba(232,90,26,0.55);
+    }
+    .mnx-mark__word {
+      font-family: var(--font-display); font-weight: 600;
+      font-size: 1.125rem; letter-spacing: -0.02em;
+    }
+
+    .cta-primary { position: relative; isolation: isolate; }
+    .cta-primary::after {
+      content: ''; position: absolute; inset: -2px;
+      border-radius: inherit;
+      background: radial-gradient(60% 80% at 50% 100%, rgba(232,90,26,0.6), transparent 70%);
+      filter: blur(14px); z-index: -1; opacity: 0.85;
+      transition: opacity 220ms cubic-bezier(0.2,0,0,1);
+    }
+    .cta-primary:hover::after { opacity: 1; }
+
+    :focus-visible {
+      outline: 3px solid var(--color-orange-500);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .animate-fade-up,
+      .animate-pulse-glow,
+      .cta-primary::after { animation: none !important; transition: none !important; }
+      html { scroll-behavior: auto; }
+    }
+
+    .auth-grid {
+      background-image:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse 70% 55% at 50% 30%, black, transparent 75%);
+      -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 30%, black, transparent 75%);
+    }
+
+    .auth-card {
+      background: var(--color-neutral-0);
+      border: 1px solid var(--color-neutral-200);
+      border-radius: var(--radius-2xl);
+      box-shadow:
+        0 30px 60px -20px rgba(0, 0, 0, 0.55),
+        0 12px 24px -10px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+      color: var(--color-graphite-900);
+    }
+
+    .auth-mark {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 3rem; height: 3rem;
+      background: var(--color-orange-500); border-radius: var(--radius-md);
+      font-family: var(--font-display); font-weight: 700; font-size: 1.5rem;
+      color: #fff; letter-spacing: -0.02em;
+      box-shadow: 0 8px 24px -6px rgba(232, 90, 26, 0.55);
+    }
+
+    .trust-chip {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.375rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: var(--fs-xs); font-weight: var(--fw-medium);
+      letter-spacing: 0.04em; text-transform: uppercase;
+      color: var(--color-orange-200);
+      background: rgba(232, 90, 26, 0.10);
+      border: 1px solid rgba(232, 90, 26, 0.30);
+    }
+
+    /* ============================================================
+       NEW ATOMS — promote into globals.css when migrating
+       ============================================================ */
+
+    /*  Wizard — dark, brutalist tracker on the dark mesh shell.
+        Visual contract:
+          - Connector line: 2px, neutral white/10 → orange-500 once a step
+            is "completed" (left-side fill).
+          - Step circle: 44×44 (touch target!), white/10 ring, orange fill
+            when "active", solid orange + check icon when "completed".
+          - Glow halo around the active circle (matches the home
+            shadow-glow-md vocabulary).
+          - Label: small uppercase tracking-wide caption under the circle.
+    */
+    .mnx-wizard {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 0;
+      padding: 1rem 0 0;
+      list-style: none;
+      margin: 0;
+    }
+
+    .mnx-wizard__step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      max-width: 180px;
+      position: relative;
+      color: var(--color-graphite-300);
+    }
+
+    /* connector */
+    .mnx-wizard__step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 22px;                       /* circle center: 22 = 44/2 */
+      left: calc(50% + 26px);
+      width: calc(100% - 52px);
+      height: 2px;
+      background: rgba(255, 255, 255, 0.10);
+      transition: background 220ms cubic-bezier(0.2,0,0,1);
+    }
+
+    .mnx-wizard__step.is-completed:not(:last-child)::after {
+      background: var(--color-orange-500);
+    }
+
+    .mnx-wizard__circle {
+      width: 44px; height: 44px;
+      border-radius: 9999px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1.5px solid rgba(255, 255, 255, 0.14);
+      color: var(--color-graphite-300);
+      transition: background 220ms, border-color 220ms, color 220ms;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .mnx-wizard__step.is-active .mnx-wizard__circle {
+      background: var(--color-orange-500);
+      border-color: var(--color-orange-500);
+      color: #fff;
+      box-shadow: 0 8px 24px -6px rgba(232, 90, 26, 0.55);
+    }
+
+    /* glow halo on the active step — soft, additive, animates pulse */
+    .mnx-wizard__step.is-active .mnx-wizard__circle::after {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: inherit;
+      background: radial-gradient(60% 60% at 50% 50%, rgba(232, 90, 26, 0.55), transparent 70%);
+      filter: blur(10px);
+      z-index: -1;
+      animation: pulse-glow 2.4s ease-in-out infinite;
+    }
+
+    .mnx-wizard__step.is-completed .mnx-wizard__circle {
+      background: var(--color-orange-500);
+      border-color: var(--color-orange-500);
+      color: #fff;
+    }
+
+    .mnx-wizard__label {
+      margin-top: 0.625rem;
+      font-size: var(--fs-xs);
+      font-weight: var(--fw-medium);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-align: center;
+      color: var(--color-graphite-300);
+      max-width: 8.5rem;
+      line-height: 1.25;
+    }
+    .mnx-wizard__step.is-active  .mnx-wizard__label { color: #fff; }
+    .mnx-wizard__step.is-completed .mnx-wizard__label { color: var(--color-graphite-100); }
+
+    /* mobile compaction — labels under, smaller circles */
+    @media (max-width: 640px) {
+      .mnx-wizard__circle { width: 36px; height: 36px; }
+      .mnx-wizard__step:not(:last-child)::after {
+        top: 18px;
+        left: calc(50% + 22px);
+        width: calc(100% - 44px);
+      }
+      .mnx-wizard__label {
+        font-size: 0.625rem;
+        letter-spacing: 0.04em;
+      }
+    }
+
+    /* Auth-form preview — same vocabulary as login mockup but used for the
+       NEW network/user inputs the page now owns directly (no LoginForm). */
+    .auth-form-preview .field-label {
+      display: block;
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--color-graphite-700);
+      margin-bottom: 0.375rem;
+    }
+    .auth-form-preview .field-input,
+    .auth-form-preview .field-input-prefixed {
+      display: block;
+      width: 100%;
+      height: 3rem;
+      padding: 0 0.875rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-neutral-300);
+      background: var(--color-neutral-0);
+      color: var(--color-graphite-900);
+      font-size: var(--fs-base);
+      transition: border-color 150ms cubic-bezier(0.2,0,0,1),
+                  box-shadow   150ms cubic-bezier(0.2,0,0,1);
+    }
+    .auth-form-preview .field-input::placeholder,
+    .auth-form-preview .field-input-prefixed::placeholder {
+      color: var(--color-graphite-400);
+    }
+    .auth-form-preview .field-input:hover,
+    .auth-form-preview .field-input-prefixed:hover { border-color: var(--color-graphite-400); }
+    .auth-form-preview .field-input:focus,
+    .auth-form-preview .field-input-prefixed:focus {
+      border-color: var(--color-orange-500);
+      box-shadow: 0 0 0 3px rgba(232, 90, 26, 0.18);
+      outline: none;
+    }
+    .auth-form-preview .field-checkbox {
+      width: 1.125rem; height: 1.125rem;
+      accent-color: var(--color-orange-500);
+    }
+
+    /* Suffix wrapper for "%" on commission input */
+    .field-affix {
+      position: relative;
+    }
+    .field-affix .field-input-prefixed { padding-right: 2.5rem; }
+    .field-affix__suffix {
+      position: absolute;
+      right: 0.875rem; top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-graphite-400);
+      font-weight: 500;
+      pointer-events: none;
+    }
+
+    /* Tab/segmented control — Step 1 only.
+       Sits on top of the auth-card. Two tabs: "Já tenho conta" / "Sou novo".
+       Active state: orange underline + bolder text + neutral-50 surface lift. */
+    .seg {
+      display: inline-flex;
+      width: 100%;
+      padding: 0.25rem;
+      background: var(--color-neutral-100);
+      border: 1px solid var(--color-neutral-200);
+      border-radius: var(--radius-lg);
+    }
+    .seg__btn {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      height: 2.5rem;
+      padding: 0 0.75rem;
+      border-radius: calc(var(--radius-lg) - 4px);
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-medium);
+      color: var(--color-graphite-500);
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      transition: background 150ms, color 150ms, box-shadow 150ms;
+    }
+    .seg__btn:hover { color: var(--color-graphite-900); }
+    .seg__btn.is-active {
+      background: var(--color-neutral-0);
+      color: var(--color-graphite-900);
+      font-weight: var(--fw-semibold);
+      box-shadow: 0 1px 2px rgba(10,10,13,0.10), 0 0 0 1px rgba(232,90,26,0.35);
+    }
+
+    /* Slug preview chip (Step 2) */
+    .slug-preview {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.375rem 0.625rem 0.375rem 0.5rem;
+      background: var(--color-orange-50);
+      border: 1px solid rgba(232, 90, 26, 0.30);
+      border-radius: var(--radius-md);
+      font-size: var(--fs-xs);
+      color: var(--color-orange-700);
+      font-family: var(--font-mono);
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .slug-preview__icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 1.25rem; height: 1.25rem;
+      border-radius: 4px;
+      background: rgba(232, 90, 26, 0.18);
+      color: var(--color-orange-700);
+    }
+
+    /* Success halo (Step 4) — large orange ring with check */
+    .success-halo {
+      position: relative;
+      width: 6rem;
+      height: 6rem;
+      border-radius: 9999px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--color-orange-500);
+      color: #fff;
+      box-shadow: 0 16px 40px -10px rgba(232, 90, 26, 0.55);
+      isolation: isolate;
+    }
+    .success-halo::after {
+      content: '';
+      position: absolute;
+      inset: -1.25rem;
+      border-radius: inherit;
+      background: radial-gradient(60% 60% at 50% 50%, rgba(232, 90, 26, 0.45), transparent 70%);
+      filter: blur(18px);
+      z-index: -1;
+    }
+
+    /* Confetti dots (decorative, behind success card) */
+    .confetti {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        radial-gradient(circle 4px at 18% 22%, rgba(232,90,26,0.55), transparent 60%),
+        radial-gradient(circle 3px at 82% 16%, rgba(255,255,255,0.55), transparent 60%),
+        radial-gradient(circle 5px at 12% 78%, rgba(232,90,26,0.40), transparent 60%),
+        radial-gradient(circle 3px at 88% 82%, rgba(255,255,255,0.40), transparent 60%),
+        radial-gradient(circle 2px at 50% 8%,  rgba(232,90,26,0.55), transparent 60%);
+    }
+
+    /* Section guide bar (mockup-only, remove when porting) */
+    .mockup-bar {
+      background: var(--color-graphite-800);
+      color: var(--color-graphite-200);
+      font-size: var(--fs-sm);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+  </style>
+</head>
+
+<body class="bg-graphite-900">
+
+<!-- ============================================================
+     SECTION GUIDE — printed at top of mockup so the engineer can
+     scan all four step states in one scroll. Remove on copy
+     to production.
+     ============================================================ -->
+<div class="mockup-bar">
+  <div class="max-w-container mx-auto px-shell py-3 flex items-center justify-between gap-4">
+    <p class="font-display tracking-wide uppercase text-xs">MonexUp · Network creation · 4 step states</p>
+    <p class="text-xs text-graphite-400">Step 1 (login/register tabs) → Step 2 (network) → Step 3 (payment) → Step 4 (success)</p>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     HEADER — verbatim copy from monexup-app/src/Pages/HomePage/Header.tsx
+     ============================================================ -->
+<header class="mnx-surface-dark sticky top-0 z-50 border-b border-white/5 backdrop-blur-md"
+        style="background: rgba(10,10,13,0.85);">
+  <nav class="max-w-container mx-auto px-shell flex items-center justify-between h-16 lg:h-20"
+       aria-label="Primary">
+    <a href="#" class="mnx-mark" aria-label="MonexUp — Home">
+      <span class="mnx-mark__square" aria-hidden="true">M<span class="text-graphite-900">.</span></span>
+      <span class="mnx-mark__word text-neutral-50">
+        monex<span class="bg-orange-500 text-white px-1.5 rounded-sm ml-0.5">up</span>
+      </span>
+    </a>
+
+    <ul class="hidden lg:flex items-center gap-8 text-sm font-medium text-graphite-200">
+      <li><a href="#" class="hover:text-white transition-colors duration-150">Home</a></li>
+      <li><a href="#" class="hover:text-white transition-colors duration-150">Redes</a></li>
+      <li><a href="#" class="hover:text-white transition-colors duration-150">Planos</a></li>
+      <li><a href="#" class="hover:text-white transition-colors duration-150">Sobre</a></li>
+      <li><a href="#" class="text-white font-semibold">Crie sua rede</a></li>
+      <li><a href="#" class="hover:text-white transition-colors duration-150">Entrar</a></li>
+    </ul>
+
+    <div class="flex items-center gap-3">
+      <a href="#" class="hidden sm:inline-flex h-10 items-center px-4 rounded-md text-sm font-medium text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-150">
+        Crie sua rede
+      </a>
+      <a href="#" class="hidden sm:inline-flex h-10 items-center px-4 rounded-md text-sm font-medium text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-150">
+        Entrar
+      </a>
+      <a href="#"
+         class="cta-primary inline-flex h-10 items-center px-5 rounded-md text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-150 shadow-glow-md">
+        Seja um representante
+      </a>
+
+      <button class="lg:hidden inline-flex w-10 h-10 items-center justify-center rounded-md text-graphite-100 hover:bg-white/5"
+              aria-label="Abrir menu" aria-expanded="false">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6"  x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+
+<!-- ============================================================
+     MAIN — dark mesh shell. Hero band on top with the wizard.
+     Each step state renders below, separated only for the mockup
+     (in production only ONE renders at a time).
+     ============================================================ -->
+<main id="network-main"
+      class="mnx-surface-dark relative overflow-hidden bg-mesh-auth"
+      aria-labelledby="network-heading">
+  <div class="auth-grid absolute inset-0 pointer-events-none" aria-hidden="true"></div>
+
+  <!-- ─────────── HERO BAND with wizard tracker ─────────── -->
+  <div class="relative max-w-container mx-auto px-shell pt-12 lg:pt-16 pb-6 lg:pb-10">
+    <div class="text-center max-w-2xl mx-auto animate-fade-up">
+      <span class="trust-chip">
+        <span class="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" aria-hidden="true"></span>
+        Crie sua rede em 4 passos
+      </span>
+
+      <h1 id="network-heading" class="display-headline text-neutral-50 mt-5 text-3xl sm:text-4xl lg:text-5xl">
+        Crie sua rede MMN.<br/>
+        <span class="text-orange-500">Comece em minutos.</span>
+      </h1>
+
+      <p class="mt-4 text-graphite-200 text-base lg:text-lg leading-relaxed max-w-xl mx-auto">
+        Configure seu painel, comissões e pagamento PIX em quatro passos.
+        Seus representantes começam a operar no mesmo dia.
+      </p>
+    </div>
+
+    <!-- Wizard tracker (active step varies; shown on Step 2 here) -->
+    <ol class="mnx-wizard mt-10 lg:mt-12" aria-label="Progresso da criação da rede">
+      <li class="mnx-wizard__step is-completed" aria-current="false">
+        <span class="mnx-wizard__circle" aria-hidden="true">
+          <!-- check -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </span>
+        <span class="mnx-wizard__label">Registrar usuário</span>
+      </li>
+      <li class="mnx-wizard__step is-active" aria-current="step">
+        <span class="mnx-wizard__circle" aria-hidden="true">
+          <!-- globe -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+        </span>
+        <span class="mnx-wizard__label">Registrar rede</span>
+      </li>
+      <li class="mnx-wizard__step" aria-current="false">
+        <span class="mnx-wizard__circle" aria-hidden="true">
+          <!-- credit-card -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        </span>
+        <span class="mnx-wizard__label">Pagamento</span>
+      </li>
+      <li class="mnx-wizard__step" aria-current="false">
+        <span class="mnx-wizard__circle" aria-hidden="true">
+          <!-- check -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </span>
+        <span class="mnx-wizard__label">Concluído</span>
+      </li>
+    </ol>
+  </div>
+
+  <!-- ===========================================================
+       STEP 1 — Auth split. Left dark editorial column with copy
+       and trust signals, right light auth card with a tabbed
+       segmented control toggling LOGIN ↔ REGISTER.
+       =========================================================== -->
+  <section id="step-1" aria-labelledby="step-1-label"
+           class="relative max-w-container mx-auto px-shell py-12 lg:py-16 border-t border-white/5">
+
+    <!-- Mockup-only label -->
+    <div class="mb-6">
+      <p class="font-display tracking-wider uppercase text-xs text-graphite-400">
+        Step 1 · Authenticate or create your user account
+      </p>
+      <h2 id="step-1-label" class="sr-only">Passo 1 — Registrar usuário</h2>
+    </div>
+
+    <div class="grid lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+
+      <!-- LEFT — editorial copy on dark mesh -->
+      <div class="lg:col-span-5 order-2 lg:order-1 animate-fade-up">
+        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-orange-400">
+          Por que MonexUp?
+        </p>
+        <h3 class="display-headline text-neutral-50 mt-4 text-3xl lg:text-4xl">
+          Sua rede,<br/>
+          <span class="text-orange-500">seu protagonismo.</span>
+        </h3>
+        <p class="mt-5 max-w-md text-graphite-200 leading-relaxed">
+          Cadastre-se ou entre na sua conta para começar. Em seguida você define
+          o nome da rede, a comissão por nível e ativa o plano.
+        </p>
+
+        <!-- Value props -->
+        <ul class="mt-8 space-y-4 max-w-md text-sm text-graphite-200">
+          <li class="flex items-start gap-3">
+            <span class="mt-0.5 inline-flex w-7 h-7 rounded-md bg-orange-500/15 border border-orange-500/30 items-center justify-center text-orange-400" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </span>
+            <span><strong class="text-neutral-50 font-semibold">Cadastro instantâneo.</strong> Sua conta fica pronta em segundos — sem espera por aprovação.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="mt-0.5 inline-flex w-7 h-7 rounded-md bg-orange-500/15 border border-orange-500/30 items-center justify-center text-orange-400" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
+            <span><strong class="text-neutral-50 font-semibold">Login seguro com NAuth.</strong> Autenticação criptografada e fingerprint do dispositivo.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="mt-0.5 inline-flex w-7 h-7 rounded-md bg-orange-500/15 border border-orange-500/30 items-center justify-center text-orange-400" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+            </span>
+            <span><strong class="text-neutral-50 font-semibold">PIX integrado.</strong> Cobrança e split de comissão sem etapas extras.</span>
+          </li>
+        </ul>
+
+        <!-- Trust micro-stats -->
+        <div class="mt-10 grid grid-cols-3 gap-6 max-w-md">
+          <div>
+            <p class="font-display text-2xl font-bold text-neutral-50">+12k</p>
+            <p class="text-[0.6875rem] uppercase tracking-wider text-graphite-300 mt-1">Representantes</p>
+          </div>
+          <div class="border-l border-white/10 pl-6">
+            <p class="font-display text-2xl font-bold text-neutral-50">340+</p>
+            <p class="text-[0.6875rem] uppercase tracking-wider text-graphite-300 mt-1">Redes ativas</p>
+          </div>
+          <div class="border-l border-white/10 pl-6">
+            <p class="font-display text-2xl font-bold text-neutral-50">R$ 4.2M</p>
+            <p class="text-[0.6875rem] uppercase tracking-wider text-graphite-300 mt-1">Pago em comissões</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT — auth card with login/register tabs -->
+      <div class="lg:col-span-7 order-1 lg:order-2">
+        <div class="relative max-w-xl mx-auto lg:ml-auto lg:mr-0">
+          <div class="absolute -inset-6 bg-orange-500/15 rounded-3xl blur-3xl pointer-events-none" aria-hidden="true"></div>
+
+          <article class="auth-card relative p-6 sm:p-8 lg:p-10 animate-fade-up" aria-label="Autenticação ou cadastro">
+            <!-- Brand mark + heading -->
+            <div class="flex items-center gap-4">
+              <div class="auth-mark" aria-hidden="true">M<span class="text-graphite-900">.</span></div>
+              <div>
+                <h2 class="display-headline text-2xl text-graphite-900" id="step-1-card-title">
+                  Comece sua jornada
+                </h2>
+                <p class="text-sm text-graphite-500 mt-1">
+                  Já tem conta? Entre. Senão, cadastre-se em 30 segundos.
+                </p>
+              </div>
+            </div>
+
+            <!-- Segmented control: login ↔ register ----------------- -->
+            <div role="tablist" aria-label="Modo de autenticação" class="seg mt-6">
+              <button role="tab"
+                      id="tab-login"
+                      aria-controls="panel-login"
+                      aria-selected="true"
+                      class="seg__btn is-active">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                Já tenho conta
+              </button>
+              <button role="tab"
+                      id="tab-register"
+                      aria-controls="panel-register"
+                      aria-selected="false"
+                      class="seg__btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                Sou novo aqui
+              </button>
+            </div>
+
+            <!-- ─────── Panel: LOGIN (visible by default) ─────── -->
+            <div id="panel-login" role="tabpanel" aria-labelledby="tab-login"
+                 class="auth-form-preview mt-6">
+              <h3 class="sr-only">Acesse sua conta</h3>
+              <form class="space-y-5" onsubmit="event.preventDefault();">
+                <div>
+                  <label class="field-label" for="login-email">Email</label>
+                  <input class="field-input" id="login-email" type="email" autocomplete="email"
+                         placeholder="seu@email.com" />
+                </div>
+                <div>
+                  <label class="field-label" for="login-password">Senha</label>
+                  <input class="field-input" id="login-password" type="password" autocomplete="current-password"
+                         placeholder="Sua senha" />
+                </div>
+
+                <div class="flex items-center justify-between text-sm">
+                  <label class="inline-flex items-center gap-2 text-graphite-700">
+                    <input type="checkbox" class="field-checkbox" />
+                    Lembrar minha senha
+                  </label>
+                  <a href="#" class="font-medium text-orange-700 hover:text-orange-600 transition-colors duration-150">
+                    Esqueci minha senha
+                  </a>
+                </div>
+
+                <button type="submit"
+                        class="cta-primary inline-flex items-center justify-center w-full h-12 px-5 rounded-md bg-orange-500 hover:bg-orange-600 text-white font-semibold shadow-glow-md transition-colors duration-150">
+                  Próximo
+                  <svg class="ml-2" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </button>
+              </form>
+            </div>
+
+            <!-- ─────── Panel: REGISTER (rendered hidden in mockup, but
+                       shown here below for the reviewer to inspect both
+                       states in the same scroll) ─────── -->
+            <div id="panel-register" role="tabpanel" aria-labelledby="tab-register"
+                 class="auth-form-preview mt-8 pt-8 border-t border-dashed border-neutral-200">
+              <p class="text-xs uppercase tracking-wider text-graphite-400 mb-3">Mockup preview · panel: register</p>
+              <h3 class="sr-only">Registro de usuário</h3>
+              <form class="space-y-5" onsubmit="event.preventDefault();">
+                <div>
+                  <label class="field-label" for="reg-name">Nome</label>
+                  <input class="field-input" id="reg-name" type="text" autocomplete="name"
+                         placeholder="Seu nome" />
+                </div>
+                <div>
+                  <label class="field-label" for="reg-email">Email</label>
+                  <input class="field-input" id="reg-email" type="email" autocomplete="email"
+                         placeholder="Seu email" />
+                </div>
+                <div class="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="field-label" for="reg-password">Senha</label>
+                    <input class="field-input" id="reg-password" type="password" autocomplete="new-password"
+                           placeholder="Sua senha" />
+                  </div>
+                  <div>
+                    <label class="field-label" for="reg-password-confirm">Confirmar senha</label>
+                    <input class="field-input" id="reg-password-confirm" type="password" autocomplete="new-password"
+                           placeholder="Confirme sua senha" />
+                  </div>
+                </div>
+
+                <button type="submit"
+                        class="cta-primary inline-flex items-center justify-center w-full h-12 px-5 rounded-md bg-orange-500 hover:bg-orange-600 text-white font-semibold shadow-glow-md transition-colors duration-150">
+                  Próximo
+                  <svg class="ml-2" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </button>
+              </form>
+            </div>
+
+          </article>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===========================================================
+       STEP 2 — Network registration. Single centered card.
+       Inputs: name (with slug preview), email, commission %.
+       =========================================================== -->
+  <section id="step-2" aria-labelledby="step-2-label"
+           class="relative max-w-container mx-auto px-shell py-12 lg:py-16 border-t border-white/5">
+
+    <div class="mb-6">
+      <p class="font-display tracking-wider uppercase text-xs text-graphite-400">
+        Step 2 · Configure your network
+      </p>
+      <h2 id="step-2-label" class="sr-only">Passo 2 — Registro de rede</h2>
+    </div>
+
+    <div class="flex justify-center">
+      <div class="relative w-full max-w-2xl">
+        <div class="absolute -inset-6 bg-orange-500/15 rounded-3xl blur-3xl pointer-events-none" aria-hidden="true"></div>
+
+        <article class="auth-card relative p-6 sm:p-8 lg:p-10 animate-fade-up" aria-label="Registro de rede">
+          <div class="flex items-center gap-4">
+            <div class="auth-mark" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+            </div>
+            <div>
+              <h2 class="display-headline text-2xl text-graphite-900">
+                Registro de rede
+              </h2>
+              <p class="text-sm text-graphite-500 mt-1">
+                O registro não é obrigatório para fazer trocas, mas você pode fazê-lo para acessar seu histórico de transações.
+              </p>
+            </div>
+          </div>
+
+          <form class="auth-form-preview mt-8 space-y-5" onsubmit="event.preventDefault();">
+            <!-- Nome da rede + slug preview -->
+            <div>
+              <label class="field-label" for="net-name">Nome da rede</label>
+              <input class="field-input" id="net-name" type="text"
+                     value="Rede Alpha"
+                     aria-describedby="net-name-help"
+                     placeholder="Nome da sua rede" />
+              <div class="mt-2" id="net-name-help">
+                <span class="slug-preview" aria-live="polite">
+                  <span class="slug-preview__icon" aria-hidden="true">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                  </span>
+                  <span class="text-[0.7rem] uppercase tracking-wider font-sans font-semibold mr-1">URL</span>
+                  monexup.com/<span class="font-bold">rede-alpha</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Email da rede -->
+            <div>
+              <label class="field-label" for="net-email">Email</label>
+              <input class="field-input" id="net-email" type="email" autocomplete="email"
+                     placeholder="Email da sua rede" />
+            </div>
+
+            <!-- Comissão -->
+            <div>
+              <label class="field-label" for="net-commission">Comissão</label>
+              <div class="field-affix">
+                <input class="field-input-prefixed" id="net-commission" type="number"
+                       inputmode="decimal"
+                       min="0" max="100" step="0.5"
+                       placeholder="Percentual de Comissão da Rede"
+                       value="10" />
+                <span class="field-affix__suffix" aria-hidden="true">%</span>
+              </div>
+              <p class="mt-2 text-xs text-graphite-500">
+                Percentual aplicado por nível na sua estrutura de comissão (0 a 100).
+              </p>
+            </div>
+
+            <!-- Action row -->
+            <div class="pt-4 flex flex-col sm:flex-row sm:justify-end gap-3">
+              <button type="button"
+                      class="inline-flex items-center justify-center h-12 px-5 rounded-md border border-neutral-300 bg-white text-graphite-900 font-medium hover:bg-neutral-100 transition-colors duration-150">
+                <svg class="mr-2" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                Voltar
+              </button>
+              <button type="submit"
+                      class="cta-primary inline-flex items-center justify-center h-12 px-6 rounded-md bg-orange-500 hover:bg-orange-600 text-white font-semibold shadow-glow-md transition-colors duration-150">
+                Próximo
+                <svg class="ml-2" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+            </div>
+          </form>
+        </article>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===========================================================
+       STEP 3 — Payment placeholder. Visual stub matching the same
+       card system, with a "Em breve" badge and disabled CTA.
+       =========================================================== -->
+  <section id="step-3" aria-labelledby="step-3-label"
+           class="relative max-w-container mx-auto px-shell py-12 lg:py-16 border-t border-white/5">
+
+    <div class="mb-6">
+      <p class="font-display tracking-wider uppercase text-xs text-graphite-400">
+        Step 3 · Payment (placeholder)
+      </p>
+      <h2 id="step-3-label" class="sr-only">Passo 3 — Pagamento</h2>
+    </div>
+
+    <div class="flex justify-center">
+      <div class="relative w-full max-w-2xl">
+        <div class="absolute -inset-6 bg-orange-500/10 rounded-3xl blur-3xl pointer-events-none" aria-hidden="true"></div>
+
+        <article class="auth-card relative p-6 sm:p-8 lg:p-10 animate-fade-up" aria-label="Pagamento">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <div class="auth-mark" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+              </div>
+              <div>
+                <h2 class="display-headline text-2xl text-graphite-900">Pagamento</h2>
+                <p class="text-sm text-graphite-500 mt-1">
+                  Ative seu plano via PIX. A integração de pagamento será exibida aqui.
+                </p>
+              </div>
+            </div>
+            <span class="trust-chip" style="color:var(--color-orange-700); background:rgba(232,90,26,0.08); border-color:rgba(232,90,26,0.30);">
+              Em breve
+            </span>
+          </div>
+
+          <!-- Placeholder grid -->
+          <div class="mt-8 grid sm:grid-cols-2 gap-4">
+            <div class="rounded-lg border border-dashed border-neutral-300 p-6 flex flex-col items-center justify-center text-center min-h-[180px]">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-graphite-400" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+              <p class="mt-3 text-sm font-semibold text-graphite-700">QR Code PIX</p>
+              <p class="mt-1 text-xs text-graphite-500">Renderizado via ProxyPay</p>
+            </div>
+            <div class="rounded-lg border border-dashed border-neutral-300 p-6 flex flex-col items-center justify-center text-center min-h-[180px]">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="text-graphite-400" aria-hidden="true"><path d="M12 2v6M12 16v6"/><circle cx="12" cy="12" r="3"/><path d="M4 12H2M22 12h-2"/></svg>
+              <p class="mt-3 text-sm font-semibold text-graphite-700">Resumo do plano</p>
+              <p class="mt-1 text-xs text-graphite-500">Plano, taxa, total e validade</p>
+            </div>
+          </div>
+
+          <div class="pt-6 mt-2 flex flex-col sm:flex-row sm:justify-end gap-3">
+            <button type="button"
+                    class="inline-flex items-center justify-center h-12 px-5 rounded-md border border-neutral-300 bg-white text-graphite-900 font-medium hover:bg-neutral-100 transition-colors duration-150">
+              <svg class="mr-2" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+              Voltar
+            </button>
+            <button type="button" disabled
+                    class="inline-flex items-center justify-center h-12 px-6 rounded-md bg-neutral-200 text-graphite-400 font-semibold cursor-not-allowed">
+              Próximo
+            </button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===========================================================
+       STEP 4 — Celebration. Success halo + copy + primary CTA.
+       =========================================================== -->
+  <section id="step-4" aria-labelledby="step-4-label"
+           class="relative max-w-container mx-auto px-shell py-12 lg:py-16 border-t border-white/5">
+
+    <div class="mb-6">
+      <p class="font-display tracking-wider uppercase text-xs text-graphite-400">
+        Step 4 · Success
+      </p>
+      <h2 id="step-4-label" class="sr-only">Passo 4 — Concluído</h2>
+    </div>
+
+    <div class="flex justify-center">
+      <div class="relative w-full max-w-2xl">
+        <div class="absolute -inset-6 bg-orange-500/20 rounded-3xl blur-3xl pointer-events-none" aria-hidden="true"></div>
+
+        <article class="auth-card relative p-8 sm:p-10 lg:p-12 text-center overflow-hidden animate-fade-up" aria-label="Rede criada com sucesso">
+          <div class="confetti" aria-hidden="true"></div>
+
+          <div class="relative inline-flex">
+            <div class="success-halo" role="img" aria-label="Sucesso">
+              <!-- CheckCircle2 (lucide) -->
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+          </div>
+
+          <h2 class="display-headline text-graphite-900 mt-8 text-3xl sm:text-4xl">
+            Sua rede foi criada<br/>
+            <span class="text-orange-500">com sucesso!</span>
+          </h2>
+
+          <p class="mt-5 text-graphite-700 max-w-lg mx-auto leading-relaxed">
+            Parabéns! Você acaba de dar o primeiro passo para construir uma comunidade
+            forte, colaborativa e pronta para alcançar resultados incríveis com o poder
+            do marketing de rede.
+          </p>
+
+          <!-- Bullet recap (avoids the run-on sentence the i18n key uses) -->
+          <ul class="mt-6 mx-auto max-w-md text-sm text-graphite-700 text-left space-y-2.5">
+            <li class="flex items-start gap-2.5">
+              <svg class="mt-0.5 flex-shrink-0 text-orange-500" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+              Convide novos representantes
+            </li>
+            <li class="flex items-start gap-2.5">
+              <svg class="mt-0.5 flex-shrink-0 text-orange-500" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+              Cadastre produtos para doação e venda
+            </li>
+            <li class="flex items-start gap-2.5">
+              <svg class="mt-0.5 flex-shrink-0 text-orange-500" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+              Acompanhe o desempenho da sua rede
+            </li>
+            <li class="flex items-start gap-2.5">
+              <svg class="mt-0.5 flex-shrink-0 text-orange-500" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+              Organize eventos e campanhas
+            </li>
+          </ul>
+
+          <p class="mt-8 font-display text-graphite-900 text-lg">
+            Vamos começar?
+          </p>
+
+          <div class="mt-6 flex justify-center">
+            <a href="#"
+               class="cta-primary inline-flex items-center justify-center h-12 px-6 rounded-md bg-orange-500 hover:bg-orange-600 text-white font-semibold shadow-glow-md transition-colors duration-150">
+              Acessar minha rede
+              <svg class="ml-2" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+
+<!-- ============================================================
+     FOOTER — verbatim copy from monexup-app/src/Pages/HomePage/Footer.tsx
+     ============================================================ -->
+<footer role="contentinfo" class="mnx-surface-dark bg-mesh-footer text-neutral-50 pt-20 pb-10">
+  <div class="max-w-container mx-auto px-shell">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-12 gap-10 mb-12">
+
+      <!-- Brand column -->
+      <div class="lg:col-span-5">
+        <a href="#" class="mnx-mark mb-5" aria-label="MonexUp — Home">
+          <span class="mnx-mark__square" aria-hidden="true">M<span class="text-graphite-900">.</span></span>
+          <span class="mnx-mark__word text-neutral-50">
+            monex<span class="bg-orange-500 text-white px-1.5 rounded-sm ml-0.5">up</span>
+          </span>
+        </a>
+        <p class="mt-4 text-sm text-graphite-300 leading-relaxed max-w-md">
+          Plataforma de marketing multinível com gestão de redes, comissões em múltiplos níveis e pagamento PIX integrado.
+          <span class="text-orange-400 font-semibold">Vença. Ganhe. Evolua.</span>
+        </p>
+        <div class="mt-6 flex items-center gap-3">
+          <a href="#" aria-label="Facebook" class="w-10 h-10 inline-flex items-center justify-center rounded-md border border-white/10 hover:border-orange-500 hover:text-orange-400 transition-colors duration-150">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 10-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.7-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0022 12z"/></svg>
+          </a>
+          <a href="#" aria-label="Twitter" class="w-10 h-10 inline-flex items-center justify-center rounded-md border border-white/10 hover:border-orange-500 hover:text-orange-400 transition-colors duration-150">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zM17.083 19.77h1.834L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="#" aria-label="Instagram" class="w-10 h-10 inline-flex items-center justify-center rounded-md border border-white/10 hover:border-orange-500 hover:text-orange-400 transition-colors duration-150">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+          </a>
+          <a href="#" aria-label="LinkedIn" class="w-10 h-10 inline-flex items-center justify-center rounded-md border border-white/10 hover:border-orange-500 hover:text-orange-400 transition-colors duration-150">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S.02 4.88.02 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8h4.56v14H.22V8zM8 8h4.37v1.92h.06c.61-1.15 2.1-2.36 4.32-2.36C21.39 7.56 22 10.4 22 14.07V22h-4.56v-7.05c0-1.68-.03-3.84-2.34-3.84-2.34 0-2.7 1.83-2.7 3.72V22H8V8z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Produto -->
+      <div class="lg:col-span-2">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-graphite-400 mb-4">Produto</h4>
+        <ul class="space-y-3 text-sm text-graphite-200">
+          <li><a href="#" class="hover:text-orange-400 transition-colors duration-150">Recursos</a></li>
+          <li><a href="#" class="hover:text-orange-400 transition-colors duration-150">Redes</a></li>
+          <li><a href="#" class="hover:text-orange-400 transition-colors duration-150">Planos</a></li>
+          <li><a href="#" class="hover:text-orange-400 transition-colors duration-150">Painel</a></li>
+        </ul>
+      </div>
+
+      <!-- Empresa -->
+      <div class="lg:col-span-2">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-graphite-400 mb-4">Empresa</h4>
+        <ul class="space-y-3 text-sm text-graphite-200">
+          <li><a href="#" class="hover:text-orange-400 transition-colors duration-150">Crie sua rede</a></li>
+          <li><a href="#" class="hover:text-orange-400 transition-colors duration-150">Seja um representante</a></li>
+        </ul>
+      </div>
+
+      <!-- Legal -->
+      <div class="lg:col-span-1">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-graphite-400 mb-4">Legal</h4>
+        <ul class="space-y-3 text-sm text-graphite-200">
+          <li><a href="#" class="hover:text-orange-400 transition-colors duration-150">Termos</a></li>
+          <li><a href="#" class="hover:text-orange-400 transition-colors duration-150">Privacidade</a></li>
+        </ul>
+      </div>
+
+      <!-- Contato -->
+      <div class="lg:col-span-2">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-graphite-400 mb-4">Contato</h4>
+        <ul class="space-y-3 text-sm text-graphite-200">
+          <li><a href="mailto:contato@monexup.com" class="hover:text-orange-400 transition-colors duration-150">contato@monexup.com</a></li>
+          <li><a href="#" class="hover:text-orange-400 transition-colors duration-150">Suporte</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-graphite-400">
+      <p>© 2026 MonexUp. Todos os direitos reservados.</p>
+      <p class="font-display tracking-wider uppercase">Vença · Ganhe · Evolua</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
