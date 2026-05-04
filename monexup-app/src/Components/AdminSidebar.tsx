@@ -8,7 +8,6 @@ import {
   Users,
   ListOrdered,
   DollarSign,
-  Package,
   UserCog,
   Lock,
   LogOut,
@@ -418,13 +417,6 @@ export default function AdminSidebar() {
               active={isActive("/admin/invoices")}
               collapsed={collapsed}
               onClick={() => navigate("/admin/invoices")}
-            />
-            <SidebarItem
-              icon={Package}
-              label={t("products")}
-              active={isActive("/admin/products")}
-              collapsed={collapsed}
-              onClick={() => navigate("/admin/products")}
             />
           </SidebarGroup>
         )}
