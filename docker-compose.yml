@@ -1,5 +1,29 @@
 services:
   # ===========================================
+  # PostgreSQL - Database (dev, internal only)
+  # ===========================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: monexup-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-monexup_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init-databases.sh:/docker-entrypoint-initdb.d/01-init-databases.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME:-monexup_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - emagine-network
+
+  # ===========================================
   # MonexUp API - Main application API
   # ===========================================
   monexup-api:
@@ -10,7 +34,7 @@ services:
     env_file: .env
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
-      ConnectionStrings__MonexUpContext: ${CONNECTION_STRING}
+      ConnectionStrings__MonexUpContext: "Host=postgres;Port=5432;Database=${DB_NAME:-monexup_db};Username=${DB_USER};Password=${DB_PASSWORD}"
       # zTools
       zTools__ApiURL: ${ZTOOLS_API_URL}
       # NAuth
@@ -23,9 +47,19 @@ services:
       ProxyPay__TenantId: ${PROXYPAY_TENANT_ID:-monexup}
       # Lofn
       Lofn__ApiURL: ${LOFN_API_URL:-http://localhost:5003}
+      # Logging — surface Information + Error to container stdout
+      Logging__LogLevel__Default: Information
+      Logging__LogLevel__Microsoft: Warning
+      Logging__LogLevel__Microsoft.Hosting.Lifetime: Information
+      Logging__LogLevel__Microsoft.EntityFrameworkCore: Information
+      Logging__LogLevel__Microsoft.EntityFrameworkCore.Database.Command: Information
+      DOTNET_CONSOLE_ANSI_COLOR: 0
     ports:
       - "5000:80"
     restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       - emagine-network
 
@@ -40,11 +74,18 @@ services:
   #   env_file: .env
   #   environment:
   #     ASPNETCORE_ENVIRONMENT: Docker
-  #     ConnectionStrings__MonexUpContext: ${CONNECTION_STRING}
+  #     ConnectionStrings__MonexUpContext: "Host=postgres;Port=5432;Database=${DB_NAME:-monexup_db};Username=${DB_USER};Password=${DB_PASSWORD}"
   #     ZTOOLS_API_URL: ${ZTOOLS_API_URL}
   #   restart: unless-stopped
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
   #   networks:
   #     - emagine-network
+
+volumes:
+  postgres_data:
+    driver: local
 
 networks:
   emagine-network:

@@ -1,0 +1,19 @@
+meta {
+  name: Get By User
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/ProductLink/by-user/1
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+headers {
+  X-Tenant-Id: monexup
+}

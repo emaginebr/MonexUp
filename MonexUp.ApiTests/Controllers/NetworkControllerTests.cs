@@ -2,6 +2,7 @@ using FluentAssertions;
 using Flurl.Http;
 using MonexUp.ApiTests.Fixtures;
 using MonexUp.ApiTests.Helpers;
+using MonexUp.DTO.Network;
 
 namespace MonexUp.ApiTests.Controllers
 {
@@ -45,6 +46,62 @@ namespace MonexUp.ApiTests.Controllers
                 .PostJsonAsync(param);
 
             response.StatusCode.Should().Be(401);
+        }
+
+        [Fact]
+        public async Task Insert_WithAuth_ShouldReturnOkAndPersistNetwork()
+        {
+            var param = TestDataHelper.CreateNetworkInsertInfo();
+
+            var response = await _fixture.CreateAuthenticatedRequest("/network/insert")
+                .AllowAnyHttpStatus()
+                .PostJsonAsync(param);
+
+            response.StatusCode.Should().Be(200, "authenticated request with valid payload should create the network");
+
+            var created = await response.GetJsonAsync<NetworkInfo>();
+            created.Should().NotBeNull();
+            created.NetworkId.Should().BeGreaterThan(0);
+            created.Name.Should().Be(param.Name);
+            created.Email.Should().Be(param.Email);
+            created.Plan.Should().Be(param.Plan);
+            created.Status.Should().Be(NetworkStatusEnum.Active);
+            created.Slug.Should().NotBeNullOrEmpty();
+            created.LofnStoreId.Should().BeNull("Lofn store is provisioned lazily on first product create, not on network insert");
+        }
+
+        [Fact]
+        public async Task Insert_WithAuth_ShouldGenerateUniqueSlugPerNetwork()
+        {
+            var first = TestDataHelper.CreateNetworkInsertInfo();
+            var firstResponse = await _fixture.CreateAuthenticatedRequest("/network/insert")
+                .AllowAnyHttpStatus()
+                .PostJsonAsync(first);
+            firstResponse.StatusCode.Should().Be(200);
+            var firstBody = await firstResponse.GetJsonAsync<NetworkInfo>();
+
+            var second = TestDataHelper.CreateNetworkInsertInfo();
+            var secondResponse = await _fixture.CreateAuthenticatedRequest("/network/insert")
+                .AllowAnyHttpStatus()
+                .PostJsonAsync(second);
+            secondResponse.StatusCode.Should().Be(200);
+            var secondBody = await secondResponse.GetJsonAsync<NetworkInfo>();
+
+            secondBody.NetworkId.Should().NotBe(firstBody.NetworkId);
+            secondBody.Slug.Should().NotBe(firstBody.Slug, "each insert must produce a unique slug");
+        }
+
+        [Fact]
+        public async Task Insert_WithEmptyName_ShouldReturnNon200()
+        {
+            var param = TestDataHelper.CreateNetworkInsertInfo();
+            param.Name = string.Empty;
+
+            var response = await _fixture.CreateAuthenticatedRequest("/network/insert")
+                .AllowAnyHttpStatus()
+                .PostJsonAsync(param);
+
+            response.StatusCode.Should().NotBe(200, "blank name violates the slug/name constraint and must not create a network");
         }
 
         [Fact]

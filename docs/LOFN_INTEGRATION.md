@@ -3,7 +3,7 @@
 > Documenta os gaps, convenções de mapeamento e alterações necessárias no projeto Lofn para suportar o sistema de produtos do MonexUp.
 
 **Created:** 2026-03-31
-**Last Updated:** 2026-03-31
+**Last Updated:** 2026-05-04
 
 ---
 
@@ -45,6 +45,26 @@ X-Tenant-Id: monexup
 ```
 
 O Lofn precisa ter o tenant `monexup` configurado em `appsettings.json`.
+
+---
+
+## Boundary changes (feature 004 — 2026-05-04)
+
+- Nova tabela `monexup_product_links (id, lofn_product_id UNIQUE, network_id, user_id, created_at)` — o MonexUp passa a ser dono do vínculo de propriedade `(LofnProductId, NetworkId, UserId)`. Lofn permanece inalterado.
+- Nova coluna `monexup_networks.lofn_store_id (bigint NULL)` — populada de forma preguiçosa no primeiro CREATE de produto de uma network.
+- Backend `LofnStoreClient` chama `POST {Lofn:ApiURL}/Store/insert` (sem prefixo `/api`; a rota do controller no Lofn é `[controller]/insert`) com `X-Tenant-Id: monexup` e o bearer NAuth do chamador. Retorna `storeId` persistido via `NetworkRepository.TrySetLofnStoreId` (UPDATE atômico — se uma requisição concorrente já gravou o valor, a store Lofn da segunda requisição fica órfã, comportamento intencionalmente tolerado conforme clarificação Q2).
+- Backend expõe `POST /ProductLink` (idempotente em `lofnProductId` — 201 na primeira chamada, 200 em retry), `GET /ProductLink/by-network/{id}`, `GET /ProductLink/by-user/{id}`, `DELETE /ProductLink/by-network/{id}`. Auth: bearer NAuth + (self OR Network Manager) para writes. ProductLinks de uma network são removidos em cascata quando a linha de `Networks` é deletada (FK `ON DELETE CASCADE`).
+- Frontend agora monta `LofnProvider` + `ProductProvider` (de `lofn-react`) dentro do stack de providers em `App.tsx`. A nova página `/admin/products` (`Pages/Admin/ProductManagePage`) renderiza `<ProductList />` e `<ProductForm />` do `lofn-react` para o Network Manager. Após o save no Lofn, a página chama `productLinkContext.upsert(lofnProductId, networkId, userId)`, que faz `POST` em `/ProductLink` no MonexUp.
+- Retry harness do frontend: links pendentes são espelhados em `localStorage` sob a chave `mnx.productLink.pending` para que um reload de aba possa retentar o vínculo caso a chamada ao MonexUp tenha falhado após um create bem-sucedido no Lofn.
+- Página voltada ao cliente `Pages/ProductPage` (checkout PIX) continua usando o caminho atual `ProductService` → backend `LofnProductRepository` → leitura no Lofn — inalterado nesta feature. Um ticket futuro de cleanup migrará essa página para consumir `lofn-react` diretamente.
+
+### Source-of-truth split
+
+```text
+Lofn API           — owns: stores, products, categories, images, store-users
+MonexUp backend    — owns: networks, network↔store-id link, product-link table, orders, invoices, withdrawals
+NAuth              — owns: users, tokens
+```
 
 ---
 

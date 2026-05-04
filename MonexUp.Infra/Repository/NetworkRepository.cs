@@ -1,5 +1,6 @@
 ﻿using Core.Domain.Repository;
 using DB.Infra.Context;
+using Microsoft.EntityFrameworkCore;
 using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
 using MonexUp.DTO.Invoice;
@@ -35,6 +36,7 @@ namespace DB.Infra.Repository
             md.WithdrawalPeriod = row.WithdrawalPeriod;
             md.Plan = (NetworkPlanEnum)row.Plan;
             md.Status = (NetworkStatusEnum) row.Status;
+            md.LofnStoreId = row.LofnStoreId;
             return md;
         }
 
@@ -50,6 +52,7 @@ namespace DB.Infra.Repository
             row.WithdrawalPeriod = md.WithdrawalPeriod;
             row.Plan = (int)md.Plan;
             row.Status = (int)md.Status;
+            row.LofnStoreId = md.LofnStoreId;
         }
 
         public INetworkModel Insert(INetworkModel model, INetworkDomainFactory factory)
@@ -118,6 +121,13 @@ namespace DB.Infra.Repository
                 return null;
             }
             return DbToModel(factory, row);
+        }
+
+        public bool TrySetLofnStoreId(long networkId, long storeId)
+        {
+            var rowsAffected = _ccsContext.Database.ExecuteSqlInterpolated(
+                $"UPDATE monexup_networks SET lofn_store_id = {storeId} WHERE network_id = {networkId} AND lofn_store_id IS NULL");
+            return rowsAffected == 1;
         }
     }
 }

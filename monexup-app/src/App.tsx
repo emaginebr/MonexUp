@@ -22,6 +22,7 @@ import DashboardPage from './Pages/DashboardPage';
 import NetworkEditPage from './Pages/NetworkEditPage';
 import NetworkListPage from './Pages/NetworkListPage';
 import ProductPage from './Pages/ProductPage';
+import ProductManagePage from './Pages/Admin/ProductManagePage';
 import NetworkInsertPage from './Pages/NetworkInsertPage';
 import NetworkProvider from './Contexts/Network/NetworkProvider';
 import ProfileProvider from './Contexts/Profile/ProfileProvider';
@@ -29,6 +30,7 @@ import ProfileListPage from './Pages/ProfileListPage';
 import ProfileEditPage from './Pages/ProfileEditPage';
 import UserSearchPage from './Pages/UserSearchPage';
 import ProductProvider from './Contexts/Product/ProductProvider';
+import ProductLinkProvider from './Contexts/ProductLink/ProductLinkProvider';
 import MenuNetwork from './Components/MenuNetwork';
 import RequestAccessPage from './Pages/RequestAccessPage';
 import OrderProvider from './Contexts/Order/OrderProvider';
@@ -43,6 +45,8 @@ import MenuUser from './Components/MenuUser';
 import ImageProvider from './Contexts/Image/ImageProvider';
 import { TemplateProvider } from './packages/template';
 import { ProxyPayProvider } from 'proxypay-react';
+import { LofnProvider, ProductProvider as LofnProductProvider } from 'lofn-react';
+import 'lofn-react/styles';
 import CheckoutSuccessPage from './Pages/CheckoutSuccessPage';
 
 function Layout() {
@@ -122,6 +126,20 @@ function LayoutDashboard() {
 
 const tenantId = process.env.REACT_APP_TENANT_ID || 'monexup';
 
+const lofnConfig = {
+  apiUrl: process.env.REACT_APP_LOFN_API_URL || '',
+  tenantId,
+  headers: { 'X-Tenant-Id': tenantId },
+  getToken: () => {
+    try {
+      const raw = window.localStorage.getItem('nauth.token');
+      return raw || null;
+    } catch {
+      return null;
+    }
+  },
+};
+
 const proxyPayConfig = {
   baseUrl: process.env.REACT_APP_PROXYPAY_API_URL || '',
   clientId: process.env.REACT_APP_PROXYPAY_CLIENT_ID || '',
@@ -138,12 +156,14 @@ const nauthConfig = {
 function App() {
   const ContextContainer = ContextBuilder([
     AuthProvider, UserProvider, NetworkProvider, ProfileProvider, ProductProvider,
-    OrderProvider, InvoiceProvider, ImageProvider, TemplateProvider
+    ProductLinkProvider, OrderProvider, InvoiceProvider, ImageProvider, TemplateProvider
   ]);
 
   return (
     <ProxyPayProvider config={proxyPayConfig}>
     <NAuthProvider config={nauthConfig}>
+    <LofnProvider config={lofnConfig}>
+    <LofnProductProvider>
     <ContextContainer>
       <Routes>
         {/* Marketing-shell routes (Tailwind dark Header/Footer) — keep
@@ -184,6 +204,7 @@ function App() {
             <Route path=":pageNum" element={<UserSearchPage />} />
           </Route>
           <Route path="orders" element={<OrderSearchPage />} />
+          <Route path="products" element={<ProductManagePage />} />
           <Route path="invoices" element={<InvoiceSearchPage />} />
           <Route path="team-structure">
             <Route index element={<ProfileListPage />} />
@@ -231,6 +252,8 @@ function App() {
         <Route path="*" element={<Error404Page />} />
       </Routes>
     </ContextContainer>
+    </LofnProductProvider>
+    </LofnProvider>
     </NAuthProvider>
     </ProxyPayProvider>
   );

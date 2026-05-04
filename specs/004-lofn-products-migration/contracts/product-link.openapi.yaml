@@ -1,0 +1,188 @@
+openapi: 3.0.3
+info:
+  title: MonexUp ProductLink API
+  version: 1.0.0
+  description: |
+    Endpoints exposed by MonexUp for the Lofn product migration.
+    Source-of-truth for the "(LofnProductId, NetworkId, UserId)" link.
+    Lofn product CRUD itself is NOT here — the frontend calls Lofn directly.
+
+servers:
+  - url: '{baseUrl}/api'
+    variables:
+      baseUrl:
+        default: http://localhost:5000
+
+tags:
+  - name: ProductLink
+    description: MonexUp-side ownership link for Lofn products.
+
+components:
+  securitySchemes:
+    NAuthBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    XTenantId:
+      name: X-Tenant-Id
+      in: header
+      required: true
+      schema:
+        type: string
+        enum: [monexup]
+      description: Tenant identifier; always `monexup` in this deployment.
+
+  schemas:
+    ProductLinkInsertInfo:
+      type: object
+      required: [lofnProductId, networkId, userId]
+      properties:
+        lofnProductId:
+          type: integer
+          format: int64
+          minimum: 1
+        networkId:
+          type: integer
+          minimum: 1
+        userId:
+          type: integer
+          minimum: 1
+
+    ProductLinkInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+        lofnProductId:
+          type: integer
+          format: int64
+        networkId:
+          type: integer
+        userId:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    ApiResponse:
+      type: object
+      description: Standard MonexUp envelope (Portuguese field names).
+      required: [sucesso]
+      properties:
+        sucesso:
+          type: boolean
+        mensagem:
+          type: string
+          nullable: true
+        mensagemErro:
+          type: string
+          nullable: true
+        mensagemSucesso:
+          type: string
+          nullable: true
+        data:
+          oneOf:
+            - $ref: '#/components/schemas/ProductLinkInfo'
+            - type: array
+              items: { $ref: '#/components/schemas/ProductLinkInfo' }
+            - type: 'null'
+
+security:
+  - NAuthBearer: []
+
+paths:
+  /productLink:
+    post:
+      tags: [ProductLink]
+      summary: Idempotently create a product link.
+      description: |
+        Records `(LofnProductId, NetworkId, UserId)` after a product was created in Lofn.
+        **Idempotent on `lofnProductId`**: if a row already exists, the existing record is
+        returned with HTTP 200; otherwise HTTP 201 is returned with the new record.
+      parameters:
+        - $ref: '#/components/parameters/XTenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProductLinkInsertInfo' }
+      responses:
+        '200':
+          description: Existing link returned (idempotent retry).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '201':
+          description: New link created.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '400':
+          description: Validation failed.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '401':
+          description: Missing or invalid bearer token.
+        '403':
+          description: Authenticated user is not the link's user and not a Network Manager.
+
+  /productLink/by-network/{networkId}:
+    get:
+      tags: [ProductLink]
+      summary: List links for a network.
+      parameters:
+        - $ref: '#/components/parameters/XTenantId'
+        - name: networkId
+          in: path
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: Array of links.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '401': { description: Unauthorized }
+        '403': { description: Not a member of the network }
+    delete:
+      tags: [ProductLink]
+      summary: Remove all links for a network (used by network deletion flow).
+      description: |
+        Internal cleanup endpoint. Removes every `ProductLink` row whose `NetworkId`
+        matches. Does NOT touch the corresponding Lofn products (orphan-tolerated, Q5).
+      parameters:
+        - $ref: '#/components/parameters/XTenantId'
+        - name: networkId
+          in: path
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: Links removed.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '401': { description: Unauthorized }
+        '403': { description: Not Network Manager of the target network }
+
+  /productLink/by-user/{userId}:
+    get:
+      tags: [ProductLink]
+      summary: List links for a user.
+      parameters:
+        - $ref: '#/components/parameters/XTenantId'
+        - name: userId
+          in: path
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        '200':
+          description: Array of links.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '401': { description: Unauthorized }
+        '403': { description: Caller is neither the user nor a Network Manager. }
