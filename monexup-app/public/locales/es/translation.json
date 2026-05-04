@@ -1,4 +1,12 @@
 {
+  "product_link_pending_retry": "Reintentando vínculo del producto...",
+  "product_link_error_persisted": "Error al registrar el vínculo. Usa 'Intentar de nuevo'.",
+  "product_link_first_create_provisioning": "Tienda creada y producto vinculado.",
+  "product_manage_title": "Productos",
+  "product_manage_no_network": "Ninguna red seleccionada.",
+  "product_manage_no_session": "Sesión expirada.",
+  "product_manage_new": "Nuevo producto",
+  "product_manage_updated": "Producto actualizado.",
   "new": "Nuevo",
   "home": "Inicio",
   "be_a_representative": "Sé un representante",

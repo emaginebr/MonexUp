@@ -1,12 +1,14 @@
 using Flurl;
 using Flurl.Http;
 using Microsoft.Extensions.Configuration;
+using System.Text.Json;
 
 namespace MonexUp.ApiTests.Fixtures
 {
     public class ApiTestFixture : IAsyncLifetime
     {
         public string BaseUrl { get; private set; } = string.Empty;
+        public string LofnApiUrl { get; private set; } = string.Empty;
         public string AuthToken { get; private set; } = string.Empty;
 
         private IConfiguration _configuration = null!;
@@ -23,6 +25,7 @@ namespace MonexUp.ApiTests.Fixtures
                 .Build();
 
             BaseUrl = _configuration["ApiBaseUrl"] ?? throw new Exception("ApiBaseUrl not configured");
+            LofnApiUrl = _configuration["LofnApiUrl"] ?? throw new Exception("LofnApiUrl not configured");
 
             var authBaseUrl = _configuration["Auth:BaseUrl"] ?? throw new Exception("Auth:BaseUrl not configured");
             _tenant = _configuration["Auth:Tenant"] ?? throw new Exception("Auth:Tenant not configured");
@@ -72,6 +75,60 @@ namespace MonexUp.ApiTests.Fixtures
                 .WithHeader("X-Device-Fingerprint", _deviceFingerprint)
                 .WithAutoRedirect(true);
         }
+
+        public IFlurlRequest CreateLofnAuthenticatedRequest(string path)
+        {
+            return new Url(LofnApiUrl)
+                .AppendPathSegment(path)
+                .WithOAuthBearerToken(AuthToken)
+                .WithHeader("X-Tenant-Id", _tenant)
+                .WithHeader("User-Agent", _userAgent)
+                .WithHeader("X-Device-Fingerprint", _deviceFingerprint);
+        }
+
+        public long ExtractUserIdFromToken()
+        {
+            if (string.IsNullOrWhiteSpace(AuthToken))
+                throw new InvalidOperationException("AuthToken not available; InitializeAsync must run first.");
+
+            var parts = AuthToken.Split('.');
+            if (parts.Length < 2)
+                throw new InvalidOperationException($"AuthToken is not a valid JWT. Token: {Truncate(AuthToken, 80)}");
+
+            var payload = Base64UrlDecode(parts[1]);
+            using var doc = JsonDocument.Parse(payload);
+            var root = doc.RootElement;
+
+            foreach (var name in new[] { "userId", "userid", "sub", "nameid", "id", "user_id" })
+            {
+                if (root.TryGetProperty(name, out var prop))
+                {
+                    if (prop.ValueKind == JsonValueKind.Number && prop.TryGetInt64(out var n)) return n;
+                    if (prop.ValueKind == JsonValueKind.String && long.TryParse(prop.GetString(), out var s)) return s;
+                }
+            }
+
+            throw new InvalidOperationException(
+                $"JWT payload does not contain a recognizable userId claim. Payload: {Truncate(payload, 200)}");
+        }
+
+        private static byte[] Base64UrlDecodeBytes(string input)
+        {
+            var padded = input.Replace('-', '+').Replace('_', '/');
+            switch (padded.Length % 4)
+            {
+                case 2: padded += "=="; break;
+                case 3: padded += "="; break;
+            }
+            return Convert.FromBase64String(padded);
+        }
+
+        private static string Base64UrlDecode(string input) =>
+            System.Text.Encoding.UTF8.GetString(Base64UrlDecodeBytes(input));
+
+        private static string Truncate(string? value, int max) =>
+            string.IsNullOrEmpty(value) ? string.Empty :
+            value.Length <= max ? value : value.Substring(0, max) + "...";
 
         private class LoginResponse
         {

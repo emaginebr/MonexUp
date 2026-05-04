@@ -1,4 +1,4 @@
-﻿# CLAUDE.md
+# CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -91,13 +91,17 @@ Key entities: Users, Networks, UserNetworks (junction), Orders, OrderItems, Invo
 
 ### Lofn Integration (Products/E-commerce)
 
-Products are managed by the separate **Lofn** project (external API). The backend `LofnProductRepository` calls Lofn's GraphQL and REST API, replacing direct database access. The frontend calls Lofn API directly for product reads. See `docs/LOFN_INTEGRATION.md` for details.
+Products are managed by the separate **Lofn** project (external API). MonexUp owns the cross-link table only. See `docs/LOFN_INTEGRATION.md` for details.
 
 - **Backend config:** `Lofn:ApiURL` in appsettings.json
 - **Frontend env var:** `REACT_APP_LOFN_API_URL` — URL of the Lofn API
 - **Header:** All requests include `X-Tenant-Id: monexup`
 - **Do NOT add product CRUD code to this backend** — it belongs in the Lofn project
-- **Payment integration** lives in MonexUp (ProxyPayService) and reads product data via Lofn
+- **Backend reads** for checkout still go through `LofnProductRepository` (HTTP shim — used by `OrderService`/`ProxyPayService` to fetch a product before issuing a PIX invoice)
+- **Backend writes** are limited to `LofnStoreClient` (`POST {Lofn:ApiURL}/Store/insert` for lazy store provisioning) — no product writes from MonexUp
+- **MonexUp-owned tables**: `monexup_networks.lofn_store_id` (1:1 link, lazy on first product create) + `monexup_product_links` (idempotent `(LofnProductId, NetworkId, UserId)` rows)
+- **MonexUp-owned endpoints**: `POST /ProductLink` (201 first / 200 retry, idempotent on `lofnProductId`), `GET /ProductLink/by-network/{id}`, `GET /ProductLink/by-user/{id}`, `DELETE /ProductLink/by-network/{id}`
+- **Frontend Manager UI** at `/admin/products` uses `lofn-react`'s `<ProductList />` + `<ProductForm />`. After Lofn save, calls `productLinkContext.upsert(...)` which posts to MonexUp `/ProductLink`. Retry harness: `localStorage` key `mnx.productLink.pending`
 
 ### Dedalo Integration (Templates/CMS)
 

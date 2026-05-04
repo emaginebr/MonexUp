@@ -33,5 +33,7 @@ namespace MonexUp.DTO.Network
         public int QtdyUsers { get; set; }
         [JsonPropertyName("maxUsers")]
         public int MaxUsers { get; set; }
+        [JsonPropertyName("lofnStoreId")]
+        public long? LofnStoreId { get; set; }
     }
 }

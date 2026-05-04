@@ -32,6 +32,7 @@ namespace MonexUp.Domain.Impl.Models
         public int WithdrawalPeriod { get; set; }
         public NetworkPlanEnum Plan { get; set; }
         public NetworkStatusEnum Status { get; set; }
+        public long? LofnStoreId { get; set; }
 
         public INetworkModel Insert(INetworkDomainFactory factory)
         {
@@ -71,6 +72,11 @@ namespace MonexUp.Domain.Impl.Models
         public INetworkModel GetByName(string name, INetworkDomainFactory factory)
         {
             return _repositoryNetwork.GetByName(name, factory);
+        }
+
+        public bool TrySetLofnStoreId(long networkId, long storeId)
+        {
+            return _repositoryNetwork.TrySetLofnStoreId(networkId, storeId);
         }
 
         public int MaxQtdyUserByNetwork() {

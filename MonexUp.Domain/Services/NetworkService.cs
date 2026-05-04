@@ -267,7 +267,8 @@ namespace MonexUp.Domain.Impl.Services
                 WithdrawalPeriod = model.WithdrawalPeriod,
                 QtdyUsers = _userNetworkFactory.BuildUserNetworkModel().GetQtdyUserByNetwork(model.NetworkId),
                 MaxUsers = model.MaxQtdyUserByNetwork(),
-                Status = model.Status
+                Status = model.Status,
+                LofnStoreId = model.LofnStoreId
             };
         }
 

@@ -25,7 +25,11 @@ public partial class Network
 
     public string Image { get; set; }
 
+    public long? LofnStoreId { get; set; }
+
     public virtual ICollection<InvoiceFee> InvoiceFees { get; set; } = new List<InvoiceFee>();
+
+    public virtual ICollection<ProductLink> ProductLinks { get; set; } = new List<ProductLink>();
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 

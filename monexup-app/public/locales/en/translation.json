@@ -1,4 +1,12 @@
 {
+  "product_link_pending_retry": "Retrying product link...",
+  "product_link_error_persisted": "Failed to register product link. Use 'Try again'.",
+  "product_link_first_create_provisioning": "Store created and product linked.",
+  "product_manage_title": "Products",
+  "product_manage_no_network": "No network selected.",
+  "product_manage_no_session": "Session expired.",
+  "product_manage_new": "New product",
+  "product_manage_updated": "Product updated.",
   "new": "New",
   "home": "Home",
   "be_a_representative": "Be a representative",

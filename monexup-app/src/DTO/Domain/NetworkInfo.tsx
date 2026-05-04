@@ -11,4 +11,5 @@ export default interface NetworkInfo {
     status: number;
     qtdyUsers: number;
     maxUsers: number;
+    lofnStoreId?: number | null;
 }

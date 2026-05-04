@@ -1,4 +1,12 @@
 {
+  "product_link_pending_retry": "Nouvelle tentative du lien du produit...",
+  "product_link_error_persisted": "Échec de l'enregistrement du lien. Utilisez 'Réessayer'.",
+  "product_link_first_create_provisioning": "Boutique créée et produit lié.",
+  "product_manage_title": "Produits",
+  "product_manage_no_network": "Aucun réseau sélectionné.",
+  "product_manage_no_session": "Session expirée.",
+  "product_manage_new": "Nouveau produit",
+  "product_manage_updated": "Produit mis à jour.",
   "new": "Nouveau",
   "home": "Accueil",
   "be_a_representative": "Devenir représentant",

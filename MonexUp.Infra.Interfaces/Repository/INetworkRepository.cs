@@ -16,5 +16,6 @@ namespace Core.Domain.Repository
         TModel Insert(TModel model, TFactory factory);
         TModel Update(TModel model, TFactory factory);
         bool ExistSlug(long networkId, string slug);
+        bool TrySetLofnStoreId(long networkId, long storeId);
     }
 }

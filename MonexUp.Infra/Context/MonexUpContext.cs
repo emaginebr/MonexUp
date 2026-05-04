@@ -25,6 +25,8 @@ public partial class MonexUpContext : DbContext
 
     public virtual DbSet<OrderItem> OrderItems { get; set; }
 
+    public virtual DbSet<ProductLink> ProductLinks { get; set; }
+
     public virtual DbSet<UserDocument> UserDocuments { get; set; }
 
     public virtual DbSet<UserNetwork> UserNetworks { get; set; }
@@ -123,6 +125,37 @@ public partial class MonexUpContext : DbContext
             entity.Property(e => e.WithdrawalPeriod)
                 .HasDefaultValue(0)
                 .HasColumnName("withdrawal_period");
+            entity.Property(e => e.LofnStoreId).HasColumnName("lofn_store_id");
+            entity.HasIndex(e => e.LofnStoreId).HasDatabaseName("ix_monexup_networks_lofn_store_id");
+        });
+
+        modelBuilder.Entity<ProductLink>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("monexup_product_links_pkey");
+
+            entity.ToTable("monexup_product_links");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.LofnProductId).HasColumnName("lofn_product_id");
+            entity.Property(e => e.NetworkId).HasColumnName("network_id");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("timestamp without time zone")
+                .HasDefaultValueSql("(now() at time zone 'utc')")
+                .HasColumnName("created_at");
+
+            entity.HasIndex(e => e.LofnProductId)
+                .IsUnique()
+                .HasDatabaseName("ix_monexup_product_links_lofn_product_id");
+            entity.HasIndex(e => new { e.NetworkId, e.UserId })
+                .HasDatabaseName("ix_monexup_product_links_network_user");
+            entity.HasIndex(e => e.UserId)
+                .HasDatabaseName("ix_monexup_product_links_user");
+
+            entity.HasOne(d => d.Network).WithMany(p => p.ProductLinks)
+                .HasForeignKey(d => d.NetworkId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("monexup_fk_product_link_network");
         });
 
         modelBuilder.Entity<Order>(entity =>

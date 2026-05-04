@@ -25,11 +25,11 @@ namespace DB.Infra.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.HasSequence("invoice_commission_commission_id_seq");
+            modelBuilder.HasSequence("monexup_invoice_commission_id_seq");
 
-            modelBuilder.HasSequence("network_id_seq");
+            modelBuilder.HasSequence("monexup_network_id_seq");
 
-            modelBuilder.HasSequence("profile_id_seq");
+            modelBuilder.HasSequence("monexup_profile_id_seq");
 
             modelBuilder.Entity("DB.Infra.Context.Invoice", b =>
                 {
@@ -66,21 +66,16 @@ namespace DB.Infra.Migrations
                         .HasDefaultValue(1)
                         .HasColumnName("status");
 
-                    b.Property<string>("StripeId")
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
-                        .HasColumnName("stripe_id");
-
                     b.Property<long>("UserId")
                         .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
                     b.HasKey("InvoiceId")
-                        .HasName("invoices_pkey");
+                        .HasName("monexup_invoices_pkey");
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("invoices", (string)null);
+                    b.ToTable("monexup_invoices", (string)null);
                 });
 
             modelBuilder.Entity("DB.Infra.Context.InvoiceFee", b =>
@@ -89,7 +84,7 @@ namespace DB.Infra.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("fee_id")
-                        .HasDefaultValueSql("nextval('invoice_commission_commission_id_seq'::regclass)");
+                        .HasDefaultValueSql("nextval('monexup_invoice_commission_id_seq'::regclass)");
 
                     b.Property<double>("Amount")
                         .HasColumnType("double precision")
@@ -112,13 +107,13 @@ namespace DB.Infra.Migrations
                         .HasColumnName("user_id");
 
                     b.HasKey("FeeId")
-                        .HasName("pk_invoice_fee");
+                        .HasName("monexup_pk_invoice_fee");
 
                     b.HasIndex("InvoiceId");
 
                     b.HasIndex("NetworkId");
 
-                    b.ToTable("invoice_fees", (string)null);
+                    b.ToTable("monexup_invoice_fees", (string)null);
                 });
 
             modelBuilder.Entity("DB.Infra.Context.Network", b =>
@@ -127,7 +122,7 @@ namespace DB.Infra.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("network_id")
-                        .HasDefaultValueSql("nextval('network_id_seq'::regclass)");
+                        .HasDefaultValueSql("nextval('monexup_network_id_seq'::regclass)");
 
                     b.Property<double>("Commission")
                         .HasColumnType("double precision")
@@ -142,6 +137,10 @@ namespace DB.Infra.Migrations
                         .HasMaxLength(110)
                         .HasColumnType("character varying(110)")
                         .HasColumnName("image");
+
+                    b.Property<long?>("LofnStoreId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("lofn_store_id");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -178,9 +177,12 @@ namespace DB.Infra.Migrations
                         .HasColumnName("withdrawal_period");
 
                     b.HasKey("NetworkId")
-                        .HasName("networks_pkey");
+                        .HasName("monexup_networks_pkey");
 
-                    b.ToTable("networks", (string)null);
+                    b.HasIndex("LofnStoreId")
+                        .HasDatabaseName("ix_monexup_networks_lofn_store_id");
+
+                    b.ToTable("monexup_networks", (string)null);
                 });
 
             modelBuilder.Entity("DB.Infra.Context.Order", b =>
@@ -210,11 +212,6 @@ namespace DB.Infra.Migrations
                         .HasDefaultValue(1)
                         .HasColumnName("status");
 
-                    b.Property<string>("StripeId")
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
-                        .HasColumnName("stripe_id");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("updated_at");
@@ -224,11 +221,11 @@ namespace DB.Infra.Migrations
                         .HasColumnName("user_id");
 
                     b.HasKey("OrderId")
-                        .HasName("orders_pkey");
+                        .HasName("monexup_orders_pkey");
 
                     b.HasIndex("NetworkId");
 
-                    b.ToTable("orders", (string)null);
+                    b.ToTable("monexup_orders", (string)null);
                 });
 
             modelBuilder.Entity("DB.Infra.Context.OrderItem", b =>
@@ -255,222 +252,54 @@ namespace DB.Infra.Migrations
                         .HasColumnName("quantity");
 
                     b.HasKey("ItemId")
-                        .HasName("order_items_pkey");
+                        .HasName("monexup_order_items_pkey");
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("order_items", (string)null);
+                    b.ToTable("monexup_order_items", (string)null);
                 });
 
-            modelBuilder.Entity("DB.Infra.Context.Product", b =>
+            modelBuilder.Entity("DB.Infra.Context.ProductLink", b =>
                 {
-                    b.Property<long>("ProductId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("(now() at time zone 'utc')");
+
+                    b.Property<long>("LofnProductId")
                         .HasColumnType("bigint")
-                        .HasColumnName("product_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("ProductId"));
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<int>("Frequency")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0)
-                        .HasColumnName("frequency");
-
-                    b.Property<string>("Image")
-                        .HasMaxLength(150)
-                        .HasColumnType("character varying(150)")
-                        .HasColumnName("image");
-
-                    b.Property<int>("Limit")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0)
-                        .HasColumnName("limit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
-                        .HasColumnName("name");
+                        .HasColumnName("lofn_product_id");
 
                     b.Property<long>("NetworkId")
                         .HasColumnType("bigint")
                         .HasColumnName("network_id");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("double precision")
-                        .HasColumnName("price");
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasMaxLength(140)
-                        .HasColumnType("character varying(140)")
-                        .HasColumnName("slug");
-
-                    b.Property<int>("Status")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(1)
-                        .HasColumnName("status");
-
-                    b.Property<string>("StripePriceId")
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
-                        .HasColumnName("stripe_price_id");
-
-                    b.Property<string>("StripeProductId")
-                        .HasMaxLength(120)
-                        .HasColumnType("character varying(120)")
-                        .HasColumnName("stripe_product_id");
-
-                    b.HasKey("ProductId")
-                        .HasName("products_pkey");
-
-                    b.HasIndex("NetworkId");
-
-                    b.ToTable("products", (string)null);
-                });
-
-            modelBuilder.Entity("DB.Infra.Context.Template", b =>
-                {
-                    b.Property<long>("TemplateId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("template_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("TemplateId"));
-
-                    b.Property<string>("Css")
-                        .HasMaxLength(80)
-                        .HasColumnType("character varying(80)")
-                        .HasColumnName("css");
-
-                    b.Property<long?>("NetworkId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("network_id");
-
-                    b.Property<string>("Title")
-                        .HasMaxLength(80)
-                        .HasColumnType("character varying(80)")
-                        .HasColumnName("title");
-
-                    b.Property<long?>("UserId")
+                    b.Property<long>("UserId")
                         .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
-                    b.HasKey("TemplateId")
-                        .HasName("templates_pkey");
+                    b.HasKey("Id")
+                        .HasName("monexup_product_links_pkey");
 
-                    b.HasIndex("NetworkId");
+                    b.HasIndex("LofnProductId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_monexup_product_links_lofn_product_id");
 
-                    b.ToTable("templates", (string)null);
-                });
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_monexup_product_links_user");
 
-            modelBuilder.Entity("DB.Infra.Context.TemplatePage", b =>
-                {
-                    b.Property<long>("PageId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("page_id");
+                    b.HasIndex("NetworkId", "UserId")
+                        .HasDatabaseName("ix_monexup_product_links_network_user");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("PageId"));
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasMaxLength(180)
-                        .HasColumnType("character varying(180)")
-                        .HasColumnName("slug");
-
-                    b.Property<long>("TemplateId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("template_id");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(170)
-                        .HasColumnType("character varying(170)")
-                        .HasColumnName("title");
-
-                    b.HasKey("PageId")
-                        .HasName("template_pages_pkey");
-
-                    b.HasIndex("TemplateId");
-
-                    b.ToTable("template_pages", (string)null);
-                });
-
-            modelBuilder.Entity("DB.Infra.Context.TemplatePart", b =>
-                {
-                    b.Property<long>("PartId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("part_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("PartId"));
-
-                    b.Property<double>("Order")
-                        .HasColumnType("double precision")
-                        .HasColumnName("order");
-
-                    b.Property<long>("PageId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("page_id");
-
-                    b.Property<string>("PartKey")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("character varying(80)")
-                        .HasColumnName("part_key");
-
-                    b.HasKey("PartId")
-                        .HasName("template_parts_pkey");
-
-                    b.HasIndex("PageId");
-
-                    b.ToTable("template_parts", (string)null);
-                });
-
-            modelBuilder.Entity("DB.Infra.Context.TemplateVar", b =>
-                {
-                    b.Property<long>("VarId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("var_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("VarId"));
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("character varying(80)")
-                        .HasColumnName("key");
-
-                    b.Property<int>("Language")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(1)
-                        .HasColumnName("language");
-
-                    b.Property<long>("PageId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("page_id");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("value");
-
-                    b.HasKey("VarId")
-                        .HasName("template_vars_pkey");
-
-                    b.HasIndex("PageId");
-
-                    b.ToTable("template_vars", (string)null);
+                    b.ToTable("monexup_product_links", (string)null);
                 });
 
             modelBuilder.Entity("DB.Infra.Context.UserDocument", b =>
@@ -497,9 +326,9 @@ namespace DB.Infra.Migrations
                         .HasColumnName("user_id");
 
                     b.HasKey("DocumentId")
-                        .HasName("user_documents_pkey");
+                        .HasName("monexup_user_documents_pkey");
 
-                    b.ToTable("user_documents", (string)null);
+                    b.ToTable("monexup_user_documents", (string)null);
                 });
 
             modelBuilder.Entity("DB.Infra.Context.UserNetwork", b =>
@@ -533,13 +362,13 @@ namespace DB.Infra.Migrations
                         .HasColumnName("status");
 
                     b.HasKey("UserId", "NetworkId")
-                        .HasName("pk_user_network");
+                        .HasName("monexup_pk_user_network");
 
                     b.HasIndex("NetworkId");
 
                     b.HasIndex("ProfileId");
 
-                    b.ToTable("user_networks", (string)null);
+                    b.ToTable("monexup_user_networks", (string)null);
                 });
 
             modelBuilder.Entity("DB.Infra.Context.UserProfile", b =>
@@ -548,7 +377,7 @@ namespace DB.Infra.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("profile_id")
-                        .HasDefaultValueSql("nextval('profile_id_seq'::regclass)");
+                        .HasDefaultValueSql("nextval('monexup_profile_id_seq'::regclass)");
 
                     b.Property<double>("Commission")
                         .HasColumnType("double precision")
@@ -571,11 +400,11 @@ namespace DB.Infra.Migrations
                         .HasColumnName("network_id");
 
                     b.HasKey("ProfileId")
-                        .HasName("user_profiles_pkey");
+                        .HasName("monexup_user_profiles_pkey");
 
                     b.HasIndex("NetworkId");
 
-                    b.ToTable("user_profiles", (string)null);
+                    b.ToTable("monexup_user_profiles", (string)null);
                 });
 
             modelBuilder.Entity("DB.Infra.Context.Withdrawal", b =>
@@ -606,11 +435,11 @@ namespace DB.Infra.Migrations
                         .HasColumnName("user_id");
 
                     b.HasKey("WithdrawalId")
-                        .HasName("withdrawals_pkey");
+                        .HasName("monexup_withdrawals_pkey");
 
                     b.HasIndex("NetworkId");
 
-                    b.ToTable("withdrawals", (string)null);
+                    b.ToTable("monexup_withdrawals", (string)null);
                 });
 
             modelBuilder.Entity("DB.Infra.Context.Invoice", b =>
@@ -619,7 +448,7 @@ namespace DB.Infra.Migrations
                         .WithMany("Invoices")
                         .HasForeignKey("OrderId")
                         .IsRequired()
-                        .HasConstraintName("fk_invoice_order");
+                        .HasConstraintName("monexup_fk_invoice_order");
 
                     b.Navigation("Order");
                 });
@@ -630,12 +459,12 @@ namespace DB.Infra.Migrations
                         .WithMany("InvoiceFees")
                         .HasForeignKey("InvoiceId")
                         .IsRequired()
-                        .HasConstraintName("fk_fee_invoice");
+                        .HasConstraintName("monexup_fk_fee_invoice");
 
                     b.HasOne("DB.Infra.Context.Network", "Network")
                         .WithMany("InvoiceFees")
                         .HasForeignKey("NetworkId")
-                        .HasConstraintName("fk_fee_network");
+                        .HasConstraintName("monexup_fk_fee_network");
 
                     b.Navigation("Invoice");
 
@@ -648,7 +477,7 @@ namespace DB.Infra.Migrations
                         .WithMany("Orders")
                         .HasForeignKey("NetworkId")
                         .IsRequired()
-                        .HasConstraintName("fk_order_network");
+                        .HasConstraintName("monexup_fk_order_network");
 
                     b.Navigation("Network");
                 });
@@ -659,63 +488,21 @@ namespace DB.Infra.Migrations
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .IsRequired()
-                        .HasConstraintName("fk_order_item");
+                        .HasConstraintName("monexup_fk_order_item");
 
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("DB.Infra.Context.Product", b =>
+            modelBuilder.Entity("DB.Infra.Context.ProductLink", b =>
                 {
                     b.HasOne("DB.Infra.Context.Network", "Network")
-                        .WithMany("Products")
+                        .WithMany("ProductLinks")
                         .HasForeignKey("NetworkId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_network_product");
+                        .HasConstraintName("monexup_fk_product_link_network");
 
                     b.Navigation("Network");
-                });
-
-            modelBuilder.Entity("DB.Infra.Context.Template", b =>
-                {
-                    b.HasOne("DB.Infra.Context.Network", "Network")
-                        .WithMany("Templates")
-                        .HasForeignKey("NetworkId")
-                        .HasConstraintName("fk_template_network");
-
-                    b.Navigation("Network");
-                });
-
-            modelBuilder.Entity("DB.Infra.Context.TemplatePage", b =>
-                {
-                    b.HasOne("DB.Infra.Context.Template", "Template")
-                        .WithMany("TemplatePages")
-                        .HasForeignKey("TemplateId")
-                        .IsRequired()
-                        .HasConstraintName("fk_template_page");
-
-                    b.Navigation("Template");
-                });
-
-            modelBuilder.Entity("DB.Infra.Context.TemplatePart", b =>
-                {
-                    b.HasOne("DB.Infra.Context.TemplatePage", "Page")
-                        .WithMany("TemplateParts")
-                        .HasForeignKey("PageId")
-                        .IsRequired()
-                        .HasConstraintName("fk_template_part_page");
-
-                    b.Navigation("Page");
-                });
-
-            modelBuilder.Entity("DB.Infra.Context.TemplateVar", b =>
-                {
-                    b.HasOne("DB.Infra.Context.TemplatePage", "Page")
-                        .WithMany("TemplateVars")
-                        .HasForeignKey("PageId")
-                        .IsRequired()
-                        .HasConstraintName("fk_template_var_page");
-
-                    b.Navigation("Page");
                 });
 
             modelBuilder.Entity("DB.Infra.Context.UserNetwork", b =>
@@ -724,12 +511,12 @@ namespace DB.Infra.Migrations
                         .WithMany("UserNetworks")
                         .HasForeignKey("NetworkId")
                         .IsRequired()
-                        .HasConstraintName("fk_user_network_network");
+                        .HasConstraintName("monexup_fk_user_network_network");
 
                     b.HasOne("DB.Infra.Context.UserProfile", "Profile")
                         .WithMany("UserNetworks")
                         .HasForeignKey("ProfileId")
-                        .HasConstraintName("fk_user_network_profile");
+                        .HasConstraintName("monexup_fk_user_network_profile");
 
                     b.Navigation("Network");
 
@@ -742,7 +529,7 @@ namespace DB.Infra.Migrations
                         .WithMany("UserProfiles")
                         .HasForeignKey("NetworkId")
                         .IsRequired()
-                        .HasConstraintName("fk_user_profile_network");
+                        .HasConstraintName("monexup_fk_user_profile_network");
 
                     b.Navigation("Network");
                 });
@@ -753,7 +540,7 @@ namespace DB.Infra.Migrations
                         .WithMany("Withdrawals")
                         .HasForeignKey("NetworkId")
                         .IsRequired()
-                        .HasConstraintName("fk_withdrawal_network");
+                        .HasConstraintName("monexup_fk_withdrawal_network");
 
                     b.Navigation("Network");
                 });
@@ -769,9 +556,7 @@ namespace DB.Infra.Migrations
 
                     b.Navigation("Orders");
 
-                    b.Navigation("Products");
-
-                    b.Navigation("Templates");
+                    b.Navigation("ProductLinks");
 
                     b.Navigation("UserNetworks");
 
@@ -785,18 +570,6 @@ namespace DB.Infra.Migrations
                     b.Navigation("Invoices");
 
                     b.Navigation("OrderItems");
-                });
-
-            modelBuilder.Entity("DB.Infra.Context.Template", b =>
-                {
-                    b.Navigation("TemplatePages");
-                });
-
-            modelBuilder.Entity("DB.Infra.Context.TemplatePage", b =>
-                {
-                    b.Navigation("TemplateParts");
-
-                    b.Navigation("TemplateVars");
                 });
 
             modelBuilder.Entity("DB.Infra.Context.UserProfile", b =>

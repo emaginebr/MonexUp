@@ -2,6 +2,7 @@ using MonexUp.DTO.Network;
 using MonexUp.DTO.Order;
 using MonexUp.DTO.Invoice;
 using MonexUp.DTO.Product;
+using MonexUp.DTO.ProductLink;
 using MonexUp.DTO.Profile;
 using MonexUp.DTO.Payment;
 
@@ -120,6 +121,39 @@ namespace MonexUp.ApiTests.Helpers
             return new PixPaymentRequest
             {
                 DocumentId = documentId ?? "12345678901"
+            };
+        }
+
+        public static object CreateLofnStorePayload(string? name = null)
+        {
+            var uniqueId = Guid.NewGuid().ToString("N")[..8];
+            return new { name = name ?? $"Test Store {uniqueId}" };
+        }
+
+        public static object CreateLofnProductPayload(string? name = null)
+        {
+            var uniqueId = Guid.NewGuid().ToString("N")[..8];
+            return new
+            {
+                name = name ?? $"Test Product {uniqueId}",
+                description = "Product created from MonexUp.ApiTests",
+                price = 49.90,
+                discount = 0.0,
+                frequency = 0,
+                limit = 0,
+                status = 1, // ProductStatusEnum.Active
+                productType = 1, // ProductTypeEnum.Physical
+                featured = false
+            };
+        }
+
+        public static ProductLinkInsertInfo CreateProductLinkInsertInfo(long lofnProductId, long networkId, long userId)
+        {
+            return new ProductLinkInsertInfo
+            {
+                LofnProductId = lofnProductId,
+                NetworkId = networkId,
+                UserId = userId
             };
         }
     }
