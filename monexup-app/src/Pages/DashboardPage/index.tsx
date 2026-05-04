@@ -8,6 +8,9 @@ import {
   Download,
   DollarSign,
   ShoppingBag,
+  Briefcase,
+  ShieldCheck,
+  Calendar,
 } from "lucide-react";
 import AuthContext from "../../Contexts/Auth/AuthContext";
 import NetworkContext from "../../Contexts/Network/NetworkContext";
@@ -157,63 +160,72 @@ export default function DashboardPage() {
         onClose={() => setShowMessage(false)}
       />
 
-      <div className="max-w-container mx-auto px-shell pt-10 pb-16">
+      <div className="max-w-container mx-auto px-shell pt-6 pb-12">
         {/* 1. Page header band ------------------------------------------- */}
         <section
-          className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10 animate-fade-up"
+          className="flex flex-row items-start sm:items-center justify-between gap-4 mb-6 lg:mb-8 animate-fade-up"
           aria-labelledby="dashboard-page-title"
         >
-          <div>
-            <span className="mnx-eyebrow">{t("dashboard_eyebrow")}</span>
-            <h1
-              id="dashboard-page-title"
-              className="display-headline mt-3 text-graphite-900 text-4xl sm:text-5xl"
-            >
-              {t("dashboard_greeting")}, {firstName}.
-            </h1>
-            <p className="mt-3 text-graphite-500 text-base sm:text-lg max-w-xl leading-relaxed">
-              {todayLabel}
+          <div className="min-w-0">
+            <div className="flex items-center gap-3">
+              <span
+                aria-hidden="true"
+                className="inline-block w-[2px] h-5 rounded-full bg-orange-500"
+              />
+              <h1
+                id="dashboard-page-title"
+                className="display-headline text-graphite-900 text-2xl sm:text-3xl lg:text-[2rem] leading-tight"
+              >
+                {t("dashboard_greeting")}, {firstName}.
+              </h1>
+            </div>
+
+            <div className="mt-2 ml-[14px] flex flex-wrap items-center gap-x-2 gap-y-2 text-sm">
+              <span className="inline-flex items-center gap-1.5 text-graphite-500">
+                <Calendar size={12} aria-hidden="true" className="text-graphite-400" />
+                <span className="capitalize">{todayLabel}</span>
+              </span>
+
+              {(!isUserOnly || networkName) && (
+                <span aria-hidden="true" className="text-graphite-300">·</span>
+              )}
+
               {!isUserOnly && (
-                <>
-                  <span aria-hidden="true" className="px-2 text-graphite-300">
-                    ·
-                  </span>
-                  <span className="font-medium text-graphite-700">
-                    {roleLabel}
-                  </span>
-                </>
+                <span className="inline-flex items-center gap-1 h-[26px] px-2 rounded-full bg-orange-500/10 text-orange-700 ring-1 ring-orange-500/20 text-xs font-semibold">
+                  <ShieldCheck size={12} aria-hidden="true" />
+                  {roleLabel}
+                </span>
               )}
+
               {networkName && (
-                <>
-                  <span aria-hidden="true" className="px-2 text-graphite-300">
-                    ·
-                  </span>
-                  {networkName}
-                </>
+                <span className="inline-flex items-center gap-1 h-[26px] px-2 rounded-full bg-graphite-100 text-graphite-700 ring-1 ring-graphite-200 text-xs font-semibold max-w-[14rem] truncate">
+                  <Briefcase size={12} aria-hidden="true" className="shrink-0" />
+                  <span className="truncate">{networkName}</span>
+                </span>
               )}
-            </p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 shrink-0">
             <button
               type="button"
-              className="inline-flex w-10 h-10 items-center justify-center rounded-md border border-mnx-neutral-300 text-graphite-700 hover:border-graphite-900 hover:bg-mnx-neutral-100 transition-colors duration-fast"
+              className="inline-flex w-9 h-9 items-center justify-center rounded-md border border-mnx-neutral-300 text-graphite-700 hover:border-graphite-900 hover:bg-mnx-neutral-100 transition-colors duration-fast"
               aria-label={t("dashboard_filter")}
             >
-              <Filter size={18} aria-hidden="true" />
+              <Filter size={16} aria-hidden="true" />
             </button>
             <button
               type="button"
-              className="inline-flex w-10 h-10 items-center justify-center rounded-md border border-mnx-neutral-300 text-graphite-700 hover:border-graphite-900 hover:bg-mnx-neutral-100 transition-colors duration-fast"
+              className="inline-flex w-9 h-9 items-center justify-center rounded-md border border-mnx-neutral-300 text-graphite-700 hover:border-graphite-900 hover:bg-mnx-neutral-100 transition-colors duration-fast"
               aria-label={t("dashboard_export")}
             >
-              <Download size={18} aria-hidden="true" />
+              <Download size={16} aria-hidden="true" />
             </button>
             {!isUserOnly && (
               <button
                 type="button"
                 disabled
-                className="inline-flex h-10 items-center px-4 rounded-md text-sm font-semibold text-graphite-900 border border-graphite-900 hover:bg-graphite-900 hover:text-white transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-graphite-900"
+                className="inline-flex h-9 items-center px-4 ml-1 rounded-md text-sm font-semibold text-graphite-900 border border-graphite-900 hover:bg-graphite-900 hover:text-white transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-graphite-900"
                 aria-disabled="true"
               >
                 {t("dashboard_withdraw_balance")}

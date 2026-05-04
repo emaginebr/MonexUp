@@ -113,32 +113,35 @@ export default function NetworkEditPage() {
         }}
       />
 
-      <div className="max-w-container mx-auto px-shell pt-10 pb-32">
-        {/* 1. Page header band ------------------------------------------- */}
+      <div className="max-w-container mx-auto px-shell pt-6 pb-12">
+        {/* 1. Page header band (compact, dashboard parity) -------------- */}
         <section
-          className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10 animate-fade-up"
+          className="flex flex-row items-start sm:items-center justify-between gap-4 mb-6 lg:mb-8 animate-fade-up"
           aria-labelledby="network-edit-page-title"
         >
-          <div>
-            <span className="mnx-eyebrow">
-              {t("network_edit_eyebrow")}
-            </span>
-            <h1
-              id="network-edit-page-title"
-              className="display-headline mt-3 text-graphite-900 text-4xl sm:text-5xl"
-            >
-              {t("network_edit_title")}
-            </h1>
-            <p className="mt-3 text-graphite-500 text-base sm:text-lg max-w-2xl leading-relaxed">
+          <div className="min-w-0">
+            <div className="flex items-center gap-3">
+              <span
+                aria-hidden="true"
+                className="inline-block w-[2px] h-5 rounded-full bg-orange-500"
+              />
+              <h1
+                id="network-edit-page-title"
+                className="display-headline text-graphite-900 text-2xl sm:text-3xl lg:text-[2rem] leading-tight"
+              >
+                {t("network_edit_title")}
+              </h1>
+            </div>
+            <p className="mt-2 ml-[14px] text-graphite-500 text-sm max-w-2xl">
               {t("network_edit_subtitle")}
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 shrink-0">
             <button
               type="button"
               onClick={() => navigate("/admin/dashboard")}
-              className="inline-flex h-10 items-center gap-2 px-4 rounded-md border border-mnx-neutral-300 text-sm font-semibold text-graphite-700 hover:border-graphite-900 hover:bg-mnx-neutral-100 transition-colors duration-fast"
+              className="inline-flex h-9 items-center gap-2 px-3 rounded-md border border-mnx-neutral-300 text-sm font-semibold text-graphite-700 hover:border-graphite-900 hover:bg-mnx-neutral-100 transition-colors duration-fast"
             >
               <ArrowLeft size={16} aria-hidden="true" />
               {t("back_button")}

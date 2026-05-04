@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useAuth } from 'nauth-react';
 import ProviderResult from '../../DTO/Contexts/ProviderResult';
 import IAuthProvider from '../../DTO/Contexts/IAuthProvider';
 import AuthContext from './AuthContext';
+import NetworkContext from '../Network/NetworkContext';
 import AuthSession from '../../DTO/Domain/AuthSession';
 import { LanguageEnum } from '../../DTO/Enum/LanguageEnum';
 
 export default function AuthProvider(props: any) {
 
   const { user, token, isLoading, login, logout: nauthLogout } = useAuth();
+  const networkCtx = useContext(NetworkContext);
   const [language, setLanguage] = useState<LanguageEnum>(LanguageEnum.English);
   const [localSession, setLocalSession] = useState<AuthSession>(null);
 
@@ -65,6 +67,7 @@ export default function AuthProvider(props: any) {
     },
     logout: function (): ProviderResult {
       try {
+        networkCtx?.clear?.();
         nauthLogout();
         setLocalSession(null);
         return {

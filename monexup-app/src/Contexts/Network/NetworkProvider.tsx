@@ -8,6 +8,7 @@ import NetworkInsertInfo from "../../DTO/Domain/NetworkInsertInfo";
 import NetworkFactory from "../../Business/Factory/NetworkFactory";
 import { UserRoleEnum } from "../../DTO/Enum/UserRoleEnum";
 import NetworkProviderResult from "../../DTO/Contexts/NetworkProviderResult";
+import { readSelection, writeSelection, clearSelection } from "./networkStorage";
 
 export default function NetworkProvider(props: any) {
 
@@ -46,10 +47,28 @@ export default function NetworkProvider(props: any) {
         setUserNetwork: (userNetwork: UserNetworkInfo) => {
             _setUserNetwork(userNetwork);
             _setNetwork(userNetwork?.network);
-            _setCurrentRole(userNetwork.role);
+            _setCurrentRole(userNetwork?.role ?? UserRoleEnum.NoRole);
+            if (userNetwork) {
+                writeSelection({ networkId: userNetwork.networkId, role: userNetwork.role });
+            } else {
+                clearSelection();
+            }
         },
         setCurrentRole: (role: UserRoleEnum) => {
             _setCurrentRole(role);
+            if (userNetwork) {
+                writeSelection({ networkId: userNetwork.networkId, role });
+            }
+        },
+        clear: () => {
+            _setUserNetwork(null);
+            _setNetwork(null);
+            _setCurrentRole(UserRoleEnum.NoRole);
+            setUserNetworks([]);
+            setNetworks([]);
+            setSeller(null);
+            setTeams([]);
+            clearSelection();
         },
         /*
         setEditMode: (edit: boolean) => {
@@ -204,13 +223,37 @@ export default function NetworkProvider(props: any) {
                 let brt = await NetworkFactory.NetworkBusiness.listByUser();
                 if (brt.sucesso) {
                     setLoading(false);
-                    setUserNetworks(brt.dataResult);
-                    if (!userNetwork) {
-                        if (brt.dataResult.length > 0) {
-                            _setUserNetwork(brt.dataResult[0]);
-                            _setNetwork(brt.dataResult[0].network);
+                    const list: UserNetworkInfo[] = brt.dataResult ?? [];
+                    setUserNetworks(list);
+
+                    if (list.length === 0) {
+                        clearSelection();
+                        _setUserNetwork(null);
+                        _setNetwork(null);
+                        _setCurrentRole(UserRoleEnum.NoRole);
+                    } else {
+                        const stored = readSelection();
+                        const found = stored
+                            ? list.find((un) => un.networkId === stored.networkId)
+                            : null;
+
+                        if (found) {
+                            _setUserNetwork(found);
+                            _setNetwork(found.network);
+                            const effective = stored.role <= found.role ? stored.role : found.role;
+                            _setCurrentRole(effective);
+                            if (effective !== stored.role) {
+                                writeSelection({ networkId: found.networkId, role: effective });
+                            }
+                        } else {
+                            const first = list[0];
+                            _setUserNetwork(first);
+                            _setNetwork(first.network);
+                            _setCurrentRole(first.role);
+                            writeSelection({ networkId: first.networkId, role: first.role });
                         }
                     }
+
                     return {
                         ...ret,
                         sucesso: true,

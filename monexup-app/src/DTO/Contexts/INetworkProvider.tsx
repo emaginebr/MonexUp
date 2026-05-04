@@ -24,6 +24,7 @@ interface INetworkProvider {
     setNetwork: (network: NetworkInfo) => void;
     setUserNetwork: (userNetwork: UserNetworkInfo) => void;
     setCurrentRole: (role: UserRoleEnum) => void;
+    clear: () => void;
 
     insert: (network: NetworkInsertInfo) => Promise<ProviderResult>;
     update: (network: NetworkInfo) => Promise<ProviderResult>;

@@ -1,4 +1,5 @@
 {
+  "new": "Novo",
   "home": "Início",
   "be_a_representative": "Seja um representante",
   "create_your_network": "Crie sua rede",
@@ -376,7 +377,20 @@
     "level": "Nível",
     "commission": "Comissão",
     "members": "Membros",
-    "actions": "Ações"
+    "actions": "Ações",
+    "subtitle": "Defina níveis de comissão e cargos da estrutura da sua rede.",
+    "emptyTitle": "Nenhum perfil cadastrado",
+    "emptyBody": "Crie o primeiro nível de comissão para começar a organizar a estrutura da sua equipe."
+  },
+  "networkListPage": {
+    "breadcrumbCurrent": "Buscar",
+    "searchLabel": "Buscar rede",
+    "searchPlaceholder": "Buscar por nome ou slug",
+    "open": "Abrir página da rede",
+    "manage": "Gerenciar minha rede",
+    "emptyTitle": "Nenhuma rede encontrada",
+    "emptyBody": "Você ainda não pertence a nenhuma rede. Crie a sua para começar a recrutar vendedores e gerenciar comissões.",
+    "createNetwork": "Criar minha rede"
   },
   "areYouSure": "Você tem certeza?",
   "requestAccessPage": {
@@ -516,15 +530,37 @@
       "reactivate": "Reativar",
       "block": "Bloquear",
       "approve": "Aprovar",
-      "reprove": "Reprovar"
+      "reprove": "Reprovar",
+      "promote": "Promover",
+      "demote": "Rebaixar",
+      "previous": "Anterior",
+      "next": "Próximo"
     },
     "messages": {
       "userAccessRemoved": "Acesso do usuário removido",
       "userReactivated": "Usuário reativado",
       "userBlocked": "Usuário bloqueado",
       "userApproved": "Usuário aprovado",
-      "userReproved": "Usuário reprovado"
-    }
+      "userReproved": "Usuário reprovado",
+      "userPromoted": "Usuário promovido",
+      "userDemoted": "Usuário rebaixado"
+    },
+    "pageOf": "Página {{current}} de {{total}}",
+    "emptyTitle": "Sua equipe ainda está vazia",
+    "emptyBody": "Quando vendedores entrarem na sua rede, eles aparecerão aqui para você gerenciar funções e acessos."
+  },
+  "orderSearchPage": {
+    "searchPlaceholder": "Buscar pedido por comprador ou produto",
+    "emptyTitle": "Nenhum pedido encontrado",
+    "emptyBody": "Quando um pedido for criado nesta rede, ele aparecerá aqui com status e valor.",
+    "viewDetails": "Ver detalhes"
+  },
+  "invoiceSearchPage": {
+    "searchPlaceholder": "Buscar fatura por comprador, vendedor ou produto",
+    "emptyTitle": "Nenhuma fatura encontrada",
+    "emptyBody": "Assim que uma fatura for emitida nesta rede, ela aparecerá aqui com status, vencimento e valor.",
+    "viewDetails": "Ver detalhes",
+    "synchronize": "Sincronizar"
   },
   "recovery_page_title": "Recuperar Senha",
   "recovery_email_sent": "E-mail de recuperação enviado. Verifique sua caixa de entrada.",

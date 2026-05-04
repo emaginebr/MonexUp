@@ -322,19 +322,7 @@ export default function AdminSidebar() {
         id="mnx-admin-sidebar-nav"
         className="relative px-2 pb-3"
       >
-        {/* Overview — every role sees this */}
-        <SidebarGroup label={t("admin_sidebar_overview")} collapsed={collapsed}>
-          <SidebarItem
-            icon={LayoutDashboard}
-            label={t("footer_dashboard")}
-            active={isDashboardActive}
-            collapsed={collapsed}
-            onClick={() => navigate("/admin/dashboard")}
-          />
-        </SidebarGroup>
-
-        {/* Role switcher — placed right under Overview so users see
-            "select your role" immediately after Dashboard. */}
+        {/* Role switcher — placed first so users pick role before navigating. */}
         {networkContext?.userNetwork && (
           <SidebarGroup label={t("role_description")} collapsed={collapsed}>
             {networkContext.userNetwork.role >= UserRoleEnum.User && (
@@ -375,6 +363,17 @@ export default function AdminSidebar() {
             )}
           </SidebarGroup>
         )}
+
+        {/* Overview — every role sees this */}
+        <SidebarGroup label={t("admin_sidebar_overview")} collapsed={collapsed}>
+          <SidebarItem
+            icon={LayoutDashboard}
+            label={t("footer_dashboard")}
+            active={isDashboardActive}
+            collapsed={collapsed}
+            onClick={() => navigate("/admin/dashboard")}
+          />
+        </SidebarGroup>
 
         {/* Network Manager — preferences / structure / teams */}
         {role >= UserRoleEnum.NetworkManager && (
