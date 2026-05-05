@@ -1,0 +1,19 @@
+meta {
+  name: Payment Completed
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/billing/payment-completed
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "networkId": 1,
+    "proxyPayInvoiceId": 1,
+    "signature": ""
+  }
+}

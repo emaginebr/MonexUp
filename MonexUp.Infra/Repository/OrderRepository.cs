@@ -32,6 +32,7 @@ namespace DB.Infra.Repository
             md.NetworkId = row.NetworkId;
             md.UserId = row.UserId;
             md.SellerId = row.SellerId;
+            md.ProxyPayInvoiceId = row.ProxyPayInvoiceId;
             md.CreatedAt = row.CreatedAt;
             md.UpdatedAt = row.UpdatedAt;
             md.Status = (OrderStatusEnum) row.Status;
@@ -44,6 +45,7 @@ namespace DB.Infra.Repository
             row.NetworkId = md.NetworkId;
             row.UserId = md.UserId;
             row.SellerId = md.SellerId;
+            row.ProxyPayInvoiceId = md.ProxyPayInvoiceId;
             row.CreatedAt = md.CreatedAt;
             row.UpdatedAt = md.UpdatedAt;
             row.Status = (int)md.Status;
@@ -107,6 +109,14 @@ namespace DB.Infra.Repository
         public IOrderModel GetById(long id, IOrderDomainFactory factory)
         {
             var row = _ccsContext.Orders.Find(id);
+            if (row == null)
+                return null;
+            return DbToModel(factory, row);
+        }
+
+        public IOrderModel GetByProxyPayInvoiceId(long proxypayInvoiceId, IOrderDomainFactory factory)
+        {
+            var row = _ccsContext.Orders.FirstOrDefault(x => x.ProxyPayInvoiceId == proxypayInvoiceId);
             if (row == null)
                 return null;
             return DbToModel(factory, row);

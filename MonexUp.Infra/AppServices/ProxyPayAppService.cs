@@ -31,11 +31,14 @@ namespace MonexUp.Infra.AppServices
         private HttpClient CreateClient()
         {
             var client = _httpClientFactory.CreateClient("ProxyPay");
-            client.BaseAddress = new Uri(_settings.ApiUrl);
             client.DefaultRequestHeaders.Add("X-Tenant-Id", _settings.TenantId);
-            client.DefaultRequestHeaders.Add("X-Client-Id", _settings.ClientId);
+            if (!string.IsNullOrEmpty(_settings.ClientId))
+                client.DefaultRequestHeaders.Add("X-Client-Id", _settings.ClientId);
             return client;
         }
+
+        private string BuildUri(string path) =>
+            $"{_settings.ApiUrl.TrimEnd('/')}/{path.TrimStart('/')}";
 
         public async Task<ProxyPayQRCodeResponse> CreateQRCodeAsync(ProxyPayQRCodeRequest request)
         {
@@ -45,23 +48,28 @@ namespace MonexUp.Infra.AppServices
 
                 var payload = new
                 {
-                    customerName = request.CustomerName,
-                    customerEmail = request.CustomerEmail,
-                    customerDocumentId = request.CustomerDocumentId,
-                    customerCellphone = request.CustomerCellphone,
+                    clientId = request.ClientId,
+                    customer = new
+                    {
+                        name = request.CustomerName,
+                        email = request.CustomerEmail,
+                        documentId = request.CustomerDocumentId,
+                        cellphone = request.CustomerCellphone
+                    },
                     items = request.Items?.ConvertAll(item => new
                     {
                         id = item.Id,
                         description = item.Description,
                         quantity = item.Quantity,
-                        unitPrice = (long)(item.UnitPrice * 100)
+                        unitPrice = item.UnitPrice,
+                        discount = 0.0
                     })
                 };
 
                 var json = JsonSerializer.Serialize(payload, _jsonOptions);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await client.PostAsync("/payment/qrcode", content);
+                var response = await client.PostAsync(BuildUri("Payment/qrcode"), content);
                 var responseBody = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
@@ -74,11 +82,20 @@ namespace MonexUp.Infra.AppServices
                 }
 
                 var result = JsonSerializer.Deserialize<ProxyPayQRCodeResponse>(responseBody, _jsonOptions);
-                return result ?? new ProxyPayQRCodeResponse
+                if (result == null)
                 {
-                    Sucesso = false,
-                    Mensagem = "Failed to deserialize ProxyPay response"
-                };
+                    return new ProxyPayQRCodeResponse
+                    {
+                        Sucesso = false,
+                        Mensagem = "Failed to deserialize ProxyPay response"
+                    };
+                }
+                result.Sucesso = result.InvoiceId > 0;
+                if (!result.Sucesso)
+                {
+                    result.Mensagem = "ProxyPay returned no invoiceId";
+                }
+                return result;
             }
             catch (Exception ex)
             {
@@ -96,7 +113,7 @@ namespace MonexUp.Infra.AppServices
             {
                 var client = CreateClient();
 
-                var response = await client.GetAsync($"/payment/qrcode/status/{invoiceId}");
+                var response = await client.GetAsync(BuildUri($"Payment/qrcode/status/{invoiceId}"));
                 var responseBody = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)

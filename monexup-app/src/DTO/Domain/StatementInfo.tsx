@@ -1,14 +1,14 @@
 export default interface StatementInfo {
-    invoiceId: number;
+    proxyPayInvoiceId?: number;
     feeId: number;
-    networkId: number;
-    networkName: string;
-    userId: number;
-    buyerName: string;
-    sellerId: number;
-    sellerName: string;
-    description: string;
-    paymentDate: string;
+    networkId?: number;
+    networkName?: string;
+    userId?: number;
+    buyerName?: string;
+    sellerId?: number;
+    sellerName?: string;
+    description?: string;
     amount: number;
-    paidAt: string;
+    paidAt?: string;
+    withdrawalDueDate?: string;
 }

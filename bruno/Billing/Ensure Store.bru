@@ -1,0 +1,21 @@
+meta {
+  name: Ensure Store
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/billing/ensure-store
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "networkId": 1
+  }
+}

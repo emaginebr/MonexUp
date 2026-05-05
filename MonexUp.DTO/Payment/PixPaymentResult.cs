@@ -13,7 +13,7 @@ namespace MonexUp.DTO.Payment
 
     public class PixQRCodeInfo
     {
-        public string InvoiceId { get; set; }
+        public long InvoiceId { get; set; }
         public string BrCode { get; set; }
         public string BrCodeBase64 { get; set; }
         public DateTime? ExpiredAt { get; set; }

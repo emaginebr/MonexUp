@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Lofn;
@@ -13,26 +12,26 @@ namespace MonexUp.Domain.Impl.Services
     public class ProxyPayService : IProxyPayService
     {
         private readonly IProxyPayAppService _proxyPayAppService;
-        private readonly IInvoiceDomainFactory _invoiceFactory;
-        private readonly IInvoiceFeeDomainFactory _feeFactory;
-        private readonly IInvoiceService _invoiceService;
 
-        public ProxyPayService(
-            IProxyPayAppService proxyPayAppService,
-            IInvoiceDomainFactory invoiceFactory,
-            IInvoiceFeeDomainFactory feeFactory,
-            IInvoiceService invoiceService)
+        public ProxyPayService(IProxyPayAppService proxyPayAppService)
         {
             _proxyPayAppService = proxyPayAppService;
-            _invoiceFactory = invoiceFactory;
-            _feeFactory = feeFactory;
-            _invoiceService = invoiceService;
         }
 
         public async Task<ProxyPayQRCodeResponse> CreateQRCode(UserInfo user, LofnProductInfo product, INetworkModel network, UserInfo seller, string documentId)
         {
+            if (network == null || string.IsNullOrEmpty(network.ProxyPayClientId))
+            {
+                return new ProxyPayQRCodeResponse
+                {
+                    Sucesso = false,
+                    Mensagem = "Network has no ProxyPay store. Call /Billing/ensure-store first."
+                };
+            }
+
             var request = new ProxyPayQRCodeRequest
             {
+                ClientId = network.ProxyPayClientId,
                 CustomerName = user.Name,
                 CustomerEmail = user.Email,
                 CustomerDocumentId = documentId,
@@ -49,24 +48,18 @@ namespace MonexUp.Domain.Impl.Services
                 }
             };
 
-            var response = await _proxyPayAppService.CreateQRCodeAsync(request);
-            return response;
+            return await _proxyPayAppService.CreateQRCodeAsync(request);
         }
 
         public async Task<ProxyPayQRCodeStatusResponse> CheckQRCodeStatus(string proxyPayInvoiceId)
         {
-            var response = await _proxyPayAppService.CheckQRCodeStatusAsync(proxyPayInvoiceId);
-            return response;
+            return await _proxyPayAppService.CheckQRCodeStatusAsync(proxyPayInvoiceId);
         }
 
-        public async Task SyncPendingInvoices()
+        public Task SyncPendingInvoices()
         {
-            // Placeholder: In this phase, PIX payment sync is handled by the polling flow
-            // (frontend polls CheckQRCodeStatus). Once we add a ProxyPay external code field
-            // to invoices, this method will query pending invoices and check their status
-            // against the ProxyPay API.
-            Console.WriteLine("[ProxyPayService] SyncPendingInvoices: No-op placeholder. PIX sync is handled via polling.");
-            await Task.CompletedTask;
+            // Reconciliation now handled by BillingReconciliationService.
+            return Task.CompletedTask;
         }
     }
 }

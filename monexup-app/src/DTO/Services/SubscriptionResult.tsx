@@ -1,7 +1,7 @@
 import OrderInfo from "../Domain/OrderInfo";
 
 export interface PixQRCodeInfo {
-    invoiceId: string;
+    invoiceId: number;
     brCode: string;
     brCodeBase64: string;
     expiredAt: string;

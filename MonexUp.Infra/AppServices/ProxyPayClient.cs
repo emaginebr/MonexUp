@@ -25,10 +25,12 @@ namespace DB.Infra.AppServices
             _tenantId = configuration["ProxyPay:TenantId"] ?? "monexup";
         }
 
-        public async Task<ProxyPayStoreCreatedInfo> InsertStoreAsync(string storeName, string bearerToken, CancellationToken ct = default)
+        public async Task<ProxyPayStoreCreatedInfo> InsertStoreAsync(string storeName, string email, string bearerToken, CancellationToken ct = default)
         {
             if (string.IsNullOrWhiteSpace(storeName))
                 throw new ArgumentException("storeName is required.", nameof(storeName));
+            if (string.IsNullOrWhiteSpace(email))
+                throw new ArgumentException("email is required.", nameof(email));
             if (string.IsNullOrWhiteSpace(bearerToken))
                 throw new ArgumentException("bearerToken is required.", nameof(bearerToken));
 
@@ -36,10 +38,10 @@ namespace DB.Infra.AppServices
             client.DefaultRequestHeaders.Add("X-Tenant-Id", _tenantId);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
 
-            var payload = JsonSerializer.Serialize(new { name = storeName });
+            var payload = JsonSerializer.Serialize(new { name = storeName, email = email, billingStrategy = 1 });
             using var content = new StringContent(payload, Encoding.UTF8, "application/json");
 
-            var requestUri = $"{_proxyPayApiUrl.TrimEnd('/')}/Store/insert";
+            var requestUri = $"{_proxyPayApiUrl.TrimEnd('/')}/Store";
             using var response = await client.PostAsync(requestUri, content, ct);
             var body = await response.Content.ReadAsStringAsync(ct);
 
@@ -61,6 +63,45 @@ namespace DB.Infra.AppServices
             {
                 StoreId = storeIdProp.GetInt64(),
                 ClientId = clientIdProp.GetString()
+            };
+        }
+
+        public async Task<ProxyPayStoreCreatedInfo> GetMyStoreAsync(string bearerToken, CancellationToken ct = default)
+        {
+            if (string.IsNullOrWhiteSpace(bearerToken))
+                throw new ArgumentException("bearerToken is required.", nameof(bearerToken));
+
+            using var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("X-Tenant-Id", _tenantId);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+
+            var query = "{\"query\":\"{ myStore { storeId clientId } }\"}";
+            using var content = new StringContent(query, Encoding.UTF8, "application/json");
+
+            var requestUri = $"{_proxyPayApiUrl.TrimEnd('/')}/graphql";
+            using var response = await client.PostAsync(requestUri, content, ct);
+            var body = await response.Content.ReadAsStringAsync(ct);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException(
+                    $"ProxyPay GraphQL myStore failed ({(int)response.StatusCode}): {body}");
+            }
+
+            using var doc = JsonDocument.Parse(body);
+            if (!doc.RootElement.TryGetProperty("data", out var data))
+                return null;
+            if (!data.TryGetProperty("myStore", out var arr) || arr.ValueKind != JsonValueKind.Array || arr.GetArrayLength() == 0)
+                return null;
+
+            var first = arr[0];
+            if (!first.TryGetProperty("storeId", out var sid) || !first.TryGetProperty("clientId", out var cid))
+                return null;
+
+            return new ProxyPayStoreCreatedInfo
+            {
+                StoreId = sid.GetInt64(),
+                ClientId = cid.GetString()
             };
         }
 

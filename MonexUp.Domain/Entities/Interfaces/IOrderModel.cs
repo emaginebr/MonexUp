@@ -14,6 +14,7 @@ namespace MonexUp.Domain.Interfaces.Models
         long NetworkId { get; set; }
         long UserId { get; set; }
         long? SellerId { get; set; }
+        long? ProxyPayInvoiceId { get; set; }
         DateTime CreatedAt { get; set; }
         DateTime UpdatedAt { get; set; }
         OrderStatusEnum Status { get; set; }
@@ -23,6 +24,7 @@ namespace MonexUp.Domain.Interfaces.Models
         IEnumerable<IOrderModel> List(long networkId, long userId, OrderStatusEnum? status, IOrderDomainFactory factory);
         IEnumerable<IOrderModel> Search(long networkId, long? userId, long? sellerId, int pageNum, out int pageCount, IOrderDomainFactory factory);
         IOrderModel GetById(long id, IOrderDomainFactory factory);
+        IOrderModel GetByProxyPayInvoiceId(long proxypayInvoiceId, IOrderDomainFactory factory);
         IOrderModel Get(long productId, long userId, long? sellerId, OrderStatusEnum status, IOrderDomainFactory factory);
         IOrderModel Insert(IOrderDomainFactory factory);
         IOrderModel Update(IOrderDomainFactory factory);

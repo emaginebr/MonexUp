@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MonexUp.API.Extensions;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Billing;
+using MonexUp.DTO.Invoice;
 using NAuth.ACL.Interfaces;
 using System;
 using System.Linq;
@@ -109,6 +110,74 @@ namespace MonexUp.API.Controllers
                     Sucesso = false,
                     MensagemErro = BuildErrorMessage(ex)
                 });
+            }
+        }
+
+        [Authorize]
+        [HttpPost("searchStatement")]
+        public async Task<IActionResult> SearchStatement([FromBody] StatementSearchParam param)
+        {
+            try
+            {
+                var session = _userClient.GetUserInSession(HttpContext);
+                if (session == null) return Unauthorized();
+                var token = HttpContext.GetBearerToken();
+                return Ok(await _service.SearchStatement(param, token));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpGet("getBalance")]
+        public IActionResult GetBalance([FromQuery] long networkId)
+        {
+            try
+            {
+                var session = _userClient.GetUserInSession(HttpContext);
+                if (session == null) return Unauthorized();
+                long? newNetworkId = (networkId > 0) ? networkId : 0;
+                return Ok(_service.GetBalance(newNetworkId, newNetworkId.HasValue ? null : session.UserId));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpGet("getAvailableBalance")]
+        public IActionResult GetAvailableBalance()
+        {
+            try
+            {
+                var session = _userClient.GetUserInSession(HttpContext);
+                if (session == null) return Unauthorized();
+                return Ok(_service.GetAvailableBalance(session.UserId));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpGet("getInvoice/{networkId}/{proxypayInvoiceId}")]
+        public async Task<IActionResult> GetInvoice(long networkId, long proxypayInvoiceId, CancellationToken ct)
+        {
+            try
+            {
+                var session = _userClient.GetUserInSession(HttpContext);
+                if (session == null) return Unauthorized();
+                var inv = await _service.GetInvoice(networkId, proxypayInvoiceId, ct);
+                if (inv == null) return NotFound();
+                return Ok(inv);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
 

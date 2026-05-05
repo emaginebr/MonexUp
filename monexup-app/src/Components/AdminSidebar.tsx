@@ -411,13 +411,6 @@ export default function AdminSidebar() {
               collapsed={collapsed}
               onClick={() => navigate("/admin/orders")}
             />
-            <SidebarItem
-              icon={DollarSign}
-              label={t("invoices")}
-              active={isActive("/admin/invoices")}
-              collapsed={collapsed}
-              onClick={() => navigate("/admin/invoices")}
-            />
             {role >= UserRoleEnum.NetworkManager && (
               <SidebarItem
                 icon={DollarSign}

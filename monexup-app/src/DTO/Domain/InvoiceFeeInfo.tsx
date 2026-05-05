@@ -1,8 +1,9 @@
 export default interface InvoiceFeeInfo {
     feeId: number;
-    invoiceId: number;
+    proxyPayInvoiceId?: number;
     networkId?: number;
     userId?: number;
     amount: number;
-    paidAt: string;
+    paidAt?: string;
+    withdrawalDueDate?: string;
 }

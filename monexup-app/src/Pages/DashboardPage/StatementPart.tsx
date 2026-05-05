@@ -178,7 +178,7 @@ export default function StatementPart({
 
             {!loading &&
               StatementResult?.statements?.map((statement) => (
-                <tr key={`${statement.invoiceId}-${statement.feeId}`}>
+                <tr key={`${statement.proxyPayInvoiceId ?? 0}-${statement.feeId}`}>
                   <td>
                     <span
                       className="mnx-status-pill"
@@ -188,7 +188,7 @@ export default function StatementPart({
                     </span>
                   </td>
                   <td>
-                    <Moment format="DD/MM/YYYY">{statement.paymentDate}</Moment>
+                    <Moment format="DD/MM/YYYY">{statement.paidAt}</Moment>
                   </td>
                   <td>{statement.networkName}</td>
                   <td>

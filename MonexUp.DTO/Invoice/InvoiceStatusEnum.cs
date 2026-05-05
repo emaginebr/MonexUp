@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace MonexUp.DTO.Invoice
 {
     public enum InvoiceStatusEnum
     {
-        Draft = 1,
-        Open = 2,
+        Pending = 1,
+        Sent = 2,
         Paid = 3,
-        Cancelled = 4,
-        Lost = 5
+        Overdue = 4,
+        Cancelled = 5,
+        Expired = 6
     }
 }

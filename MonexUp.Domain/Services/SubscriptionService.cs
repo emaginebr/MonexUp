@@ -1,7 +1,6 @@
 using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
-using MonexUp.DTO.Invoice;
 using MonexUp.DTO.Order;
 using MonexUp.DTO.Payment;
 using MonexUp.DTO.Subscription;
@@ -18,32 +17,26 @@ namespace MonexUp.Domain.Impl.Services
     {
         private readonly IOrderService _orderService;
         private readonly IProxyPayService _proxyPayService;
-        private readonly IInvoiceService _invoiceService;
         private readonly IUserClient _userClient;
         private readonly INetworkDomainFactory _networkFactory;
+        private readonly IOrderDomainFactory _orderFactory;
         private readonly ILofnProductClient _lofnProductClient;
-        private readonly IOrderItemDomainFactory _orderItemFactory;
-        private readonly IInvoiceDomainFactory _invoiceFactory;
 
         public SubscriptionService(
             IOrderService orderService,
             IProxyPayService proxyPayService,
-            IInvoiceService invoiceService,
             IUserClient userClient,
             INetworkDomainFactory networkFactory,
-            ILofnProductClient lofnProductClient,
-            IOrderItemDomainFactory orderItemFactory,
-            IInvoiceDomainFactory invoiceFactory
+            IOrderDomainFactory orderFactory,
+            ILofnProductClient lofnProductClient
         )
         {
             _orderService = orderService;
             _proxyPayService = proxyPayService;
-            _invoiceService = invoiceService;
             _userClient = userClient;
             _networkFactory = networkFactory;
+            _orderFactory = orderFactory;
             _lofnProductClient = lofnProductClient;
-            _orderItemFactory = orderItemFactory;
-            _invoiceFactory = invoiceFactory;
         }
 
         public async Task<PixPaymentResult> CreatePixPayment(long productId, long userId, long? networkId, long? sellerId, string documentId, string token)
@@ -60,6 +53,11 @@ namespace MonexUp.Domain.Impl.Services
                 network = _networkFactory.BuildNetworkModel().GetById(networkId.Value, _networkFactory);
             }
 
+            if (network == null)
+            {
+                return new PixPaymentResult { Sucesso = false, Mensagem = "Network not found" };
+            }
+
             UserInfo seller = null;
             if (sellerId.HasValue && sellerId.Value > 0)
             {
@@ -71,7 +69,7 @@ namespace MonexUp.Domain.Impl.Services
             {
                 order = _orderService.Insert(new OrderInfo
                 {
-                    NetworkId = product.StoreId ?? 0,
+                    NetworkId = network.NetworkId,
                     UserId = userId,
                     SellerId = sellerId,
                     Status = OrderStatusEnum.Incoming,
@@ -85,15 +83,6 @@ namespace MonexUp.Domain.Impl.Services
                 });
             }
 
-            var invoice = _invoiceFactory.BuildInvoiceModel();
-            invoice.OrderId = order.OrderId;
-            invoice.UserId = userId;
-            invoice.SellerId = sellerId;
-            invoice.Price = product.Price;
-            invoice.DueDate = DateTime.UtcNow;
-            invoice.Status = InvoiceStatusEnum.Draft;
-            var newInvoice = _invoiceService.Insert(invoice);
-
             var user = await _userClient.GetByIdAsync(order.UserId, token);
             var qrCodeResponse = await _proxyPayService.CreateQRCode(user, product, network, seller, documentId);
 
@@ -104,6 +93,12 @@ namespace MonexUp.Domain.Impl.Services
                     Sucesso = false,
                     Mensagem = qrCodeResponse.Mensagem ?? "Failed to create QR Code"
                 };
+            }
+
+            if (qrCodeResponse.InvoiceId > 0)
+            {
+                order.ProxyPayInvoiceId = qrCodeResponse.InvoiceId;
+                order.Update(_orderFactory);
             }
 
             return new PixPaymentResult

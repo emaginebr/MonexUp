@@ -1,12 +1,6 @@
-﻿using MonexUp.DTO.Order;
-using MonexUp.DTO.User;
-using NAuth.DTO.User;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace MonexUp.DTO.Invoice
 {
@@ -14,27 +8,29 @@ namespace MonexUp.DTO.Invoice
     {
         [JsonPropertyName("invoiceId")]
         public long InvoiceId { get; set; }
-        [JsonPropertyName("orderId")]
-        public long OrderId { get; set; }
-        [JsonPropertyName("userId")]
-        public long UserId { get; set; }
-        [JsonPropertyName("sellerId")]
-        public long? SellerId { get; set; }
-        [JsonPropertyName("price")]
-        public double Price { get; set; }
-        [JsonPropertyName("dueDate")]
-        public DateTime DueDate { get; set; }
-        [JsonPropertyName("paymentDate")]
-        public DateTime? PaymentDate { get; set; }
+        [JsonPropertyName("invoiceNumber")]
+        public string InvoiceNumber { get; set; }
+        [JsonPropertyName("notes")]
+        public string Notes { get; set; }
         [JsonPropertyName("status")]
         public InvoiceStatusEnum Status { get; set; }
-        [JsonPropertyName("order")]
-        public OrderInfo Order {  get; set; }
-        [JsonPropertyName("user")]
-        public UserInfo User { get; set; }
-        [JsonPropertyName("seller")]
-        public UserInfo Seller {  get; set; }
-        [JsonPropertyName("fees")]
-        public IList<InvoiceFeeInfo> Fees {  get; set; }
+        [JsonPropertyName("paymentMethod")]
+        public PaymentMethodEnum PaymentMethod { get; set; }
+        [JsonPropertyName("discount")]
+        public double Discount { get; set; }
+        [JsonPropertyName("dueDate")]
+        public DateTime DueDate { get; set; }
+        [JsonPropertyName("externalCode")]
+        public string ExternalCode { get; set; }
+        [JsonPropertyName("expiresAt")]
+        public DateTime? ExpiresAt { get; set; }
+        [JsonPropertyName("paidAt")]
+        public DateTime? PaidAt { get; set; }
+        [JsonPropertyName("createdAt")]
+        public DateTime CreatedAt { get; set; }
+        [JsonPropertyName("updatedAt")]
+        public DateTime UpdatedAt { get; set; }
+        [JsonPropertyName("items")]
+        public IList<InvoiceItemInfo> Items { get; set; }
     }
 }

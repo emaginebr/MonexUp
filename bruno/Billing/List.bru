@@ -1,0 +1,21 @@
+meta {
+  name: List
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/billing/list?networkId=1&pageNum=1&pageSize=20
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:query {
+  networkId: 1
+  pageNum: 1
+  pageSize: 20
+}

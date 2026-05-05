@@ -29,6 +29,7 @@ namespace MonexUp.Domain.Impl.Models
         public long NetworkId { get; set; }
         public long UserId { get; set; }
         public long? SellerId { get; set; }
+        public long? ProxyPayInvoiceId { get; set; }
         public OrderStatusEnum Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
@@ -60,6 +61,11 @@ namespace MonexUp.Domain.Impl.Models
         public IOrderModel GetById(long id, IOrderDomainFactory factory)
         {
             return _repositoryOrder.GetById(id, factory);
+        }
+
+        public IOrderModel GetByProxyPayInvoiceId(long proxypayInvoiceId, IOrderDomainFactory factory)
+        {
+            return _repositoryOrder.GetByProxyPayInvoiceId(proxypayInvoiceId, factory);
         }
 
         public IOrderModel Get(long productId, long userId, long? sellerId, OrderStatusEnum status, IOrderDomainFactory factory)

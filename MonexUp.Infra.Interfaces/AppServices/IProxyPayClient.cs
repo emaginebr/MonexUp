@@ -28,7 +28,13 @@ namespace MonexUp.Infra.Interfaces.AppServices
         /// Provisions a new ProxyPay store under the calling user's account.
         /// Authenticated with NAuth bearer (server-side only).
         /// </summary>
-        Task<ProxyPayStoreCreatedInfo> InsertStoreAsync(string storeName, string bearerToken, CancellationToken ct = default);
+        Task<ProxyPayStoreCreatedInfo> InsertStoreAsync(string storeName, string email, string bearerToken, CancellationToken ct = default);
+
+        /// <summary>
+        /// Returns the authenticated user's existing ProxyPay store via GraphQL `myStore`.
+        /// Returns null if no store exists.
+        /// </summary>
+        Task<ProxyPayStoreCreatedInfo> GetMyStoreAsync(string bearerToken, CancellationToken ct = default);
 
         /// <summary>
         /// Reads a single ProxyPay invoice. Anonymous; clientId in URL or query.

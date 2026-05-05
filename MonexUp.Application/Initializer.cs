@@ -54,7 +54,6 @@ namespace MonexUp.Application
             #endregion
 
             #region Repository
-            injectDependency(typeof(IInvoiceRepository<IInvoiceModel, IInvoiceDomainFactory>), typeof(InvoiceRepository), services, scoped);
             injectDependency(typeof(IInvoiceFeeRepository<IInvoiceFeeModel, IInvoiceFeeDomainFactory>), typeof(InvoiceFeeRepository), services, scoped);
             injectDependency(typeof(INetworkRepository<INetworkModel, INetworkDomainFactory>), typeof(NetworkRepository), services, scoped);
             injectDependency(typeof(IOrderRepository<IOrderModel, IOrderDomainFactory>), typeof(OrderRepository), services, scoped);
@@ -99,14 +98,12 @@ namespace MonexUp.Application
             injectDependency(typeof(IOrderService), typeof(OrderService), services, scoped);
             injectDependency(typeof(ISubscriptionService), typeof(SubscriptionService), services, scoped);
             injectDependency(typeof(IProxyPayService), typeof(ProxyPayService), services, scoped);
-            injectDependency(typeof(IInvoiceService), typeof(InvoiceService), services, scoped);
             injectDependency(typeof(IBillingService), typeof(BillingService), services, scoped);
             injectDependency(typeof(IBillingFeeService), typeof(DB.Infra.Services.BillingFeeService), services, scoped);
             injectDependency(typeof(IBillingReconciliationService), typeof(DB.Infra.Services.BillingReconciliationService), services, scoped);
             #endregion
 
             #region Factory
-            injectDependency(typeof(IInvoiceDomainFactory), typeof(InvoiceDomainFactory), services, scoped);
             injectDependency(typeof(IInvoiceFeeDomainFactory), typeof(InvoiceFeeDomainFactory), services, scoped);
             injectDependency(typeof(INetworkDomainFactory), typeof(NetworkDomainFactory), services, scoped);
             injectDependency(typeof(IOrderDomainFactory), typeof(OrderDomainFactory), services, scoped);

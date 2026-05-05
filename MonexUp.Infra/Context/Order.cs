@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace DB.Infra.Context;
@@ -19,7 +19,7 @@ public partial class Order
 
     public long NetworkId { get; set; }
 
-    public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
+    public long? ProxyPayInvoiceId { get; set; }
 
     public virtual Network Network { get; set; }
 

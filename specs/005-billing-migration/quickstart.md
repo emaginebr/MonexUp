@@ -5,7 +5,7 @@ End-to-end runbook for an operator/developer to verify the new flow on a fresh d
 ## Prerequisites
 
 - PostgreSQL up (docker compose).
-- ProxyPay API reachable at `ProxyPay:ApiUrl` (default `https://emagine.com.br/proxypay-api`).
+- ProxyPay API reachable at `ProxyPay:ApiUrl` (default `https://proxypay.online/api`).
 - Lofn API reachable (still used for product reads).
 - NAuth API reachable.
 - Bearer token for a test user with `IsAdmin = true`.

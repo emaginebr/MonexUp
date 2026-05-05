@@ -139,9 +139,6 @@ export default function Menu() {
                         navigate("/admin/orders");
                       }}><FontAwesomeIcon icon={faFileWord} fixedWidth />&nbsp;{t('orders')}</NavDropdown.Item>
                       <NavDropdown.Item onClick={() => {
-                        navigate("/admin/invoices");
-                      }}><FontAwesomeIcon icon={faDollar} fixedWidth />&nbsp;{t('invoices')}</NavDropdown.Item>
-                      <NavDropdown.Item onClick={() => {
                         navigate("/admin/products");
                       }}><FontAwesomeIcon icon={faBox} fixedWidth />&nbsp;{t('products')}</NavDropdown.Item>
                     </>

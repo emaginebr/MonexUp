@@ -15,8 +15,6 @@ public partial class MonexUpContext : DbContext
     {
     }
 
-    public virtual DbSet<Invoice> Invoices { get; set; }
-
     public virtual DbSet<InvoiceFee> InvoiceFees { get; set; }
 
     public virtual DbSet<Network> Networks { get; set; }
@@ -27,8 +25,6 @@ public partial class MonexUpContext : DbContext
 
     public virtual DbSet<ProductLink> ProductLinks { get; set; }
 
-    public virtual DbSet<UserDocument> UserDocuments { get; set; }
-
     public virtual DbSet<UserNetwork> UserNetworks { get; set; }
 
     public virtual DbSet<UserProfile> UserProfiles { get; set; }
@@ -37,33 +33,6 @@ public partial class MonexUpContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Invoice>(entity =>
-        {
-            entity.HasKey(e => e.InvoiceId).HasName("monexup_invoices_pkey");
-
-            entity.ToTable("monexup_invoices");
-
-            entity.Property(e => e.InvoiceId).HasColumnName("invoice_id");
-            entity.Property(e => e.DueDate)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("due_date");
-            entity.Property(e => e.OrderId).HasColumnName("order_id");
-            entity.Property(e => e.PaymentDate)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("payment_date");
-            entity.Property(e => e.Price).HasColumnName("price");
-            entity.Property(e => e.SellerId).HasColumnName("seller_id");
-            entity.Property(e => e.Status)
-                .HasDefaultValue(1)
-                .HasColumnName("status");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
-
-            entity.HasOne(d => d.Order).WithMany(p => p.Invoices)
-                .HasForeignKey(d => d.OrderId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("monexup_fk_invoice_order");
-        });
-
         modelBuilder.Entity<InvoiceFee>(entity =>
         {
             entity.HasKey(e => e.FeeId).HasName("monexup_pk_invoice_fee");
@@ -74,7 +43,6 @@ public partial class MonexUpContext : DbContext
                 .HasDefaultValueSql("nextval('monexup_invoice_commission_id_seq'::regclass)")
                 .HasColumnName("fee_id");
             entity.Property(e => e.Amount).HasColumnName("amount");
-            entity.Property(e => e.InvoiceId).HasColumnName("invoice_id");
             entity.Property(e => e.NetworkId).HasColumnName("network_id");
             entity.Property(e => e.PaidAt)
                 .HasColumnType("timestamp without time zone")
@@ -86,6 +54,9 @@ public partial class MonexUpContext : DbContext
                 .HasColumnName("reversed_at");
             entity.Property(e => e.PaidAmountCentsAtRecord).HasColumnName("paid_amount_cents_at_record");
             entity.Property(e => e.Role).HasColumnName("role");
+            entity.Property(e => e.WithdrawalDueDate)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("withdrawal_due_date");
 
             entity.HasIndex(e => e.ProxyPayInvoiceId)
                 .HasDatabaseName("ix_monexup_invoice_fees_proxypay_invoice_id");
@@ -96,11 +67,6 @@ public partial class MonexUpContext : DbContext
             entity.HasIndex(e => e.NetworkId)
                 .HasDatabaseName("ix_monexup_invoice_fees_network_unreversed")
                 .HasFilter("reversed_at IS NULL");
-
-            entity.HasOne(d => d.Invoice).WithMany(p => p.InvoiceFees)
-                .HasForeignKey(d => d.InvoiceId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("monexup_fk_fee_invoice");
 
             entity.HasOne(d => d.Network).WithMany(p => p.InvoiceFees)
                 .HasForeignKey(d => d.NetworkId)
@@ -198,6 +164,9 @@ public partial class MonexUpContext : DbContext
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("updated_at");
             entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.ProxyPayInvoiceId).HasColumnName("proxypay_invoice_id");
+            entity.HasIndex(e => e.ProxyPayInvoiceId)
+                .HasDatabaseName("ix_monexup_orders_proxypay_invoice_id");
 
             entity.HasOne(d => d.Network).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.NetworkId)
@@ -222,20 +191,6 @@ public partial class MonexUpContext : DbContext
                 .HasForeignKey(d => d.OrderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("monexup_fk_order_item");
-        });
-
-        modelBuilder.Entity<UserDocument>(entity =>
-        {
-            entity.HasKey(e => e.DocumentId).HasName("monexup_user_documents_pkey");
-
-            entity.ToTable("monexup_user_documents");
-
-            entity.Property(e => e.DocumentId).HasColumnName("document_id");
-            entity.Property(e => e.Base64).HasColumnName("base64");
-            entity.Property(e => e.DocumentType)
-                .HasDefaultValue(0)
-                .HasColumnName("document_type");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
         });
 
         modelBuilder.Entity<UserNetwork>(entity =>

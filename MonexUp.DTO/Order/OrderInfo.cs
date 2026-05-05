@@ -19,6 +19,8 @@ namespace MonexUp.DTO.Order
         public long UserId { get; set; }
         [JsonPropertyName("sellerId")]
         public long? SellerId { get; set; }
+        [JsonPropertyName("proxyPayInvoiceId")]
+        public long? ProxyPayInvoiceId { get; set; }
         [JsonPropertyName("status")]
         public OrderStatusEnum Status { get; set; }
         [JsonPropertyName("createdAt")]

@@ -43,7 +43,6 @@ import OrderSearchPage from './Pages/OrderSearchPage';
 import SellerAddPage from './Pages/SellerAddPage';
 import SellerPage from './Pages/SellerPage';
 import InvoiceProvider from './Contexts/Invoice/InvoiceProvider';
-import InvoiceSearchPage from './Pages/InvoiceSearchPage';
 import NetworkFooter from './Pages/NetworkPage/NetworkFooter';
 import MenuUser from './Components/MenuUser';
 import ImageProvider from './Contexts/Image/ImageProvider';
@@ -211,7 +210,6 @@ function App() {
           </Route>
           <Route path="orders" element={<OrderSearchPage />} />
           <Route path="products" element={<ProductManagePage />} />
-          <Route path="invoices" element={<InvoiceSearchPage />} />
           <Route path="billing" element={<BillingManagePage />} />
           <Route path="team-structure">
             <Route index element={<ProfileListPage />} />

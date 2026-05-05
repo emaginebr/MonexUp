@@ -86,15 +86,6 @@ namespace MonexUp.ApiTests.Helpers
             };
         }
 
-        public static InvoiceSearchParam CreateInvoiceSearchParam(long networkId = 1, int pageNum = 1)
-        {
-            return new InvoiceSearchParam
-            {
-                NetworkId = networkId,
-                PageNum = pageNum
-            };
-        }
-
         public static StatementSearchParam CreateStatementSearchParam(int pageNum = 1)
         {
             return new StatementSearchParam
@@ -119,7 +110,7 @@ namespace MonexUp.ApiTests.Helpers
         {
             return new PixPaymentRequest
             {
-                DocumentId = documentId ?? "12345678901"
+                DocumentId = documentId ?? "11144477735"
             };
         }
 

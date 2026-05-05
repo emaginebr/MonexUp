@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace MonexUp.DTO.Invoice
 {
@@ -11,8 +7,8 @@ namespace MonexUp.DTO.Invoice
     {
         [JsonPropertyName("feeId")]
         public long FeeId { get; set; }
-        [JsonPropertyName("invoiceId")]
-        public long InvoiceId { get; set; }
+        [JsonPropertyName("proxyPayInvoiceId")]
+        public long? ProxyPayInvoiceId { get; set; }
         [JsonPropertyName("networkId")]
         public long? NetworkId { get; set; }
         [JsonPropertyName("userId")]
@@ -21,5 +17,7 @@ namespace MonexUp.DTO.Invoice
         public double Amount { get; set; }
         [JsonPropertyName("paidAt")]
         public DateTime? PaidAt { get; set; }
+        [JsonPropertyName("withdrawalDueDate")]
+        public DateTime? WithdrawalDueDate { get; set; }
     }
 }

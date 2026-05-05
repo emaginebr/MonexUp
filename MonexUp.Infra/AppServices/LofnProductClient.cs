@@ -26,7 +26,7 @@ namespace DB.Infra.AppServices
         public Task<LofnProductInfo> GetByIdAsync(long productId, CancellationToken ct = default)
         {
             var query = @"query($id: Long!) {
-                getProducts(where: { productId: { eq: $id } }) {
+                products(where: { productId: { eq: $id } }) {
                     items { productId storeId categoryId slug name description price discount frequency limit status productType featured imageUrl }
                 }
             }";
@@ -36,7 +36,7 @@ namespace DB.Infra.AppServices
         public Task<LofnProductInfo> GetBySlugAsync(string slug, CancellationToken ct = default)
         {
             var query = @"query($slug: String!) {
-                getProducts(where: { slug: { eq: $slug } }) {
+                products(where: { slug: { eq: $slug } }) {
                     items { productId storeId categoryId slug name description price discount frequency limit status productType featured imageUrl }
                 }
             }";
@@ -58,8 +58,8 @@ namespace DB.Infra.AppServices
             var body = await response.Content.ReadAsStringAsync(ct);
             using var doc = JsonDocument.Parse(body);
             if (!doc.RootElement.TryGetProperty("data", out var data)) return null;
-            if (!data.TryGetProperty("getProducts", out var getProducts)) return null;
-            if (!getProducts.TryGetProperty("items", out var items) || items.GetArrayLength() == 0) return null;
+            if (!data.TryGetProperty("products", out var products)) return null;
+            if (!products.TryGetProperty("items", out var items) || items.GetArrayLength() == 0) return null;
 
             var first = items[0];
             return JsonSerializer.Deserialize<LofnProductInfo>(first.GetRawText(), new JsonSerializerOptions

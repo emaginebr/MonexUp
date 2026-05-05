@@ -12,6 +12,7 @@ namespace MonexUp.Infra.Interfaces.AppServices
 
     public class ProxyPayQRCodeRequest
     {
+        public string ClientId { get; set; }
         public string CustomerName { get; set; }
         public string CustomerEmail { get; set; }
         public string CustomerDocumentId { get; set; }
@@ -31,7 +32,7 @@ namespace MonexUp.Infra.Interfaces.AppServices
     {
         public bool Sucesso { get; set; }
         public string Mensagem { get; set; }
-        public string InvoiceId { get; set; }
+        public long InvoiceId { get; set; }
         public string InvoiceNumber { get; set; }
         public string BrCode { get; set; }
         public string BrCodeBase64 { get; set; }

@@ -4,6 +4,7 @@ using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
 using System;
+using System.Linq;
 
 namespace DB.Infra.Services
 {
@@ -27,6 +28,7 @@ namespace DB.Infra.Services
 
             var paidAmount = paidAmountCents / 100.0;
             var paidAtUnspec = DateTime.SpecifyKind(paidAt, DateTimeKind.Unspecified);
+            var withdrawalDue = DateTime.SpecifyKind(paidAt.Date.AddDays(network.WithdrawalPeriod), DateTimeKind.Unspecified);
             var inserted = 0;
 
             if (network.Plan == MonexUp.DTO.Network.NetworkPlanEnum.Free)
@@ -38,7 +40,8 @@ namespace DB.Infra.Services
                     role: null,
                     amount: Math.Round(paidAmount * PLATAFORM_FEE, 2),
                     paidAmountCents: paidAmountCents,
-                    paidAt: paidAtUnspec);
+                    paidAt: paidAtUnspec,
+                    withdrawalDueDate: withdrawalDue);
             }
 
             if (network.Commission > 0)
@@ -50,7 +53,29 @@ namespace DB.Infra.Services
                     role: null,
                     amount: Math.Round(paidAmount * (network.Commission / 100.0), 2),
                     paidAmountCents: paidAmountCents,
-                    paidAt: paidAtUnspec);
+                    paidAt: paidAtUnspec,
+                    withdrawalDueDate: withdrawalDue);
+            }
+
+            var order = _context.Orders.FirstOrDefault(x => x.ProxyPayInvoiceId == proxypayInvoiceId);
+            if (order != null && order.SellerId.HasValue && order.SellerId.Value > 0)
+            {
+                var profile = _context.UserNetworks
+                    .Where(un => un.NetworkId == networkId && un.UserId == order.SellerId.Value)
+                    .Select(un => un.Profile)
+                    .FirstOrDefault();
+                if (profile != null && profile.Commission > 0)
+                {
+                    inserted += InsertFeeIfAbsent(
+                        proxypayInvoiceId,
+                        networkId: null,
+                        userId: order.SellerId.Value,
+                        role: null,
+                        amount: Math.Round(paidAmount * (profile.Commission / 100.0), 2),
+                        paidAmountCents: paidAmountCents,
+                        paidAt: paidAtUnspec,
+                        withdrawalDueDate: withdrawalDue);
+                }
             }
 
             return inserted;
@@ -72,15 +97,15 @@ namespace DB.Infra.Services
             var factor = (double)refundedAmountCents / (double)originalPaidAmountCents;
             return _context.Database.ExecuteSqlInterpolated(
                 $@"INSERT INTO monexup_invoice_fees
-                       (proxypay_invoice_id, network_id, user_id, role, amount, paid_amount_cents_at_record, paid_at, reversed_at)
+                       (proxypay_invoice_id, network_id, user_id, role, amount, paid_amount_cents_at_record, paid_at, withdrawal_due_date, reversed_at)
                    SELECT proxypay_invoice_id, network_id, user_id, role,
                           ROUND((-amount * {factor})::numeric, 2),
-                          paid_amount_cents_at_record, paid_at, {nowUnspec}
+                          paid_amount_cents_at_record, paid_at, withdrawal_due_date, {nowUnspec}
                    FROM monexup_invoice_fees
                    WHERE proxypay_invoice_id = {proxypayInvoiceId} AND reversed_at IS NULL");
         }
 
-        private int InsertFeeIfAbsent(long proxypayInvoiceId, long? networkId, long? userId, int? role, double amount, long paidAmountCents, DateTime paidAt)
+        private int InsertFeeIfAbsent(long proxypayInvoiceId, long? networkId, long? userId, int? role, double amount, long paidAmountCents, DateTime paidAt, DateTime withdrawalDueDate)
         {
             try
             {
@@ -92,7 +117,8 @@ namespace DB.Infra.Services
                     Role = role,
                     Amount = amount,
                     PaidAmountCentsAtRecord = paidAmountCents,
-                    PaidAt = paidAt
+                    PaidAt = paidAt,
+                    WithdrawalDueDate = withdrawalDueDate
                 };
                 _context.Add(row);
                 _context.SaveChanges();

@@ -3,8 +3,10 @@ using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Billing;
+using MonexUp.DTO.Invoice;
 using MonexUp.DTO.User;
 using MonexUp.Infra.Interfaces.AppServices;
+using NAuth.ACL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,21 +21,42 @@ namespace MonexUp.Domain.Impl.Services
     {
         private readonly INetworkDomainFactory _networkFactory;
         private readonly IUserNetworkDomainFactory _userNetworkFactory;
+        private readonly IInvoiceFeeDomainFactory _feeFactory;
+        private readonly IOrderDomainFactory _orderFactory;
+        private readonly IOrderItemDomainFactory _orderItemFactory;
+        private readonly IUserProfileDomainFactory _profileFactory;
+        private readonly INetworkService _networkService;
         private readonly IProxyPayClient _proxyPayClient;
         private readonly IBillingFeeService _billingFeeService;
+        private readonly IUserClient _userClient;
+        private readonly ILofnProductClient _lofnProductClient;
         private readonly IConfiguration _configuration;
 
         public BillingService(
             INetworkDomainFactory networkFactory,
             IUserNetworkDomainFactory userNetworkFactory,
+            IInvoiceFeeDomainFactory feeFactory,
+            IOrderDomainFactory orderFactory,
+            IOrderItemDomainFactory orderItemFactory,
+            IUserProfileDomainFactory profileFactory,
+            INetworkService networkService,
             IProxyPayClient proxyPayClient,
             IBillingFeeService billingFeeService,
+            IUserClient userClient,
+            ILofnProductClient lofnProductClient,
             IConfiguration configuration)
         {
             _networkFactory = networkFactory;
             _userNetworkFactory = userNetworkFactory;
+            _feeFactory = feeFactory;
+            _orderFactory = orderFactory;
+            _orderItemFactory = orderItemFactory;
+            _profileFactory = profileFactory;
+            _networkService = networkService;
             _proxyPayClient = proxyPayClient;
             _billingFeeService = billingFeeService;
+            _userClient = userClient;
+            _lofnProductClient = lofnProductClient;
             _configuration = configuration;
         }
 
@@ -68,7 +91,22 @@ namespace MonexUp.Domain.Impl.Services
             ProxyPayStoreCreatedInfo created;
             try
             {
-                created = await _proxyPayClient.InsertStoreAsync(network.Name, bearerToken, ct);
+                created = await _proxyPayClient.InsertStoreAsync(network.Name, network.Email, bearerToken, ct);
+            }
+            catch (Exception ex) when (ex.Message.Contains("User already has a store", StringComparison.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    created = await _proxyPayClient.GetMyStoreAsync(bearerToken, ct);
+                }
+                catch (Exception ex2)
+                {
+                    return Fail(503, "ProxyPay indisponível, tente novamente. " + ex2.Message);
+                }
+                if (created == null || created.StoreId <= 0 || string.IsNullOrEmpty(created.ClientId))
+                {
+                    return Fail(503, "ProxyPay reportou loja existente mas GraphQL myStore não retornou dados.");
+                }
             }
             catch (Exception ex)
             {
@@ -159,6 +197,157 @@ namespace MonexUp.Domain.Impl.Services
             return $"{baseUrl}?n={networkId}&i={proxypayInvoiceId}&s={Uri.EscapeDataString(sig)}";
         }
 
+        public BillingListApiResult List(long networkId, long callerUserId, int pageNum, int pageSize)
+        {
+            if (!IsMember(callerUserId, networkId))
+            {
+                return new BillingListApiResult
+                {
+                    Sucesso = false,
+                    MensagemErro = "Usuário não pertence à rede."
+                };
+            }
+
+            return new BillingListApiResult
+            {
+                Sucesso = true,
+                Data = new List<BillingListItemInfo>(),
+                PageNum = pageNum,
+                PageSize = pageSize,
+                TotalCount = 0
+            };
+        }
+
+        public async Task<StatementListPagedResult> SearchStatement(StatementSearchParam param, string token)
+        {
+            int pageCount = 0;
+            var fees = _feeFactory.BuildInvoiceFeeModel().Search(param.NetworkId, param.UserId, param.Ini, param.End, param.PageNum, out pageCount, _feeFactory);
+            var statements = new List<StatementInfo>();
+            foreach (var fee in fees)
+            {
+                statements.Add(await GetStatementInfo(fee, token));
+            }
+            return new StatementListPagedResult
+            {
+                PageNum = param.PageNum,
+                PageCount = pageCount,
+                Statements = statements
+            };
+        }
+
+        public double GetBalance(long? networkId, long? userId)
+        {
+            return _feeFactory.BuildInvoiceFeeModel().GetBalance(networkId, userId);
+        }
+
+        public double GetAvailableBalance(long userId)
+        {
+            return _feeFactory.BuildInvoiceFeeModel().GetAvailableBalance(userId);
+        }
+
+        public async Task<InvoiceInfo> GetInvoice(long networkId, long proxypayInvoiceId, CancellationToken ct = default)
+        {
+            var network = _networkFactory.BuildNetworkModel().GetById(networkId, _networkFactory);
+            if (network == null || string.IsNullOrEmpty(network.ProxyPayClientId))
+            {
+                return null;
+            }
+
+            var status = await _proxyPayClient.GetInvoiceAsync(proxypayInvoiceId, network.ProxyPayClientId, ct);
+            if (status == null)
+            {
+                return null;
+            }
+
+            return new InvoiceInfo
+            {
+                InvoiceId = status.InvoiceId,
+                Status = (InvoiceStatusEnum)status.Status,
+                PaymentMethod = MonexUp.DTO.Invoice.PaymentMethodEnum.Pix,
+                DueDate = status.DueDate ?? DateTime.MinValue,
+                PaidAt = status.PaidAt,
+                Items = new List<InvoiceItemInfo>()
+            };
+        }
+
+        private async Task<StatementInfo> GetStatementInfo(IInvoiceFeeModel fee, string token)
+        {
+            string networkName = null;
+            string buyerName = null;
+            string sellerName = null;
+            string description = null;
+            long? sellerId = null;
+            long? buyerUserId = null;
+
+            if (fee.NetworkId.HasValue)
+            {
+                var net = _networkService.GetById(fee.NetworkId.Value);
+                networkName = net?.Name;
+            }
+
+            if (fee.ProxyPayInvoiceId.HasValue)
+            {
+                var order = _orderFactory.BuildOrderModel().GetByProxyPayInvoiceId(fee.ProxyPayInvoiceId.Value, _orderFactory);
+                if (order != null)
+                {
+                    if (string.IsNullOrEmpty(networkName))
+                    {
+                        var net = _networkService.GetById(order.NetworkId);
+                        networkName = net?.Name;
+                    }
+                    sellerId = order.SellerId;
+                    buyerUserId = order.UserId;
+
+                    var buyer = await _userClient.GetByIdAsync(order.UserId, token);
+                    buyerName = buyer?.Name;
+
+                    if (order.SellerId.HasValue)
+                    {
+                        var seller = await _userClient.GetByIdAsync(order.SellerId.Value, token);
+                        sellerName = seller?.Name;
+                    }
+
+                    var items = order.ListItems(_orderItemFactory);
+                    var descriptions = new List<string>();
+                    foreach (var x in items)
+                    {
+                        var product = await _lofnProductClient.GetByIdAsync(x.ProductId);
+                        descriptions.Add((product?.Name ?? "?") + " (" + x.Quantity.ToString() + ")");
+                    }
+                    description = string.Join(", ", descriptions);
+                }
+            }
+
+            return new StatementInfo
+            {
+                ProxyPayInvoiceId = fee.ProxyPayInvoiceId,
+                FeeId = fee.FeeId,
+                NetworkId = fee.NetworkId,
+                NetworkName = networkName,
+                UserId = buyerUserId,
+                BuyerName = buyerName,
+                SellerId = sellerId,
+                SellerName = sellerName,
+                Description = description,
+                Amount = fee.Amount,
+                PaidAt = fee.PaidAt,
+                WithdrawalDueDate = fee.WithdrawalDueDate
+            };
+        }
+
+        private bool IsManager(long userId, long networkId)
+        {
+            var un = _userNetworkFactory.BuildUserNetworkModel().Get(networkId, userId, _userNetworkFactory);
+            if (un == null) return false;
+            return un.Role == UserRoleEnum.NetworkManager || un.Role == UserRoleEnum.Administrator;
+        }
+
+        private bool IsMember(long userId, long networkId)
+        {
+            var un = _userNetworkFactory.BuildUserNetworkModel().Get(networkId, userId, _userNetworkFactory);
+            return un != null && un.Role >= UserRoleEnum.User;
+        }
+
         private static string ComputeHmac(string secret, string payload)
         {
             using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secret));
@@ -185,40 +374,6 @@ namespace MonexUp.Domain.Impl.Services
                 MensagemErro = err
             }
         };
-
-        public BillingListApiResult List(long networkId, long callerUserId, int pageNum, int pageSize)
-        {
-            if (!IsMember(callerUserId, networkId))
-            {
-                return new BillingListApiResult
-                {
-                    Sucesso = false,
-                    MensagemErro = "Usuário não pertence à rede."
-                };
-            }
-
-            return new BillingListApiResult
-            {
-                Sucesso = true,
-                Data = new List<BillingListItemInfo>(),
-                PageNum = pageNum,
-                PageSize = pageSize,
-                TotalCount = 0
-            };
-        }
-
-        private bool IsManager(long userId, long networkId)
-        {
-            var un = _userNetworkFactory.BuildUserNetworkModel().Get(networkId, userId, _userNetworkFactory);
-            if (un == null) return false;
-            return un.Role == UserRoleEnum.NetworkManager || un.Role == UserRoleEnum.Administrator;
-        }
-
-        private bool IsMember(long userId, long networkId)
-        {
-            var un = _userNetworkFactory.BuildUserNetworkModel().Get(networkId, userId, _userNetworkFactory);
-            return un != null && un.Role >= UserRoleEnum.User;
-        }
 
         private static EnsureStoreResult Ok(long storeId, string clientId) => new()
         {

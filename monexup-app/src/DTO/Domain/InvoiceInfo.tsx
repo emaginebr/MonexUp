@@ -1,19 +1,19 @@
 import { InvoiceStatusEnum } from "../Enum/InvoiceStatusEnum";
-import InvoiceFeeInfo from "./InvoiceFeeInfo";
-import OrderInfo from "./OrderInfo";
-import UserInfo from "./UserInfo";
+import { PaymentMethodEnum } from "../Enum/PaymentMethodEnum";
+import InvoiceItemInfo from "./InvoiceItemInfo";
 
 export default interface InvoiceInfo {
     invoiceId: number;
-    orderId: number;
-    userId: number;
-    sellerId?: number;
-    price: number;
-    dueDate: string;
-    paymentDate: string;
+    invoiceNumber?: string;
+    notes?: string;
     status: InvoiceStatusEnum;
-    order: OrderInfo;
-    user: UserInfo;
-    seller?: UserInfo;
-    fees: InvoiceFeeInfo[];
+    paymentMethod: PaymentMethodEnum;
+    discount: number;
+    dueDate: string;
+    externalCode?: string;
+    expiresAt?: string;
+    paidAt?: string;
+    createdAt: string;
+    updatedAt: string;
+    items: InvoiceItemInfo[];
 }
