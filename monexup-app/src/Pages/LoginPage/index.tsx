@@ -42,7 +42,7 @@ export default function LoginPage() {
         if (queryParams.has("returnUrl")) {
             return queryParams.get("returnUrl");
         }
-        return "/";
+        return "/admin/dashboard";
     };
 
     const handleLoginSuccess = async (user: UserInfo) => {
