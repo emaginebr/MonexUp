@@ -58,28 +58,20 @@ export default function DashboardPage() {
   };
 
   const searchStatements = async (pageNum: number) => {
-    let param: StatementSearchParam;
+    let param: StatementSearchParam = { pageNum };
     switch (networkContext.currentRole) {
       case UserRoleEnum.NetworkManager:
-        param = {
-          ...param,
-          networkId: networkContext.userNetwork.networkId,
-          pageNum: pageNum,
-        };
+        param.networkId = networkContext.userNetwork.networkId;
         break;
       case UserRoleEnum.Seller:
-        param = {
-          ...param,
-          userId: authContext.sessionInfo.userId,
-          pageNum: pageNum,
-        };
+        param.userId = authContext.sessionInfo.userId;
         break;
+      default:
+        return;
     }
-    if (networkContext.currentRole !== UserRoleEnum.User) {
-      const ret = await invoiceContext.searchStatement(param);
-      if (!ret.sucesso) {
-        throwError(ret.mensagemErro);
-      }
+    const ret = await invoiceContext.searchStatement(param);
+    if (!ret.sucesso) {
+      throwError(ret.mensagemErro);
     }
   };
 

@@ -16,7 +16,9 @@ function getCatchValue<T>(error: any, path: string, requiresAuth: boolean = fals
     ret = {
       httpStatus: error.response.status.toString(),
       success: false,
-      messageError: error.response.data,
+      messageError: typeof error.response.data === "string"
+        ? error.response.data
+        : (error.response.data?.title || error.response.data?.message || JSON.stringify(error.response.data)),
       ...ret
     }
   } else if (error.request) {

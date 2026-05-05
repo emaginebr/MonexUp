@@ -6,14 +6,13 @@ using MonexUp.Domain.Impl.Services;
 using MonexUp.Domain.Interfaces.Factory;
 using NAuth.ACL.Interfaces;
 using zTools.ACL.Interfaces;
-using System;
 using System.Threading.Tasks;
 
 namespace MonexUp.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class ImageController: ControllerBase
+    public class ImageController : ControllerBase
     {
         private readonly IUserClient _userClient;
         private readonly INetworkDomainFactory _networkFactory;
@@ -25,7 +24,8 @@ namespace MonexUp.API.Controllers
             IUserClient userClient,
             INetworkDomainFactory networkFactory,
             IFileClient fileClient
-        ) {
+        )
+        {
             _userClient = userClient;
             _networkFactory = networkFactory;
             _fileClient = fileClient;
@@ -35,65 +35,38 @@ namespace MonexUp.API.Controllers
         [HttpPost("uploadImageUser")]
         public async Task<IActionResult> UploadImageUser(IFormFile file)
         {
-            try
-            {
-                if (file == null || file.Length == 0)
-                {
-                    return BadRequest("No file uploaded");
-                }
-                var userSession = _userClient.GetUserInSession(HttpContext);
-                if (userSession == null)
-                {
-                    return Unauthorized();
-                }
+            if (file == null || file.Length == 0) return BadRequest("No file uploaded");
 
-                var fileName = $"user-{StringUtils.GenerateShortUniqueString()}.jpg";
-                var formFile = new FormFileWrapper(file.OpenReadStream(), fileName, file.ContentType);
-                await _fileClient.UploadFileAsync(BucketName, formFile);
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
 
-                return Ok(await _fileClient.GetFileUrlAsync(BucketName, fileName));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var fileName = $"user-{StringUtils.GenerateShortUniqueString()}.jpg";
+            var formFile = new FormFileWrapper(file.OpenReadStream(), fileName, file.ContentType);
+            await _fileClient.UploadFileAsync(BucketName, formFile);
+
+            return Ok(await _fileClient.GetFileUrlAsync(BucketName, fileName));
         }
 
         [Authorize]
         [HttpPost("uploadImageNetwork")]
         public async Task<IActionResult> UploadImageNetwork([FromForm] long networkId, IFormFile file)
         {
-            try
-            {
-                if (file == null || file.Length == 0)
-                {
-                    return BadRequest("No file uploaded");
-                }
-                var userSession = _userClient.GetUserInSession(HttpContext);
-                if (userSession == null)
-                {
-                    return Unauthorized();
-                }
+            if (file == null || file.Length == 0) return BadRequest("No file uploaded");
 
-                var network = _networkFactory.BuildNetworkModel().GetById(networkId, _networkFactory);
-                if (network == null)
-                {
-                    return BadRequest("Network not found");
-                }
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
 
-                var fileName = $"network-{StringUtils.GenerateShortUniqueString()}.jpg";
-                var formFile = new FormFileWrapper(file.OpenReadStream(), fileName, file.ContentType);
-                await _fileClient.UploadFileAsync(BucketName, formFile);
+            var network = _networkFactory.BuildNetworkModel().GetById(networkId, _networkFactory);
+            if (network == null) return BadRequest("Network not found");
 
-                network.Image = fileName;
-                network.Update(_networkFactory);
+            var fileName = $"network-{StringUtils.GenerateShortUniqueString()}.jpg";
+            var formFile = new FormFileWrapper(file.OpenReadStream(), fileName, file.ContentType);
+            await _fileClient.UploadFileAsync(BucketName, formFile);
 
-                return Ok(await _fileClient.GetFileUrlAsync(BucketName, fileName));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            network.Image = fileName;
+            network.Update(_networkFactory);
+
+            return Ok(await _fileClient.GetFileUrlAsync(BucketName, fileName));
         }
     }
 }

@@ -88,6 +88,34 @@ namespace MonexUp.API
                     }
                 });
 
+            app.Use(async (context, next) =>
+            {
+                try
+                {
+                    await next();
+                }
+                catch (Exception ex)
+                {
+                    var logger = context.RequestServices.GetRequiredService<ILogger<Startup>>();
+                    logger.LogError(ex, "Unhandled exception on {Method} {Path}", context.Request.Method, context.Request.Path);
+
+                    if (context.Response.HasStarted)
+                    {
+                        throw;
+                    }
+
+                    context.Response.Clear();
+                    context.Response.StatusCode = 500;
+                    context.Response.ContentType = MediaTypeNames.Application.Json;
+                    var payload = JsonSerializer.Serialize(new
+                    {
+                        sucesso = false,
+                        mensagemErro = ex.Message
+                    });
+                    await context.Response.WriteAsync(payload);
+                }
+            });
+
             app.UseRouting();
             app.UseCors("MyPolicy");
 

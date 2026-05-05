@@ -5,7 +5,6 @@ using MonexUp.Infra.Interfaces.AppServices;
 using MonexUp.DTO.Order;
 using MonexUp.DTO.Payment;
 using NAuth.ACL.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,7 +14,7 @@ namespace MonexUp.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class OrderController: ControllerBase
+    public class OrderController : ControllerBase
     {
         private readonly IUserClient _userClient;
         private readonly IOrderService _orderService;
@@ -50,168 +49,102 @@ namespace MonexUp.API.Controllers
             [FromQuery] string sellerSlug
         )
         {
-            try
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
+
+            if (string.IsNullOrWhiteSpace(request?.DocumentId))
             {
-                var userSession = _userClient.GetUserInSession(HttpContext);
-                if (userSession == null)
-                {
-                    return Unauthorized();
-                }
-
-                if (string.IsNullOrWhiteSpace(request?.DocumentId))
-                {
-                    return BadRequest(new PixPaymentResult { Sucesso = false, Mensagem = "CPF é obrigatório" });
-                }
-
-                var product = await _lofnProductClient.GetBySlugAsync(productSlug);
-                if (product == null)
-                {
-                    return BadRequest(new PixPaymentResult { Sucesso = false, Mensagem = "Produto não encontrado" });
-                }
-
-                long? networkId = null;
-                if (!string.IsNullOrEmpty(networkSlug))
-                {
-                    var network = _networkService.GetBySlug(networkSlug);
-                    if (network != null)
-                    {
-                        networkId = network.NetworkId;
-                    }
-                }
-
-                long? sellerId = null;
-                if (!string.IsNullOrEmpty(sellerSlug))
-                {
-                    var seller = await _userClient.GetBySlugAsync(sellerSlug);
-                    if (seller != null)
-                    {
-                        sellerId = seller.UserId;
-                    }
-                }
-
-                var token = HttpContext.GetBearerToken();
-                var result = await _subscriptionService.CreatePixPayment(
-                    product.ProductId, userSession.UserId, networkId, sellerId, request.DocumentId, token
-                );
-
-                if (!result.Sucesso)
-                {
-                    return BadRequest(result);
-                }
-
-                return Ok(result);
+                return BadRequest(new PixPaymentResult { Sucesso = false, Mensagem = "CPF é obrigatório" });
             }
-            catch (Exception ex)
+
+            var product = await _lofnProductClient.GetBySlugAsync(productSlug);
+            if (product == null)
             {
-                return StatusCode(500, new PixPaymentResult { Sucesso = false, Mensagem = ex.Message });
+                return BadRequest(new PixPaymentResult { Sucesso = false, Mensagem = "Produto não encontrado" });
             }
+
+            long? networkId = null;
+            if (!string.IsNullOrEmpty(networkSlug))
+            {
+                var network = _networkService.GetBySlug(networkSlug);
+                if (network != null) networkId = network.NetworkId;
+            }
+
+            long? sellerId = null;
+            if (!string.IsNullOrEmpty(sellerSlug))
+            {
+                var seller = await _userClient.GetBySlugAsync(sellerSlug);
+                if (seller != null) sellerId = seller.UserId;
+            }
+
+            var token = HttpContext.GetBearerToken();
+            var result = await _subscriptionService.CreatePixPayment(
+                product.ProductId, userSession.UserId, networkId, sellerId, request.DocumentId, token
+            );
+
+            if (!result.Sucesso) return BadRequest(result);
+            return Ok(result);
         }
 
         [Authorize]
         [HttpGet("checkPixStatus/{proxyPayInvoiceId}")]
         public async Task<IActionResult> CheckPixStatus(string proxyPayInvoiceId)
         {
-            try
-            {
-                var userSession = _userClient.GetUserInSession(HttpContext);
-                if (userSession == null)
-                {
-                    return Unauthorized();
-                }
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
 
-                var status = await _proxyPayService.CheckQRCodeStatus(proxyPayInvoiceId);
-                return Ok(status);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var status = await _proxyPayService.CheckQRCodeStatus(proxyPayInvoiceId);
+            return Ok(status);
         }
 
         [Authorize]
         [HttpPost("update")]
         public async Task<IActionResult> Update([FromBody] OrderInfo order)
         {
-            try
-            {
-                var userSession = _userClient.GetUserInSession(HttpContext);
-                if (userSession == null)
-                {
-                    return Unauthorized();
-                }
-                var token = HttpContext.GetBearerToken();
-                var newOrder = _orderService.Update(order);
-                return Ok(await _orderService.GetOrderInfo(newOrder, token));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
+
+            var token = HttpContext.GetBearerToken();
+            var newOrder = _orderService.Update(order);
+            return Ok(await _orderService.GetOrderInfo(newOrder, token));
         }
 
         [HttpPost("search")]
         [Authorize]
         public async Task<IActionResult> Search([FromBody] OrderSearchParam param)
         {
-            try
-            {
-                var userSession = _userClient.GetUserInSession(HttpContext);
-                if (userSession == null)
-                {
-                    return Unauthorized();
-                }
-                var token = HttpContext.GetBearerToken();
-                return Ok(await _orderService.Search(param.NetworkId, param.UserId, param.SellerId, param.PageNum, token));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
+
+            var token = HttpContext.GetBearerToken();
+            return Ok(await _orderService.Search(param.NetworkId, param.UserId, param.SellerId, param.PageNum, token));
         }
 
         [Authorize]
         [HttpPost("list")]
         public async Task<IActionResult> List([FromBody] OrderParam param)
         {
-            try
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
+
+            var token = HttpContext.GetBearerToken();
+            var orderModels = _orderService.List(param.NetworkId, param.UserId, param.Status).ToList();
+            var orders = new List<OrderInfo>();
+            foreach (var x in orderModels)
             {
-                var userSession = _userClient.GetUserInSession(HttpContext);
-                if (userSession == null)
-                {
-                    return Unauthorized();
-                }
-                var token = HttpContext.GetBearerToken();
-                var orderModels = _orderService.List(param.NetworkId, param.UserId, param.Status).ToList();
-                var orders = new List<OrderInfo>();
-                foreach (var x in orderModels)
-                {
-                    orders.Add(await _orderService.GetOrderInfo(x, token));
-                }
-                return Ok(orders);
+                orders.Add(await _orderService.GetOrderInfo(x, token));
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            return Ok(orders);
         }
 
         [Authorize]
         [HttpGet("getById/{orderId}")]
         public async Task<IActionResult> GetById(long orderId)
         {
-            try
-            {
-                var userSession = _userClient.GetUserInSession(HttpContext);
-                if (userSession == null)
-                {
-                    return Unauthorized();
-                }
-                return Ok(await _orderService.GetOrderInfo(_orderService.GetById(orderId), HttpContext.GetBearerToken()));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
+
+            return Ok(await _orderService.GetOrderInfo(_orderService.GetById(orderId), HttpContext.GetBearerToken()));
         }
     }
 }

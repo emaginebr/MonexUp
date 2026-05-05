@@ -7,8 +7,8 @@
 # Claude Code worktrees
 .claude/worktrees/
 
-# Frontend environment (secrets)
-monexup-app/.env.production
+# Frontend environment
+# .env.production is committed (URLs públicas, sem secrets sensíveis)
 
 # Frontend build output
 monexup-app/build/
