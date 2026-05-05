@@ -78,7 +78,7 @@ namespace MonexUp.Application
             #region zTools
             services.Configure<zToolsetting>(options =>
             {
-                options.ApiUrl = configuration["ZTOOLS_API_URL"];
+                options.ApiUrl = configuration["zTools:ApiURL"];
             });
             injectDependency(typeof(IFileClient), typeof(FileClient), services, scoped);
             injectDependency(typeof(IMailClient), typeof(MailClient), services, scoped);

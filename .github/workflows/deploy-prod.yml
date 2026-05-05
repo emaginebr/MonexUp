@@ -4,82 +4,156 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  checkout:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Deploy via SSH
-      uses: appleboy/ssh-action@v1
-      with:
-        host: ${{ secrets.PROD_SSH_HOST }}
-        username: ${{ secrets.PROD_SSH_USER }}
-        password: ${{ secrets.PROD_SSH_PASSWORD }}
-        port: ${{ secrets.PROD_SSH_PORT }}
-        script: |
-          set -e
+      - name: Clone or update repository
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          password: ${{ secrets.PROD_SSH_PASSWORD }}
+          port: ${{ secrets.PROD_SSH_PORT || 22 }}
+          script: |
+            set -e
+            DEPLOY_DIR="/opt/monexup"
+            REPO_URL="https://github.com/${{ github.repository }}.git"
+            BRANCH="main"
 
-          DEPLOY_DIR="/opt/monexup"
-          REPO_URL="https://github.com/${{ github.repository }}.git"
-          BRANCH="main"
+            if [ -d "$DEPLOY_DIR" ]; then
+              echo "Updating existing repository..."
+              cd "$DEPLOY_DIR"
+              git fetch origin
+              git reset --hard "origin/$BRANCH"
+              git clean -fd
+              git submodule update --init --recursive
+            else
+              echo "Cloning repository..."
+              git clone --branch "$BRANCH" --single-branch --recurse-submodules "$REPO_URL" "$DEPLOY_DIR"
+            fi
 
-          # Clone or update repository
-          if [ -d "$DEPLOY_DIR" ]; then
-            echo "Updating existing repository..."
+            echo "Repository ready at $DEPLOY_DIR"
+
+  inject-secrets:
+    runs-on: ubuntu-latest
+    needs: checkout
+    steps:
+      - name: Inject secrets into .env.prod
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          password: ${{ secrets.PROD_SSH_PASSWORD }}
+          port: ${{ secrets.PROD_SSH_PORT || 22 }}
+          script: |
+            set -e
+            DEPLOY_DIR="/opt/monexup"
             cd "$DEPLOY_DIR"
-            git fetch origin
-            git reset --hard "origin/$BRANCH"
-            git clean -fd
-            git submodule update --init --recursive
-          else
-            echo "Cloning repository..."
-            git clone --branch "$BRANCH" --single-branch --recurse-submodules "$REPO_URL" "$DEPLOY_DIR"
+
+            cat > .env.prod <<ENVEOF
+            MONEXUP_CONNECTION_STRING=${{ secrets.MONEXUP_CONNECTION_STRING }}
+            MONEXUP_JWT_SECRET=${{ secrets.MONEXUP_JWT_SECRET }}
+            ENVEOF
+
+            sed -i 's/^[[:space:]]*//' .env.prod
+            echo ".env.prod written successfully"
+
+  network-setup:
+    runs-on: ubuntu-latest
+    needs: inject-secrets
+    steps:
+      - name: Ensure Docker network exists
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          password: ${{ secrets.PROD_SSH_PASSWORD }}
+          port: ${{ secrets.PROD_SSH_PORT || 22 }}
+          script: |
+            set -e
+            docker network inspect emagine-network >/dev/null 2>&1 || docker network create emagine-network
+            echo "Network emagine-network ready"
+
+  stop-services:
+    runs-on: ubuntu-latest
+    needs: network-setup
+    steps:
+      - name: Stop running containers
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          password: ${{ secrets.PROD_SSH_PASSWORD }}
+          port: ${{ secrets.PROD_SSH_PORT || 22 }}
+          script: |
+            set -e
+            DEPLOY_DIR="/opt/monexup"
             cd "$DEPLOY_DIR"
-          fi
 
-          # Inject .env.prod from GitHub Secrets
-          cat > .env.prod <<'ENVEOF'
-          POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB=${{ secrets.POSTGRES_DB }}
-          NAUTH_DB_NAME=${{ secrets.NAUTH_DB_NAME }}
-          NAUTH_JWT_SECRET=${{ secrets.NAUTH_JWT_SECRET }}
-          NAUTH_BUCKET=${{ secrets.NAUTH_BUCKET }}
-          PROXYPAY_API_URL=${{ secrets.PROXYPAY_API_URL }}
-          PROXYPAY_CLIENT_ID=${{ secrets.PROXYPAY_CLIENT_ID }}
-          PROXYPAY_TENANT_ID=${{ secrets.PROXYPAY_TENANT_ID }}
-          LOFN_API_URL=${{ secrets.LOFN_API_URL }}
-          DEDALO_API_URL=${{ secrets.DEDALO_API_URL }}
-          MAILERSEND_API_TOKEN=${{ secrets.MAILERSEND_API_TOKEN }}
-          MAILERSEND_SENDER=${{ secrets.MAILERSEND_SENDER }}
-          MAILERSEND_API_URL=https://api.mailersend.com/v1/email
-          S3_ACCESS_KEY=${{ secrets.S3_ACCESS_KEY }}
-          S3_SECRET_KEY=${{ secrets.S3_SECRET_KEY }}
-          S3_ENDPOINT=${{ secrets.S3_ENDPOINT }}
-          CHATGPT_APIURL=https://api.openai.com/v1/chat/completions
-          CHATGPT_IMAGEAPIURL=https://api.openai.com/v1/images/generations
-          CHATGPT_APIKEY=${{ secrets.CHATGPT_APIKEY }}
-          CHATGPT_MODEL=gpt-3.5-turbo
-          ENVEOF
+            docker compose --env-file .env.prod -f docker-compose-prod.yml down || true
+            echo "Services stopped"
 
-          # Remove leading whitespace from .env.prod
-          sed -i 's/^[[:space:]]*//' .env.prod
+  build-deploy:
+    runs-on: ubuntu-latest
+    needs: stop-services
+    steps:
+      - name: Build and start services
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          password: ${{ secrets.PROD_SSH_PASSWORD }}
+          port: ${{ secrets.PROD_SSH_PORT || 22 }}
+          script: |
+            set -e
+            DEPLOY_DIR="/opt/monexup"
+            cd "$DEPLOY_DIR"
 
-          # Deploy with docker compose
-          docker compose --env-file .env.prod -f docker-compose-prod.yml down
-          docker compose --env-file .env.prod -f docker-compose-prod.yml up --build -d
+            docker compose --env-file .env.prod -f docker-compose-prod.yml up --build -d
+            echo "Services started"
 
-          # Wait and verify
-          echo "Waiting for services to start..."
-          sleep 10
-          docker compose --env-file .env.prod -f docker-compose-prod.yml ps
+  health-check:
+    runs-on: ubuntu-latest
+    needs: build-deploy
+    steps:
+      - name: Verify deployment health
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          password: ${{ secrets.PROD_SSH_PASSWORD }}
+          port: ${{ secrets.PROD_SSH_PORT || 22 }}
+          script: |
+            set -e
+            DEPLOY_DIR="/opt/monexup"
+            cd "$DEPLOY_DIR"
 
-          echo "Deployment completed successfully."
+            echo "Waiting for services to start..."
+            sleep 10
 
-    - name: Summary
-      run: |
-        echo "## Production Deployment" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "- Server: \`${{ secrets.PROD_SSH_HOST }}\`" >> $GITHUB_STEP_SUMMARY
-        echo "- Branch: \`main\`" >> $GITHUB_STEP_SUMMARY
-        echo "- Commit: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
-        echo "- Triggered by: \`${{ github.event_name }}\`" >> $GITHUB_STEP_SUMMARY
+            docker compose --env-file .env.prod -f docker-compose-prod.yml ps
+
+            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/ || echo "000")
+            if [ "$HTTP_STATUS" = "200" ] || [ "$HTTP_STATUS" = "404" ] || [ "$HTTP_STATUS" = "401" ]; then
+              echo "Health check passed (HTTP $HTTP_STATUS)"
+            else
+              echo "WARNING: Health check returned HTTP $HTTP_STATUS"
+              docker compose --env-file .env.prod -f docker-compose-prod.yml logs --tail=50
+              exit 1
+            fi
+
+  summary:
+    runs-on: ubuntu-latest
+    needs: health-check
+    steps:
+      - name: Deployment summary
+        run: |
+          echo "## Production Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Detail | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Server | \`${{ secrets.PROD_SSH_HOST }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Branch | \`main\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Commit | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Triggered by | \`${{ github.actor }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Timestamp | \`$(date -u +'%Y-%m-%d %H:%M:%S UTC')\` |" >> $GITHUB_STEP_SUMMARY
