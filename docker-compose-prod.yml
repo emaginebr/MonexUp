@@ -21,17 +21,17 @@ services:
   # ===========================================
   # MonexUp BackgroundService
   # ===========================================
-  monexup-bg:
-    build:
-      context: .
-      dockerfile: MonexUp.BackgroundService/Dockerfile
-    container_name: monexup-bg
-    restart: unless-stopped
-    environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      ConnectionStrings__MonexUpContext: ${MONEXUP_CONNECTION_STRING}
-    networks:
-      - emagine-network
+  # monexup-bg:
+  #   build:
+  #     context: .
+  #     dockerfile: MonexUp.BackgroundService/Dockerfile
+  #   container_name: monexup-bg
+  #   restart: unless-stopped
+  #   environment:
+  #     ASPNETCORE_ENVIRONMENT: Production
+  #     ConnectionStrings__MonexUpContext: ${MONEXUP_CONNECTION_STRING}
+  #   networks:
+  #     - emagine-network
 
 networks:
   emagine-network:
