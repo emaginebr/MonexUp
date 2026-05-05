@@ -31,6 +31,10 @@ import ProfileEditPage from './Pages/ProfileEditPage';
 import UserSearchPage from './Pages/UserSearchPage';
 import ProductProvider from './Contexts/Product/ProductProvider';
 import ProductLinkProvider from './Contexts/ProductLink/ProductLinkProvider';
+import BillingProvider from './Contexts/Billing/BillingProvider';
+import NetworkAwareProxyPayProvider from './Components/NetworkAwareProxyPayProvider';
+import BillingManagePage from './Pages/BillingManagePage';
+import BillingPaymentCompletedPage from './Pages/BillingPaymentCompletedPage';
 import MenuNetwork from './Components/MenuNetwork';
 import RequestAccessPage from './Pages/RequestAccessPage';
 import OrderProvider from './Contexts/Order/OrderProvider';
@@ -156,7 +160,7 @@ const nauthConfig = {
 function App() {
   const ContextContainer = ContextBuilder([
     AuthProvider, UserProvider, NetworkProvider, ProfileProvider, ProductProvider,
-    ProductLinkProvider, OrderProvider, InvoiceProvider, ImageProvider, TemplateProvider
+    ProductLinkProvider, BillingProvider, OrderProvider, InvoiceProvider, ImageProvider, TemplateProvider
   ]);
 
   return (
@@ -165,6 +169,7 @@ function App() {
     <LofnProvider config={lofnConfig}>
     <LofnProductProvider>
     <ContextContainer>
+      <NetworkAwareProxyPayProvider>
       <Routes>
         {/* Marketing-shell routes (Tailwind dark Header/Footer) — keep
             the seller signup pages OUT of the legacy <Menu /> chrome so they
@@ -179,6 +184,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="checkout/success" element={<CheckoutSuccessPage />} />
+          <Route path="billing/payment-completed" element={<BillingPaymentCompletedPage />} />
           <Route path="network">
             <Route index element={<NetworkInsertPage />} />
           </Route>
@@ -206,6 +212,7 @@ function App() {
           <Route path="orders" element={<OrderSearchPage />} />
           <Route path="products" element={<ProductManagePage />} />
           <Route path="invoices" element={<InvoiceSearchPage />} />
+          <Route path="billing" element={<BillingManagePage />} />
           <Route path="team-structure">
             <Route index element={<ProfileListPage />} />
             <Route path="new" element={<ProfileEditPage />} />
@@ -251,6 +258,7 @@ function App() {
         </Route>
         <Route path="*" element={<Error404Page />} />
       </Routes>
+      </NetworkAwareProxyPayProvider>
     </ContextContainer>
     </LofnProductProvider>
     </LofnProvider>

@@ -268,7 +268,9 @@ namespace MonexUp.Domain.Impl.Services
                 QtdyUsers = _userNetworkFactory.BuildUserNetworkModel().GetQtdyUserByNetwork(model.NetworkId),
                 MaxUsers = model.MaxQtdyUserByNetwork(),
                 Status = model.Status,
-                LofnStoreId = model.LofnStoreId
+                LofnStoreId = model.LofnStoreId,
+                ProxyPayStoreId = model.ProxyPayStoreId,
+                ProxyPayClientId = model.ProxyPayClientId
             };
         }
 

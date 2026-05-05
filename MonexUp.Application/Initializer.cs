@@ -26,6 +26,7 @@ using MonexUp.Infra.Interfaces.AppServices;
 using MonexUp.Application.Validators;
 using FluentValidation;
 using MonexUp.DTO.ProductLink;
+using MonexUp.DTO.Billing;
 
 namespace MonexUp.Application
 {
@@ -87,6 +88,7 @@ namespace MonexUp.Application
             #region ProxyPay
             services.Configure<MonexUp.Infra.Interfaces.AppServices.ProxyPaySetting>(configuration.GetSection("ProxyPay"));
             injectDependency(typeof(IProxyPayAppService), typeof(MonexUp.Infra.AppServices.ProxyPayAppService), services, scoped);
+            injectDependency(typeof(IProxyPayClient), typeof(DB.Infra.AppServices.ProxyPayClient), services, scoped);
             #endregion
 
             #region Service
@@ -99,6 +101,9 @@ namespace MonexUp.Application
             injectDependency(typeof(ISubscriptionService), typeof(SubscriptionService), services, scoped);
             injectDependency(typeof(IProxyPayService), typeof(ProxyPayService), services, scoped);
             injectDependency(typeof(IInvoiceService), typeof(InvoiceService), services, scoped);
+            injectDependency(typeof(IBillingService), typeof(BillingService), services, scoped);
+            injectDependency(typeof(IBillingFeeService), typeof(DB.Infra.Services.BillingFeeService), services, scoped);
+            injectDependency(typeof(IBillingReconciliationService), typeof(DB.Infra.Services.BillingReconciliationService), services, scoped);
             #endregion
 
             #region Factory
@@ -115,6 +120,7 @@ namespace MonexUp.Application
 
             #region Validators
             services.AddScoped<IValidator<ProductLinkInsertInfo>, ProductLinkInsertInfoValidator>();
+            services.AddScoped<IValidator<EnsureStoreRequest>, EnsureStoreRequestValidator>();
             #endregion
 
 

@@ -45,6 +45,9 @@ services:
       ProxyPay__ApiUrl: ${PROXYPAY_API_URL:-http://localhost:5100}
       ProxyPay__ClientId: ${PROXYPAY_CLIENT_ID}
       ProxyPay__TenantId: ${PROXYPAY_TENANT_ID:-monexup}
+      ProxyPay__WebhookCallbackSecret: ${PROXYPAY_WEBHOOK_CALLBACK_SECRET}
+      ProxyPay__CompletionUrlBase: ${PROXYPAY_COMPLETION_URL_BASE}
+      ProxyPay__ReturnUrlBase: ${PROXYPAY_RETURN_URL_BASE}
       # Lofn
       Lofn__ApiURL: ${LOFN_API_URL:-http://localhost:5003}
       # Logging — surface Information + Error to container stdout

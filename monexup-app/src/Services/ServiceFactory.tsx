@@ -16,6 +16,8 @@ import IImageService from './Interfaces/IImageService';
 import ImageService from './Impl/ImageService';
 import IProductLinkService from './Interfaces/IProductLinkService';
 import ProductLinkService from './Impl/ProductLinkService';
+import IBillingService from './Interfaces/IBillingService';
+import BillingService from './Impl/BillingService';
 import { TemplateFactory } from '../packages/template';
 
 const TENANT_HEADERS = { 'X-Tenant-Id': process.env.REACT_APP_TENANT_ID || 'monexup' };
@@ -56,6 +58,9 @@ imageServiceImpl.init(httpClientAuth);
 const productLinkServiceImpl : IProductLinkService = ProductLinkService;
 productLinkServiceImpl.init(httpClientAuth);
 
+const billingServiceImpl : IBillingService = BillingService;
+billingServiceImpl.init(httpClientAuth);
+
 // Initialize template package (Dedalo API)
 const httpClientDedalo: IHttpClient = HttpClient();
 httpClientDedalo.init(
@@ -73,6 +78,7 @@ const ServiceFactory = {
   InvoiceService: invoiceServiceImpl,
   ImageService: imageServiceImpl,
   ProductLinkService: productLinkServiceImpl,
+  BillingService: billingServiceImpl,
   setLogoffCallback: (cb : () => void) => {
     httpClientAuth.setLogoff(cb);
   }

@@ -2,8 +2,21 @@
 -- MonexUp Database Schema
 -- PostgreSQL
 -- Generated: 2026-04-03
--- Last updated: 2026-05-04 (feature 004-lofn-products-migration)
+-- Last updated: 2026-05-04 (feature 005-billing-migration to ProxyPay)
 -- Prefix: monexup_
+--
+-- Feature 005 changes:
+--   * monexup_networks: + proxypay_store_id, proxypay_client_id (lazy 1:1 store)
+--   * monexup_invoice_fees:
+--       - invoice_id is NULLABLE (legacy fee rows still link; new ProxyPay-driven
+--         rows leave it NULL and use proxypay_invoice_id instead)
+--       - + proxypay_invoice_id, reversed_at, paid_amount_cents_at_record, role
+--       - UNIQUE (proxypay_invoice_id, user_id, role) WHERE proxypay_invoice_id
+--         IS NOT NULL  -> idempotent upsert from completion-redirect + poller
+--       - partial index on (network_id) WHERE reversed_at IS NULL  -> fast
+--         per-network commission balance
+-- monexup_invoices stays for now (Phase 5 / US3 cleanup is gated on staging
+-- verification; once US3 ships, DROP it and the FK below).
 -- ============================================================
 
 -- Sequences
@@ -26,10 +39,13 @@ CREATE TABLE monexup_networks (
     plan INTEGER NOT NULL DEFAULT 1,
     image VARCHAR(110),
     lofn_store_id BIGINT NULL,
+    proxypay_store_id BIGINT NULL,
+    proxypay_client_id VARCHAR(64) NULL,
     CONSTRAINT monexup_networks_pkey PRIMARY KEY (network_id)
 );
 
 CREATE INDEX ix_monexup_networks_lofn_store_id ON monexup_networks (lofn_store_id);
+CREATE INDEX ix_monexup_networks_proxypay_store_id ON monexup_networks (proxypay_store_id);
 
 -- ============================================================
 -- Table: monexup_user_profiles
@@ -124,11 +140,15 @@ CREATE INDEX idx_monexup_invoices_order_id ON monexup_invoices (order_id);
 -- ============================================================
 CREATE TABLE monexup_invoice_fees (
     fee_id BIGINT NOT NULL DEFAULT nextval('monexup_invoice_commission_id_seq'::regclass),
-    invoice_id BIGINT NOT NULL,
+    invoice_id BIGINT NULL,
     network_id BIGINT,
     user_id BIGINT,
     amount DOUBLE PRECISION NOT NULL DEFAULT 0,
     paid_at TIMESTAMP WITHOUT TIME ZONE,
+    proxypay_invoice_id BIGINT NULL,
+    reversed_at TIMESTAMP WITHOUT TIME ZONE NULL,
+    paid_amount_cents_at_record BIGINT NULL,
+    role INTEGER NULL,
     CONSTRAINT monexup_pk_invoice_fee PRIMARY KEY (fee_id),
     CONSTRAINT monexup_fk_fee_invoice FOREIGN KEY (invoice_id)
         REFERENCES monexup_invoices (invoice_id) ON DELETE SET NULL,
@@ -137,7 +157,12 @@ CREATE TABLE monexup_invoice_fees (
 );
 
 CREATE INDEX idx_monexup_invoice_fees_invoice_id ON monexup_invoice_fees (invoice_id);
-CREATE INDEX idx_monexup_invoice_fees_network_id ON monexup_invoice_fees (network_id);
+CREATE INDEX ix_monexup_invoice_fees_proxypay_invoice_id ON monexup_invoice_fees (proxypay_invoice_id);
+CREATE UNIQUE INDEX ix_monexup_invoice_fees_proxypay_invoice_user_role
+    ON monexup_invoice_fees (proxypay_invoice_id, user_id, role)
+    WHERE proxypay_invoice_id IS NOT NULL;
+CREATE INDEX ix_monexup_invoice_fees_network_unreversed
+    ON monexup_invoice_fees (network_id) WHERE reversed_at IS NULL;
 
 -- ============================================================
 -- Table: monexup_withdrawals

@@ -80,6 +80,22 @@ public partial class MonexUpContext : DbContext
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("paid_at");
             entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.ProxyPayInvoiceId).HasColumnName("proxypay_invoice_id");
+            entity.Property(e => e.ReversedAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("reversed_at");
+            entity.Property(e => e.PaidAmountCentsAtRecord).HasColumnName("paid_amount_cents_at_record");
+            entity.Property(e => e.Role).HasColumnName("role");
+
+            entity.HasIndex(e => e.ProxyPayInvoiceId)
+                .HasDatabaseName("ix_monexup_invoice_fees_proxypay_invoice_id");
+            entity.HasIndex(e => new { e.ProxyPayInvoiceId, e.UserId, e.Role })
+                .IsUnique()
+                .HasDatabaseName("ix_monexup_invoice_fees_proxypay_invoice_user_role")
+                .HasFilter("proxypay_invoice_id IS NOT NULL");
+            entity.HasIndex(e => e.NetworkId)
+                .HasDatabaseName("ix_monexup_invoice_fees_network_unreversed")
+                .HasFilter("reversed_at IS NULL");
 
             entity.HasOne(d => d.Invoice).WithMany(p => p.InvoiceFees)
                 .HasForeignKey(d => d.InvoiceId)
@@ -127,6 +143,11 @@ public partial class MonexUpContext : DbContext
                 .HasColumnName("withdrawal_period");
             entity.Property(e => e.LofnStoreId).HasColumnName("lofn_store_id");
             entity.HasIndex(e => e.LofnStoreId).HasDatabaseName("ix_monexup_networks_lofn_store_id");
+            entity.Property(e => e.ProxyPayStoreId).HasColumnName("proxypay_store_id");
+            entity.Property(e => e.ProxyPayClientId)
+                .HasMaxLength(64)
+                .HasColumnName("proxypay_client_id");
+            entity.HasIndex(e => e.ProxyPayStoreId).HasDatabaseName("ix_monexup_networks_proxypay_store_id");
         });
 
         modelBuilder.Entity<ProductLink>(entity =>

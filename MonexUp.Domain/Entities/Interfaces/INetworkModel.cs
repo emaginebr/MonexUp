@@ -28,6 +28,9 @@ namespace MonexUp.Domain.Interfaces.Models
 
         long? LofnStoreId { get; set; }
 
+        long? ProxyPayStoreId { get; set; }
+        string ProxyPayClientId { get; set; }
+
         IEnumerable<INetworkModel> ListByStatus(NetworkStatusEnum status, INetworkDomainFactory factory);
         INetworkModel GetById(long id, INetworkDomainFactory factory);
         INetworkModel GetBySlug(string slug, INetworkDomainFactory factory);
@@ -38,5 +41,6 @@ namespace MonexUp.Domain.Interfaces.Models
         INetworkModel GetByName(string name, INetworkDomainFactory factory);
         int MaxQtdyUserByNetwork();
         bool TrySetLofnStoreId(long networkId, long storeId);
+        bool TrySetProxyPayStore(long networkId, long storeId, string clientId);
     }
 }

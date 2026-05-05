@@ -17,5 +17,6 @@ namespace Core.Domain.Repository
         TModel Update(TModel model, TFactory factory);
         bool ExistSlug(long networkId, string slug);
         bool TrySetLofnStoreId(long networkId, long storeId);
+        bool TrySetProxyPayStore(long networkId, long storeId, string clientId);
     }
 }

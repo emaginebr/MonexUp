@@ -1,50 +1,59 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using MonexUp.BackgroundService;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using MonexUp.Domain.Interfaces.Services;
 using NCrontab;
 
 namespace NoChainSwapBackgroundService
 {
     public class Service : BackgroundService
     {
-        /*
-        private IConfiguration _configuration;
-
-        private CrontabSchedule _schedule;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly ILogger<Service> _logger;
+        private readonly CrontabSchedule _schedule;
         private DateTime _nextRun;
-        private readonly ScheduleTask _gwScheduleTask;
 
-        public Service(ScheduleTask gwScheduleTask, IConfiguration configuration)
+        public Service(IServiceProvider serviceProvider, ILogger<Service> logger)
         {
-            _configuration = configuration;
-            //_schedule = CrontabSchedule.Parse(_configuration["Schedule:Cron"], new CrontabSchedule.ParseOptions { IncludingSeconds = true });
-            _schedule = CrontabSchedule.Parse("* 0/5 * * * *", new CrontabSchedule.ParseOptions { IncludingSeconds = true });
+            _serviceProvider = serviceProvider;
+            _logger = logger;
+            _schedule = CrontabSchedule.Parse("*/5 * * * *");
             _nextRun = _schedule.GetNextOccurrence(DateTime.UtcNow);
-            _gwScheduleTask = gwScheduleTask;
         }
-        */
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            /*
-            do
+            _logger.LogInformation("ProxyPay reconciliation background service started.");
+            while (!stoppingToken.IsCancellationRequested)
             {
-                var now = DateTime.UtcNow;
-                var nextrun = _schedule.GetNextOccurrence(now);
-
-                if (now > _nextRun)
+                if (DateTime.UtcNow >= _nextRun)
                 {
-                    //await _gwScheduleTask.DetectNewTransactions();
-                    //await _gwScheduleTask.ProccessAllTransactions();
+                    await RunReconciliationAsync(stoppingToken);
                     _nextRun = _schedule.GetNextOccurrence(DateTime.UtcNow);
                 }
-                
-                await Task.Delay(60000, stoppingToken);
+                try
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
+                }
+                catch (TaskCanceledException) { }
             }
-            while (!stoppingToken.IsCancellationRequested); ;
-            */
+        }
+
+        private async Task RunReconciliationAsync(CancellationToken ct)
+        {
+            try
+            {
+                using var scope = _serviceProvider.CreateScope();
+                var reconciler = scope.ServiceProvider.GetRequiredService<IBillingReconciliationService>();
+                await reconciler.ReconcileAsync(ct);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "ProxyPay reconciliation tick failed.");
+            }
         }
     }
 }
