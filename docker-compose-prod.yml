@@ -1,38 +1,5 @@
 services:
   # ===========================================
-  # NAuth API - Authentication service
-  # ===========================================
-  nauth-api:
-    build:
-      context: ./submodules/NAuth
-      dockerfile: Dockerfile
-    container_name: nauth-api
-    restart: unless-stopped
-    environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      ASPNETCORE_URLS: http://+:80
-      ConnectionStrings__NAuthContext: ${MONEXUP_CONNECTION_STRING}
-      zTools__ApiURL: http://ztools-api:8080
-      NAuth__JwtSecret: ${MONEXUP_JWT_SECRET}
-    networks:
-      - emagine-network
-
-  # ===========================================
-  # zTools API - Utility microservice
-  # ===========================================
-  ztools-api:
-    build:
-      context: ./submodules/zTools
-      dockerfile: Dockerfile
-    container_name: ztools-api
-    restart: unless-stopped
-    environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      ASPNETCORE_URLS: http://+:8080
-    networks:
-      - emagine-network
-
-  # ===========================================
   # MonexUp API - Main application API
   # ===========================================
   monexup-api:
@@ -48,11 +15,6 @@ services:
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__MonexUpContext: ${MONEXUP_CONNECTION_STRING}
       NAuth__JwtSecret: ${MONEXUP_JWT_SECRET}
-    depends_on:
-      nauth-api:
-        condition: service_started
-      ztools-api:
-        condition: service_started
     networks:
       - emagine-network
 

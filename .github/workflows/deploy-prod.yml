@@ -21,15 +21,14 @@ jobs:
             BRANCH="main"
 
             if [ -d "$DEPLOY_DIR" ]; then
-              echo "Updating existing repository..."
+              echo "Updating MonexUp repository..."
               cd "$DEPLOY_DIR"
               git fetch origin
               git reset --hard "origin/$BRANCH"
               git clean -fd
-              git submodule update --init --recursive
             else
-              echo "Cloning repository..."
-              git clone --branch "$BRANCH" --single-branch --recurse-submodules "$REPO_URL" "$DEPLOY_DIR"
+              echo "Cloning MonexUp repository..."
+              git clone --branch "$BRANCH" --single-branch "$REPO_URL" "$DEPLOY_DIR"
             fi
 
             echo "Repository ready at $DEPLOY_DIR"
