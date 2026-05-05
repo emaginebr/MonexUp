@@ -1,7 +1,6 @@
 using MonexUp.DTO.Network;
 using MonexUp.DTO.Order;
 using MonexUp.DTO.Invoice;
-using MonexUp.DTO.Product;
 using MonexUp.DTO.ProductLink;
 using MonexUp.DTO.Profile;
 using MonexUp.DTO.Payment;

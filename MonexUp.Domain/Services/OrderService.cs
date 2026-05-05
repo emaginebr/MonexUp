@@ -2,13 +2,11 @@ using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Order;
-using MonexUp.DTO.Product;
+using MonexUp.Infra.Interfaces.AppServices;
 using NAuth.ACL.Interfaces;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MonexUp.Domain.Impl.Services
@@ -17,22 +15,19 @@ namespace MonexUp.Domain.Impl.Services
     {
         private readonly IOrderDomainFactory _orderFactory;
         private readonly IOrderItemDomainFactory _itemFactory;
-        private readonly IProductService _productService;
+        private readonly ILofnProductClient _lofnProductClient;
         private readonly IUserClient _userClient;
-        private readonly IProductDomainFactory _productFactory;
 
         public OrderService(
             IOrderDomainFactory orderFactory,
             IOrderItemDomainFactory itemFactory,
-            IProductService productService,
-            IUserClient userClient,
-            IProductDomainFactory productFactory)
+            ILofnProductClient lofnProductClient,
+            IUserClient userClient)
         {
             _orderFactory = orderFactory;
             _itemFactory = itemFactory;
-            _productService = productService;
+            _lofnProductClient = lofnProductClient;
             _userClient = userClient;
-            _productFactory = productFactory;
         }
 
         public IOrderModel Insert(OrderInfo order)
@@ -104,7 +99,7 @@ namespace MonexUp.Domain.Impl.Services
                     OrderId = x.OrderId,
                     ProductId = x.ProductId,
                     Quantity = x.Quantity,
-                    Product = await _productService.GetProductInfo(x.GetProduct(_productFactory))
+                    Product = await _lofnProductClient.GetByIdAsync(x.ProductId)
                 });
             }
             return new OrderInfo

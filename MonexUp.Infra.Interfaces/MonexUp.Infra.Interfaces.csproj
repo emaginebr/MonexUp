@@ -18,4 +18,7 @@
   <ItemGroup>
     <Compile Remove="Repository\IGoblinEquipmentRepository.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MonexUp.DTO\MonexUp.DTO.csproj" />
+  </ItemGroup>
 </Project>

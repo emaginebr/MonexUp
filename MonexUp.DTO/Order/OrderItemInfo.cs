@@ -1,10 +1,5 @@
-﻿using MonexUp.DTO.Product;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using MonexUp.DTO.Lofn;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace MonexUp.DTO.Order
 {
@@ -19,6 +14,6 @@ namespace MonexUp.DTO.Order
         [JsonPropertyName("quantity")]
         public int Quantity { get; set; }
         [JsonPropertyName("product")]
-        public ProductInfo Product { get; set; }
+        public LofnProductInfo Product { get; set; }
     }
 }

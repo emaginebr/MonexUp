@@ -1,35 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
-namespace MonexUp.DTO.Product
+namespace MonexUp.DTO.Lofn
 {
-    public class ProductInfo
+    public class LofnProductInfo
     {
         [JsonPropertyName("productId")]
         public long ProductId { get; set; }
-        [JsonPropertyName("networkId")]
-        public long NetworkId { get; set; }
+
+        [JsonPropertyName("storeId")]
+        public long? StoreId { get; set; }
+
+        [JsonPropertyName("categoryId")]
+        public long? CategoryId { get; set; }
+
         [JsonPropertyName("slug")]
         public string Slug { get; set; }
-        [JsonPropertyName("image")]
-        public string Image { get; set; }
-        [JsonPropertyName("imageUrl")]
-        public string ImageUrl { get; set; }
+
         [JsonPropertyName("name")]
         public string Name { get; set; }
+
         [JsonPropertyName("description")]
         public string Description { get; set; }
+
         [JsonPropertyName("price")]
         public double Price { get; set; }
+
+        [JsonPropertyName("discount")]
+        public double Discount { get; set; }
+
         [JsonPropertyName("frequency")]
         public int Frequency { get; set; }
+
         [JsonPropertyName("limit")]
         public int Limit { get; set; }
+
         [JsonPropertyName("status")]
-        public ProductStatusEnum Status { get; set; }
+        public int Status { get; set; }
+
+        [JsonPropertyName("productType")]
+        public int ProductType { get; set; }
+
+        [JsonPropertyName("featured")]
+        public bool Featured { get; set; }
+
+        [JsonPropertyName("imageUrl")]
+        public string ImageUrl { get; set; }
     }
 }

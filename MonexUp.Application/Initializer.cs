@@ -59,7 +59,6 @@ namespace MonexUp.Application
             injectDependency(typeof(INetworkRepository<INetworkModel, INetworkDomainFactory>), typeof(NetworkRepository), services, scoped);
             injectDependency(typeof(IOrderRepository<IOrderModel, IOrderDomainFactory>), typeof(OrderRepository), services, scoped);
             injectDependency(typeof(IOrderItemRepository<IOrderItemModel, IOrderItemDomainFactory>), typeof(OrderItemRepository), services, scoped);
-            injectDependency(typeof(IProductRepository<IProductModel, IProductDomainFactory>), typeof(LofnProductRepository), services, scoped);
             injectDependency(typeof(IProductLinkRepository<IProductLinkModel, IProductLinkDomainFactory>), typeof(ProductLinkRepository), services, scoped);
             injectDependency(typeof(IUserNetworkRepository<IUserNetworkModel, IUserNetworkDomainFactory>), typeof(UserNetworkRepository), services, scoped);
             injectDependency(typeof(IUserProfileRepository<IUserProfileModel, IUserProfileDomainFactory>), typeof(UserProfileRepository), services, scoped);
@@ -67,6 +66,7 @@ namespace MonexUp.Application
 
             #region Lofn
             injectDependency(typeof(ILofnStoreClient), typeof(DB.Infra.AppServices.LofnStoreClient), services, scoped);
+            injectDependency(typeof(ILofnProductClient), typeof(DB.Infra.AppServices.LofnProductClient), services, scoped);
             #endregion
 
             #region NAuth
@@ -94,7 +94,6 @@ namespace MonexUp.Application
             #region Service
             injectDependency(typeof(INetworkService), typeof(NetworkService), services, scoped);
             injectDependency(typeof(IProfileService), typeof(ProfileService), services, scoped);
-            injectDependency(typeof(IProductService), typeof(ProductService), services, scoped);
             injectDependency(typeof(IProductLinkService), typeof(ProductLinkService), services, scoped);
             injectDependency(typeof(ILofnStoreProvisioningService), typeof(LofnStoreProvisioningService), services, scoped);
             injectDependency(typeof(IOrderService), typeof(OrderService), services, scoped);
@@ -112,7 +111,6 @@ namespace MonexUp.Application
             injectDependency(typeof(INetworkDomainFactory), typeof(NetworkDomainFactory), services, scoped);
             injectDependency(typeof(IOrderDomainFactory), typeof(OrderDomainFactory), services, scoped);
             injectDependency(typeof(IOrderItemDomainFactory), typeof(OrderItemDomainFactory), services, scoped);
-            injectDependency(typeof(IProductDomainFactory), typeof(ProductDomainFactory), services, scoped);
             injectDependency(typeof(IProductLinkDomainFactory), typeof(ProductLinkDomainFactory), services, scoped);
             injectDependency(typeof(IUserNetworkDomainFactory), typeof(UserNetworkDomainFactory), services, scoped);
             injectDependency(typeof(IUserProfileDomainFactory), typeof(UserProfileDomainFactory), services, scoped);

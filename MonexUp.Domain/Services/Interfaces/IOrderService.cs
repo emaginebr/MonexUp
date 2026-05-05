@@ -1,6 +1,5 @@
 ﻿using MonexUp.Domain.Interfaces.Models;
 using MonexUp.DTO.Order;
-using MonexUp.DTO.Product;
 using System;
 using System.Collections.Generic;
 using System.Linq;

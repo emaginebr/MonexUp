@@ -5,12 +5,11 @@ using MonexUp.DTO.Invoice;
 using MonexUp.DTO.Order;
 using MonexUp.DTO.Payment;
 using MonexUp.DTO.Subscription;
+using MonexUp.Infra.Interfaces.AppServices;
 using NAuth.ACL.Interfaces;
 using NAuth.DTO.User;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MonexUp.Domain.Impl.Services
@@ -22,7 +21,7 @@ namespace MonexUp.Domain.Impl.Services
         private readonly IInvoiceService _invoiceService;
         private readonly IUserClient _userClient;
         private readonly INetworkDomainFactory _networkFactory;
-        private readonly IProductDomainFactory _productFactory;
+        private readonly ILofnProductClient _lofnProductClient;
         private readonly IOrderItemDomainFactory _orderItemFactory;
         private readonly IInvoiceDomainFactory _invoiceFactory;
 
@@ -32,7 +31,7 @@ namespace MonexUp.Domain.Impl.Services
             IInvoiceService invoiceService,
             IUserClient userClient,
             INetworkDomainFactory networkFactory,
-            IProductDomainFactory productFactory,
+            ILofnProductClient lofnProductClient,
             IOrderItemDomainFactory orderItemFactory,
             IInvoiceDomainFactory invoiceFactory
         )
@@ -42,14 +41,14 @@ namespace MonexUp.Domain.Impl.Services
             _invoiceService = invoiceService;
             _userClient = userClient;
             _networkFactory = networkFactory;
-            _productFactory = productFactory;
+            _lofnProductClient = lofnProductClient;
             _orderItemFactory = orderItemFactory;
             _invoiceFactory = invoiceFactory;
         }
 
         public async Task<PixPaymentResult> CreatePixPayment(long productId, long userId, long? networkId, long? sellerId, string documentId, string token)
         {
-            var product = _productFactory.BuildProductModel().GetById(productId, _productFactory);
+            var product = await _lofnProductClient.GetByIdAsync(productId);
             if (product == null)
             {
                 return new PixPaymentResult { Sucesso = false, Mensagem = "Product not found" };
@@ -72,7 +71,7 @@ namespace MonexUp.Domain.Impl.Services
             {
                 order = _orderService.Insert(new OrderInfo
                 {
-                    NetworkId = product.NetworkId,
+                    NetworkId = product.StoreId ?? 0,
                     UserId = userId,
                     SellerId = sellerId,
                     Status = OrderStatusEnum.Incoming,

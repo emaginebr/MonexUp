@@ -1,16 +1,12 @@
-﻿using Core.Domain.Repository;
 using Core.Domain;
+using Core.Domain.Repository;
 using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MonexUp.Domain.Impl.Models
 {
-
     public class OrderItemModel : IOrderItemModel
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -25,19 +21,10 @@ namespace MonexUp.Domain.Impl.Models
             _repositoryItem = repositoryItem;
         }
 
-        public long ItemId {  get; set; }
+        public long ItemId { get; set; }
         public long OrderId { get; set; }
         public long ProductId { get; set; }
         public int Quantity { get; set; }
-
-        public IProductModel GetProduct(IProductDomainFactory factory)
-        {
-            if (ProductId <= 0)
-            {
-                return null;
-            }
-            return factory.BuildProductModel().GetById(ProductId, factory);
-        }
 
         public IOrderItemModel Insert(IOrderItemDomainFactory factory)
         {

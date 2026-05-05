@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Services;
+using MonexUp.Infra.Interfaces.AppServices;
 using MonexUp.DTO.Order;
 using MonexUp.DTO.Payment;
 using NAuth.ACL.Interfaces;
@@ -21,27 +21,24 @@ namespace MonexUp.API.Controllers
         private readonly IOrderService _orderService;
         private readonly ISubscriptionService _subscriptionService;
         private readonly INetworkService _networkService;
-        private readonly IProductService _productService;
+        private readonly ILofnProductClient _lofnProductClient;
         private readonly IProxyPayService _proxyPayService;
-        private readonly IProductDomainFactory _productFactory;
 
         public OrderController(
             IUserClient userClient,
             IOrderService orderService,
             ISubscriptionService subscriptionService,
             INetworkService networkService,
-            IProductService productService,
-            IProxyPayService proxyPayService,
-            IProductDomainFactory productFactory
+            ILofnProductClient lofnProductClient,
+            IProxyPayService proxyPayService
         )
         {
             _userClient = userClient;
             _orderService = orderService;
             _subscriptionService = subscriptionService;
             _networkService = networkService;
-            _productService = productService;
+            _lofnProductClient = lofnProductClient;
             _proxyPayService = proxyPayService;
-            _productFactory = productFactory;
         }
 
         [Authorize]
@@ -66,7 +63,7 @@ namespace MonexUp.API.Controllers
                     return BadRequest(new PixPaymentResult { Sucesso = false, Mensagem = "CPF é obrigatório" });
                 }
 
-                var product = _productService.GetBySlug(productSlug);
+                var product = await _lofnProductClient.GetBySlugAsync(productSlug);
                 if (product == null)
                 {
                     return BadRequest(new PixPaymentResult { Sucesso = false, Mensagem = "Produto não encontrado" });

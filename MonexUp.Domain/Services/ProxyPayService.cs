@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
+using MonexUp.DTO.Lofn;
 using MonexUp.Infra.Interfaces.AppServices;
 using NAuth.DTO.User;
 
@@ -28,7 +29,7 @@ namespace MonexUp.Domain.Impl.Services
             _invoiceService = invoiceService;
         }
 
-        public async Task<ProxyPayQRCodeResponse> CreateQRCode(UserInfo user, IProductModel product, INetworkModel network, UserInfo seller, string documentId)
+        public async Task<ProxyPayQRCodeResponse> CreateQRCode(UserInfo user, LofnProductInfo product, INetworkModel network, UserInfo seller, string documentId)
         {
             var request = new ProxyPayQRCodeRequest
             {

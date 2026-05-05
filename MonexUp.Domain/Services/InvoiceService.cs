@@ -3,6 +3,7 @@ using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Invoice;
 using MonexUp.DTO.Order;
+using MonexUp.Infra.Interfaces.AppServices;
 using NAuth.ACL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace MonexUp.Domain.Impl.Services
         private readonly IUserProfileDomainFactory _profileFactory;
         private readonly IOrderDomainFactory _orderFactory;
         private readonly IOrderItemDomainFactory _orderItemFactory;
-        private readonly IProductDomainFactory _productFactory;
+        private readonly ILofnProductClient _lofnProductClient;
         private readonly IOrderService _orderService;
         private readonly INetworkService _networkService;
 
@@ -34,7 +35,7 @@ namespace MonexUp.Domain.Impl.Services
             IUserProfileDomainFactory profileFactory,
             IOrderDomainFactory orderFactory,
             IOrderItemDomainFactory orderItemFactory,
-            IProductDomainFactory productFactory,
+            ILofnProductClient lofnProductClient,
             IOrderService orderService,
             INetworkService networkService
         )
@@ -45,7 +46,7 @@ namespace MonexUp.Domain.Impl.Services
             _profileFactory = profileFactory;
             _orderFactory = orderFactory;
             _orderItemFactory = orderItemFactory;
-            _productFactory = productFactory;
+            _lofnProductClient = lofnProductClient;
             _orderService = orderService;
             _networkService = networkService;
         }
@@ -185,6 +186,15 @@ namespace MonexUp.Domain.Impl.Services
             var network = _networkService.GetById(order.NetworkId);
             var buyer = await _userClient.GetByIdAsync(invoice.UserId, token);
             var seller = invoice.SellerId.HasValue ? await _userClient.GetByIdAsync(invoice.SellerId.Value, token) : null;
+
+            var items = order.ListItems(_orderItemFactory);
+            var descriptions = new List<string>();
+            foreach (var x in items)
+            {
+                var product = await _lofnProductClient.GetByIdAsync(x.ProductId);
+                descriptions.Add((product?.Name ?? "?") + " (" + x.Quantity.ToString() + ")");
+            }
+
             return new StatementInfo {
                 InvoiceId = fee.InvoiceId,
                 FeeId = fee.FeeId,
@@ -195,11 +205,7 @@ namespace MonexUp.Domain.Impl.Services
                 SellerId = invoice.SellerId,
                 SellerName = seller?.Name,
                 PaymentDate = invoice.PaymentDate,
-                Description = string.Join(", ",
-                    order.ListItems(_orderItemFactory)
-                    .Select(x => x.GetProduct(_productFactory).Name + " (" + x.Quantity.ToString() + ")")
-                    .ToArray()
-                ),
+                Description = string.Join(", ", descriptions),
                 Amount = fee.Amount,
                 PaidAt = fee.PaidAt,
             };
