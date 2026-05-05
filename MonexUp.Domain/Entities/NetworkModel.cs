@@ -33,6 +33,8 @@ namespace MonexUp.Domain.Impl.Models
         public NetworkPlanEnum Plan { get; set; }
         public NetworkStatusEnum Status { get; set; }
         public long? LofnStoreId { get; set; }
+        public long? ProxyPayStoreId { get; set; }
+        public string ProxyPayClientId { get; set; }
 
         public INetworkModel Insert(INetworkDomainFactory factory)
         {
@@ -77,6 +79,11 @@ namespace MonexUp.Domain.Impl.Models
         public bool TrySetLofnStoreId(long networkId, long storeId)
         {
             return _repositoryNetwork.TrySetLofnStoreId(networkId, storeId);
+        }
+
+        public bool TrySetProxyPayStore(long networkId, long storeId, string clientId)
+        {
+            return _repositoryNetwork.TrySetProxyPayStore(networkId, storeId, clientId);
         }
 
         public int MaxQtdyUserByNetwork() {

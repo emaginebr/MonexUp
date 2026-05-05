@@ -90,7 +90,7 @@ namespace DB.Infra.Migrations
                         .HasColumnType("double precision")
                         .HasColumnName("amount");
 
-                    b.Property<long>("InvoiceId")
+                    b.Property<long?>("InvoiceId")
                         .HasColumnType("bigint")
                         .HasColumnName("invoice_id");
 
@@ -98,9 +98,25 @@ namespace DB.Infra.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("network_id");
 
+                    b.Property<long?>("PaidAmountCentsAtRecord")
+                        .HasColumnType("bigint")
+                        .HasColumnName("paid_amount_cents_at_record");
+
                     b.Property<DateTime?>("PaidAt")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("paid_at");
+
+                    b.Property<long?>("ProxyPayInvoiceId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("proxypay_invoice_id");
+
+                    b.Property<DateTime?>("ReversedAt")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("reversed_at");
+
+                    b.Property<int?>("Role")
+                        .HasColumnType("integer")
+                        .HasColumnName("role");
 
                     b.Property<long?>("UserId")
                         .HasColumnType("bigint")
@@ -111,7 +127,17 @@ namespace DB.Infra.Migrations
 
                     b.HasIndex("InvoiceId");
 
-                    b.HasIndex("NetworkId");
+                    b.HasIndex("NetworkId")
+                        .HasDatabaseName("ix_monexup_invoice_fees_network_unreversed")
+                        .HasFilter("reversed_at IS NULL");
+
+                    b.HasIndex("ProxyPayInvoiceId")
+                        .HasDatabaseName("ix_monexup_invoice_fees_proxypay_invoice_id");
+
+                    b.HasIndex("ProxyPayInvoiceId", "UserId", "Role")
+                        .IsUnique()
+                        .HasDatabaseName("ix_monexup_invoice_fees_proxypay_invoice_user_role")
+                        .HasFilter("proxypay_invoice_id IS NOT NULL");
 
                     b.ToTable("monexup_invoice_fees", (string)null);
                 });
@@ -154,6 +180,15 @@ namespace DB.Infra.Migrations
                         .HasDefaultValue(1)
                         .HasColumnName("plan");
 
+                    b.Property<string>("ProxyPayClientId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("proxypay_client_id");
+
+                    b.Property<long?>("ProxyPayStoreId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("proxypay_store_id");
+
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -181,6 +216,9 @@ namespace DB.Infra.Migrations
 
                     b.HasIndex("LofnStoreId")
                         .HasDatabaseName("ix_monexup_networks_lofn_store_id");
+
+                    b.HasIndex("ProxyPayStoreId")
+                        .HasDatabaseName("ix_monexup_networks_proxypay_store_id");
 
                     b.ToTable("monexup_networks", (string)null);
                 });
@@ -458,7 +496,6 @@ namespace DB.Infra.Migrations
                     b.HasOne("DB.Infra.Context.Invoice", "Invoice")
                         .WithMany("InvoiceFees")
                         .HasForeignKey("InvoiceId")
-                        .IsRequired()
                         .HasConstraintName("monexup_fk_fee_invoice");
 
                     b.HasOne("DB.Infra.Context.Network", "Network")

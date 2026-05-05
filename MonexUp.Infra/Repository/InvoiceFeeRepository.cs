@@ -30,7 +30,7 @@ namespace DB.Infra.Repository
         {
             var md = factory.BuildInvoiceFeeModel();
             md.FeeId = row.FeeId;
-            md.InvoiceId = row.InvoiceId;
+            md.InvoiceId = row.InvoiceId ?? 0;
             md.NetworkId = row.NetworkId;
             md.UserId = row.UserId;
             md.Amount = row.Amount;

@@ -418,6 +418,15 @@ export default function AdminSidebar() {
               collapsed={collapsed}
               onClick={() => navigate("/admin/invoices")}
             />
+            {role >= UserRoleEnum.NetworkManager && (
+              <SidebarItem
+                icon={DollarSign}
+                label={t("billing", "Cobranças")}
+                active={isActive("/admin/billing")}
+                collapsed={collapsed}
+                onClick={() => navigate("/admin/billing")}
+              />
+            )}
           </SidebarGroup>
         )}
 

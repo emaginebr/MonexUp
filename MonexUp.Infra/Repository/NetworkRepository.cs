@@ -37,6 +37,8 @@ namespace DB.Infra.Repository
             md.Plan = (NetworkPlanEnum)row.Plan;
             md.Status = (NetworkStatusEnum) row.Status;
             md.LofnStoreId = row.LofnStoreId;
+            md.ProxyPayStoreId = row.ProxyPayStoreId;
+            md.ProxyPayClientId = row.ProxyPayClientId;
             return md;
         }
 
@@ -53,6 +55,8 @@ namespace DB.Infra.Repository
             row.Plan = (int)md.Plan;
             row.Status = (int)md.Status;
             row.LofnStoreId = md.LofnStoreId;
+            row.ProxyPayStoreId = md.ProxyPayStoreId;
+            row.ProxyPayClientId = md.ProxyPayClientId;
         }
 
         public INetworkModel Insert(INetworkModel model, INetworkDomainFactory factory)
@@ -127,6 +131,13 @@ namespace DB.Infra.Repository
         {
             var rowsAffected = _ccsContext.Database.ExecuteSqlInterpolated(
                 $"UPDATE monexup_networks SET lofn_store_id = {storeId} WHERE network_id = {networkId} AND lofn_store_id IS NULL");
+            return rowsAffected == 1;
+        }
+
+        public bool TrySetProxyPayStore(long networkId, long storeId, string clientId)
+        {
+            var rowsAffected = _ccsContext.Database.ExecuteSqlInterpolated(
+                $"UPDATE monexup_networks SET proxypay_store_id = {storeId}, proxypay_client_id = {clientId} WHERE network_id = {networkId} AND proxypay_store_id IS NULL");
             return rowsAffected == 1;
         }
     }

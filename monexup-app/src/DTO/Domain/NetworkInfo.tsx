@@ -12,4 +12,6 @@ export default interface NetworkInfo {
     qtdyUsers: number;
     maxUsers: number;
     lofnStoreId?: number | null;
+    proxypayStoreId?: number | null;
+    proxypayClientId?: string | null;
 }

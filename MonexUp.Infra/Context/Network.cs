@@ -27,6 +27,10 @@ public partial class Network
 
     public long? LofnStoreId { get; set; }
 
+    public long? ProxyPayStoreId { get; set; }
+
+    public string ProxyPayClientId { get; set; }
+
     public virtual ICollection<InvoiceFee> InvoiceFees { get; set; } = new List<InvoiceFee>();
 
     public virtual ICollection<ProductLink> ProductLinks { get; set; } = new List<ProductLink>();

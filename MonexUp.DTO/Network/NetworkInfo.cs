@@ -35,5 +35,9 @@ namespace MonexUp.DTO.Network
         public int MaxUsers { get; set; }
         [JsonPropertyName("lofnStoreId")]
         public long? LofnStoreId { get; set; }
+        [JsonPropertyName("proxypayStoreId")]
+        public long? ProxyPayStoreId { get; set; }
+        [JsonPropertyName("proxypayClientId")]
+        public string ProxyPayClientId { get; set; }
     }
 }
