@@ -7,6 +7,7 @@ import INetworkService from "../../Services/Interfaces/INetworkService";
 export default interface INetworkBusiness {
   init: (networkService: INetworkService) => void;
   insert: (network: NetworkInsertInfo) => Promise<BusinessResult<NetworkInfo>>;
+  ensureLofnStore: (networkId: number) => Promise<BusinessResult<NetworkInfo>>;
   update: (network: NetworkInfo) => Promise<BusinessResult<NetworkInfo>>;
   listAll: () => Promise<BusinessResult<NetworkInfo[]>>;
   listByUser: () => Promise<BusinessResult<UserNetworkInfo[]>>;

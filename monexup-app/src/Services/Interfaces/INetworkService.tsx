@@ -7,6 +7,7 @@ import IHttpClient from "../../Infra/Interface/IHttpClient";
 export default interface INetworkService {
     init: (httpClient: IHttpClient) => void;
     insert: (network: NetworkInsertInfo, token: string) => Promise<ApiResponse<NetworkInfo>>;
+    ensureLofnStore: (networkId: number, token: string) => Promise<ApiResponse<NetworkInfo>>;
     update: (network: NetworkInfo, token: string) => Promise<ApiResponse<NetworkInfo>>;
     listAll: () => Promise<ApiResponse<NetworkInfo[]>>;
     listByUser: (token: string) => Promise<ApiResponse<UserNetworkInfo[]>>;

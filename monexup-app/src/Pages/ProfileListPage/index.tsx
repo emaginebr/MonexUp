@@ -60,17 +60,16 @@ export default function ProfileListPage() {
   };
 
   useEffect(() => {
-    if (networkContext.userNetwork) {
-      profileContext
-        .listByNetwork(networkContext.userNetwork.networkId)
-        .then((ret) => {
-          if (!ret.sucesso) {
-            throwError(ret.mensagemErro);
-          }
-        });
+    const nid = networkContext.userNetwork?.networkId;
+    if (nid) {
+      profileContext.listByNetwork(nid).then((ret) => {
+        if (!ret.sucesso) {
+          throwError(ret.mensagemErro);
+        }
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [networkContext.userNetwork?.networkId]);
 
   const handleDeleteRequest = (profile: UserProfileInfo) => {
     setPendingProfile(profile);

@@ -17,7 +17,11 @@ import {
   Briefcase,
   ChevronDown,
   Search,
+  Package,
+  Tag,
+  Filter as FilterIcon,
 } from "lucide-react";
+import { useIsAdmin } from "../Hooks/useIsAdmin";
 
 import AuthContext from "../Contexts/Auth/AuthContext";
 import NetworkContext from "../Contexts/Network/NetworkContext";
@@ -71,6 +75,7 @@ export default function AdminSidebar() {
   const authContext = useContext(AuthContext);
   const networkContext = useContext(NetworkContext);
   const invoiceContext = useContext(InvoiceContext);
+  const isAdmin = useIsAdmin();
 
   // --- Collapsed state ----------------------------------------------------
   // Default: expanded on desktop, collapsed on narrow viewports. The user's
@@ -151,20 +156,19 @@ export default function AdminSidebar() {
   const roleLabel = roleKey ? t(roleKey) : null;
   const networkName = networkContext?.userNetwork?.network?.name;
 
-  // --- Network selector ---------------------------------------------------
-  const [netSelOpen, setNetSelOpen] = useState<boolean>(false);
-  const netSelRef = useRef<HTMLDivElement | null>(null);
-  const userNetworks = networkContext?.userNetworks ?? [];
+  // --- Role selector chip dropdown ---------------------------------------
+  const [roleOpen, setRoleOpen] = useState<boolean>(false);
+  const roleRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (!netSelOpen) return;
+    if (!roleOpen) return;
     const onDocClick = (event: MouseEvent) => {
-      if (netSelRef.current && !netSelRef.current.contains(event.target as Node)) {
-        setNetSelOpen(false);
+      if (roleRef.current && !roleRef.current.contains(event.target as Node)) {
+        setRoleOpen(false);
       }
     };
     const onEsc = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setNetSelOpen(false);
+      if (event.key === "Escape") setRoleOpen(false);
     };
     document.addEventListener("mousedown", onDocClick);
     document.addEventListener("keydown", onEsc);
@@ -172,7 +176,7 @@ export default function AdminSidebar() {
       document.removeEventListener("mousedown", onDocClick);
       document.removeEventListener("keydown", onEsc);
     };
-  }, [netSelOpen]);
+  }, [roleOpen]);
 
   // --- App version (Vite env, optional) -----------------------------------
   const appVersion =
@@ -200,119 +204,29 @@ export default function AdminSidebar() {
       />
 
       {/* ------------------------------------------------------------------
-          1. Network selector + collapse toggle (combined row)
+          1. Collapse toggle
          ------------------------------------------------------------------ */}
-      {(roleLabel || networkName) && (
-        <div
-          className={[
-            "relative flex items-stretch gap-2",
-            collapsed ? "flex-col px-2 py-3" : "px-3 py-3",
-          ].join(" ")}
-          ref={netSelRef}
+      <div
+        className={[
+          "relative flex items-center border-b border-white/5",
+          collapsed ? "justify-center px-0 py-3" : "justify-end px-3 py-3",
+        ].join(" ")}
+      >
+        <button
+          type="button"
+          onClick={() => setCollapsed((c) => !c)}
+          aria-label={t("footer_dashboard")}
+          aria-expanded={!collapsed}
+          aria-controls="mnx-admin-sidebar-nav"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-graphite-300 hover:text-white hover:bg-white/5 transition-colors duration-fast"
         >
           {collapsed ? (
-            <button
-              type="button"
-              onClick={() => userNetworks.length > 0 && setNetSelOpen((o) => !o)}
-              title={`${networkName ?? t("no_network_selected")}${roleLabel ? ` · ${roleLabel}` : ""}`}
-              className="mx-auto inline-flex h-8 w-8 items-center justify-center rounded-md bg-orange-500/15 text-orange-300 ring-1 ring-orange-500/30 hover:bg-orange-500/25 transition-colors duration-fast"
-              aria-label={networkName ?? t("no_network_selected")}
-              aria-haspopup={userNetworks.length > 0 ? "menu" : undefined}
-              aria-expanded={netSelOpen}
-            >
-              <Briefcase size={15} aria-hidden="true" />
-            </button>
+            <ChevronsRight size={16} aria-hidden="true" />
           ) : (
-            <button
-              type="button"
-              onClick={() => userNetworks.length > 0 && setNetSelOpen((o) => !o)}
-              className="flex-1 min-w-0 text-left rounded-md bg-orange-500/10 ring-1 ring-orange-500/25 px-3 py-2 hover:bg-orange-500/15 transition-colors duration-fast"
-              aria-haspopup={userNetworks.length > 0 ? "menu" : undefined}
-              aria-expanded={netSelOpen}
-              disabled={userNetworks.length === 0}
-            >
-              <p className="flex items-center gap-1.5 text-[0.65rem] uppercase tracking-wider font-semibold text-orange-300">
-                <ShieldCheck size={12} aria-hidden="true" />
-                <span className="flex-1">{roleLabel}</span>
-                {userNetworks.length > 0 && (
-                  <ChevronDown
-                    size={12}
-                    aria-hidden="true"
-                    className={`transition-transform duration-fast ${netSelOpen ? "rotate-180" : ""}`}
-                  />
-                )}
-              </p>
-              <p className="mt-0.5 flex items-center gap-1.5 text-sm font-medium text-white truncate">
-                <Briefcase size={13} className="text-orange-300 shrink-0" aria-hidden="true" />
-                <span className="truncate">{networkName ?? t("no_network_selected")}</span>
-              </p>
-            </button>
+            <ChevronsLeft size={16} aria-hidden="true" />
           )}
-
-          <button
-            type="button"
-            onClick={() => setCollapsed((c) => !c)}
-            aria-label={t("footer_dashboard")}
-            aria-expanded={!collapsed}
-            aria-controls="mnx-admin-sidebar-nav"
-            className={[
-              "inline-flex items-center justify-center rounded-md text-graphite-300 hover:text-white hover:bg-white/5 transition-colors duration-fast shrink-0",
-              collapsed ? "mx-auto h-8 w-8" : "h-auto w-8",
-            ].join(" ")}
-          >
-            {collapsed ? (
-              <ChevronsRight size={16} aria-hidden="true" />
-            ) : (
-              <ChevronsLeft size={16} aria-hidden="true" />
-            )}
-          </button>
-
-          {netSelOpen && userNetworks.length > 0 && (
-            <div
-              role="menu"
-              className={[
-                "absolute z-30 mt-2 w-72 rounded-lg border border-white/10 shadow-xl overflow-hidden",
-                collapsed ? "left-full ml-2 top-0" : "left-3 right-3 w-auto",
-              ].join(" ")}
-              style={{ background: "rgba(15, 15, 19, 0.98)" }}
-            >
-              <p className="px-4 py-3 text-xs uppercase tracking-wider text-graphite-400 border-b border-white/5">
-                {t("select_network_to_connect")}
-              </p>
-              <ul className="py-1">
-                {userNetworks.map((un) => (
-                  <li key={un.networkId}>
-                    <button
-                      type="button"
-                      role="menuitem"
-                      onClick={() => {
-                        networkContext.setUserNetwork(un);
-                        setNetSelOpen(false);
-                        navigate("/admin/dashboard");
-                      }}
-                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
-                    >
-                      <Users size={16} className="text-graphite-300" />
-                      <span className="truncate">{un.network?.name}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              <div className="border-t border-white/5 py-1">
-                <button
-                  type="button"
-                  role="menuitem"
-                  onClick={() => { setNetSelOpen(false); navigate("/network/search"); }}
-                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-orange-300 hover:text-orange-200 hover:bg-orange-500/10 transition-colors duration-fast"
-                >
-                  <Search size={16} />
-                  {t("search_for_a_network")}
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+        </button>
+      </div>
 
       {/* ------------------------------------------------------------------
           3. Nav groups
@@ -321,50 +235,117 @@ export default function AdminSidebar() {
         id="mnx-admin-sidebar-nav"
         className="relative px-2 pb-3"
       >
-        {/* Role switcher — placed first so users pick role before navigating. */}
+        {/* Role switcher — chip styled like the prior network selector. */}
         {networkContext?.userNetwork && (
-          <SidebarGroup label={t("role_description")} collapsed={collapsed}>
-            {networkContext.userNetwork.role >= UserRoleEnum.User && (
-              <SidebarItem
-                icon={ShieldCheck}
-                label={t("user")}
-                active={role === UserRoleEnum.User}
-                collapsed={collapsed}
-                onClick={() => switchRole(UserRoleEnum.User)}
-              />
+          <div
+            className={collapsed ? "px-1 pb-3" : "px-1 pb-3"}
+            ref={roleRef}
+          >
+            {collapsed ? (
+              <button
+                type="button"
+                onClick={() => setRoleOpen((o) => !o)}
+                title={`${t("role_description")} · ${roleLabel ?? ""}`}
+                className="mx-auto inline-flex h-8 w-8 items-center justify-center rounded-md bg-orange-500/15 text-orange-300 ring-1 ring-orange-500/30 hover:bg-orange-500/25 transition-colors duration-fast"
+                aria-haspopup="menu"
+                aria-expanded={roleOpen}
+                aria-label={roleLabel ?? t("role_description")}
+              >
+                <ShieldCheck size={15} aria-hidden="true" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setRoleOpen((o) => !o)}
+                className="w-full text-left rounded-md bg-orange-500/10 ring-1 ring-orange-500/25 px-3 py-2 hover:bg-orange-500/15 transition-colors duration-fast"
+                aria-haspopup="menu"
+                aria-expanded={roleOpen}
+              >
+                <p className="flex items-center gap-1.5 text-[0.65rem] uppercase tracking-wider font-semibold text-orange-300">
+                  <ShieldCheck size={12} aria-hidden="true" />
+                  <span className="flex-1 truncate">{t("role_description")}</span>
+                  <ChevronDown
+                    size={12}
+                    aria-hidden="true"
+                    className={`transition-transform duration-fast ${roleOpen ? "rotate-180" : ""}`}
+                  />
+                </p>
+                <p className="mt-0.5 text-sm font-medium text-white truncate">
+                  {roleLabel ?? "—"}
+                </p>
+              </button>
             )}
-            {networkContext.userNetwork.role >= UserRoleEnum.Seller && (
-              <SidebarItem
-                icon={ShieldCheck}
-                label={t("seller")}
-                active={role === UserRoleEnum.Seller}
-                collapsed={collapsed}
-                onClick={() => switchRole(UserRoleEnum.Seller)}
-              />
+
+            {roleOpen && (
+              <div
+                role="menu"
+                className={[
+                  "absolute z-30 mt-2 w-60 rounded-lg border border-white/10 shadow-xl overflow-hidden",
+                  collapsed ? "left-full ml-2 top-0" : "left-3 right-3 w-auto",
+                ].join(" ")}
+                style={{ background: "rgba(15, 15, 19, 0.98)" }}
+              >
+                <ul className="py-1">
+                  {networkContext.userNetwork.role >= UserRoleEnum.User && (
+                    <li>
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={() => { setRoleOpen(false); switchRole(UserRoleEnum.User); }}
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors duration-fast ${role === UserRoleEnum.User ? "bg-white/5 text-white" : "text-graphite-100 hover:text-white hover:bg-white/5"}`}
+                      >
+                        <ShieldCheck size={16} className="text-graphite-300" />
+                        {t("user")}
+                      </button>
+                    </li>
+                  )}
+                  {networkContext.userNetwork.role >= UserRoleEnum.Seller && (
+                    <li>
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={() => { setRoleOpen(false); switchRole(UserRoleEnum.Seller); }}
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors duration-fast ${role === UserRoleEnum.Seller ? "bg-white/5 text-white" : "text-graphite-100 hover:text-white hover:bg-white/5"}`}
+                      >
+                        <ShieldCheck size={16} className="text-graphite-300" />
+                        {t("seller")}
+                      </button>
+                    </li>
+                  )}
+                  {networkContext.userNetwork.role >= UserRoleEnum.NetworkManager && (
+                    <li>
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={() => { setRoleOpen(false); switchRole(UserRoleEnum.NetworkManager); }}
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors duration-fast ${role === UserRoleEnum.NetworkManager ? "bg-white/5 text-white" : "text-graphite-100 hover:text-white hover:bg-white/5"}`}
+                      >
+                        <ShieldCheck size={16} className="text-graphite-300" />
+                        {t("network_manager")}
+                      </button>
+                    </li>
+                  )}
+                  {networkContext.userNetwork.role >= UserRoleEnum.Administrator && (
+                    <li>
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={() => { setRoleOpen(false); switchRole(UserRoleEnum.Administrator); }}
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors duration-fast ${role === UserRoleEnum.Administrator ? "bg-white/5 text-white" : "text-graphite-100 hover:text-white hover:bg-white/5"}`}
+                      >
+                        <ShieldCheck size={16} className="text-graphite-300" />
+                        {t("administrator")}
+                      </button>
+                    </li>
+                  )}
+                </ul>
+              </div>
             )}
-            {networkContext.userNetwork.role >= UserRoleEnum.NetworkManager && (
-              <SidebarItem
-                icon={ShieldCheck}
-                label={t("network_manager")}
-                active={role === UserRoleEnum.NetworkManager}
-                collapsed={collapsed}
-                onClick={() => switchRole(UserRoleEnum.NetworkManager)}
-              />
-            )}
-            {networkContext.userNetwork.role >= UserRoleEnum.Administrator && (
-              <SidebarItem
-                icon={ShieldCheck}
-                label={t("administrator")}
-                active={role === UserRoleEnum.Administrator}
-                collapsed={collapsed}
-                onClick={() => switchRole(UserRoleEnum.Administrator)}
-              />
-            )}
-          </SidebarGroup>
+          </div>
         )}
 
-        {/* Overview — every role sees this */}
-        <SidebarGroup label={t("admin_sidebar_overview")} collapsed={collapsed}>
+        {/* My Network — Painel + manager-only items */}
+        <SidebarGroup label={t("my_network")} collapsed={collapsed}>
           <SidebarItem
             icon={LayoutDashboard}
             label={t("footer_dashboard")}
@@ -372,32 +353,59 @@ export default function AdminSidebar() {
             collapsed={collapsed}
             onClick={() => navigate("/admin/dashboard")}
           />
+          {role >= UserRoleEnum.NetworkManager && (
+            <>
+              <SidebarItem
+                icon={Settings}
+                label={t("preferences")}
+                active={isActive("/admin/network")}
+                collapsed={collapsed}
+                onClick={() => navigate("/admin/network")}
+              />
+              <SidebarItem
+                icon={NetworkIcon}
+                label={t("team_structure")}
+                active={isActive("/admin/team-structure")}
+                collapsed={collapsed}
+                onClick={() => navigate("/admin/team-structure")}
+              />
+              <SidebarItem
+                icon={Users}
+                label={t("teams")}
+                active={isActive("/admin/teams")}
+                collapsed={collapsed}
+                onClick={() => navigate("/admin/teams")}
+              />
+            </>
+          )}
         </SidebarGroup>
 
-        {/* Network Manager — preferences / structure / teams */}
+        {/* NetworkManager+ — catalog cluster */}
         {role >= UserRoleEnum.NetworkManager && (
-          <SidebarGroup label={t("my_network")} collapsed={collapsed}>
+          <SidebarGroup label={t("admin_catalog", "Catálogo")} collapsed={collapsed}>
             <SidebarItem
-              icon={Settings}
-              label={t("preferences")}
-              active={isActive("/admin/network")}
+              icon={Package}
+              label={t("admin_product_title", "Produtos")}
+              active={isActive("/admin/products")}
               collapsed={collapsed}
-              onClick={() => navigate("/admin/network")}
+              onClick={() => navigate("/admin/products")}
             />
             <SidebarItem
-              icon={NetworkIcon}
-              label={t("team_structure")}
-              active={isActive("/admin/team-structure")}
+              icon={Tag}
+              label={t("admin_category_title", "Categorias")}
+              active={isActive("/admin/categories")}
               collapsed={collapsed}
-              onClick={() => navigate("/admin/team-structure")}
+              onClick={() => navigate("/admin/categories")}
             />
-            <SidebarItem
-              icon={Users}
-              label={t("teams")}
-              active={isActive("/admin/teams")}
-              collapsed={collapsed}
-              onClick={() => navigate("/admin/teams")}
-            />
+            {isAdmin && (
+              <SidebarItem
+                icon={FilterIcon}
+                label={t("admin_filter_title", "Filtros")}
+                active={isActive("/admin/filters")}
+                collapsed={collapsed}
+                onClick={() => navigate("/admin/filters")}
+              />
+            )}
           </SidebarGroup>
         )}
 

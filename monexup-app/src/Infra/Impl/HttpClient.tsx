@@ -26,7 +26,7 @@ function getCatchValue<T>(error: any, path: string, requiresAuth: boolean = fals
     ret = {
       httpStatus: "400",
       success: false,
-      messageError: error.request,
+      messageError: error.message || "Sem resposta do servidor",
       ...ret
     }
   } else {

@@ -23,8 +23,14 @@ import NetworkEditPage from './Pages/NetworkEditPage';
 import NetworkListPage from './Pages/NetworkListPage';
 import ProductPage from './Pages/ProductPage';
 import ProductManagePage from './Pages/Admin/ProductManagePage';
+import ProductSearchPage from './Pages/Admin/ProductSearchPage';
+import ProductFormPage from './Pages/Admin/ProductFormPage';
+import CategoryManagePage from './Pages/Admin/CategoryManagePage';
+import FilterManagePage from './Pages/Admin/FilterManagePage';
+import RequireAdmin from './Components/Admin/RequireAdmin';
 import NetworkInsertPage from './Pages/NetworkInsertPage';
 import NetworkProvider from './Contexts/Network/NetworkProvider';
+import ActiveNetworkProvider from './Contexts/ActiveNetwork/ActiveNetworkProvider';
 import ProfileProvider from './Contexts/Profile/ProfileProvider';
 import ProfileListPage from './Pages/ProfileListPage';
 import ProfileEditPage from './Pages/ProfileEditPage';
@@ -48,7 +54,13 @@ import MenuUser from './Components/MenuUser';
 import ImageProvider from './Contexts/Image/ImageProvider';
 import { TemplateProvider } from './packages/template';
 import { ProxyPayProvider } from 'proxypay-react';
-import { LofnProvider, ProductProvider as LofnProductProvider } from 'lofn-react';
+import {
+  LofnProvider,
+  ProductProvider as LofnProductProvider,
+  ImageProvider as LofnImageProvider,
+  CategoryProvider as LofnCategoryProvider,
+  StoreProvider as LofnStoreProvider,
+} from 'lofn-react';
 import 'lofn-react/styles';
 import CheckoutSuccessPage from './Pages/CheckoutSuccessPage';
 
@@ -157,16 +169,25 @@ const nauthConfig = {
 };
 
 function App() {
+  // ContextBuilder reduces left-to-right: the LAST item in this array becomes
+  // the OUTERMOST provider in the JSX tree. AuthProvider must wrap the rest
+  // because NetworkProvider (and other providers) consumes AuthContext to
+  // bootstrap data after refresh. ActiveNetworkProvider depends on
+  // NetworkProvider (reads `userNetworks`), so it goes inside Network.
   const ContextContainer = ContextBuilder([
-    AuthProvider, UserProvider, NetworkProvider, ProfileProvider, ProductProvider,
-    ProductLinkProvider, BillingProvider, OrderProvider, InvoiceProvider, ImageProvider, TemplateProvider
+    TemplateProvider, ImageProvider, InvoiceProvider, OrderProvider, BillingProvider,
+    ProductLinkProvider, ProductProvider, ProfileProvider, ActiveNetworkProvider,
+    NetworkProvider, UserProvider, AuthProvider
   ]);
 
   return (
     <ProxyPayProvider config={proxyPayConfig}>
     <NAuthProvider config={nauthConfig}>
     <LofnProvider config={lofnConfig}>
+    <LofnStoreProvider>
+    <LofnCategoryProvider>
     <LofnProductProvider>
+    <LofnImageProvider>
     <ContextContainer>
       <NetworkAwareProxyPayProvider>
       <Routes>
@@ -209,7 +230,13 @@ function App() {
             <Route path=":pageNum" element={<UserSearchPage />} />
           </Route>
           <Route path="orders" element={<OrderSearchPage />} />
-          <Route path="products" element={<ProductManagePage />} />
+          <Route path="products">
+            <Route index element={<ProductSearchPage />} />
+            <Route path="new" element={<ProductFormPage />} />
+            <Route path=":productId/edit" element={<ProductFormPage />} />
+          </Route>
+          <Route path="categories" element={<CategoryManagePage />} />
+          <Route path="filters" element={<RequireAdmin><FilterManagePage /></RequireAdmin>} />
           <Route path="billing" element={<BillingManagePage />} />
           <Route path="team-structure">
             <Route index element={<ProfileListPage />} />
@@ -258,7 +285,10 @@ function App() {
       </Routes>
       </NetworkAwareProxyPayProvider>
     </ContextContainer>
+    </LofnImageProvider>
     </LofnProductProvider>
+    </LofnCategoryProvider>
+    </LofnStoreProvider>
     </LofnProvider>
     </NAuthProvider>
     </ProxyPayProvider>
