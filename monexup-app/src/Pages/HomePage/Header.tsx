@@ -177,13 +177,77 @@ export default function Header() {
         className="max-w-container mx-auto px-shell flex items-center justify-between h-16 lg:h-20"
         aria-label="Primary"
       >
-        <Link to="/" className="mnx-mark" aria-label="MonexUp — Home">
-          <img
-            src="/logo.png"
-            alt="MonexUp"
-            className="h-10 lg:h-12 w-auto"
-          />
-        </Link>
+        <div className="flex items-center gap-3 min-w-0">
+          <Link to="/" className="mnx-mark shrink-0" aria-label="MonexUp — Home">
+            <img
+              src="/logo.png"
+              alt="MonexUp"
+              className="h-10 lg:h-12 w-auto"
+            />
+          </Link>
+
+          {isAuthenticated && networkContext?.userNetworks?.length > 0 && (
+            <div className="relative" ref={networkSelRef}>
+              <button
+                type="button"
+                onClick={() => setNetworkSelOpen((o) => !o)}
+                className="inline-flex h-10 items-center gap-2 px-3 rounded-md text-sm font-medium text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast max-w-[14rem]"
+                aria-haspopup="menu"
+                aria-expanded={networkSelOpen}
+              >
+                <Briefcase size={16} className="text-orange-400 shrink-0" />
+                <span className="truncate">
+                  {networkContext.userNetwork?.network?.name ?? t("no_network_selected")}
+                </span>
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform duration-fast ${networkSelOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+              {networkSelOpen && (
+                <div
+                  role="menu"
+                  className="absolute left-0 mt-2 w-72 rounded-lg border border-white/10 shadow-xl overflow-hidden z-50"
+                  style={{ background: "rgba(15, 15, 19, 0.98)" }}
+                >
+                  <p className="px-4 py-3 text-xs uppercase tracking-wider text-graphite-400 border-b border-white/5">
+                    {t("select_network_to_connect")}
+                  </p>
+                  <ul className="py-1 max-h-64 overflow-y-auto">
+                    {networkContext.userNetworks.map((un) => (
+                      <li key={un.networkId}>
+                        <button
+                          type="button"
+                          role="menuitem"
+                          onClick={() => {
+                            networkContext.setUserNetwork(un);
+                            setNetworkSelOpen(false);
+                            navigate("/admin/dashboard");
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-graphite-100 hover:text-white hover:bg-white/5 transition-colors duration-fast"
+                        >
+                          <Users size={16} className="text-graphite-300" />
+                          <span className="truncate">{un.network?.name}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="border-t border-white/5 py-1">
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => { setNetworkSelOpen(false); navigate("/network/search"); }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-orange-300 hover:text-orange-200 hover:bg-orange-500/10 transition-colors duration-fast"
+                    >
+                      <Search size={16} />
+                      {t("search_for_a_network")}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
 
         <div className="flex items-center gap-3">
           {!isAuthenticated && (

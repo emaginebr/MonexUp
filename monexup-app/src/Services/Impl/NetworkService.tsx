@@ -13,6 +13,9 @@ const NetworkService: INetworkService = {
     insert: async (network: NetworkInsertInfo, token: string) => {
         return await _httpClient.doPostAuth<NetworkInfo>("/Network/insert", network, token);
     },
+    ensureLofnStore: async (networkId: number, token: string) => {
+        return await _httpClient.doPostAuth<NetworkInfo>("/Network/ensure-lofn-store/" + networkId, {}, token);
+    },
     update: async (network: NetworkInfo, token: string) => {
         return await _httpClient.doPostAuth<NetworkInfo>("/Network/update", network, token);
     },

@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { ProductForm, ProductList } from "lofn-react";
 import type { ProductInfo } from "lofn-react";
 import NetworkContext from "../../../Contexts/Network/NetworkContext";
@@ -10,6 +11,7 @@ import { MessageToastEnum } from "../../../DTO/Enum/MessageToastEnum";
 
 export default function ProductManagePage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const networkContext = useContext(NetworkContext);
   const authContext = useContext(AuthContext);
   const productLinkContext = useContext(ProductLinkContext);
@@ -86,13 +88,13 @@ export default function ProductManagePage() {
         />
       ) : (
         <>
-          <button className="btn btn-primary mb-3" onClick={() => setCreating(true)}>
-            {t("product_manage_new", "Novo produto")}
+          <button className="btn btn-primary mb-3" onClick={() => navigate("/admin/products/new")}>
+            {t("admin_product_new", "Novo produto")}
           </button>
           <ProductList
             storeId={network.lofnStoreId ?? undefined}
-            onEdit={(p) => setEditing(p)}
-            onCreate={() => setCreating(true)}
+            onEdit={(p) => navigate(`/admin/products/${p.productId}/edit`)}
+            onCreate={() => navigate("/admin/products/new")}
           />
         </>
       )}

@@ -44,6 +44,17 @@ const NetworkBusiness: INetworkBusiness = {
       }
       */
   },
+  ensureLofnStore: async (networkId: number) => {
+    let ret: BusinessResult<NetworkInfo>;
+    const session: AuthSession = AuthFactory.AuthBusiness.getSession();
+    if (!session) {
+      return { ...ret, sucesso: false, mensagem: "Not logged" };
+    }
+    const retServ = await _networkService.ensureLofnStore(networkId, session.token);
+    return retServ.success
+      ? { ...ret, dataResult: retServ.data, sucesso: true }
+      : { ...ret, sucesso: false, mensagem: retServ.messageError };
+  },
   update: async (network: NetworkInfo) => {
     try {
         let ret: BusinessResult<NetworkInfo>;

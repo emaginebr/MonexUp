@@ -22,13 +22,15 @@ namespace MonexUp.API.Controllers
         private readonly IUserClient _userClient;
         private readonly INetworkService _networkService;
         private readonly IProfileService _profileService;
+        private readonly ILofnStoreProvisioningService _lofnStoreProvisioning;
 
         public NetworkController(
             INetworkDomainFactory networkFactory,
             IUserNetworkDomainFactory userNetworkFactory,
             IUserClient userClient,
             INetworkService networkService,
-            IProfileService profileService
+            IProfileService profileService,
+            ILofnStoreProvisioningService lofnStoreProvisioning
         )
         {
             _networkFactory = networkFactory;
@@ -36,6 +38,7 @@ namespace MonexUp.API.Controllers
             _userClient = userClient;
             _networkService = networkService;
             _profileService = profileService;
+            _lofnStoreProvisioning = lofnStoreProvisioning;
         }
 
         [Authorize]
@@ -110,6 +113,29 @@ namespace MonexUp.API.Controllers
                 userNetworkInfos.Add(await _networkService.GetUserNetworkInfo(x, token));
             }
             return Ok(userNetworkInfos);
+        }
+
+        [Authorize]
+        [HttpPost("ensure-lofn-store/{networkId}")]
+        public async Task<IActionResult> EnsureLofnStore(long networkId, System.Threading.CancellationToken ct)
+        {
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
+
+            var token = HttpContext.GetBearerToken();
+            if (string.IsNullOrEmpty(token)) return Unauthorized();
+
+            try
+            {
+                await _lofnStoreProvisioning.EnsureStoreAsync(networkId, token, ct);
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(503, new { sucesso = false, mensagemErro = ex.Message });
+            }
+
+            var network = _networkService.GetById(networkId);
+            return Ok(await _networkService.GetNetworkInfo(network));
         }
 
         [Authorize]

@@ -27,6 +27,7 @@ interface INetworkProvider {
     clear: () => void;
 
     insert: (network: NetworkInsertInfo) => Promise<ProviderResult>;
+    ensureLofnStore: (networkId: number) => Promise<NetworkProviderResult>;
     update: (network: NetworkInfo) => Promise<ProviderResult>;
     listAll: () => Promise<ProviderResult>;
     listByUser: () => Promise<ProviderResult>;

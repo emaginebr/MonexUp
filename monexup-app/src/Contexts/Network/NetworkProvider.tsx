@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import ProviderResult from "../../DTO/Contexts/ProviderResult";
 import NetworkContext from "./NetworkContext";
 import INetworkProvider from "../../DTO/Contexts/INetworkProvider";
@@ -9,6 +9,7 @@ import NetworkFactory from "../../Business/Factory/NetworkFactory";
 import { UserRoleEnum } from "../../DTO/Enum/UserRoleEnum";
 import NetworkProviderResult from "../../DTO/Contexts/NetworkProviderResult";
 import { readSelection, writeSelection, clearSelection } from "./networkStorage";
+import AuthContext from "../Auth/AuthContext";
 
 export default function NetworkProvider(props: any) {
 
@@ -86,6 +87,26 @@ export default function NetworkProvider(props: any) {
         },
         */
 
+        ensureLofnStore: async (networkId: number) => {
+            let ret: any;
+            const brt = await NetworkFactory.NetworkBusiness.ensureLofnStore(networkId);
+            if (brt.sucesso) {
+                if (brt.dataResult) {
+                    _setNetwork(brt.dataResult);
+                }
+                return {
+                    ...ret,
+                    network: brt.dataResult,
+                    sucesso: true,
+                    mensagemSucesso: "Lofn store ensured",
+                };
+            }
+            return {
+                ...ret,
+                sucesso: false,
+                mensagemErro: brt.mensagem,
+            };
+        },
         insert: async (network: NetworkInsertInfo) => {
             let ret: Promise<ProviderResult>;
             setLoadingUpdate(true);
@@ -572,6 +593,25 @@ export default function NetworkProvider(props: any) {
             }
         }
     }
+
+    const authContext = useContext(AuthContext);
+    const sessionUserId = authContext?.sessionInfo?.userId ?? null;
+    const lastBootstrappedUserId = useRef<number | null>(null);
+
+    useEffect(() => {
+        if (authContext?.loading) return;
+        if (sessionUserId && lastBootstrappedUserId.current !== sessionUserId) {
+            lastBootstrappedUserId.current = sessionUserId;
+            networkProviderValue.listByUser();
+        }
+        if (!sessionUserId && lastBootstrappedUserId.current !== null) {
+            // Session ended (logout) — wipe network state so a new login
+            // doesn't leak the previous user's selection.
+            lastBootstrappedUserId.current = null;
+            networkProviderValue.clear?.();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [sessionUserId, authContext?.loading]);
 
     return (
         <NetworkContext.Provider value={networkProviderValue}>
