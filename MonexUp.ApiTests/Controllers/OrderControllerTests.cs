@@ -253,7 +253,7 @@ namespace MonexUp.ApiTests.Controllers
         private async Task EnsureProxyPayStoreAsync(long networkId)
         {
             var payload = new EnsureStoreRequest { NetworkId = networkId };
-            var response = await _fixture.CreateAuthenticatedRequest("/billing/ensure-store")
+            var response = await _fixture.CreateAuthenticatedRequest("/network/ensure-store")
                 .AllowAnyHttpStatus()
                 .PostJsonAsync(payload);
 

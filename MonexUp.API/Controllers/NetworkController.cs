@@ -1,5 +1,7 @@
+using FluentValidation;
 using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Services;
+using MonexUp.DTO.Billing;
 using MonexUp.DTO.Network;
 using MonexUp.DTO.User;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using NAuth.ACL.Interfaces;
 using System.Threading.Tasks;
 using MonexUp.API.Extensions;
@@ -23,6 +26,8 @@ namespace MonexUp.API.Controllers
         private readonly INetworkService _networkService;
         private readonly IProfileService _profileService;
         private readonly ILofnStoreProvisioningService _lofnStoreProvisioning;
+        private readonly IBillingService _billingService;
+        private readonly IValidator<EnsureStoreRequest> _ensureStoreValidator;
 
         public NetworkController(
             INetworkDomainFactory networkFactory,
@@ -30,7 +35,9 @@ namespace MonexUp.API.Controllers
             IUserClient userClient,
             INetworkService networkService,
             IProfileService profileService,
-            ILofnStoreProvisioningService lofnStoreProvisioning
+            ILofnStoreProvisioningService lofnStoreProvisioning,
+            IBillingService billingService,
+            IValidator<EnsureStoreRequest> ensureStoreValidator
         )
         {
             _networkFactory = networkFactory;
@@ -39,6 +46,8 @@ namespace MonexUp.API.Controllers
             _networkService = networkService;
             _profileService = profileService;
             _lofnStoreProvisioning = lofnStoreProvisioning;
+            _billingService = billingService;
+            _ensureStoreValidator = ensureStoreValidator;
         }
 
         [Authorize]
@@ -116,8 +125,32 @@ namespace MonexUp.API.Controllers
         }
 
         [Authorize]
+        [HttpPost("ensure-store")]
+        public async Task<IActionResult> EnsureStore([FromBody] EnsureStoreRequest request, CancellationToken ct)
+        {
+            var session = _userClient.GetUserInSession(HttpContext);
+            if (session == null) return Unauthorized();
+
+            var token = HttpContext.GetBearerToken();
+            if (string.IsNullOrEmpty(token)) return Unauthorized();
+
+            var validation = await _ensureStoreValidator.ValidateAsync(request, ct);
+            if (!validation.IsValid)
+            {
+                return BadRequest(new BillingApiResult<EnsureStoreResponse>
+                {
+                    Sucesso = false,
+                    MensagemErro = string.Join("; ", validation.Errors.Select(e => e.ErrorMessage))
+                });
+            }
+
+            var result = await _billingService.EnsureStoreAsync(request.NetworkId, session.UserId, token, ct);
+            return StatusCode(result.StatusCode, result.Body);
+        }
+
+        [Authorize]
         [HttpPost("ensure-lofn-store/{networkId}")]
-        public async Task<IActionResult> EnsureLofnStore(long networkId, System.Threading.CancellationToken ct)
+        public async Task<IActionResult> EnsureLofnStore(long networkId, CancellationToken ct)
         {
             var userSession = _userClient.GetUserInSession(HttpContext);
             if (userSession == null) return Unauthorized();

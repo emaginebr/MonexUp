@@ -10,6 +10,11 @@ import {
 } from "lucide-react";
 import { useProduct, ProductStatusEnum } from "lofn-react";
 import type { ProductInfo } from "lofn-react";
+import {
+  DonationModeEnum,
+  ProductInfoExt,
+  ProductTypeExtended,
+} from "../../../DTO/Lofn/ProductExt";
 
 import NetworkContext from "../../../Contexts/Network/NetworkContext";
 import AuthContext from "../../../Contexts/Auth/AuthContext";
@@ -247,13 +252,31 @@ export default function ProductSearchPage() {
     }
   };
 
-  const baseRowLabels: Omit<ProductSearchRowLabels, "statusText"> = {
+  const baseRowLabels: Omit<ProductSearchRowLabels, "statusText" | "typeText" | "donationModeText"> = {
     edit: t("product_manage_updated", "Editar"),
     currency: t("productSearchPage.currency", "R$"),
-    defaultCategoryLabel: t("productSearchPage.defaultCategory", "Geral"),
     priceLabel: t("product_edit_price_label", "Preço"),
-    categoryLabel: t("productSearchPage.tableHeaders.category", "Categoria"),
+    typeLabel: t("admin_product_field_type", "Tipo"),
     statusLabel: t("product_edit_status_label", "Status"),
+  };
+
+  // Translate ProductTypeExtended → label; Donation also surfaces the donation mode.
+  const showProductType = (productType: number | undefined): string => {
+    switch (productType) {
+      case ProductTypeExtended.Physical:
+        return t("admin_product_type_physical", "Físico");
+      case ProductTypeExtended.InfoProduct:
+        return t("admin_product_type_infoproduct", "Infoproduto");
+      case ProductTypeExtended.Donation:
+        return t("admin_product_type_donation", "Doação");
+      default:
+        return "—";
+    }
+  };
+  const showDonationMode = (mode: number | undefined | null): string | undefined => {
+    if (mode === DonationModeEnum.Fixed) return t("admin_product_donation_mode_fixed", "Fixo");
+    if (mode === DonationModeEnum.Free) return t("admin_product_donation_mode_free", "Livre");
+    return undefined;
   };
 
   return (
@@ -375,7 +398,7 @@ export default function ProductSearchPage() {
                   className="col-span-2 text-left text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500"
                   role="columnheader"
                 >
-                  {t("productSearchPage.tableHeaders.category", "Categoria")}
+                  {t("admin_product_field_type", "Tipo")}
                 </div>
                 <div
                   className="col-span-2 text-right text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500"
@@ -481,14 +504,20 @@ export default function ProductSearchPage() {
             {!isLoading && !isEmpty && (
               <div role="rowgroup">
                 {filteredProducts.map((product) => {
+                  const ext = product as ProductInfoExt;
                   const labels: ProductSearchRowLabels = {
                     ...baseRowLabels,
                     statusText: showStatus(product.status),
+                    typeText: showProductType(ext.productType as number | undefined),
+                    donationModeText:
+                      ext.productType === ProductTypeExtended.Donation
+                        ? showDonationMode(ext.donationMode as number | null | undefined)
+                        : undefined,
                   };
                   return (
                     <ProductSearchRow
                       key={product.productId}
-                      product={product}
+                      product={ext}
                       labels={labels}
                     />
                   );

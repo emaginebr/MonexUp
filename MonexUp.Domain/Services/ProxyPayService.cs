@@ -25,7 +25,7 @@ namespace MonexUp.Domain.Impl.Services
                 return new ProxyPayQRCodeResponse
                 {
                     Sucesso = false,
-                    Mensagem = "Network has no ProxyPay store. Call /Billing/ensure-store first."
+                    Mensagem = "Network has no ProxyPay store. Call /Network/ensure-store first."
                 };
             }
 

@@ -19,7 +19,6 @@ import {
   Search,
   Package,
   Tag,
-  Filter as FilterIcon,
 } from "lucide-react";
 import { useIsAdmin } from "../Hooks/useIsAdmin";
 
@@ -397,15 +396,6 @@ export default function AdminSidebar() {
               collapsed={collapsed}
               onClick={() => navigate("/admin/categories")}
             />
-            {isAdmin && (
-              <SidebarItem
-                icon={FilterIcon}
-                label={t("admin_filter_title", "Filtros")}
-                active={isActive("/admin/filters")}
-                collapsed={collapsed}
-                onClick={() => navigate("/admin/filters")}
-              />
-            )}
           </SidebarGroup>
         )}
 

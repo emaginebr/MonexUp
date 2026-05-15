@@ -10,7 +10,7 @@ const BillingService: IBillingService = {
     _httpClient = httpClient;
   },
   ensureStore(networkId: number, token: string) {
-    return _httpClient.doPostAuth<EnsureStoreResponse>("/Billing/ensure-store", { networkId }, token);
+    return _httpClient.doPostAuth<EnsureStoreResponse>("/Network/ensure-store", { networkId }, token);
   },
   list(networkId: number, pageNum: number, pageSize: number, token: string) {
     return _httpClient.doGetAuth<BillingListItemInfo[]>(

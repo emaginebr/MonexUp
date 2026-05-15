@@ -1,4 +1,3 @@
-using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MonexUp.API.Extensions;
@@ -6,7 +5,6 @@ using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Billing;
 using MonexUp.DTO.Invoice;
 using NAuth.ACL.Interfaces;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,40 +16,13 @@ namespace MonexUp.API.Controllers
     {
         private readonly IBillingService _service;
         private readonly IUserClient _userClient;
-        private readonly IValidator<EnsureStoreRequest> _ensureStoreValidator;
 
         public BillingController(
             IBillingService service,
-            IUserClient userClient,
-            IValidator<EnsureStoreRequest> ensureStoreValidator)
+            IUserClient userClient)
         {
             _service = service;
             _userClient = userClient;
-            _ensureStoreValidator = ensureStoreValidator;
-        }
-
-        [Authorize]
-        [HttpPost("ensure-store")]
-        public async Task<IActionResult> EnsureStore([FromBody] EnsureStoreRequest request, CancellationToken ct)
-        {
-            var session = _userClient.GetUserInSession(HttpContext);
-            if (session == null) return Unauthorized();
-
-            var token = HttpContext.GetBearerToken();
-            if (string.IsNullOrEmpty(token)) return Unauthorized();
-
-            var validation = await _ensureStoreValidator.ValidateAsync(request, ct);
-            if (!validation.IsValid)
-            {
-                return BadRequest(new BillingApiResult<EnsureStoreResponse>
-                {
-                    Sucesso = false,
-                    MensagemErro = string.Join("; ", validation.Errors.Select(e => e.ErrorMessage))
-                });
-            }
-
-            var result = await _service.EnsureStoreAsync(request.NetworkId, session.UserId, token, ct);
-            return StatusCode(result.StatusCode, result.Body);
         }
 
         [Authorize]

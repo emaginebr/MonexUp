@@ -1,9 +1,9 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { useProduct, useImage, ProductTypeEnum } from "lofn-react";
-import type { ProductInfo, ProductInsertInfo, ProductUpdateInfo } from "lofn-react";
-import { ArrowLeft, ChevronRight, Save } from "lucide-react";
+import { useProduct, useImage } from "lofn-react";
+import type { ProductInfo } from "lofn-react";
+import { ChevronRight } from "lucide-react";
 
 import AuthContext from "../../../Contexts/Auth/AuthContext";
 import NetworkContext from "../../../Contexts/Network/NetworkContext";
@@ -17,39 +17,38 @@ import NetworkSwitcher from "../../../Components/Admin/NetworkSwitcher";
 import MessageToast from "../../../Components/MessageToast";
 import { Skeleton } from "../../../Components/ui/skeleton";
 import { MessageToastEnum } from "../../../DTO/Enum/MessageToastEnum";
+import {
+    DonationModeEnum,
+    ProductInfoExt,
+    ProductInsertInfoExt,
+    ProductTypeExtended,
+    ProductUpdateInfoExt,
+} from "../../../DTO/Lofn/ProductExt";
 import SimpleForm, { SimpleFormValues } from "./SimpleForm";
 
+const MODE_STORAGE_KEY = "mnx.productForm.advancedMode";
+
 /**
- * ProductFormPage — redesigned `/admin/products/new` and
- * `/admin/products/:productId` route.
+ * ProductFormPage — `/admin/products/new` and `/admin/products/:productId`.
  *
- * Visual contract: matches the freshly redesigned `ProfileEditPage`
- * (compact page header band with 2px orange accent + `display-headline`
- * + breadcrumb in the `ml-[14px]` slot, single `auth-card` body holding
- * the form, ghost `Voltar` and primary `Salvar` on the right of the page
- * header — no sticky save bar, single document scroll). Rendered inside
- * `LayoutAdmin` so this component does NOT render any page chrome.
+ * Visual contract: ProfileEditPage parity (compact header band + breadcrumb,
+ * single `auth-card` body). Save/Voltar live at the BOTTOM of the form (owned
+ * by `SimpleForm`); the page header right slot now hosts the
+ * "Modo avançado" checkbox (persisted in localStorage `mnx.productForm.advancedMode`,
+ * default `false`).
  *
- * Behavior preserved 1:1 from the legacy Bootstrap version:
- *   - role gate: NetworkManager / Administrator only
- *   - on edit mode mounts: `productApi.getById(storeSlug, id)` → seeds
- *     `editing`, flips Simple/Advanced based on image count > 1
- *   - submit goes through `handleSimpleSubmit` which:
- *       1) calls `networkContext.ensureLofnStore(networkId)` to lazily
- *          provision the Lofn store on first save
- *       2) ensures a default category exists
- *       3) `insert` or `update` via `useProduct`
- *       4) `useImage().upload(productId, file, 1)` when a file is set
- *       5) `productLinkContext.upsert(...)` on first create to register
- *          the MonexUp ↔ Lofn link
- *   - success / error route through `MessageToast`
- *   - on success → navigate to `/admin/products` after 800ms
+ * Submit flow (preserved + extended for donations):
+ *   1) `networkContext.ensureLofnStore(networkId)` — lazy provision Lofn store
+ *   2) `ensureDefaultCategory(storeId, storeSlug)`
+ *   3) `productApi.insert/update(storeSlug, payload)` — payload is cast to the
+ *      extended Lofn shape (`ProductInsertInfoExt` / `ProductUpdateInfoExt`)
+ *      that includes `donationMode` and `minimumDonationAmount`. The Lofn C#
+ *      backend already accepts these; the npm `lofn-react` types are stale.
+ *   4) `imageApi.upload(productId, file, 1)` when an image was picked
+ *   5) `productLinkContext.upsert(...)` on first create — registers the
+ *      MonexUp ↔ Lofn link
  *
- * The page header `Salvar` button drives `SimpleForm`'s native submit by
- * calling `requestSubmit()` on the wrapped `<form>` so the form's own
- * validation pipeline (required, minLength, type=number) keeps working.
- * SimpleForm's own submit/cancel buttons are visually hidden via the
- * `[&_form_button[type=submit]]:hidden` selector on the wrapper.
+ * Errors → MessageToast. Success → navigate to `/admin/products` after 800ms.
  */
 export default function ProductFormPage() {
     const { t } = useTranslation();
@@ -65,8 +64,30 @@ export default function ProductFormPage() {
     const { ensureDefaultCategory } = useDefaultCategory();
     const { storeId, storeSlug, isReady, needsProvisioning } = useStoreScope();
 
-    const [mode, setMode] = useState<ProductFormModeEnum>(ProductFormModeEnum.Simple);
-    const [editing, setEditing] = useState<ProductInfo | null>(null);
+    // Mode toggle state — persisted in localStorage. Default = Simple.
+    const [mode, setMode] = useState<ProductFormModeEnum>(() => {
+        if (typeof window === "undefined") return ProductFormModeEnum.Simple;
+        try {
+            return window.localStorage.getItem(MODE_STORAGE_KEY) === "1"
+                ? ProductFormModeEnum.Advanced
+                : ProductFormModeEnum.Simple;
+        } catch {
+            return ProductFormModeEnum.Simple;
+        }
+    });
+
+    useEffect(() => {
+        try {
+            window.localStorage.setItem(
+                MODE_STORAGE_KEY,
+                mode === ProductFormModeEnum.Advanced ? "1" : "0",
+            );
+        } catch {
+            /* swallow — non-essential */
+        }
+    }, [mode]);
+
+    const [editing, setEditing] = useState<ProductInfoExt | null>(null);
     const [loading, setLoading] = useState<boolean>(isEdit);
     const [submitting, setSubmitting] = useState<boolean>(false);
     const [advancedDataWarning, setAdvancedDataWarning] = useState<boolean>(false);
@@ -80,24 +101,77 @@ export default function ProductFormPage() {
         setToastShow(true);
     };
 
-    // Wraps the rendered SimpleForm so the page-header Save button can drive
-    // the form's native submit pipeline via `requestSubmit()`.
-    const formWrapperRef = useRef<HTMLDivElement>(null);
-
     useEffect(() => {
-        if (!isEdit || !productId || !storeSlug) return;
+        if (!isEdit || !productId) return;
         let cancelled = false;
         (async () => {
             setLoading(true);
             try {
-                const product = await productApi.getById(storeSlug, Number(productId));
+                // lofn-react's `productApi.getById` declares the GraphQL
+                // variable as `Int!` while the server expects `Long!`. We
+                // bypass it with a raw GraphQL request that uses the right
+                // type and selects the donation fields too.
+                const lofnApiUrl =
+                    (typeof process !== "undefined" && (process as any).env?.REACT_APP_LOFN_API_URL)
+                    || (import.meta as any).env?.REACT_APP_LOFN_API_URL
+                    || (import.meta as any).env?.VITE_LOFN_API_URL
+                    || "";
+                if (!lofnApiUrl) throw new Error("LOFN_API_URL_MISSING");
+                const token = auth.sessionInfo?.token ?? "";
+                const r = await fetch(`${lofnApiUrl.replace(/\/$/, "")}/graphql/admin`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                        "X-Tenant-Id": "monexup",
+                    },
+                    body: JSON.stringify({
+                        query: `query ($productId: Long!) {
+                            myProducts(where: { productId: { eq: $productId } }) {
+                                items {
+                                    productId
+                                    storeId
+                                    categoryId
+                                    slug
+                                    name
+                                    description
+                                    price
+                                    discount
+                                    frequency
+                                    limit
+                                    status
+                                    productType
+                                    featured
+                                    imageUrl
+                                    donationMode
+                                    minimumDonationAmount
+                                    productImages { imageId imageUrl sortOrder }
+                                }
+                            }
+                        }`,
+                        variables: { productId: Number(productId) },
+                    }),
+                });
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                const j = await r.json();
+                if (j?.errors?.length) throw new Error(j.errors[0].message);
+                const item = j?.data?.myProducts?.items?.[0];
+                if (!item) throw new Error("PRODUCT_NOT_FOUND");
+                // Normalize `productImages` → `images` (matches lofn-react helper).
+                if (item.productImages && !item.images) {
+                    item.images = item.productImages;
+                    delete item.productImages;
+                }
                 if (cancelled) return;
-                setEditing(product);
-                const hasAdvancedData = (product.images?.length ?? 0) > 1;
+                setEditing(item as ProductInfoExt);
+                const hasAdvancedData = (item.images?.length ?? 0) > 1;
                 setAdvancedDataWarning(hasAdvancedData);
-                setMode(hasAdvancedData ? ProductFormModeEnum.Advanced : ProductFormModeEnum.Simple);
             } catch {
-                showToast(MessageToastEnum.Error, t("admin_lofn_unavailable", "Lofn indisponível, tente novamente."));
+                if (cancelled) return;
+                showToast(
+                    MessageToastEnum.Error,
+                    t("admin_lofn_unavailable", "Lofn indisponível, tente novamente."),
+                );
             } finally {
                 if (!cancelled) setLoading(false);
             }
@@ -106,7 +180,7 @@ export default function ProductFormPage() {
             cancelled = true;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isEdit, productId, storeSlug]);
+    }, [isEdit, productId]);
 
     // -------------------------------------------------------------------
     // Early guards (kept inside the same `mnx-surface-light` shell so they
@@ -174,59 +248,126 @@ export default function ProductFormPage() {
         }
         setSubmitting(true);
         try {
-            // Ensure Lofn store exists for this network. Backend lazily
-            // provisions the store on demand; if the network already has one,
-            // this is effectively a no-op that returns the same lofnStoreId.
-            let effectiveStoreSlug = storeSlug;
-            let effectiveStoreId = storeId;
-            if (!effectiveStoreSlug || !effectiveStoreId) {
-                const r = await networkContext.ensureLofnStore(networkId);
-                if (!r.sucesso || !r.network?.lofnStoreId) {
-                    showToast(
-                        MessageToastEnum.Error,
-                        (r as any).mensagemErro ||
-                            t("admin_product_provision_error", "Falha ao provisionar a loja na Lofn."),
-                    );
-                    return;
-                }
-                effectiveStoreId = r.network.lofnStoreId as number;
-                effectiveStoreSlug = String(effectiveStoreId);
-                // Refresh user-network list so future renders see the
-                // populated lofnStoreId everywhere (sidebar, lists, etc).
-                await networkContext.listByUser();
+            // ALWAYS call ensure-store before saving — backend lazily
+            // provisions the Lofn store on demand and returns the existing
+            // lofnStoreId on subsequent calls (idempotent). This guarantees
+            // the store exists even when the cached network info is stale.
+            const r = await networkContext.ensureLofnStore(networkId);
+            if (!r.sucesso || !r.network?.lofnStoreId) {
+                showToast(
+                    MessageToastEnum.Error,
+                    (r as any).mensagemErro ||
+                        t("admin_product_provision_error", "Falha ao provisionar a loja na Lofn."),
+                );
+                return;
             }
+            const effectiveStoreId = r.network.lofnStoreId as number;
+            // Lofn REST endpoints (`/Category/{slug}/insert`, etc.) require the
+            // actual store SLUG, not the numeric storeId. The lofn-react
+            // `getStoreById` helper has a stale GraphQL query (declares
+            // `storeId: Int!` while the server expects `Long!`), so we issue a
+            // raw GraphQL request with the correct type instead.
+            const lofnApiUrl =
+                (typeof process !== "undefined" && (process as any).env?.REACT_APP_LOFN_API_URL)
+                || (import.meta as any).env?.REACT_APP_LOFN_API_URL
+                || (import.meta as any).env?.VITE_LOFN_API_URL
+                || "";
+            if (!lofnApiUrl) {
+                showToast(
+                    MessageToastEnum.Error,
+                    t("admin_lofn_unavailable", "Lofn indisponível, tente novamente."),
+                );
+                return;
+            }
+            const token = auth.sessionInfo?.token ?? "";
+            const gqlResp = await fetch(`${lofnApiUrl.replace(/\/$/, "")}/graphql/admin`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                    "X-Tenant-Id": "monexup",
+                },
+                body: JSON.stringify({
+                    query: `query ($storeId: Long!) {
+                        myStores(where: { storeId: { eq: $storeId } }) {
+                            items { storeId slug name }
+                        }
+                    }`,
+                    variables: { storeId: effectiveStoreId },
+                }),
+            });
+            const gqlJson = await gqlResp.json();
+            const effectiveStoreSlug: string | undefined =
+                gqlJson?.data?.myStores?.items?.[0]?.slug;
+            if (!effectiveStoreSlug) {
+                showToast(
+                    MessageToastEnum.Error,
+                    t("admin_product_provision_error", "Falha ao provisionar a loja na Lofn."),
+                );
+                return;
+            }
+            // Refresh user-network list so future renders see the populated
+            // lofnStoreId everywhere (sidebar, lists, etc).
+            await networkContext.listByUser();
             const categoryId = await ensureDefaultCategory(effectiveStoreId, effectiveStoreSlug);
-            let saved: ProductInfo;
+
+            // Donation rules:
+            //   - When `productType === Donation` AND `donationMode === Free`,
+            //     the Lofn backend ignores `price` (the donor picks); we send
+            //     0 so the schema stays satisfied.
+            //   - `donationMode` and `minimumDonationAmount` are nulled out for
+            //     non-Donation types so the backend doesn't carry stale values.
+            const isDonation = values.productType === ProductTypeExtended.Donation;
+            const isFreeDonation =
+                isDonation && values.donationMode === DonationModeEnum.Free;
+            const effectivePrice = isFreeDonation ? 0 : values.price;
+            const effectiveDiscount = isDonation ? 0 : values.discount;
+            const effectiveDonationMode = isDonation ? values.donationMode : null;
+            const effectiveMinimumDonationAmount = isDonation
+                ? values.minimumDonationAmount
+                : null;
+
+            let saved: ProductInfoExt;
 
             if (editing) {
-                const update: ProductUpdateInfo = {
+                const update: ProductUpdateInfoExt = {
                     productId: editing.productId,
                     categoryId: editing.categoryId ?? categoryId,
                     name: values.name,
                     description: values.description,
-                    price: values.price,
-                    discount: editing.discount ?? 0,
+                    price: effectivePrice,
+                    discount: effectiveDiscount,
                     frequency: editing.frequency ?? 0,
                     limit: editing.limit ?? 0,
                     status: values.status,
-                    productType: editing.productType ?? ProductTypeEnum.Physical,
+                    productType: values.productType as unknown as ProductUpdateInfoExt["productType"],
                     featured: editing.featured ?? false,
+                    donationMode: effectiveDonationMode,
+                    minimumDonationAmount: effectiveMinimumDonationAmount,
                 };
-                saved = await productApi.update(effectiveStoreSlug!, update);
+                saved = (await productApi.update(
+                    effectiveStoreSlug!,
+                    update as any,
+                )) as ProductInfoExt;
             } else {
-                const insert: ProductInsertInfo = {
+                const insert: ProductInsertInfoExt = {
                     categoryId,
                     name: values.name,
                     description: values.description,
-                    price: values.price,
-                    discount: 0,
+                    price: effectivePrice,
+                    discount: effectiveDiscount,
                     frequency: 0,
                     limit: 0,
                     status: values.status,
-                    productType: ProductTypeEnum.Physical,
+                    productType: values.productType as unknown as ProductInsertInfoExt["productType"],
                     featured: false,
+                    donationMode: effectiveDonationMode,
+                    minimumDonationAmount: effectiveMinimumDonationAmount,
                 };
-                saved = await productApi.insert(effectiveStoreSlug!, insert);
+                saved = (await productApi.insert(
+                    effectiveStoreSlug!,
+                    insert as any,
+                )) as ProductInfoExt;
             }
 
             if (values.imageFile && saved?.productId) {
@@ -282,13 +423,6 @@ export default function ProductFormPage() {
             : newProductLabel
         : newProductLabel;
 
-    const handleHeaderSave = () => {
-        // Drive the SimpleForm's native submit so its validation pipeline
-        // (required fields, minLength, file requirement, etc.) keeps working.
-        const form = formWrapperRef.current?.querySelector("form");
-        form?.requestSubmit();
-    };
-
     return (
         <main className="mnx-surface-light bg-mnx-neutral-50 min-h-screen">
             <MessageToast
@@ -299,7 +433,9 @@ export default function ProductFormPage() {
             />
 
             <div className="max-w-container mx-auto px-shell pt-6 pb-12">
-                {/* 1. Page header band (ProfileEditPage parity) ----------------- */}
+                {/* 1. Page header band — title + breadcrumb on the left,
+                    "Modo avançado" checkbox on the right (Save/Voltar moved to
+                    the form bottom). */}
                 <section
                     className="flex flex-row items-start sm:items-center justify-between gap-4 mb-6 lg:mb-8 animate-fade-up"
                     aria-labelledby="product-form-page-title"
@@ -351,47 +487,18 @@ export default function ProductFormPage() {
                         </nav>
                     </div>
 
-                    <div className="flex items-center gap-1.5 shrink-0">
-                        <button
-                            type="button"
-                            onClick={() => navigate("/admin/products")}
-                            className="inline-flex h-9 items-center gap-2 px-3 rounded-md border border-mnx-neutral-300 text-sm font-semibold text-graphite-700 hover:border-graphite-900 hover:bg-mnx-neutral-100 transition-colors duration-fast"
-                        >
-                            <ArrowLeft size={16} aria-hidden="true" />
-                            {t("back_button")}
-                        </button>
-                        <button
-                            type="button"
-                            onClick={handleHeaderSave}
-                            disabled={submitting || loading}
-                            className="cta-primary inline-flex h-9 items-center gap-2 px-4 rounded-md bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold shadow-glow-md transition-colors duration-fast disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-orange-500"
-                        >
-                            {submitting ? (
-                                t("loading")
-                            ) : (
-                                <>
-                                    <Save size={16} aria-hidden="true" />
-                                    {t("save_button")}
-                                </>
-                            )}
-                        </button>
+                    <div className="flex items-center gap-3 shrink-0">
+                        <ProductModeToggle mode={mode} onModeChange={setMode} />
                     </div>
                 </section>
 
-                {/* 2. Form card --------------------------------------------------- */}
+                {/* 2. Form card -------------------------------------------------- */}
                 <section
                     aria-label={headlineText}
                     className="auth-card relative p-4 sm:p-6 animate-fade-up"
                 >
-                    {/* Auxiliary controls row (kept compact, lives inside the card so
-                        the page header stays clean). */}
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                        <ProductModeToggle mode={mode} onModeChange={setMode} />
-                        <NetworkSwitcher />
-                    </div>
-
                     {advancedDataWarning && mode === ProductFormModeEnum.Simple && (
-                        <div className="mt-4 text-xs text-orange-700 bg-orange-500/10 ring-1 ring-orange-500/20 rounded-md px-3 py-2">
+                        <div className="mb-4 text-xs text-orange-700 bg-orange-500/10 ring-1 ring-orange-500/20 rounded-md px-3 py-2">
                             {t(
                                 "admin_product_advanced_warning",
                                 "Este produto tem dados avançados não editáveis em modo Simples — alterne para Avançado para vê-los.",
@@ -399,34 +506,30 @@ export default function ProductFormPage() {
                         </div>
                     )}
 
-                    <div className="mt-4">
-                        {loading ? (
-                            <div className="space-y-3" aria-busy="true">
-                                <Skeleton className="h-12 w-full" />
-                                <Skeleton className="h-12 w-full" />
-                                <Skeleton className="h-12 w-full" />
-                                <Skeleton className="h-12 w-full" />
-                            </div>
-                        ) : mode === ProductFormModeEnum.Simple ? (
-                            <div
-                                ref={formWrapperRef}
-                                className="[&_form_button[type=submit]]:hidden [&_form_button[type=button]]:hidden"
-                            >
-                                <SimpleForm
-                                    initial={editing}
-                                    onSubmit={handleSimpleSubmit}
-                                    onCancel={() => navigate("/admin/products")}
-                                    submitting={submitting}
-                                />
-                            </div>
-                        ) : (
-                            <div className="text-sm text-graphite-600 bg-mnx-neutral-100 rounded-md px-4 py-3">
-                                {t("admin_product_mode_advanced", "Avançado")} — em construção
-                            </div>
-                        )}
-                    </div>
+                    {loading ? (
+                        <div className="space-y-3" aria-busy="true">
+                            <Skeleton className="h-12 w-full" />
+                            <Skeleton className="h-12 w-full" />
+                            <Skeleton className="h-12 w-full" />
+                            <Skeleton className="h-12 w-full" />
+                        </div>
+                    ) : mode === ProductFormModeEnum.Simple ? (
+                        <SimpleForm
+                            initial={editing}
+                            onSubmit={handleSimpleSubmit}
+                            onCancel={() => navigate("/admin/products")}
+                            submitting={submitting}
+                        />
+                    ) : (
+                        <div className="text-sm text-graphite-600 bg-mnx-neutral-100 rounded-md px-4 py-3">
+                            {t("admin_product_mode_advanced", "Modo avançado")} — em construção
+                        </div>
+                    )}
                 </section>
             </div>
         </main>
     );
 }
+
+// `ProductInfo` re-export kept for backwards compat with downstream imports.
+export type { ProductInfo };

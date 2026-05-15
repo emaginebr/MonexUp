@@ -18,6 +18,7 @@
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.0",
     "@stacks/connect": "^7.8.0",
+    "@uiw/react-md-editor": "^4.1.0",
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "class-variance-authority": "^0.7.0",

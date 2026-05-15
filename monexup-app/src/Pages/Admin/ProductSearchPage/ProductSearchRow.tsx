@@ -1,37 +1,41 @@
 import { Link } from "react-router-dom";
 import { Check, Circle, Pencil, X } from "lucide-react";
 import { ProductStatusEnum } from "lofn-react";
-import type { ProductInfo } from "lofn-react";
+import {
+  DonationModeEnum,
+  ProductInfoExt,
+  ProductTypeExtended,
+} from "../../../DTO/Lofn/ProductExt";
 
 export interface ProductSearchRowLabels {
   /** Translated status text for this product. */
   statusText: string;
+  /** Translated product type text (Físico / Infoproduto / Doação). */
+  typeText: string;
+  /** Optional donation mode text appended in parentheses when Donation. */
+  donationModeText?: string;
   /** Action labels (used as aria-label + title). */
   edit: string;
   /** Currency code prefix shown before the price. */
   currency: string;
-  /** Default category label when the product has no resolved category. */
-  defaultCategoryLabel: string;
   /** dl labels (mobile stacked card). */
   priceLabel: string;
-  categoryLabel: string;
+  typeLabel: string;
   statusLabel: string;
 }
 
 export interface ProductSearchRowProps {
-  product: ProductInfo;
+  product: ProductInfoExt;
   labels: ProductSearchRowLabels;
-  /** Optional category text resolved by the parent (Lofn category lookup). */
-  categoryText?: string;
 }
 
 /**
  * ProductSearchRow — single row of `/admin/products` rendered in two layouts:
  *
- *   • md+   : a 12-column grid row (Product 5 / Category 2 / Price 2 / Status 1
+ *   • md+   : a 12-column grid row (Product 5 / Type 2 / Price 2 / Status 1
  *             / Actions 2). Numeric cells use `mnx-num` and right-align.
  *   • <md   : a stacked card with thumbnail + name on top, status pill below,
- *             a `<dl>` strip with category + price, and the edit action on the
+ *             a `<dl>` strip with type + price, and the edit action on the
  *             title row.
  *
  * Pure presentational. Navigation to `/admin/products/:productId/edit` is
@@ -78,15 +82,24 @@ function StatusIcon({ status }: { status: ProductStatusEnum }) {
 export default function ProductSearchRow({
   product,
   labels,
-  categoryText,
 }: ProductSearchRowProps) {
   const editHref = `/admin/products/${product.productId}/edit`;
   const initials = getInitials(product.name);
   const statusClass = statusPillClasses(product.status);
-  const category = categoryText || labels.defaultCategoryLabel;
+  const typeChipText = labels.donationModeText
+    ? `${labels.typeText} · ${labels.donationModeText}`
+    : labels.typeText;
 
   // Lofn ProductInfo carries a top-level `imageUrl` plus a richer `images[]`.
   const thumb = product.imageUrl || product.images?.[0]?.imageUrl || "";
+
+  // Donation + Free → render `minimumDonationAmount` in the price slot.
+  const isFreeDonation =
+    product.productType === ProductTypeExtended.Donation &&
+    product.donationMode === DonationModeEnum.Free;
+  const priceValue = isFreeDonation
+    ? (product.minimumDonationAmount ?? 0)
+    : product.price;
 
   return (
     <>
@@ -127,10 +140,10 @@ export default function ProductSearchRow({
           </div>
         </div>
 
-        {/* Category chip */}
+        {/* Type chip (replaces Category) */}
         <div className="col-span-2 flex items-center justify-start" role="cell">
           <span className="inline-flex items-center h-[24px] px-2 rounded-full bg-graphite-100 text-graphite-700 ring-1 ring-graphite-200 text-[11px] font-semibold truncate max-w-full">
-            {category}
+            {typeChipText}
           </span>
         </div>
 
@@ -142,7 +155,7 @@ export default function ProductSearchRow({
           <span className="text-graphite-400 font-normal mr-1">
             {labels.currency}
           </span>
-          {formatPrice(product.price)}
+          {formatPrice(priceValue)}
         </div>
 
         {/* Status pill */}
@@ -221,10 +234,10 @@ export default function ProductSearchRow({
         <dl className="mt-3 grid grid-cols-2 gap-3">
           <div>
             <dt className="text-[0.65rem] uppercase tracking-wider font-semibold text-graphite-400">
-              {labels.categoryLabel}
+              {labels.typeLabel}
             </dt>
             <dd className="mt-0.5 text-sm text-graphite-900 truncate">
-              {category}
+              {typeChipText}
             </dd>
           </div>
           <div className="text-right">
@@ -235,7 +248,7 @@ export default function ProductSearchRow({
               <span className="text-graphite-400 font-normal mr-1">
                 {labels.currency}
               </span>
-              {formatPrice(product.price)}
+              {formatPrice(priceValue)}
             </dd>
           </div>
         </dl>
