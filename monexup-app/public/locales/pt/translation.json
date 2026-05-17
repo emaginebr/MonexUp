@@ -542,7 +542,10 @@
       "promote": "Promover",
       "demote": "Rebaixar",
       "previous": "Anterior",
-      "next": "Próximo"
+      "next": "Próximo",
+      "viewStorefront": "Ver loja",
+      "viewStorefrontMissingNetwork": "Rede sem slug — não é possível abrir a loja",
+      "viewStorefrontMissingSeller": "Vendedor sem slug — não é possível abrir a loja"
     },
     "messages": {
       "userAccessRemoved": "Acesso do usuário removido",
@@ -709,5 +712,27 @@
   "admin_filter_value_new": "Novo valor",
   "admin_filter_delete_confirm": "Excluir filtro? Produtos vinculados ficarão sem essa característica.",
   "admin_lofn_unavailable": "Lofn indisponível, tente novamente.",
-  "admin_catalog": "Catálogo"
+  "admin_catalog": "Catálogo",
+  "storefront_title": "Loja",
+  "storefront_empty": "Este vendedor ainda não publicou produtos.",
+  "storefront_loading": "Carregando produtos...",
+  "storefront_unavailable": "Loja indisponível.",
+  "storefront_seller_not_found": "Vendedor não encontrado.",
+  "btn_buy": "Comprar",
+  "btn_donate": "Doar",
+  "simple_login_title": "Identificação",
+  "simple_login_subtitle": "Informe seus dados para concluir o pagamento",
+  "field_name": "Nome",
+  "field_email": "E-mail",
+  "field_cpf": "CPF",
+  "cpf_invalid": "CPF inválido",
+  "email_invalid": "E-mail inválido",
+  "name_required": "Informe seu nome",
+  "donation_amount_label": "Valor da doação (R$)",
+  "donation_min_warning": "Valor mínimo de doação: R$ {{min}}",
+  "donation_amount_required": "Informe um valor",
+  "pix_modal_title": "Pagamento PIX",
+  "pix_expired": "QR Code expirado",
+  "pix_retry": "Tentar novamente",
+  "storefront_action_error": "Não foi possível iniciar o pagamento. Tente novamente."
 }

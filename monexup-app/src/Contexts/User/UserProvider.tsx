@@ -45,6 +45,7 @@ function mapNAuthUserToSearchInfo(nauthUser: NAuthUserInfo): UserNetworkSearchIn
         networkId: 0,
         name: nauthUser.name,
         email: nauthUser.email,
+        slug: nauthUser.slug,
         profile: "",
         level: 0,
         commission: 0,

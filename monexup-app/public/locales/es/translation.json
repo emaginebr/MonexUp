@@ -495,7 +495,10 @@
       "promote": "Promover",
       "demote": "Degradar",
       "previous": "Anterior",
-      "next": "Siguiente"
+      "next": "Siguiente",
+      "viewStorefront": "Ver tienda",
+      "viewStorefrontMissingNetwork": "Red sin slug — no se puede abrir la tienda",
+      "viewStorefrontMissingSeller": "Vendedor sin slug — no se puede abrir la tienda"
     },
     "messages": {
       "userAccessRemoved": "Acceso de usuario eliminado",
@@ -662,5 +665,27 @@
   "admin_filter_value_new": "Nuevo valor",
   "admin_filter_delete_confirm": "¿Eliminar filtro? Productos vinculados perderán este atributo.",
   "admin_lofn_unavailable": "Lofn no disponible, inténtalo de nuevo.",
-  "admin_catalog": "Catálogo"
+  "admin_catalog": "Catálogo",
+  "storefront_title": "Tienda",
+  "storefront_empty": "Este vendedor aún no ha publicado productos.",
+  "storefront_loading": "Cargando productos...",
+  "storefront_unavailable": "Tienda no disponible.",
+  "storefront_seller_not_found": "Vendedor no encontrado.",
+  "btn_buy": "Comprar",
+  "btn_donate": "Donar",
+  "simple_login_title": "Identificación",
+  "simple_login_subtitle": "Ingrese sus datos para completar el pago",
+  "field_name": "Nombre",
+  "field_email": "Correo electrónico",
+  "field_cpf": "CPF",
+  "cpf_invalid": "CPF inválido",
+  "email_invalid": "Correo inválido",
+  "name_required": "Ingrese su nombre",
+  "donation_amount_label": "Monto de la donación (R$)",
+  "donation_min_warning": "Monto mínimo de donación: R$ {{min}}",
+  "donation_amount_required": "Ingrese un monto",
+  "pix_modal_title": "Pago PIX",
+  "pix_expired": "QR Code expirado",
+  "pix_retry": "Reintentar",
+  "storefront_action_error": "No se pudo iniciar el pago. Inténtelo de nuevo."
 }

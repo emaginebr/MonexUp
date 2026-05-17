@@ -7,6 +7,7 @@ export default interface UserNetworkSearchInfo {
     profileId?: number;
     name: string;
     email: string;
+    slug?: string;
     profile: string;
     level: number;
     commission: number;

@@ -542,7 +542,10 @@
       "promote": "Promote",
       "demote": "Demote",
       "previous": "Previous",
-      "next": "Next"
+      "next": "Next",
+      "viewStorefront": "View store",
+      "viewStorefrontMissingNetwork": "Network missing slug — store cannot be opened",
+      "viewStorefrontMissingSeller": "Seller missing slug — store cannot be opened"
     },
     "messages": {
       "userAccessRemoved": "User access removed",
@@ -709,5 +712,27 @@
   "admin_filter_value_new": "New value",
   "admin_filter_delete_confirm": "Delete filter? Linked products will lose this attribute.",
   "admin_lofn_unavailable": "Lofn unavailable, please try again.",
-  "admin_catalog": "Catalog"
+  "admin_catalog": "Catalog",
+  "storefront_title": "Store",
+  "storefront_empty": "This seller hasn't published any products yet.",
+  "storefront_loading": "Loading products...",
+  "storefront_unavailable": "Store unavailable.",
+  "storefront_seller_not_found": "Seller not found.",
+  "btn_buy": "Buy",
+  "btn_donate": "Donate",
+  "simple_login_title": "Identification",
+  "simple_login_subtitle": "Enter your details to complete the payment",
+  "field_name": "Name",
+  "field_email": "Email",
+  "field_cpf": "CPF",
+  "cpf_invalid": "Invalid CPF",
+  "email_invalid": "Invalid email",
+  "name_required": "Please enter your name",
+  "donation_amount_label": "Donation amount (R$)",
+  "donation_min_warning": "Minimum donation amount: R$ {{min}}",
+  "donation_amount_required": "Please enter an amount",
+  "pix_modal_title": "PIX Payment",
+  "pix_expired": "QR Code expired",
+  "pix_retry": "Try again",
+  "storefront_action_error": "Could not start the payment. Please try again."
 }

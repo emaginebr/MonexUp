@@ -48,6 +48,7 @@ import Error404Page from './Pages/Error404Page';
 import OrderSearchPage from './Pages/OrderSearchPage';
 import SellerAddPage from './Pages/SellerAddPage';
 import SellerPage from './Pages/SellerPage';
+import StorefrontPage from './Pages/StorefrontPage';
 import InvoiceProvider from './Contexts/Invoice/InvoiceProvider';
 import NetworkFooter from './Pages/NetworkPage/NetworkFooter';
 import MenuUser from './Components/MenuUser';
@@ -272,6 +273,7 @@ function App() {
             <Route path="change-password" element={<PasswordPage />} />
             <Route path="reset-password" element={<ResetPasswordPage />} />
           </Route>
+          <Route path="store/:sellerSlug" element={<StorefrontPage />} />
           <Route path=":productSlug" element={<ProductPage />} />
           <Route path="@">
             <Route path=":sellerSlug">

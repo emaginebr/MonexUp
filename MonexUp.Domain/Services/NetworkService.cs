@@ -230,6 +230,24 @@ namespace MonexUp.Domain.Impl.Services
             {
                 return null;
             }
+
+            // Public surfaces (storefront, seller landing) hit this without a
+            // bearer token. NAuth refuses unauthenticated calls, so we guard
+            // the User fetch and degrade gracefully instead of 500'ing the
+            // whole request.
+            NAuth.DTO.User.UserInfo userInfo = null;
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                try
+                {
+                    userInfo = await _userClient.GetByIdAsync(model.UserId, token);
+                }
+                catch
+                {
+                    userInfo = null;
+                }
+            }
+
             return new UserNetworkInfo
             {
                 NetworkId = model.NetworkId,
@@ -239,7 +257,7 @@ namespace MonexUp.Domain.Impl.Services
                 Role = model.Role,
                 Status = model.Status,
                 Network = await GetNetworkInfo(model.GetNetwork(_networkFactory)),
-                User = await _userClient.GetByIdAsync(model.UserId, token),
+                User = userInfo,
                 Profile = _profileService.GetUserProfileInfo(
                     _userProfileFactory.BuildUserProfileModel()
                     .GetById(model.ProfileId.GetValueOrDefault(), _userProfileFactory)

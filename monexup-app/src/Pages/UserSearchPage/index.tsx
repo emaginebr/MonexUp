@@ -254,7 +254,12 @@ export default function UserSearchPage() {
     block: t("userSearchPage.actions.block"),
     approve: t("userSearchPage.actions.approve"),
     reprove: t("userSearchPage.actions.reprove"),
+    viewStorefront: t("userSearchPage.actions.viewStorefront"),
+    viewStorefrontMissingNetwork: t("userSearchPage.actions.viewStorefrontMissingNetwork"),
+    viewStorefrontMissingSeller: t("userSearchPage.actions.viewStorefrontMissingSeller"),
   };
+
+  const networkSlug = networkContext.network?.slug;
 
   return (
     <main className="mnx-surface-light bg-mnx-neutral-50 min-h-screen">
@@ -460,6 +465,7 @@ export default function UserSearchPage() {
                       user={user}
                       labels={labels}
                       handlers={handlers}
+                      networkSlug={networkSlug}
                     />
                   );
                 })}
