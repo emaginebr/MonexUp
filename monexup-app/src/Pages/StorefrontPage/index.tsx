@@ -51,12 +51,16 @@ export default function StorefrontPage() {
     }, []);
 
     // Centralised search so pagination and bootstrap fire the same code path.
+    // Accepts optional `storeIdOverride` because the bootstrap useEffect runs
+    // BEFORE React commits the network state from `getBySlug` (the closure
+    // would capture stale `networkContext.network = null`).
     const searchProducts = useCallback(
-        async (pageNum: number) => {
-            const storeId = (networkContext.network as unknown as { lofnStoreId?: number | null })
-                ?.lofnStoreId;
+        async (pageNum: number, storeIdOverride?: number | null) => {
+            const storeId =
+                storeIdOverride ??
+                (networkContext.network as unknown as { lofnStoreId?: number | null })?.lofnStoreId;
             const param: ProductSearchParam = {
-                storeId,
+                storeId: storeId ?? undefined,
                 onlyActive: true,
                 pageNum,
             };
@@ -92,7 +96,9 @@ export default function StorefrontPage() {
                 setPageState("seller_not_found");
                 return;
             }
-            await searchProducts(1);
+            const storeId = (netRet.network as unknown as { lofnStoreId?: number | null })
+                ?.lofnStoreId ?? null;
+            await searchProducts(1, storeId);
             if (cancelled) return;
             setPageState("ready");
         })();

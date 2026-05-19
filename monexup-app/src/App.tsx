@@ -268,9 +268,8 @@ function App() {
             the `VendorProductPage` route registration so list + detail share
             the same branded surface. */}
         <Route path=":networkSlug/store/:sellerSlug" element={<StorefrontPage />} />
-        {/* Vendor product detail — standalone, NO shared Layout. The vendor
-            template owns the entire chrome (per-store branding) and the page
-            renders only `VendorFooter` (condensed "Powered by MonexUp"). */}
+        {/* Vendor product detail — standalone, no shared Layout. Template
+            owns the `store-header` chrome. */}
         <Route path=":networkSlug/store/:sellerSlug/:productSlug" element={<VendorProductPage />} />
         <Route path=":networkSlug" element={<LayoutNetwork />}>
           <Route index element={<NetworkPage />} />

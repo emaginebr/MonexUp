@@ -9,11 +9,12 @@ let _httpClient: IHttpClient;
 
 const GRAPHQL_QUERY_PRODUCT_BY_SLUG = `
 query($slug: String!) {
-    getProducts(where: { slug: { eq: $slug } }) {
+    products(where: { slug: { eq: $slug } }) {
         items {
             productId storeId categoryId slug name description
             price discount frequency limit status productType featured
-            images { imageId productId image imageUrl sortOrder }
+            imageUrl donationMode minimumDonationAmount
+            productImages { imageId imageUrl sortOrder }
         }
     }
 }`;
@@ -31,8 +32,8 @@ const ProductService: IProductService = {
             query: GRAPHQL_QUERY_PRODUCT_BY_SLUG,
             variables: { slug: productSlug }
         });
-        if (response.success && response.data?.data?.getProducts?.items?.length > 0) {
-            const product = response.data.data.getProducts.items[0];
+        if (response.success && response.data?.data?.products?.items?.length > 0) {
+            const product = response.data.data.products.items[0];
             return {
                 ...ret,
                 data: product as ProductInfo,
