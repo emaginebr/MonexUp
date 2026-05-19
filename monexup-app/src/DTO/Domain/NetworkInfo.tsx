@@ -1,6 +1,7 @@
 export default interface NetworkInfo {
     networkId: number;
     slug: string;
+    template?: string | null;
     imageUrl: string;
     name: string;
     email: string;

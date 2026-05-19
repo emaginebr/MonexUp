@@ -12,6 +12,7 @@ namespace MonexUp.Domain.Interfaces.Models
     {
         long NetworkId { get; set; }
         string Slug { get; set; }
+        string Template { get; set; }
         string Image {  get; set; }
         string Name { get; set; }
 

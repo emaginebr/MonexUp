@@ -13,6 +13,8 @@ namespace MonexUp.DTO.Network
         public string Name { get; set; }
         [JsonPropertyName("email")]
         public string Email { get; set; }
+        [JsonPropertyName("template")]
+        public string Template { get; set; }
         [JsonPropertyName("comission")]
         public double Commission { get; set; }
         [JsonPropertyName("plan")]

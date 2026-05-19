@@ -4,6 +4,7 @@ import {
   ArrowUp,
   Ban,
   Check,
+  Eye,
   ShieldCheck,
   X,
 } from "lucide-react";
@@ -28,6 +29,9 @@ export interface UserSearchRowLabels {
   block: string;
   approve: string;
   reprove: string;
+  viewStorefront: string;
+  viewStorefrontMissingNetwork: string;
+  viewStorefrontMissingSeller: string;
 }
 
 export interface UserSearchRowHandlers {
@@ -44,6 +48,7 @@ export interface UserSearchRowProps {
   user: UserNetworkSearchInfo;
   labels: UserSearchRowLabels;
   handlers: UserSearchRowHandlers;
+  networkSlug?: string;
 }
 
 /**
@@ -121,13 +126,50 @@ function ActionCluster({
   user,
   labels,
   handlers,
+  networkSlug,
 }: {
   user: UserNetworkSearchInfo;
   labels: UserSearchRowLabels;
   handlers: UserSearchRowHandlers;
+  networkSlug?: string;
 }) {
+  const missingNetwork = !networkSlug;
+  const missingSeller = !user.slug;
+  const storefrontDisabled = missingNetwork || missingSeller;
+  const storefrontUrl = storefrontDisabled
+    ? null
+    : `/${networkSlug}/store/${user.slug}`;
+  const storefrontHint = missingNetwork
+    ? labels.viewStorefrontMissingNetwork
+    : missingSeller
+    ? labels.viewStorefrontMissingSeller
+    : labels.viewStorefront;
+
   return (
     <>
+      {storefrontDisabled ? (
+        <button
+          type="button"
+          disabled
+          aria-disabled="true"
+          aria-label={storefrontHint}
+          title={storefrontHint}
+          className="inline-flex w-9 h-9 items-center justify-center rounded-md text-graphite-300 cursor-not-allowed bg-mnx-neutral-50"
+        >
+          <Eye size={16} aria-hidden="true" />
+        </button>
+      ) : (
+        <a
+          href={storefrontUrl!}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={storefrontHint}
+          title={storefrontHint}
+          className="inline-flex w-9 h-9 items-center justify-center rounded-md transition-colors duration-fast focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 text-graphite-500 hover:text-orange-700 hover:bg-orange-500/10"
+        >
+          <Eye size={16} aria-hidden="true" />
+        </a>
+      )}
       <ActionButton
         ariaLabel={labels.promote}
         onClick={() => handlers.onPromote(user)}
@@ -208,6 +250,7 @@ export default function UserSearchRow({
   user,
   labels,
   handlers,
+  networkSlug,
 }: UserSearchRowProps) {
   const initials = getInitials(user.name);
   const statusClass = statusPillClasses(user.status);
@@ -261,7 +304,7 @@ export default function UserSearchRow({
           className="col-span-2 flex items-center justify-end gap-1"
           role="cell"
         >
-          <ActionCluster user={user} labels={labels} handlers={handlers} />
+          <ActionCluster user={user} labels={labels} handlers={handlers} networkSlug={networkSlug} />
         </div>
       </div>
 
@@ -287,7 +330,7 @@ export default function UserSearchRow({
             </div>
           </div>
           <div className="flex items-center gap-1 shrink-0">
-            <ActionCluster user={user} labels={labels} handlers={handlers} />
+            <ActionCluster user={user} labels={labels} handlers={handlers} networkSlug={networkSlug} />
           </div>
         </div>
         <div className="mt-3 flex flex-wrap items-center gap-2">

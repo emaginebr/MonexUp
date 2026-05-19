@@ -100,6 +100,9 @@ public partial class MonexUpContext : DbContext
                 .IsRequired()
                 .HasMaxLength(100)
                 .HasColumnName("slug");
+            entity.Property(e => e.Template)
+                .HasMaxLength(20)
+                .HasColumnName("template");
             entity.Property(e => e.Status)
                 .HasDefaultValue(1)
                 .HasColumnName("status");

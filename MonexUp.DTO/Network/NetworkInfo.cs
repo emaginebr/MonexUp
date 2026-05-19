@@ -13,6 +13,8 @@ namespace MonexUp.DTO.Network
         public long NetworkId { get; set; }
         [JsonPropertyName("slug")]
         public string Slug { get; set; }
+        [JsonPropertyName("template")]
+        public string Template { get; set; }
         [JsonPropertyName("imageUrl")]
         public string ImageUrl { get; set; }
         [JsonPropertyName("name")]
