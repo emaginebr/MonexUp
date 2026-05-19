@@ -21,6 +21,8 @@ public partial class Network
 
     public string Slug { get; set; }
 
+    public string Template { get; set; }
+
     public int Plan { get; set; }
 
     public string Image { get; set; }

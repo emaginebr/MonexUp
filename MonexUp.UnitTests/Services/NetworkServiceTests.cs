@@ -202,6 +202,74 @@ namespace MonexUp.UnitTests.Services
         }
 
         [Fact]
+        public void GetBySlug_ShouldDelegateToFactoryAndReturnModel()
+        {
+            // Arrange
+            string slug = "teste1";
+            var expectedModel = new Mock<INetworkModel>();
+
+            var mockBuilder = new Mock<INetworkModel>();
+            mockBuilder.Setup(m => m.GetBySlug(slug, It.IsAny<INetworkDomainFactory>()))
+                .Returns(expectedModel.Object);
+            _networkFactory.Setup(f => f.BuildNetworkModel()).Returns(mockBuilder.Object);
+
+            // Act
+            var result = _service.GetBySlug(slug);
+
+            // Assert
+            Assert.Same(expectedModel.Object, result);
+            mockBuilder.Verify(m => m.GetBySlug(slug, _networkFactory.Object), Times.Once);
+        }
+
+        [Fact]
+        public void GetBySlug_WhenNotFound_ShouldReturnNull()
+        {
+            // Arrange
+            string slug = "missing-slug";
+            var mockBuilder = new Mock<INetworkModel>();
+            mockBuilder.Setup(m => m.GetBySlug(slug, It.IsAny<INetworkDomainFactory>()))
+                .Returns((INetworkModel)null!);
+            _networkFactory.Setup(f => f.BuildNetworkModel()).Returns(mockBuilder.Object);
+
+            // Act
+            var result = _service.GetBySlug(slug);
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public void GetUserNetwork_ShouldDelegateToUserNetworkFactory()
+        {
+            // Arrange
+            long networkId = 7;
+            long userId = 42;
+            var expected = new Mock<IUserNetworkModel>();
+
+            var mockBuilder = new Mock<IUserNetworkModel>();
+            mockBuilder.Setup(m => m.Get(networkId, userId, It.IsAny<IUserNetworkDomainFactory>()))
+                .Returns(expected.Object);
+            _userNetworkFactory.Setup(f => f.BuildUserNetworkModel()).Returns(mockBuilder.Object);
+
+            // Act
+            var result = _service.GetUserNetwork(networkId, userId);
+
+            // Assert
+            Assert.Same(expected.Object, result);
+            mockBuilder.Verify(m => m.Get(networkId, userId, _userNetworkFactory.Object), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetUserNetworkInfo_WhenModelIsNull_ShouldReturnNull()
+        {
+            // Act
+            var result = await _service.GetUserNetworkInfo(null!, token: "any-token");
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        [Fact]
         public void GetById_ShouldDelegateToFactory()
         {
             // Arrange

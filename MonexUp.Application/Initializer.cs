@@ -70,9 +70,7 @@ namespace MonexUp.Application
 
             #region NAuth
             services.Configure<NAuthSetting>(configuration.GetSection("NAuth"));
-            services.AddHttpClient();
-            injectDependency(typeof(IUserClient), typeof(UserClient), services, scoped);
-            injectDependency(typeof(IRoleClient), typeof(RoleClient), services, scoped);
+            services.AddNAuth();
             #endregion
 
             #region zTools

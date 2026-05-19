@@ -49,6 +49,7 @@ import OrderSearchPage from './Pages/OrderSearchPage';
 import SellerAddPage from './Pages/SellerAddPage';
 import SellerPage from './Pages/SellerPage';
 import StorefrontPage from './Pages/StorefrontPage';
+import VendorProductPage from './Pages/VendorProductPage';
 import InvoiceProvider from './Contexts/Invoice/InvoiceProvider';
 import NetworkFooter from './Pages/NetworkPage/NetworkFooter';
 import MenuUser from './Components/MenuUser';
@@ -262,6 +263,15 @@ function App() {
           </Route>
           <Route index element={<Error404Page />} />
         </Route>
+        {/* Storefront listing — standalone, NO shared Layout. The vendor
+            template owns the entire chrome (per-store header/footer). Mirrors
+            the `VendorProductPage` route registration so list + detail share
+            the same branded surface. */}
+        <Route path=":networkSlug/store/:sellerSlug" element={<StorefrontPage />} />
+        {/* Vendor product detail — standalone, NO shared Layout. The vendor
+            template owns the entire chrome (per-store branding) and the page
+            renders only `VendorFooter` (condensed "Powered by MonexUp"). */}
+        <Route path=":networkSlug/store/:sellerSlug/:productSlug" element={<VendorProductPage />} />
         <Route path=":networkSlug" element={<LayoutNetwork />}>
           <Route index element={<NetworkPage />} />
           <Route path="account">
@@ -273,7 +283,6 @@ function App() {
             <Route path="change-password" element={<PasswordPage />} />
             <Route path="reset-password" element={<ResetPasswordPage />} />
           </Route>
-          <Route path="store/:sellerSlug" element={<StorefrontPage />} />
           <Route path=":productSlug" element={<ProductPage />} />
           <Route path="@">
             <Route path=":sellerSlug">

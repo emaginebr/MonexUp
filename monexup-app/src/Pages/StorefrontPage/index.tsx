@@ -1,69 +1,84 @@
-import { useContext, useEffect, useState } from "react";
+/**
+ * StorefrontPage — router-aware container for the public vendor storefront
+ * LISTING page (route: `/{networkSlug}/store/{sellerSlug}`).
+ *
+ * Responsibilities:
+ *   1. Resolve `network`, `seller` and the paginated product list via the
+ *      existing contexts.
+ *   2. Pick the visual template by `network.template` through the registry
+ *      (`templates/index.ts`). Unknown values fall back to "editorial".
+ *   3. Render `VendorFooter` (condensed MonexUp powered-by strip), shared
+ *      with `VendorProductPage`. The page is registered outside `<Layout />`
+ *      in `App.tsx` so the vendor brand owns the entire chrome.
+ *
+ * The legacy in-listing checkout flow (`DonationAmountForm`,
+ * `SimpleLoginForm`, `PixModalContainer`) lives now in `VendorProductPage`
+ * — this listing only navigates to the detail page when a card is clicked.
+ */
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Pagination from "react-bootstrap/Pagination";
-import Spinner from "react-bootstrap/Spinner";
 import NetworkContext from "../../Contexts/Network/NetworkContext";
 import ProductContext from "../../Contexts/Product/ProductContext";
-import AuthContext from "../../Contexts/Auth/AuthContext";
-import OrderContext from "../../Contexts/Order/OrderContext";
 import MessageToast from "../../Components/MessageToast";
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 import ProductSearchParam from "../../DTO/Domain/ProductSearchParam";
-import StorefrontCard from "./StorefrontCard";
-import EmptyState from "./EmptyState";
-import SimpleLoginForm, { SimpleLoginResult } from "./SimpleLoginForm";
-import DonationAmountForm from "./DonationAmountForm";
-import PixModalContainer, { PixCustomer } from "./PixModalContainer";
-import { StorefrontProductInfo, isDonation, isOpenDonation } from "./types";
-
-type PageState = "loading" | "ready" | "unavailable" | "seller_not_found";
+import VendorFooter from "../VendorProductPage/VendorFooter";
+import { resolveTemplate } from "./templates";
+import {
+    StorefrontPageState,
+    StorefrontProductInfo,
+    StorefrontViewModel,
+} from "./types";
 
 export default function StorefrontPage() {
     const { t } = useTranslation();
-    const { networkSlug, sellerSlug } = useParams<{ networkSlug: string; sellerSlug: string }>();
+    const { networkSlug, sellerSlug } = useParams<{
+        networkSlug: string;
+        sellerSlug: string;
+    }>();
 
     const networkContext = useContext(NetworkContext);
     const productContext = useContext(ProductContext);
-    const authContext = useContext(AuthContext);
-    const orderContext = useContext(OrderContext);
 
-    const [pageState, setPageState] = useState<PageState>("loading");
-
+    const [pageState, setPageState] = useState<StorefrontPageState>("loading");
     const [toastShow, setToastShow] = useState<boolean>(false);
     const [toastMsg, setToastMsg] = useState<string>("");
 
-    const [pendingProductId, setPendingProductId] = useState<number | null>(null);
-    const [selectedProduct, setSelectedProduct] = useState<StorefrontProductInfo | null>(null);
-    const [pendingAmount, setPendingAmount] = useState<number | null>(null);
-
-    const [donationFormOpen, setDonationFormOpen] = useState<boolean>(false);
-    const [loginOpen, setLoginOpen] = useState<boolean>(false);
-    const [pixOpen, setPixOpen] = useState<boolean>(false);
-    const [pixCustomer, setPixCustomer] = useState<PixCustomer | null>(null);
-
-    const showError = (msg: string) => {
+    const showError = useCallback((msg: string) => {
         setToastMsg(msg);
         setToastShow(true);
-    };
+    }, []);
 
-    const searchProducts = (pageNum: number) => {
-        const param: ProductSearchParam = {
-            networkSlug,
-            userSlug: sellerSlug,
-            keyword: "",
-            onlyActive: true,
-            pageNum,
-        };
-        return productContext.search(param);
-    };
+    // Centralised search so pagination and bootstrap fire the same code path.
+    const searchProducts = useCallback(
+        async (pageNum: number) => {
+            const storeId = (networkContext.network as unknown as { lofnStoreId?: number | null })
+                ?.lofnStoreId;
+            const param: ProductSearchParam = {
+                storeId,
+                onlyActive: true,
+                pageNum,
+            };
+            const ret = await productContext.search(param);
+            if (!ret.sucesso) {
+                showError(ret.mensagemErro || t("storefront_action_error"));
+            }
+            return ret;
+        },
+        [networkContext.network, productContext, showError, t],
+    );
 
+    // Bootstrap: network → seller → first page. Each missing step lands on a
+    // dedicated state so the template can render a meaningful empty surface
+    // instead of an empty grid + spinner.
     useEffect(() => {
         let cancelled = false;
         (async () => {
+            if (!networkSlug || !sellerSlug) {
+                setPageState("unavailable");
+                return;
+            }
             setPageState("loading");
             const netRet = await networkContext.getBySlug(networkSlug);
             if (cancelled) return;
@@ -77,119 +92,88 @@ export default function StorefrontPage() {
                 setPageState("seller_not_found");
                 return;
             }
-            const searchRet = await searchProducts(1);
+            await searchProducts(1);
             if (cancelled) return;
-            if (!searchRet.sucesso) {
-                showError(searchRet.mensagemErro || t("storefront_action_error"));
-            }
             setPageState("ready");
         })();
-        return () => { cancelled = true; };
+        return () => {
+            cancelled = true;
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [networkSlug, sellerSlug]);
 
-    const finalizeCheckout = async (product: StorefrontProductInfo, user: SimpleLoginResult, amount: number) => {
-        setPendingProductId(product.productId);
-        const ret = await orderContext.createPixPayment(
-            product.slug,
-            user.documentId,
-            networkSlug,
-            sellerSlug,
-        );
-        setPendingProductId(null);
-        if (!ret.sucesso) {
-            showError(ret.mensagemErro || t("storefront_action_error"));
-            return;
-        }
-        setPixCustomer({
-            name: user.name,
-            email: user.email,
-            documentId: user.documentId,
-            cellphone: "",
-        });
-        setPendingAmount(amount);
-        setPixOpen(true);
-    };
+    const Template = useMemo(
+        () => resolveTemplate(networkContext.network?.template ?? null),
+        [networkContext.network?.template],
+    );
 
-    const handleAction = (product: StorefrontProductInfo) => {
-        setSelectedProduct(product);
-        if (isDonation(product) && isOpenDonation(product)) {
-            setDonationFormOpen(true);
-            return;
-        }
-        setPendingAmount(product.price);
-        setLoginOpen(true);
-    };
-
-    const handleDonationConfirm = (amount: number) => {
-        setDonationFormOpen(false);
-        setPendingAmount(amount);
-        setLoginOpen(true);
-    };
-
-    const handleLoginSuccess = (user: SimpleLoginResult) => {
-        setLoginOpen(false);
-        if (!selectedProduct) return;
-        const amount = pendingAmount ?? selectedProduct.price;
-        void finalizeCheckout(selectedProduct, user, amount);
-    };
-
-    const renderPagination = () => {
+    // Project context state into the flat view-model the template consumes.
+    const view: StorefrontViewModel = useMemo(() => {
         const result = productContext.searchResult;
-        if (!result || result.pageCount <= 1) return null;
-        const items = [];
-        const total = result.pageCount;
-        for (let i = 1; i <= total; i++) {
-            items.push(
-                <Pagination.Item
-                    key={i}
-                    active={i === result.pageNum}
-                    onClick={() => searchProducts(i)}
-                >
-                    {i}
-                </Pagination.Item>
-            );
-        }
-        return (
-            <div className="d-flex justify-content-center mt-4">
-                <Pagination>{items}</Pagination>
-            </div>
-        );
-    };
+        const products = (result?.products ?? []) as StorefrontProductInfo[];
+        return {
+            network: networkContext.network,
+            seller: networkContext.seller,
+            products,
+            pageNum: result?.pageNum ?? 1,
+            pageCount: result?.pageCount ?? 0,
+            loading: productContext.loadingSearch,
+        };
+    }, [
+        networkContext.network,
+        networkContext.seller,
+        productContext.searchResult,
+        productContext.loadingSearch,
+    ]);
 
-    const renderProducts = () => {
-        if (productContext.loadingSearch) {
-            return (
-                <div className="text-center py-5">
-                    <Spinner animation="border" role="status" />
-                    <p className="text-muted mt-2">{t("storefront_loading")}</p>
-                </div>
-            );
-        }
-        const products = (productContext.searchResult?.products || []) as StorefrontProductInfo[];
-        if (products.length === 0) {
-            return <EmptyState title={t("storefront_empty")} />;
-        }
+    /* --------------------------------------------------------------------
+       Render branches:
+       - `unavailable` / `seller_not_found` use a minimal scoped empty card
+         (no template — the network record may be missing, so we can't pick
+         one safely).
+       - `loading` and `ready` both render the chosen Template; the template
+         is responsible for rendering its own skeleton/empty state internally
+         using `view.loading` + `view.products.length`.
+       -------------------------------------------------------------------- */
+    const renderEmpty = (title: string) => (
+        <div
+            style={{
+                minHeight: "60vh",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "48px 24px",
+                background: "#F4F1EA",
+                color: "#1A1812",
+                fontFamily: "Inter, system-ui, sans-serif",
+                textAlign: "center",
+            }}
+        >
+            <div>
+                <h1 style={{ fontSize: 28, fontWeight: 600, margin: "0 0 8px" }}>{title}</h1>
+                <p style={{ color: "#5A574F", margin: 0 }}>
+                    {t("vendor_product_unavailable_help")}
+                </p>
+            </div>
+        </div>
+    );
+
+    if (pageState === "unavailable") {
         return (
             <>
-                <Row className="g-3">
-                    {products.map((product) => (
-                        <Col key={product.productId} xs={12} sm={6} lg={4}>
-                            <StorefrontCard
-                                product={product}
-                                onAction={handleAction}
-                                disabled={pendingProductId === product.productId}
-                            />
-                        </Col>
-                    ))}
-                </Row>
-                {renderPagination()}
+                {renderEmpty(t("storefront_unavailable"))}
+                <VendorFooter />
             </>
         );
-    };
-
-    const session = authContext.sessionInfo;
-    const loginPrefill = session ? { name: session.name, email: session.email } : undefined;
+    }
+    if (pageState === "seller_not_found") {
+        return (
+            <>
+                {renderEmpty(t("storefront_seller_not_found"))}
+                <VendorFooter />
+            </>
+        );
+    }
 
     return (
         <>
@@ -199,53 +183,17 @@ export default function StorefrontPage() {
                 messageText={toastMsg}
                 onClose={() => setToastShow(false)}
             />
-            <Container className="py-4">
-                {pageState === "loading" && (
-                    <div className="text-center py-5">
-                        <Spinner animation="border" role="status" />
-                    </div>
-                )}
-                {pageState === "unavailable" && (
-                    <EmptyState title={t("storefront_unavailable")} />
-                )}
-                {pageState === "seller_not_found" && (
-                    <EmptyState title={t("storefront_seller_not_found")} />
-                )}
-                {pageState === "ready" && (
-                    <>
-                        <h2 className="mb-4">{networkContext.seller?.user?.name || t("storefront_title")}</h2>
-                        {renderProducts()}
-                    </>
-                )}
-            </Container>
 
-            <DonationAmountForm
-                show={donationFormOpen}
-                product={selectedProduct}
-                onConfirm={handleDonationConfirm}
-                onClose={() => setDonationFormOpen(false)}
+            <Template
+                view={view}
+                networkSlug={networkSlug || ""}
+                sellerSlug={sellerSlug || ""}
+                onPageChange={(page) => {
+                    void searchProducts(page);
+                }}
             />
 
-            <SimpleLoginForm
-                show={loginOpen}
-                onClose={() => setLoginOpen(false)}
-                onSuccess={handleLoginSuccess}
-                onError={(msg) => showError(msg)}
-                prefill={loginPrefill}
-                skipRegister={!!session}
-            />
-
-            {pixCustomer && selectedProduct && (
-                <PixModalContainer
-                    open={pixOpen}
-                    productId={selectedProduct.productId}
-                    productName={selectedProduct.name}
-                    amount={pendingAmount ?? selectedProduct.price}
-                    customer={pixCustomer}
-                    onClose={() => setPixOpen(false)}
-                    onError={(msg) => showError(msg)}
-                />
-            )}
+            <VendorFooter />
         </>
     );
 }

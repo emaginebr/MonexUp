@@ -95,6 +95,7 @@ namespace MonexUp.Domain.Impl.Services
             model.Email = network.Email;
             model.Commission = network.Commission;
             model.Plan = network.Plan;
+            model.Template = network.Template;
             model.WithdrawalMin = 300;
             model.WithdrawalPeriod = 30;
             model.Status = NetworkStatusEnum.Active;
@@ -182,6 +183,7 @@ namespace MonexUp.Domain.Impl.Services
             model.NetworkId = network.NetworkId;
             model.Name = network.Name;
             model.Slug = network.Slug;
+            model.Template = network.Template;
             model.Image = network.ImageUrl;
             model.Email = network.Email;
             model.Commission = network.Commission;
@@ -277,6 +279,7 @@ namespace MonexUp.Domain.Impl.Services
                 NetworkId = model.NetworkId,
                 Name = model.Name,
                 Slug = model.Slug,
+                Template = model.Template,
                 ImageUrl = await _fileClient.GetFileUrlAsync("monexup", model.Image),
                 Email = model.Email,
                 Plan = model.Plan,

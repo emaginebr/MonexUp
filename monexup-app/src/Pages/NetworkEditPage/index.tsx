@@ -8,6 +8,7 @@ import {
   Code as CodeIcon,
   Coins,
   ImagePlus,
+  LayoutTemplate,
   Network as NetworkIcon,
   Percent,
   Save,
@@ -253,6 +254,28 @@ export default function NetworkEditPage() {
                     networkContext.setNetwork({
                       ...network,
                       slug: e.target.value,
+                    })
+                  }
+                  className="flex-1 min-w-0 h-full px-2 bg-transparent border-0 outline-none text-graphite-900 placeholder:text-graphite-400 font-mono text-sm"
+                />
+              </FormField>
+
+              <FormField
+                id="network-edit-template"
+                label={t("network_edit_template_label")}
+                icon={LayoutTemplate}
+                helper={t("network_edit_template_helper")}
+              >
+                <input
+                  id="network-edit-template"
+                  type="text"
+                  maxLength={20}
+                  placeholder={t("network_edit_template_placeholder")}
+                  value={network?.template ?? ""}
+                  onChange={(e) =>
+                    networkContext.setNetwork({
+                      ...network,
+                      template: e.target.value,
                     })
                   }
                   className="flex-1 min-w-0 h-full px-2 bg-transparent border-0 outline-none text-graphite-900 placeholder:text-graphite-400 font-mono text-sm"

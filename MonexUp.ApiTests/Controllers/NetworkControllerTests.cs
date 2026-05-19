@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using FluentAssertions;
 using Flurl.Http;
 using MonexUp.ApiTests.Fixtures;
@@ -226,6 +227,49 @@ namespace MonexUp.ApiTests.Controllers
                 .GetAsync();
 
             response.StatusCode.Should().NotBe(401, "endpoint is anonymous");
+        }
+
+        [Fact]
+        public async Task GetSellerBySlug_WithNonExistentNetwork_ShouldReturnNetworkNotFound()
+        {
+            var response = await _fixture.CreateAnonymousRequest("/network/getSellerBySlug/non-existent-network-999/non-existent-seller-999")
+                .AllowAnyHttpStatus()
+                .GetAsync();
+
+            response.StatusCode.Should().Be(500);
+            var body = await response.GetJsonAsync<ErrorResult>();
+            body.Sucesso.Should().BeFalse();
+            body.MensagemErro.Should().Be("Network not found");
+        }
+
+        [Fact]
+        public async Task GetSellerBySlug_WithExistingNetworkButMissingSeller_ShouldNotReturnNetworkNotFound()
+        {
+            var param = TestDataHelper.CreateNetworkInsertInfo();
+            var insertResponse = await _fixture.CreateAuthenticatedRequest("/network/insert")
+                .AllowAnyHttpStatus()
+                .PostJsonAsync(param);
+            insertResponse.StatusCode.Should().Be(200);
+            var created = await insertResponse.GetJsonAsync<NetworkInfo>();
+            created.Slug.Should().NotBeNullOrEmpty();
+
+            var response = await _fixture.CreateAnonymousRequest($"/network/getSellerBySlug/{created.Slug}/non-existent-seller-999")
+                .AllowAnyHttpStatus()
+                .GetAsync();
+
+            response.StatusCode.Should().Be(500, "seller lookup against NAuth fails when user does not exist");
+            var body = await response.GetJsonAsync<ErrorResult>();
+            body.Sucesso.Should().BeFalse();
+            body.MensagemErro.Should().NotBe("Network not found", "network was just inserted with this slug — failure must come from seller lookup, not network lookup");
+        }
+
+        private class ErrorResult
+        {
+            [JsonPropertyName("sucesso")]
+            public bool Sucesso { get; set; }
+
+            [JsonPropertyName("mensagemErro")]
+            public string MensagemErro { get; set; } = string.Empty;
         }
 
         [Fact]
