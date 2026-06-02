@@ -10,6 +10,7 @@
  * `.v-editorial`. The component never mutates global tokens.
  */
 import { useEffect, useMemo, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { VendorPaymentMethod, VendorTemplateProps } from "../types";
 import { isDonation, isOpenDonation } from "../../StorefrontPage/types";
@@ -108,9 +109,16 @@ export default function EditorialTemplate({
     onAmountChange,
     submitting,
     onSubmit,
+    buyer,
+    onBuyerChange,
+    isLoggedIn,
+    onOpenLogin,
+    onLogout,
 }: VendorTemplateProps) {
     const { t } = useTranslation();
     const { network, seller, product } = view;
+    const params = useParams<{ networkSlug: string; sellerSlug: string }>();
+    const storeUrl = `/${params.networkSlug ?? ""}/store/${params.sellerSlug ?? ""}`;
 
     const donation = isDonation(product);
     const openDonation = isOpenDonation(product);
@@ -164,16 +172,18 @@ export default function EditorialTemplate({
             <style dangerouslySetInnerHTML={{ __html: editorialCss }} />
 
             <header className="store-header">
-                <div className="store-logo" aria-hidden="true">
+                <Link to={storeUrl} className="store-logo" aria-hidden="true">
                     {network?.imageUrl ? (
                         // eslint-disable-next-line jsx-a11y/img-redundant-alt
                         <img src={network.imageUrl} alt="" />
                     ) : (
                         <span>{initials(network?.name)}</span>
                     )}
-                </div>
+                </Link>
                 <div>
-                    <h2 className="store-name">{network?.name}</h2>
+                    <Link to={storeUrl} className="store-name" aria-label={t("back_button") as string}>
+                        {network?.name}
+                    </Link>
                     {storeTagline && <p className="store-tagline">{storeTagline}</p>}
                 </div>
                 {sellerName && (
@@ -185,6 +195,13 @@ export default function EditorialTemplate({
                         </span>
                     </div>
                 )}
+                <Link to={storeUrl} className="back-btn">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="m12 19-7-7 7-7" />
+                        <path d="M19 12H5" />
+                    </svg>
+                    <span>{t("back_button")}</span>
+                </Link>
             </header>
 
             <article className="product">
@@ -307,6 +324,68 @@ export default function EditorialTemplate({
                         </div>
                     </div>
 
+                    {/* INLINE BUYER FORM */}
+                    <div className="buyer-form" role="group" aria-label={t("simple_login_title") as string}>
+                        <div className="bf-row">
+                            <label className="bf-field">
+                                <span className="bf-label">{t("field_name")}</span>
+                                <input
+                                    type="text"
+                                    value={buyer.name}
+                                    onChange={(e) => onBuyerChange({ name: e.target.value })}
+                                    disabled={isLoggedIn || submitting}
+                                />
+                            </label>
+                            <label className="bf-field">
+                                <span className="bf-label">{t("field_email")}</span>
+                                <input
+                                    type="email"
+                                    value={buyer.email}
+                                    onChange={(e) => onBuyerChange({ email: e.target.value })}
+                                    disabled={isLoggedIn || submitting}
+                                />
+                            </label>
+                        </div>
+                        <div className="bf-row">
+                            <label className="bf-field">
+                                <span className="bf-label">{t("field_phone") || "Telefone"}</span>
+                                <input
+                                    type="tel"
+                                    inputMode="numeric"
+                                    value={buyer.phone}
+                                    onChange={(e) => onBuyerChange({ phone: e.target.value.replace(/\D/g, "") })}
+                                    disabled={submitting}
+                                />
+                            </label>
+                            <label className="bf-field">
+                                <span className="bf-label">{t("field_cpf")}</span>
+                                <input
+                                    type="text"
+                                    inputMode="numeric"
+                                    maxLength={14}
+                                    value={buyer.cpf}
+                                    onChange={(e) => onBuyerChange({ cpf: e.target.value.replace(/\D/g, "") })}
+                                    disabled={submitting}
+                                />
+                            </label>
+                        </div>
+                        {!isLoggedIn && (
+                            <p className="bf-login-hint">
+                                {t("simple_login_have_account") || "Já tem uma conta?"}{" "}
+                                <button type="button" className="bf-login-link" onClick={onOpenLogin}>
+                                    {t("sign_in") || "Entrar"}
+                                </button>
+                            </p>
+                        )}
+                        {isLoggedIn && (
+                            <p className="bf-logout-hint">
+                                <button type="button" className="bf-login-link" onClick={onLogout}>
+                                    {t("logout_my_account") || "Sair da minha conta"}
+                                </button>
+                            </p>
+                        )}
+                    </div>
+
                     {/* CTA */}
                     <div className="cta-row">
                         <button
@@ -395,6 +474,8 @@ const editorialCss = `
   flex-shrink: 0;
 }
 .v-editorial .store-logo img { width: 100%; height: 100%; object-fit: cover; }
+.v-editorial a.store-logo { text-decoration: none; cursor: pointer; }
+.v-editorial a.store-name,
 .v-editorial .store-name {
   font-family: "Fraunces", Georgia, serif;
   font-weight: 600;
@@ -402,6 +483,31 @@ const editorialCss = `
   letter-spacing: -0.01em;
   margin: 0 0 4px;
   color: var(--ink);
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-block;
+}
+.v-editorial a.store-name:hover { color: var(--accent-2); }
+.v-editorial .back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  font-family: "Inter", system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+.v-editorial .back-btn:hover {
+  background: var(--ink);
+  color: var(--cream);
 }
 .v-editorial .store-tagline {
   color: var(--ink-soft);
@@ -648,6 +754,62 @@ const editorialCss = `
   display: block;
 }
 
+.v-editorial .buyer-form { margin-top: 28px; display: flex; flex-direction: column; gap: 14px; }
+.v-editorial .buyer-form .bf-row { display: grid; grid-template-columns: 1fr; gap: 14px; }
+@media (min-width: 600px) { .v-editorial .buyer-form .bf-row { grid-template-columns: 1fr 1fr; } }
+.v-editorial .buyer-form .bf-field { display: flex; flex-direction: column; gap: 6px; }
+.v-editorial .buyer-form .bf-label {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.v-editorial .buyer-form input {
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 0;
+  border: 1px solid var(--ink);
+  background: transparent;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.v-editorial .buyer-form input:focus {
+  border-color: var(--accent-2);
+}
+.v-editorial .buyer-form input:disabled {
+  background: rgba(0,0,0,0.04);
+  color: var(--ink-soft);
+  cursor: not-allowed;
+}
+.v-editorial .bf-login-hint {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--ink-soft);
+  text-align: center;
+}
+.v-editorial .bf-logout-hint {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13px;
+  color: var(--ink-soft);
+  text-align: right;
+}
+.v-editorial .bf-login-link {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--accent-2);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.v-editorial .bf-login-link:hover { color: var(--ink); }
 .v-editorial .cta-row { margin-top: 28px; display: flex; flex-direction: column; gap: 10px; }
 .v-editorial .cta {
   width: 100%;

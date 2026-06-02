@@ -22,9 +22,9 @@ namespace MonexUp.ApiTests.Controllers
         [Fact]
         public async Task CreatePixPayment_WithoutAuth_ShouldReturn401()
         {
-            var param = TestDataHelper.CreatePixPaymentRequest();
+            var param = TestDataHelper.CreatePixPaymentRequest(productSlug: "some-product-slug");
 
-            var response = await _fixture.CreateAnonymousRequest("/order/createPixPayment/some-product-slug")
+            var response = await _fixture.CreateAnonymousRequest("/order/createPixPayment")
                 .AllowAnyHttpStatus()
                 .PostJsonAsync(param);
 
@@ -34,9 +34,9 @@ namespace MonexUp.ApiTests.Controllers
         [Fact]
         public async Task CreatePixPayment_WithAuth_ShouldNotReturn401()
         {
-            var param = TestDataHelper.CreatePixPaymentRequest();
+            var param = TestDataHelper.CreatePixPaymentRequest(productSlug: "non-existent-product");
 
-            var response = await _fixture.CreateAuthenticatedRequest("/order/createPixPayment/non-existent-product")
+            var response = await _fixture.CreateAuthenticatedRequest("/order/createPixPayment")
                 .AllowAnyHttpStatus()
                 .PostJsonAsync(param);
 
@@ -52,9 +52,8 @@ namespace MonexUp.ApiTests.Controllers
             var lofnProduct = await CreateLofnProductAsync(lofnStore.Slug);
             await UpsertLinkAsync(lofnProduct.ProductId, network.NetworkId, userId);
 
-            var payload = TestDataHelper.CreatePixPaymentRequest();
+            var payload = TestDataHelper.CreatePixPaymentRequest(productSlug: lofnProduct.Slug);
             var response = await _fixture.CreateAuthenticatedRequest("/order/createPixPayment")
-                .AppendPathSegment(lofnProduct.Slug)
                 .AllowAnyHttpStatus()
                 .PostJsonAsync(payload);
 
@@ -71,10 +70,10 @@ namespace MonexUp.ApiTests.Controllers
             await UpsertLinkAsync(lofnProduct.ProductId, network.NetworkId, userId);
             await EnsureProxyPayStoreAsync(network.NetworkId);
 
-            var payload = TestDataHelper.CreatePixPaymentRequest();
+            var payload = TestDataHelper.CreatePixPaymentRequest(
+                productSlug: lofnProduct.Slug,
+                networkSlug: network.Slug);
             var response = await _fixture.CreateAuthenticatedRequest("/order/createPixPayment")
-                .AppendPathSegment(lofnProduct.Slug)
-                .SetQueryParam("networkSlug", network.Slug)
                 .AllowAnyHttpStatus()
                 .PostJsonAsync(payload);
 
@@ -94,9 +93,11 @@ namespace MonexUp.ApiTests.Controllers
         [Fact]
         public async Task CreatePixPayment_WithoutDocumentId_ShouldReturn400()
         {
-            var payload = TestDataHelper.CreatePixPaymentRequest(documentId: string.Empty);
+            var payload = TestDataHelper.CreatePixPaymentRequest(
+                documentId: string.Empty,
+                productSlug: "any-slug");
 
-            var response = await _fixture.CreateAuthenticatedRequest("/order/createPixPayment/any-slug")
+            var response = await _fixture.CreateAuthenticatedRequest("/order/createPixPayment")
                 .AllowAnyHttpStatus()
                 .PostJsonAsync(payload);
 

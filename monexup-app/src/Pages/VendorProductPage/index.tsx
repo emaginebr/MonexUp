@@ -27,12 +27,15 @@ import AuthContext from "../../Contexts/Auth/AuthContext";
 import OrderContext from "../../Contexts/Order/OrderContext";
 import MessageToast from "../../Components/MessageToast";
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
-import SimpleLoginForm, { SimpleLoginResult } from "../StorefrontPage/SimpleLoginForm";
 import PixModalContainer, { PixCustomer } from "../StorefrontPage/PixModalContainer";
 import { isDonation, isOpenDonation, StorefrontProductInfo } from "../StorefrontPage/types";
 import VendorFooter from "./VendorFooter";
+import LoginPasswordModal from "./LoginPasswordModal";
 import { resolveTemplate } from "./templates";
-import { VendorPaymentMethod, VendorProductViewModel } from "./types";
+import { VendorBuyer, VendorPaymentMethod, VendorProductViewModel } from "./types";
+import { isValidCpf } from "../../Infra/Validators/CpfValidator";
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type PageState = "loading" | "ready" | "network_not_found" | "seller_not_found" | "product_not_found";
 
@@ -63,6 +66,43 @@ export default function VendorProductPage() {
     const [loginOpen, setLoginOpen] = useState<boolean>(false);
     const [pixOpen, setPixOpen] = useState<boolean>(false);
     const [pixCustomer, setPixCustomer] = useState<PixCustomer | null>(null);
+
+    // Inline buyer state — kept on the page (not the template) so login or
+    // network changes can re-sync without remounting the template tree.
+    const [buyer, setBuyer] = useState<VendorBuyer>({
+        name: "",
+        email: "",
+        phone: "",
+        cpf: "",
+    });
+    const isLoggedIn = Boolean(authContext.sessionInfo);
+
+    // Whenever the session changes (login/logout), refill the readonly name +
+    // email fields from `sessionInfo`. CPF/phone stay editable as they aren't
+    // stored on the client session.
+    useEffect(() => {
+        const s = authContext.sessionInfo;
+        if (s) {
+            setBuyer((b) => ({
+                ...b,
+                name: s.name || "",
+                email: s.email || "",
+            }));
+        }
+    }, [authContext.sessionInfo]);
+
+    const patchBuyer = (patch: Partial<VendorBuyer>) =>
+        setBuyer((b) => ({ ...b, ...patch }));
+
+    const handleLogout = () => {
+        const ret = authContext.logout?.();
+        // Logout returns sync result on this app; flip back to anonymous
+        // buyer fields so the form is editable again. PixModal state stays
+        // intact — user only resets identity, not the cart.
+        if (ret?.sucesso !== false) {
+            setBuyer({ name: "", email: "", phone: "", cpf: "" });
+        }
+    };
 
     const showError = (msg: string) => {
         setToastDialog(MessageToastEnum.Error);
@@ -131,9 +171,6 @@ export default function VendorProductPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [networkSlug, sellerSlug, productSlug]);
 
-    const session = authContext.sessionInfo;
-    const loginPrefill = session ? { name: session.name, email: session.email } : undefined;
-
     const handleSubmit = () => {
         if (!view) return;
 
@@ -146,7 +183,7 @@ export default function VendorProductPage() {
 
         const product = view.product;
 
-        // Validate donation amount before opening login.
+        // Validate donation amount before processing the inline form.
         if (isOpenDonation(product)) {
             const minimum = product.minimumDonationAmount ?? 0;
             if (!amount || amount <= 0) {
@@ -159,15 +196,43 @@ export default function VendorProductPage() {
             }
         }
 
-        setLoginOpen(true);
+        // Validate inline buyer fields. Name/email are prefilled from the
+        // session when logged in (read-only) but still validated for safety.
+        const nameTrim = buyer.name.trim();
+        const emailTrim = buyer.email.trim();
+        const cpfDigits = buyer.cpf.replace(/\D/g, "");
+        if (!nameTrim) {
+            showError(t("name_required"));
+            return;
+        }
+        if (!emailRegex.test(emailTrim)) {
+            showError(t("email_invalid"));
+            return;
+        }
+        if (!isValidCpf(cpfDigits)) {
+            showError(t("cpf_invalid"));
+            return;
+        }
+
+        void finalizeCheckout({
+            name: nameTrim,
+            email: emailTrim,
+            documentId: cpfDigits,
+            phone: buyer.phone.replace(/\D/g, ""),
+        });
     };
 
-    const finalizeCheckout = async (user: SimpleLoginResult) => {
+    const finalizeCheckout = async (buyerData: {
+        name: string;
+        email: string;
+        documentId: string;
+        phone: string;
+    }) => {
         if (!view) return;
         setSubmitting(true);
         const ret = await orderContext.createPixPayment(
             view.product.slug,
-            user.documentId,
+            buyerData.documentId,
             networkSlug,
             sellerSlug,
         );
@@ -177,17 +242,12 @@ export default function VendorProductPage() {
             return;
         }
         setPixCustomer({
-            name: user.name,
-            email: user.email,
-            documentId: user.documentId,
-            cellphone: "",
+            name: buyerData.name,
+            email: buyerData.email,
+            documentId: buyerData.documentId,
+            cellphone: buyerData.phone,
         });
         setPixOpen(true);
-    };
-
-    const handleLoginSuccess = (user: SimpleLoginResult) => {
-        setLoginOpen(false);
-        void finalizeCheckout(user);
     };
 
     const Template = useMemo(
@@ -279,17 +339,20 @@ export default function VendorProductPage() {
                 onAmountChange={isOpenDonation(view.product) ? setAmount : undefined}
                 submitting={submitting}
                 onSubmit={handleSubmit}
+                buyer={buyer}
+                onBuyerChange={patchBuyer}
+                isLoggedIn={isLoggedIn}
+                onOpenLogin={() => setLoginOpen(true)}
+                onLogout={handleLogout}
             />
 
             <VendorFooter />
 
-            <SimpleLoginForm
+            <LoginPasswordModal
                 show={loginOpen}
                 onClose={() => setLoginOpen(false)}
-                onSuccess={handleLoginSuccess}
-                onError={(msg) => showError(msg)}
-                prefill={loginPrefill}
-                skipRegister={!!session}
+                onSuccess={() => setLoginOpen(false)}
+                initialEmail={buyer.email}
             />
 
             {pixCustomer && (

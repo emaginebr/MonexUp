@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Moq;
 using MonexUp.Domain.Impl.Services;
 using MonexUp.Domain.Interfaces.Factory;
@@ -35,7 +36,8 @@ namespace MonexUp.UnitTests.Services
                 _userNetworkFactory.Object,
                 _userProfileFactory.Object,
                 _profileService.Object,
-                _fileClient.Object
+                _fileClient.Object,
+                new Mock<ILogger<NetworkService>>().Object
             );
         }
 

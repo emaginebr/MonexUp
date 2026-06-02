@@ -9,6 +9,7 @@
  * Self-contained: all tokens and fonts scoped under `.v-vibrant`.
  */
 import { useEffect, useMemo, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { VendorPaymentMethod, VendorTemplateProps } from "../types";
 import { isDonation, isOpenDonation } from "../../StorefrontPage/types";
@@ -107,9 +108,16 @@ export default function VibrantTemplate({
     onAmountChange,
     submitting,
     onSubmit,
+    buyer,
+    onBuyerChange,
+    isLoggedIn,
+    onOpenLogin,
+    onLogout,
 }: VendorTemplateProps) {
     const { t } = useTranslation();
     const { network, seller, product } = view;
+    const params = useParams<{ networkSlug: string; sellerSlug: string }>();
+    const storeUrl = `/${params.networkSlug ?? ""}/store/${params.sellerSlug ?? ""}`;
 
     const donation = isDonation(product);
     const openDonation = isOpenDonation(product);
@@ -166,16 +174,18 @@ export default function VibrantTemplate({
             <style dangerouslySetInnerHTML={{ __html: vibrantCss }} />
 
             <header className="store-header">
-                <div className="store-logo" aria-hidden="true">
+                <Link to={storeUrl} className="store-logo" aria-hidden="true">
                     {network?.imageUrl ? (
                         // eslint-disable-next-line jsx-a11y/img-redundant-alt
                         <img src={network.imageUrl} alt="" />
                     ) : (
                         <span>{initials(network?.name)}</span>
                     )}
-                </div>
+                </Link>
                 <div className="store-meta">
-                    <h2 className="store-name display">{network?.name}</h2>
+                    <Link to={storeUrl} className="store-name display" aria-label={t("back_button") as string}>
+                        {network?.name}
+                    </Link>
                     {storeTagline && <p className="store-tagline">{storeTagline}</p>}
                 </div>
                 {sellerName && (
@@ -186,6 +196,13 @@ export default function VibrantTemplate({
                         </span>
                     </div>
                 )}
+                <Link to={storeUrl} className="back-btn">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="m12 19-7-7 7-7" />
+                        <path d="M19 12H5" />
+                    </svg>
+                    <span>{t("back_button")}</span>
+                </Link>
             </header>
 
             <article className="product">
@@ -314,6 +331,68 @@ export default function VibrantTemplate({
                         </div>
                     </div>
 
+                    {/* INLINE BUYER FORM */}
+                    <div className="buyer-form" role="group" aria-label={t("simple_login_title") as string}>
+                        <div className="bf-row">
+                            <label className="bf-field">
+                                <span className="bf-label">{t("field_name")}</span>
+                                <input
+                                    type="text"
+                                    value={buyer.name}
+                                    onChange={(e) => onBuyerChange({ name: e.target.value })}
+                                    disabled={isLoggedIn || submitting}
+                                />
+                            </label>
+                            <label className="bf-field">
+                                <span className="bf-label">{t("field_email")}</span>
+                                <input
+                                    type="email"
+                                    value={buyer.email}
+                                    onChange={(e) => onBuyerChange({ email: e.target.value })}
+                                    disabled={isLoggedIn || submitting}
+                                />
+                            </label>
+                        </div>
+                        <div className="bf-row">
+                            <label className="bf-field">
+                                <span className="bf-label">{t("field_phone") || "Telefone"}</span>
+                                <input
+                                    type="tel"
+                                    inputMode="numeric"
+                                    value={buyer.phone}
+                                    onChange={(e) => onBuyerChange({ phone: e.target.value.replace(/\D/g, "") })}
+                                    disabled={submitting}
+                                />
+                            </label>
+                            <label className="bf-field">
+                                <span className="bf-label">{t("field_cpf")}</span>
+                                <input
+                                    type="text"
+                                    inputMode="numeric"
+                                    maxLength={14}
+                                    value={buyer.cpf}
+                                    onChange={(e) => onBuyerChange({ cpf: e.target.value.replace(/\D/g, "") })}
+                                    disabled={submitting}
+                                />
+                            </label>
+                        </div>
+                        {!isLoggedIn && (
+                            <p className="bf-login-hint">
+                                {t("simple_login_have_account") || "Já tem uma conta?"}{" "}
+                                <button type="button" className="bf-login-link" onClick={onOpenLogin}>
+                                    {t("sign_in") || "Entrar"}
+                                </button>
+                            </p>
+                        )}
+                        {isLoggedIn && (
+                            <p className="bf-logout-hint">
+                                <button type="button" className="bf-login-link" onClick={onLogout}>
+                                    {t("logout_my_account") || "Sair da minha conta"}
+                                </button>
+                            </p>
+                        )}
+                    </div>
+
                     {/* CTA */}
                     <div className="cta-row">
                         <button
@@ -425,7 +504,9 @@ const vibrantCss = `
   flex-shrink: 0;
 }
 .v-vibrant .store-logo img { width: 100%; height: 100%; object-fit: cover; transform: rotate(3deg); }
+.v-vibrant a.store-logo { text-decoration: none; cursor: pointer; }
 .v-vibrant .store-meta { flex: 1; min-width: 200px; }
+.v-vibrant a.store-name,
 .v-vibrant .store-name {
   font-family: "Bricolage Grotesque", sans-serif;
   font-weight: 700;
@@ -434,6 +515,32 @@ const vibrantCss = `
   line-height: 1.1;
   margin: 0 0 4px;
   color: var(--ink);
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-block;
+}
+.v-vibrant a.store-name:hover { color: var(--brand); }
+.v-vibrant .back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  font-family: "Geist", sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  text-decoration: none;
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+.v-vibrant .back-btn:hover {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
 }
 .v-vibrant .store-tagline {
   color: var(--ink-soft);
@@ -466,12 +573,12 @@ const vibrantCss = `
   gap: clamp(24px, 4vw, 40px);
 }
 @media (min-width: 980px) {
-  .v-vibrant .product { grid-template-columns: 1.1fr 1fr; align-items: start; }
+  .v-vibrant .product { grid-template-columns: 1.5fr 1fr; align-items: start; }
 }
 
 .v-vibrant .gallery .g-hero {
   position: relative;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 16 / 10;
   border-radius: 28px;
   overflow: hidden;
   background-color: var(--brand);
@@ -688,6 +795,63 @@ const vibrantCss = `
   color: #fff;
 }
 
+.v-vibrant .buyer-form { margin-top: 24px; display: flex; flex-direction: column; gap: 12px; }
+.v-vibrant .buyer-form .bf-row { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 600px) { .v-vibrant .buyer-form .bf-row { grid-template-columns: 1fr 1fr; } }
+.v-vibrant .buyer-form .bf-field { display: flex; flex-direction: column; gap: 4px; }
+.v-vibrant .buyer-form .bf-label {
+  font-family: "Geist", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft, #5A574F);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.v-vibrant .buyer-form input {
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.12);
+  background: #fff;
+  font-family: "Geist", sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.v-vibrant .buyer-form input:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(159, 71, 199, 0.15);
+}
+.v-vibrant .buyer-form input:disabled {
+  background: rgba(0,0,0,0.04);
+  color: var(--ink-soft, #5A574F);
+  cursor: not-allowed;
+}
+.v-vibrant .bf-login-hint {
+  margin: 0;
+  font-family: "Geist", sans-serif;
+  font-size: 13px;
+  color: var(--ink-soft, #5A574F);
+  text-align: center;
+}
+.v-vibrant .bf-logout-hint {
+  margin: 0;
+  font-family: "Geist", sans-serif;
+  font-size: 13px;
+  color: var(--ink-soft, #5A574F);
+  text-align: right;
+}
+.v-vibrant .bf-login-link {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--brand);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.v-vibrant .bf-login-link:hover { color: var(--brand-2, var(--brand)); }
 .v-vibrant .cta-row { margin-top: 24px; display: flex; flex-direction: column; gap: 12px; }
 .v-vibrant .cta {
   width: 100%;

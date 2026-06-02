@@ -32,6 +32,13 @@ export interface VendorProductViewModel {
     product: StorefrontProductInfo;
 }
 
+export interface VendorBuyer {
+    name: string;
+    email: string;
+    phone: string;
+    cpf: string;
+}
+
 export interface VendorTemplateProps {
     view: VendorProductViewModel;
     /** Currently selected payment method. PIX is the initial value. */
@@ -46,4 +53,14 @@ export interface VendorTemplateProps {
     submitting: boolean;
     /** Primary action — triggers the same flow as `StorefrontPage.handleAction`. */
     onSubmit: () => void;
+    /** Inline buyer form data + setters. Name/email come from session when
+     *  the user is logged in (disabled then); phone/cpf stay editable. */
+    buyer: VendorBuyer;
+    onBuyerChange: (patch: Partial<VendorBuyer>) => void;
+    isLoggedIn: boolean;
+    /** Opens a lightweight email+password login modal. */
+    onOpenLogin: () => void;
+    /** Clears the session. Surfaced as a "Sair" affordance when the user
+     *  is logged in so they can switch accounts before checkout. */
+    onLogout: () => void;
 }

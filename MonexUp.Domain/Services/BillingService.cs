@@ -27,6 +27,7 @@ namespace MonexUp.Domain.Impl.Services
         private readonly IUserProfileDomainFactory _profileFactory;
         private readonly INetworkService _networkService;
         private readonly IProxyPayClient _proxyPayClient;
+        private readonly IProxyPayService _proxyPayService;
         private readonly IBillingFeeService _billingFeeService;
         private readonly IUserClient _userClient;
         private readonly ILofnProductClient _lofnProductClient;
@@ -41,6 +42,7 @@ namespace MonexUp.Domain.Impl.Services
             IUserProfileDomainFactory profileFactory,
             INetworkService networkService,
             IProxyPayClient proxyPayClient,
+            IProxyPayService proxyPayService,
             IBillingFeeService billingFeeService,
             IUserClient userClient,
             ILofnProductClient lofnProductClient,
@@ -54,6 +56,7 @@ namespace MonexUp.Domain.Impl.Services
             _profileFactory = profileFactory;
             _networkService = networkService;
             _proxyPayClient = proxyPayClient;
+            _proxyPayService = proxyPayService;
             _billingFeeService = billingFeeService;
             _userClient = userClient;
             _lofnProductClient = lofnProductClient;
@@ -88,44 +91,25 @@ namespace MonexUp.Domain.Impl.Services
                 return Ok(network.ProxyPayStoreId.Value, network.ProxyPayClientId);
             }
 
-            ProxyPayStoreCreatedInfo created;
+            INetworkModel provisioned;
             try
             {
-                created = await _proxyPayClient.InsertStoreAsync(network.Name, network.Email, bearerToken, ct);
-            }
-            catch (Exception ex) when (ex.Message.Contains("User already has a store", StringComparison.OrdinalIgnoreCase))
-            {
-                try
-                {
-                    created = await _proxyPayClient.GetMyStoreAsync(bearerToken, ct);
-                }
-                catch (Exception ex2)
-                {
-                    return Fail(503, "ProxyPay indisponível, tente novamente. " + ex2.Message);
-                }
-                if (created == null || created.StoreId <= 0 || string.IsNullOrEmpty(created.ClientId))
-                {
-                    return Fail(503, "ProxyPay reportou loja existente mas GraphQL myStore não retornou dados.");
-                }
+                provisioned = await _proxyPayService.EnsureStoreAsync(network, bearerToken, ct);
             }
             catch (Exception ex)
             {
                 return Fail(503, "ProxyPay indisponível, tente novamente. " + ex.Message);
             }
 
-            var won = networkModel.TrySetProxyPayStore(networkId, created.StoreId, created.ClientId);
-            if (won)
+            if (provisioned == null
+                || !provisioned.ProxyPayStoreId.HasValue
+                || provisioned.ProxyPayStoreId.Value <= 0
+                || string.IsNullOrEmpty(provisioned.ProxyPayClientId))
             {
-                return Ok(created.StoreId, created.ClientId);
+                return Fail(503, "ProxyPay provisioning did not return a usable store.");
             }
 
-            var refreshed = networkModel.GetById(networkId, _networkFactory);
-            if (refreshed?.ProxyPayStoreId.HasValue == true && refreshed.ProxyPayStoreId.Value > 0)
-            {
-                return Ok(refreshed.ProxyPayStoreId.Value, refreshed.ProxyPayClientId);
-            }
-
-            return Ok(created.StoreId, created.ClientId);
+            return Ok(provisioned.ProxyPayStoreId.Value, provisioned.ProxyPayClientId);
         }
 
         public async Task<PaymentCompletionResult> ProcessPaymentCompletionAsync(PaymentCompletionInfo info, CancellationToken ct = default)

@@ -52,25 +52,54 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpPost("insert")]
-        public async Task<IActionResult> Insert([FromBody] NetworkInsertInfo network)
-        {
-            var userSession = _userClient.GetUserInSession(HttpContext);
-            if (userSession == null) return Unauthorized();
-
-            var newNetwork = _networkService.Insert(network, userSession.UserId);
-            return Ok(await _networkService.GetNetworkInfo(newNetwork));
-        }
-
-        [Authorize]
-        [HttpPost("update")]
-        public async Task<IActionResult> Update([FromBody] NetworkInfo network)
+        public async Task<IActionResult> Insert([FromBody] NetworkInsertInfo network, CancellationToken ct)
         {
             var userSession = _userClient.GetUserInSession(HttpContext);
             if (userSession == null) return Unauthorized();
 
             var token = HttpContext.GetBearerToken();
+            if (string.IsNullOrEmpty(token)) return Unauthorized();
+
+            var newNetwork = _networkService.Insert(network, userSession.UserId);
+
+            // Transparent ProxyPay store provisioning at network creation —
+            // the manager bearer token signs the ProxyPay /Store call.
+            // Failure breaks the request: the network must not be exposed
+            // without a usable billing store.
+            var ensure = await _billingService.EnsureStoreAsync(newNetwork.NetworkId, userSession.UserId, token, ct);
+            if (ensure.StatusCode < 200 || ensure.StatusCode >= 300)
+            {
+                return StatusCode(ensure.StatusCode, ensure.Body);
+            }
+
+            return Ok(await _networkService.GetNetworkInfo(_networkService.GetById(newNetwork.NetworkId)));
+        }
+
+        [Authorize]
+        [HttpPost("update")]
+        public async Task<IActionResult> Update([FromBody] NetworkInfo network, CancellationToken ct)
+        {
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
+
+            var token = HttpContext.GetBearerToken();
+            if (string.IsNullOrEmpty(token)) return Unauthorized();
+
             var newNetwork = await _networkService.Update(network, userSession.UserId, token);
-            return Ok(await _networkService.GetNetworkInfo(newNetwork));
+
+            // Lazy ProxyPay store provisioning for pre-existing networks
+            // created before the auto-provisioning at insert was added.
+            // Failure breaks the request.
+            if (!newNetwork.ProxyPayStoreId.HasValue || string.IsNullOrEmpty(newNetwork.ProxyPayClientId))
+            {
+                var ensure = await _billingService.EnsureStoreAsync(newNetwork.NetworkId, userSession.UserId, token, ct);
+                if (ensure.StatusCode < 200 || ensure.StatusCode >= 300)
+                {
+                    return StatusCode(ensure.StatusCode, ensure.Body);
+                }
+            }
+
+            return Ok(await _networkService.GetNetworkInfo(_networkService.GetById(newNetwork.NetworkId)));
         }
 
         [HttpGet("listAll")]

@@ -9,6 +9,7 @@ using NAuth.ACL.Interfaces;
 using NAuth.DTO.User;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MonexUp.Domain.Impl.Services
@@ -39,7 +40,7 @@ namespace MonexUp.Domain.Impl.Services
             _lofnProductClient = lofnProductClient;
         }
 
-        public async Task<PixPaymentResult> CreatePixPayment(long productId, long userId, long? networkId, long? sellerId, string documentId, string token)
+        public async Task<PixPaymentResult> CreatePixPayment(long productId, long userId, long? networkId, long? sellerId, string documentId, string token, CancellationToken ct = default)
         {
             var product = await _lofnProductClient.GetByIdAsync(productId);
             if (product == null)
@@ -56,6 +57,11 @@ namespace MonexUp.Domain.Impl.Services
             if (network == null)
             {
                 return new PixPaymentResult { Sucesso = false, Mensagem = "Network not found" };
+            }
+
+            if (string.IsNullOrEmpty(network.ProxyPayClientId))
+            {
+                network = await _proxyPayService.EnsureStoreAsync(network, token, ct);
             }
 
             UserInfo seller = null;

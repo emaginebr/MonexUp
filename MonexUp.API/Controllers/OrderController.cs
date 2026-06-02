@@ -7,6 +7,7 @@ using MonexUp.DTO.Payment;
 using NAuth.ACL.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MonexUp.API.Extensions;
 
@@ -41,45 +42,48 @@ namespace MonexUp.API.Controllers
         }
 
         [Authorize]
-        [HttpPost("createPixPayment/{productSlug}")]
-        public async Task<IActionResult> CreatePixPayment(
-            string productSlug,
-            [FromBody] PixPaymentRequest request,
-            [FromQuery] string networkSlug,
-            [FromQuery] string sellerSlug
-        )
+        [HttpPost("createPixPayment")]
+        public async Task<IActionResult> CreatePixPayment([FromBody] PixPaymentRequest request, CancellationToken ct)
         {
             var userSession = _userClient.GetUserInSession(HttpContext);
             if (userSession == null) return Unauthorized();
 
-            if (string.IsNullOrWhiteSpace(request?.DocumentId))
+            if (request == null)
+            {
+                return BadRequest(new PixPaymentResult { Sucesso = false, Mensagem = "Body é obrigatório" });
+            }
+            if (string.IsNullOrWhiteSpace(request.DocumentId))
             {
                 return BadRequest(new PixPaymentResult { Sucesso = false, Mensagem = "CPF é obrigatório" });
             }
+            if (string.IsNullOrWhiteSpace(request.ProductSlug))
+            {
+                return BadRequest(new PixPaymentResult { Sucesso = false, Mensagem = "productSlug é obrigatório" });
+            }
 
-            var product = await _lofnProductClient.GetBySlugAsync(productSlug);
+            var product = await _lofnProductClient.GetBySlugAsync(request.ProductSlug);
             if (product == null)
             {
                 return BadRequest(new PixPaymentResult { Sucesso = false, Mensagem = "Produto não encontrado" });
             }
 
             long? networkId = null;
-            if (!string.IsNullOrEmpty(networkSlug))
+            if (!string.IsNullOrWhiteSpace(request.NetworkSlug))
             {
-                var network = _networkService.GetBySlug(networkSlug);
+                var network = _networkService.GetBySlug(request.NetworkSlug);
                 if (network != null) networkId = network.NetworkId;
             }
 
             long? sellerId = null;
-            if (!string.IsNullOrEmpty(sellerSlug))
+            if (!string.IsNullOrWhiteSpace(request.SellerSlug))
             {
-                var seller = await _userClient.GetBySlugAsync(sellerSlug);
+                var seller = await _userClient.GetBySlugAsync(request.SellerSlug);
                 if (seller != null) sellerId = seller.UserId;
             }
 
             var token = HttpContext.GetBearerToken();
             var result = await _subscriptionService.CreatePixPayment(
-                product.ProductId, userSession.UserId, networkId, sellerId, request.DocumentId, token
+                product.ProductId, userSession.UserId, networkId, sellerId, request.DocumentId, token, ct
             );
 
             if (!result.Sucesso) return BadRequest(result);

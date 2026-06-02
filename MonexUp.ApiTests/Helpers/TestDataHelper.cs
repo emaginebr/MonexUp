@@ -106,11 +106,18 @@ namespace MonexUp.ApiTests.Helpers
             };
         }
 
-        public static PixPaymentRequest CreatePixPaymentRequest(string? documentId = null)
+        public static PixPaymentRequest CreatePixPaymentRequest(
+            string? documentId = null,
+            string? productSlug = null,
+            string? networkSlug = null,
+            string? sellerSlug = null)
         {
             return new PixPaymentRequest
             {
-                DocumentId = documentId ?? "11144477735"
+                DocumentId = documentId ?? "11144477735",
+                ProductSlug = productSlug,
+                NetworkSlug = networkSlug,
+                SellerSlug = sellerSlug
             };
         }
 

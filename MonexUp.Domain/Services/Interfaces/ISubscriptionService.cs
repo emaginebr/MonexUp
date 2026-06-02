@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MonexUp.Domain.Interfaces.Services
@@ -11,6 +12,6 @@ namespace MonexUp.Domain.Interfaces.Services
     public interface ISubscriptionService
     {
         Task<SubscriptionInfo> CreateSubscription(long productId, long userId, long? networkId, long? sellerId, string token);
-        Task<PixPaymentResult> CreatePixPayment(long productId, long userId, long? networkId, long? sellerId, string documentId, string token);
+        Task<PixPaymentResult> CreatePixPayment(long productId, long userId, long? networkId, long? sellerId, string documentId, string token, CancellationToken ct = default);
     }
 }

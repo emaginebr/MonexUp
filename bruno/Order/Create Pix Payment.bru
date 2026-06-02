@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/order/createPixPayment/:productSlug?networkSlug=&sellerSlug=
+  url: {{baseUrl}}/order/createPixPayment
   body: json
   auth: bearer
 }
@@ -14,17 +14,11 @@ auth:bearer {
   token: {{token}}
 }
 
-params:path {
-  productSlug:
-}
-
-params:query {
-  networkSlug:
-  sellerSlug:
-}
-
 body:json {
   {
-    "documentId": "11144477735"
+    "networkSlug": "teste1",
+    "productSlug": "teste2",
+    "sellerSlug": "rodrigo-landim",
+    "documentId": "89639766100"
   }
 }

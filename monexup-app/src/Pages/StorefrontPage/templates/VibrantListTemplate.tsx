@@ -475,7 +475,7 @@ const vibrantListCss = `
 }
 .v-vibrant-list .pcard__media {
   position: relative;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 16 / 10;
   overflow: hidden;
   border-radius: 18px;
   margin: 12px 12px 0;

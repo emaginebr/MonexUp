@@ -1,4 +1,5 @@
 using Core.Domain;
+using Microsoft.Extensions.Logging;
 using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
@@ -25,6 +26,7 @@ namespace MonexUp.Domain.Impl.Services
         private readonly IUserProfileDomainFactory _userProfileFactory;
         private readonly IProfileService _profileService;
         private readonly IFileClient _fileClient;
+        private readonly ILogger<NetworkService> _logger;
 
         public NetworkService(
             IUserClient userClient,
@@ -32,7 +34,8 @@ namespace MonexUp.Domain.Impl.Services
             IUserNetworkDomainFactory userNetworkFactory,
             IUserProfileDomainFactory userProfileFactory,
             IProfileService profileService,
-            IFileClient fileClient
+            IFileClient fileClient,
+            ILogger<NetworkService> logger
         )
         {
             _userClient = userClient;
@@ -41,6 +44,7 @@ namespace MonexUp.Domain.Impl.Services
             _userProfileFactory = userProfileFactory;
             _profileService = profileService;
             _fileClient = fileClient;
+            _logger = logger;
         }
 
         private string GenerateSlug(INetworkModel md)
@@ -244,8 +248,9 @@ namespace MonexUp.Domain.Impl.Services
                 {
                     userInfo = await _userClient.GetByIdAsync(model.UserId, token);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    _logger.LogWarning(ex, "NAuth GetByIdAsync failed for userId={UserId} — returning UserNetworkInfo without user details.", model.UserId);
                     userInfo = null;
                 }
             }

@@ -12,10 +12,13 @@ const OrderService: IOrderService = {
     },
     createPixPayment: async (productSlug: string, documentId: string, networkSlug: string, sellerSlug: string, token: string) => {
         let ret: PixPaymentResult;
-        let path = "/Order/createPixPayment/" + productSlug;
-        if (networkSlug) path += "?networkSlug=" + networkSlug;
-        if (sellerSlug) path += (networkSlug ? "&" : "?") + "sellerSlug=" + sellerSlug;
-        let request = await _httpClient.doPostAuth<PixPaymentResult>(path, { documentId }, token);
+        const body = {
+            networkSlug: networkSlug || null,
+            productSlug,
+            sellerSlug: sellerSlug || null,
+            documentId,
+        };
+        let request = await _httpClient.doPostAuth<PixPaymentResult>("/Order/createPixPayment", body, token);
         if (request.success) {
             return request.data;
         } else {
