@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MonexUp.Domain.Interfaces.Factory;
@@ -61,7 +62,7 @@ namespace MonexUp.Domain.Impl.Services
             return refreshed ?? network;
         }
 
-        public async Task<ProxyPayQRCodeResponse> CreateQRCode(UserInfo user, LofnProductInfo product, INetworkModel network, UserInfo seller, string documentId)
+        public async Task<ProxyPayQRCodeResponse> CreateQRCode(UserInfo user, LofnProductInfo product, INetworkModel network, UserInfo seller, decimal? unitPriceOverride = null)
         {
             if (network == null || string.IsNullOrEmpty(network.ProxyPayClientId))
             {
@@ -72,13 +73,25 @@ namespace MonexUp.Domain.Impl.Services
                 };
             }
 
+            // Open-amount donations send the buyer-typed value via
+            // unitPriceOverride. Anything else (fixed price products, fixed
+            // donations) falls back to the product's stored Price.
+            // ProxyPayItem.UnitPrice is double — cast at the boundary.
+            var unitPrice = unitPriceOverride.HasValue && unitPriceOverride.Value > 0
+                ? (double)unitPriceOverride.Value
+                : product.Price;
+
+            // Buyer identity is sourced from the NAuth UserInfo (already
+            // merged with any body-supplied values upstream).
+            var customerCellphone = user.Phones?.FirstOrDefault()?.Phone ?? string.Empty;
+
             var request = new ProxyPayQRCodeRequest
             {
                 ClientId = network.ProxyPayClientId,
                 CustomerName = user.Name,
                 CustomerEmail = user.Email,
-                CustomerDocumentId = documentId,
-                CustomerCellphone = string.Empty,
+                CustomerDocumentId = user.IdDocument,
+                CustomerCellphone = customerCellphone,
                 Items = new List<ProxyPayItem>
                 {
                     new ProxyPayItem
@@ -86,7 +99,7 @@ namespace MonexUp.Domain.Impl.Services
                         Id = product.ProductId.ToString(),
                         Description = product.Name,
                         Quantity = 1,
-                        UnitPrice = product.Price
+                        UnitPrice = unitPrice
                     }
                 }
             };

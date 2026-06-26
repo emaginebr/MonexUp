@@ -28,6 +28,7 @@ namespace DB.Infra.Repository
             md.OrderId = row.OrderId;
             md.ProductId = row.ProductId;
             md.Quantity = row.Quantity;
+            md.Amount = row.Amount;
             return md;
         }
 
@@ -37,6 +38,7 @@ namespace DB.Infra.Repository
             row.OrderId = md.OrderId;
             row.ProductId = md.ProductId;
             row.Quantity = md.Quantity;
+            row.Amount = md.Amount;
         }
 
         public IOrderItemModel Insert(IOrderItemModel model, IOrderItemDomainFactory factory)

@@ -83,7 +83,7 @@ namespace MonexUp.API.Controllers
 
             var token = HttpContext.GetBearerToken();
             var result = await _subscriptionService.CreatePixPayment(
-                product.ProductId, userSession.UserId, networkId, sellerId, request.DocumentId, token, ct
+                product.ProductId, userSession.UserId, networkId, sellerId, request.DocumentId, request.Cellphone, token, request.Amount, ct
             );
 
             if (!result.Sucesso) return BadRequest(result);

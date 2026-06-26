@@ -14,7 +14,7 @@ interface IOrderProvider {
     searchResult: OrderListPagedInfo;
     pixPaymentResult: PixPaymentResult | null;
 
-    createPixPayment: (productSlug: string, documentId: string, networkSlug?: string, sellerSlug?: string) => Promise<OrderProviderResult>;
+    createPixPayment: (productSlug: string, documentId: string, cellphone: string, networkSlug?: string, sellerSlug?: string, amount?: number) => Promise<OrderProviderResult>;
     search: (networkId: number, userId: number, sellerId: number, pageNum: number) => Promise<ProviderResult>;
     getById: (orderId: number) => Promise<OrderProviderResult>;
 }

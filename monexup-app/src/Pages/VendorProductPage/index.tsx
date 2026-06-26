@@ -25,11 +25,13 @@ import NetworkContext from "../../Contexts/Network/NetworkContext";
 import ProductContext from "../../Contexts/Product/ProductContext";
 import AuthContext from "../../Contexts/Auth/AuthContext";
 import OrderContext from "../../Contexts/Order/OrderContext";
+import UserContext from "../../Contexts/User/UserContext";
 import MessageToast from "../../Components/MessageToast";
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 import PixModalContainer, { PixCustomer } from "../StorefrontPage/PixModalContainer";
 import { isDonation, isOpenDonation, StorefrontProductInfo } from "../StorefrontPage/types";
 import VendorFooter from "./VendorFooter";
+import VendorProductSkeleton from "./VendorProductSkeleton";
 import LoginPasswordModal from "./LoginPasswordModal";
 import { resolveTemplate } from "./templates";
 import { VendorBuyer, VendorPaymentMethod, VendorProductViewModel } from "./types";
@@ -51,6 +53,7 @@ export default function VendorProductPage() {
     const productContext = useContext(ProductContext);
     const authContext = useContext(AuthContext);
     const orderContext = useContext(OrderContext);
+    const userContext = useContext(UserContext);
 
     const [pageState, setPageState] = useState<PageState>("loading");
     const [view, setView] = useState<VendorProductViewModel | null>(null);
@@ -78,17 +81,45 @@ export default function VendorProductPage() {
     const isLoggedIn = Boolean(authContext.sessionInfo);
 
     // Whenever the session changes (login/logout), refill the readonly name +
-    // email fields from `sessionInfo`. CPF/phone stay editable as they aren't
-    // stored on the client session.
+    // email fields from `sessionInfo`. CPF + phone aren't carried in the
+    // client AuthSession — fetch them from NAuth via userContext.getMe() so
+    // pre-registered buyers don't have to retype.
     useEffect(() => {
         const s = authContext.sessionInfo;
-        if (s) {
-            setBuyer((b) => ({
-                ...b,
-                name: s.name || "",
-                email: s.email || "",
-            }));
-        }
+        if (!s) return;
+
+        // Seed name + email immediately from the session.
+        setBuyer((b) => ({
+            ...b,
+            name: s.name || "",
+            email: s.email || "",
+        }));
+
+        // Fetch full UserInfo (idDocument + phones[]) for the logged user.
+        // Best-effort: if the request fails the form just stays editable.
+        let cancelled = false;
+        (async () => {
+            try {
+                const ret = await userContext.getMe();
+                if (cancelled) return;
+                const u = ret?.user;
+                if (!u) return;
+                const phoneDigits = u.phones?.[0]?.phone || "";
+                setBuyer((b) => ({
+                    ...b,
+                    name: u.name || b.name,
+                    email: u.email || b.email,
+                    cpf: u.idDocument || b.cpf,
+                    phone: phoneDigits || b.phone,
+                }));
+            } catch {
+                // Swallow — buyer fields stay with whatever the user typed.
+            }
+        })();
+        return () => {
+            cancelled = true;
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [authContext.sessionInfo]);
 
     const patchBuyer = (patch: Partial<VendorBuyer>) =>
@@ -230,11 +261,17 @@ export default function VendorProductPage() {
     }) => {
         if (!view) return;
         setSubmitting(true);
+        // For donations (open or fixed) we forward the buyer-typed/seed
+        // `amount` so backend can override product.Price. Fixed-price products
+        // pass undefined and backend keeps using product.Price.
+        const overrideAmount = isDonation(view.product) ? amount : undefined;
         const ret = await orderContext.createPixPayment(
             view.product.slug,
             buyerData.documentId,
+            buyerData.phone,
             networkSlug,
             sellerSlug,
+            overrideAmount,
         );
         setSubmitting(false);
         if (!ret.sucesso) {
@@ -279,19 +316,7 @@ export default function VendorProductPage() {
     if (pageState === "loading") {
         return (
             <>
-                <div
-                    style={{
-                        minHeight: "60vh",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        background: "#F4F1EA",
-                        color: "#5A574F",
-                        fontFamily: "Inter, system-ui, sans-serif",
-                    }}
-                >
-                    {t("storefront_loading")}
-                </div>
+                <VendorProductSkeleton />
                 <VendorFooter />
             </>
         );

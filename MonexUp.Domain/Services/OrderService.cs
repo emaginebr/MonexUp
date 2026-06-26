@@ -59,6 +59,7 @@ namespace MonexUp.Domain.Impl.Services
                 mdItem.OrderId = newOrder.OrderId;
                 mdItem.ProductId = item.ProductId;
                 mdItem.Quantity = item.Quantity;
+                mdItem.Amount = item.Amount;
 
                 mdItem.Insert(_itemFactory);
             }
@@ -99,6 +100,7 @@ namespace MonexUp.Domain.Impl.Services
                     OrderId = x.OrderId,
                     ProductId = x.ProductId,
                     Quantity = x.Quantity,
+                    Amount = x.Amount,
                     Product = await _lofnProductClient.GetByIdAsync(x.ProductId)
                 });
             }

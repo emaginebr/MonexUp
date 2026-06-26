@@ -5,5 +5,6 @@ export default interface OrderItemInfo {
     orderId: number;
     productId: number;
     quantity: number;
+    amount?: number | null;
     product: ProductInfo;
 }

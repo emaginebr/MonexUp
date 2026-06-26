@@ -6,7 +6,7 @@ import IOrderService from "../../Services/Interfaces/IOrderService";
 
 export default interface IOrderBusiness {
   init: (orderService: IOrderService) => void;
-  createPixPayment: (productSlug: string, documentId: string, networkSlug?: string, sellerSlug?: string) => Promise<BusinessResult<PixPaymentResult>>;
+  createPixPayment: (productSlug: string, documentId: string, cellphone: string, networkSlug?: string, sellerSlug?: string, amount?: number) => Promise<BusinessResult<PixPaymentResult>>;
   search: (networkId: number, userId: number, sellerId: number, pageNum: number) => Promise<BusinessResult<OrderListPagedInfo>>;
   getById: (orderId: number) => Promise<BusinessResult<OrderInfo>>;
 }

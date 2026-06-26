@@ -6,7 +6,7 @@ import IHttpClient from "../../Infra/Interface/IHttpClient";
 
 export default interface IOrderService {
     init: (httpClient: IHttpClient) => void;
-    createPixPayment: (productSlug: string, documentId: string, networkSlug: string, sellerSlug: string, token: string) => Promise<PixPaymentResult>;
+    createPixPayment: (productSlug: string, documentId: string, cellphone: string, networkSlug: string, sellerSlug: string, token: string, amount?: number) => Promise<PixPaymentResult>;
     checkPixStatus: (proxyPayInvoiceId: string, token: string) => Promise<any>;
     search: (networkId: number, userId: number, sellerId: number, pageNum: number, token: string) => Promise<ApiResponse<OrderListPagedResult>>;
     getById: (orderId: number, token: string) => Promise<ApiResponse<OrderInfo>>;

@@ -13,7 +13,7 @@ const OrderBusiness: IOrderBusiness = {
   init: function (orderService: IOrderService): void {
     _orderService = orderService;
   },
-  createPixPayment: async (productSlug: string, documentId: string, networkSlug?: string, sellerSlug?: string) => {
+  createPixPayment: async (productSlug: string, documentId: string, cellphone: string, networkSlug?: string, sellerSlug?: string, amount?: number) => {
     try {
         let ret: BusinessResult<PixPaymentResult>;
         let session: AuthSession = AuthFactory.AuthBusiness.getSession();
@@ -24,7 +24,7 @@ const OrderBusiness: IOrderBusiness = {
             mensagem: "Not logged"
           };
         }
-        let retServ = await _orderService.createPixPayment(productSlug, documentId, networkSlug, sellerSlug, session.token);
+        let retServ = await _orderService.createPixPayment(productSlug, documentId, cellphone, networkSlug, sellerSlug, session.token, amount);
         return {
           ...ret,
           dataResult: retServ,

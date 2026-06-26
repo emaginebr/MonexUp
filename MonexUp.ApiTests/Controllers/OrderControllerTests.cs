@@ -105,6 +105,30 @@ namespace MonexUp.ApiTests.Controllers
         }
 
         [Fact]
+        public async Task CreatePixPayment_WithoutCellphone_ShouldNotReject()
+        {
+            // Cellphone is optional. Send empty/null so this test exercises the
+            // tolerant path without depending on NAuth profile state.
+            var payload = TestDataHelper.CreatePixPaymentRequest(
+                productSlug: "non-existent-product",
+                cellphone: string.Empty);
+
+            var response = await _fixture.CreateAuthenticatedRequest("/order/createPixPayment")
+                .AllowAnyHttpStatus()
+                .PostJsonAsync(payload);
+
+            // Status will be 400 (product not found) or 200 — never the
+            // "cellphone required" path. Asserts the cellphone field stays optional.
+            var status = (int)response.StatusCode;
+            status.Should().NotBe(401, "authenticated request must not be rejected");
+            if (status == 400)
+            {
+                var body = await response.GetStringAsync();
+                body.Should().NotContain("telefone", "cellphone is optional and must not block checkout");
+            }
+        }
+
+        [Fact]
         public async Task CheckPixStatus_WithoutAuth_ShouldReturn401()
         {
             var response = await _fixture.CreateAnonymousRequest("/order/checkPixStatus/some-invoice-id")

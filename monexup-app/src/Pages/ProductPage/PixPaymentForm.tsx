@@ -27,7 +27,7 @@ export default function PixPaymentForm(props: PixPaymentFormProps) {
             return;
         }
         setLoading(true);
-        const result = await orderContext.createPixPayment(props.productSlug, cpf, props.networkSlug, props.sellerSlug);
+        const result = await orderContext.createPixPayment(props.productSlug, cpf, "", props.networkSlug, props.sellerSlug);
         setLoading(false);
         if (result.sucesso) {
             setShowQrCode(true);
