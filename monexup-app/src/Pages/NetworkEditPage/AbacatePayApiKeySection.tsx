@@ -78,7 +78,7 @@ export default function AbacatePayApiKeySection({ storeId, onSuccess, onError }:
         </p>
       ) : (
         <div className="space-y-5">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2" aria-live="polite">
             {hasKey ? (
               <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-700">
                 <CheckCircle2 size={16} aria-hidden="true" />
