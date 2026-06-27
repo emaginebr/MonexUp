@@ -23,6 +23,7 @@ import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 
 import SectionHeader from "./SectionHeader";
 import FormField from "./FormField";
+import AbacatePayApiKeySection from "./AbacatePayApiKeySection";
 
 /**
  * NetworkEditPage — redesigned `/admin/network` route.
@@ -386,6 +387,13 @@ export default function NetworkEditPage() {
             </FormField>
           </div>
         </section>
+
+        {/* 3b. AbacatePay payment key ----------------------------------- */}
+        <AbacatePayApiKeySection
+          storeId={network?.proxypayStoreId}
+          onSuccess={showSuccessMessage}
+          onError={throwError}
+        />
       </div>
 
       {/* 4. Save bar (inline) -------------------------------------------- */}
