@@ -18,6 +18,8 @@ import IProductLinkService from './Interfaces/IProductLinkService';
 import ProductLinkService from './Impl/ProductLinkService';
 import IBillingService from './Interfaces/IBillingService';
 import BillingService from './Impl/BillingService';
+import IProxyPayStoreService from './Interfaces/IProxyPayStoreService';
+import ProxyPayStoreService from './Impl/ProxyPayStoreService';
 import { TemplateFactory } from '../packages/template';
 
 const TENANT_HEADERS = { 'X-Tenant-Id': process.env.REACT_APP_TENANT_ID || 'monexup' };
@@ -46,6 +48,19 @@ httpClientLofn.init(
 const productServiceImpl : IProductService = ProductService;
 productServiceImpl.init(httpClientLofn);
 
+// Initialize ProxyPay direct client (frontend talks straight to ProxyPay API)
+const PROXYPAY_TENANT_HEADERS = {
+  'X-Tenant-Id':
+    process.env.REACT_APP_PROXYPAY_TENANT_ID ||
+    process.env.REACT_APP_TENANT_ID ||
+    'monexup',
+};
+const httpClientProxyPay: IHttpClient = HttpClient();
+httpClientProxyPay.init(
+  process.env.REACT_APP_PROXYPAY_API_URL || '',
+  PROXYPAY_TENANT_HEADERS
+);
+
 const orderServiceImpl : IOrderService = OrderService;
 orderServiceImpl.init(httpClientAuth);
 
@@ -60,6 +75,9 @@ productLinkServiceImpl.init(httpClientAuth);
 
 const billingServiceImpl : IBillingService = BillingService;
 billingServiceImpl.init(httpClientAuth);
+
+const proxyPayStoreServiceImpl: IProxyPayStoreService = ProxyPayStoreService;
+proxyPayStoreServiceImpl.init(httpClientProxyPay);
 
 // Initialize template package (Dedalo API)
 const httpClientDedalo: IHttpClient = HttpClient();
@@ -79,6 +97,7 @@ const ServiceFactory = {
   ImageService: imageServiceImpl,
   ProductLinkService: productLinkServiceImpl,
   BillingService: billingServiceImpl,
+  ProxyPayStoreService: proxyPayStoreServiceImpl,
   setLogoffCallback: (cb : () => void) => {
     httpClientAuth.setLogoff(cb);
   }
