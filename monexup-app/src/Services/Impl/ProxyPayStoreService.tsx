@@ -1,5 +1,4 @@
 import IHttpClient from '../../Infra/Interface/IHttpClient';
-import ApiResponse from '../../DTO/Services/ApiResponse';
 import IProxyPayStoreService from '../Interfaces/IProxyPayStoreService';
 
 let _httpClient: IHttpClient;

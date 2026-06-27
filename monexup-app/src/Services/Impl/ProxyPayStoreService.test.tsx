@@ -62,4 +62,16 @@ describe('ProxyPayStoreService', () => {
 
     expect(ret).toBe(false);
   });
+
+  it('getHasAbacatePayApiKey retorna false quando myStore vem vazio', async () => {
+    (http.doPostAuth as any).mockResolvedValue({
+      success: true,
+      httpStatus: '200',
+      data: { data: { myStore: [] } },
+    });
+
+    const ret = await ProxyPayStoreService.getHasAbacatePayApiKey('tok');
+
+    expect(ret).toBe(false);
+  });
 });
