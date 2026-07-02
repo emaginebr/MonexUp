@@ -9,6 +9,7 @@ namespace MonexUp.ApiTests.Fixtures
     {
         public string BaseUrl { get; private set; } = string.Empty;
         public string LofnApiUrl { get; private set; } = string.Empty;
+        public string AbacatePayApiKey { get; private set; } = string.Empty;
         public string AuthToken { get; private set; } = string.Empty;
 
         private IConfiguration _configuration = null!;
@@ -26,6 +27,7 @@ namespace MonexUp.ApiTests.Fixtures
 
             BaseUrl = _configuration["ApiBaseUrl"] ?? throw new Exception("ApiBaseUrl not configured");
             LofnApiUrl = _configuration["LofnApiUrl"] ?? throw new Exception("LofnApiUrl not configured");
+            AbacatePayApiKey = _configuration["AbacatePayApiKey"] ?? string.Empty;
 
             var authBaseUrl = _configuration["Auth:BaseUrl"] ?? throw new Exception("Auth:BaseUrl not configured");
             _tenant = _configuration["Auth:Tenant"] ?? throw new Exception("Auth:Tenant not configured");

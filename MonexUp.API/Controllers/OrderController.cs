@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.Infra.Interfaces.AppServices;
 using MonexUp.DTO.Order;
@@ -23,6 +24,7 @@ namespace MonexUp.API.Controllers
         private readonly INetworkService _networkService;
         private readonly ILofnProductClient _lofnProductClient;
         private readonly IProxyPayService _proxyPayService;
+        private readonly ILogger<OrderController> _logger;
 
         public OrderController(
             IUserClient userClient,
@@ -30,7 +32,8 @@ namespace MonexUp.API.Controllers
             ISubscriptionService subscriptionService,
             INetworkService networkService,
             ILofnProductClient lofnProductClient,
-            IProxyPayService proxyPayService
+            IProxyPayService proxyPayService,
+            ILogger<OrderController> logger
         )
         {
             _userClient = userClient;
@@ -39,6 +42,7 @@ namespace MonexUp.API.Controllers
             _networkService = networkService;
             _lofnProductClient = lofnProductClient;
             _proxyPayService = proxyPayService;
+            _logger = logger;
         }
 
         [Authorize]
@@ -83,7 +87,7 @@ namespace MonexUp.API.Controllers
 
             var token = HttpContext.GetBearerToken();
             var result = await _subscriptionService.CreatePixPayment(
-                product.ProductId, userSession.UserId, networkId, sellerId, request.DocumentId, token, ct
+                product.ProductId, userSession.UserId, networkId, sellerId, request.DocumentId, request.Cellphone, token, request.Amount, ct
             );
 
             if (!result.Sucesso) return BadRequest(result);
@@ -98,7 +102,41 @@ namespace MonexUp.API.Controllers
             if (userSession == null) return Unauthorized();
 
             var status = await _proxyPayService.CheckQRCodeStatus(proxyPayInvoiceId);
+
+            // When the provider reports paid, reflect it on the MonexUp order.
+            // Idempotent (only advances Incoming → Active); a charge with no
+            // matching order is surfaced by MarkPaidByInvoiceId returning null.
+            if (status.Sucesso && status.Paid && long.TryParse(proxyPayInvoiceId, out var invoiceId))
+            {
+                var order = _orderService.MarkPaidByInvoiceId(invoiceId);
+                if (order == null)
+                {
+                    _logger.LogWarning("Paid ProxyPay invoice {InvoiceId} has no matching MonexUp order.", invoiceId);
+                }
+            }
+
             return Ok(status);
+        }
+
+        // Dev/test only: proxies ProxyPay's simulate-payment so the browser never
+        // calls ProxyPay directly. The status poller then flips the order to Active.
+        [Authorize]
+        [HttpPost("simulatePixPayment/{proxyPayInvoiceId}")]
+        public async Task<IActionResult> SimulatePixPayment(long proxyPayInvoiceId)
+        {
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
+
+            try
+            {
+                await _proxyPayService.SimulatePayment(proxyPayInvoiceId);
+                return Ok(new { sucesso = true });
+            }
+            catch (System.Net.Http.HttpRequestException ex)
+            {
+                _logger.LogWarning(ex, "Simulate PIX payment failed for invoice {InvoiceId}", proxyPayInvoiceId);
+                return StatusCode(502, new { sucesso = false, mensagem = ex.Message });
+            }
         }
 
         [Authorize]

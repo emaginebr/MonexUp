@@ -13,7 +13,7 @@ const OrderBusiness: IOrderBusiness = {
   init: function (orderService: IOrderService): void {
     _orderService = orderService;
   },
-  createPixPayment: async (productSlug: string, documentId: string, networkSlug?: string, sellerSlug?: string) => {
+  createPixPayment: async (productSlug: string, documentId: string, cellphone: string, networkSlug?: string, sellerSlug?: string, amount?: number) => {
     try {
         let ret: BusinessResult<PixPaymentResult>;
         let session: AuthSession = AuthFactory.AuthBusiness.getSession();
@@ -24,7 +24,7 @@ const OrderBusiness: IOrderBusiness = {
             mensagem: "Not logged"
           };
         }
-        let retServ = await _orderService.createPixPayment(productSlug, documentId, networkSlug, sellerSlug, session.token);
+        let retServ = await _orderService.createPixPayment(productSlug, documentId, cellphone, networkSlug, sellerSlug, session.token, amount);
         return {
           ...ret,
           dataResult: retServ,
@@ -33,6 +33,37 @@ const OrderBusiness: IOrderBusiness = {
       } catch {
         throw new Error("Failed to create PIX payment");
       }
+  },
+  checkPixStatus: async (invoiceId: number) => {
+    try {
+      let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+      if (!session) {
+        return { paid: false, status: "NO_SESSION", sucesso: false };
+      }
+      let retServ = await _orderService.checkPixStatus(String(invoiceId), session.token);
+      return {
+        paid: retServ?.paid === true,
+        status: retServ?.status ?? "UNKNOWN",
+        sucesso: retServ?.sucesso !== false,
+      };
+    } catch {
+      throw new Error("Failed to check PIX status");
+    }
+  },
+  simulatePixPayment: async (invoiceId: number) => {
+    try {
+      let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+      if (!session) {
+        return { sucesso: false, mensagem: "Not logged" };
+      }
+      let retServ = await _orderService.simulatePixPayment(invoiceId, session.token);
+      return {
+        sucesso: retServ?.sucesso !== false,
+        mensagem: retServ?.mensagem,
+      };
+    } catch {
+      throw new Error("Failed to simulate PIX payment");
+    }
   },
   search: async (networkId: number, userId: number, sellerId: number, pageNum: number) => {
     try {

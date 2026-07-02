@@ -203,9 +203,11 @@ function App() {
           <Route path=":networkSlug/request-access" element={<RequestAccessPage />} />
           <Route path=":networkSlug/@/:sellerSlug/request-access" element={<RequestAccessPage />} />
         </Route>
+        {/* Standalone: page owns its own chrome (cream vendor surface),
+            no HomeHeader/HomeFooter wrap. */}
+        <Route path="checkout/success" element={<CheckoutSuccessPage />} />
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
-          <Route path="checkout/success" element={<CheckoutSuccessPage />} />
           <Route path="billing/payment-completed" element={<BillingPaymentCompletedPage />} />
           <Route path="network">
             <Route index element={<NetworkInsertPage />} />

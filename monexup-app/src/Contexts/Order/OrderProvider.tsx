@@ -27,10 +27,10 @@ export default function OrderProvider(props: any) {
         searchResult: searchResult,
         pixPaymentResult: pixPaymentResult,
 
-        createPixPayment: async (productSlug: string, documentId: string, networkSlug?: string, sellerSlug?: string) => {
+        createPixPayment: async (productSlug: string, documentId: string, cellphone: string, networkSlug?: string, sellerSlug?: string, amount?: number) => {
             let ret: Promise<OrderProviderResult>;
             setLoadingUpdate(true);
-            let brt = await OrderFactory.OrderBusiness.createPixPayment(productSlug, documentId, networkSlug, sellerSlug);
+            let brt = await OrderFactory.OrderBusiness.createPixPayment(productSlug, documentId, cellphone, networkSlug, sellerSlug, amount);
             if (brt.sucesso) {
                 setLoadingUpdate(false);
                 setPixPaymentResult(brt.dataResult);
@@ -48,6 +48,12 @@ export default function OrderProvider(props: any) {
                     mensagemErro: brt.mensagem
                 };
             }
+        },
+        checkPixStatus: async (invoiceId: number) => {
+            return await OrderFactory.OrderBusiness.checkPixStatus(invoiceId);
+        },
+        simulatePixPayment: async (invoiceId: number) => {
+            return await OrderFactory.OrderBusiness.simulatePixPayment(invoiceId);
         },
         search: async (networkId: number, userId: number, sellerId: number, pageNum: number) => {
             let ret: Promise<ProviderResult>;

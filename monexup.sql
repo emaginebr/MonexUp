@@ -41,6 +41,7 @@ CREATE TABLE monexup_networks (
     withdrawal_period INTEGER NOT NULL DEFAULT 0,
     status INTEGER NOT NULL DEFAULT 1,
     slug VARCHAR(100) NOT NULL,
+    template VARCHAR(20) NULL,
     plan INTEGER NOT NULL DEFAULT 1,
     image VARCHAR(110),
     lofn_store_id BIGINT NULL,
@@ -116,6 +117,7 @@ CREATE TABLE monexup_order_items (
     order_id BIGINT NOT NULL,
     product_id BIGINT NOT NULL,
     quantity INTEGER NOT NULL DEFAULT 1,
+    amount NUMERIC NULL,
     CONSTRAINT monexup_order_items_pkey PRIMARY KEY (item_id),
     CONSTRAINT monexup_fk_order_item FOREIGN KEY (order_id)
         REFERENCES monexup_orders (order_id) ON DELETE SET NULL

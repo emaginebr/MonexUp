@@ -110,14 +110,16 @@ namespace MonexUp.ApiTests.Helpers
             string? documentId = null,
             string? productSlug = null,
             string? networkSlug = null,
-            string? sellerSlug = null)
+            string? sellerSlug = null,
+            string? cellphone = null)
         {
             return new PixPaymentRequest
             {
                 DocumentId = documentId ?? "11144477735",
                 ProductSlug = productSlug,
                 NetworkSlug = networkSlug,
-                SellerSlug = sellerSlug
+                SellerSlug = sellerSlug,
+                Cellphone = cellphone ?? "11999998888"
             };
         }
 

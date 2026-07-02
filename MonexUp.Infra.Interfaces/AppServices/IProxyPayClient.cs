@@ -46,5 +46,24 @@ namespace MonexUp.Infra.Interfaces.AppServices
         /// Used by the reconciliation poller. Implemented via GraphQL.
         /// </summary>
         Task<IList<ProxyPayInvoiceStatusInfo>> ListPendingInvoicesAsync(long storeId, CancellationToken ct = default);
+
+        /// <summary>
+        /// Sets (write-only) the AbacatePay API key on the given ProxyPay store.
+        /// Authenticated with NAuth bearer (server-side only). Throws on non-success.
+        /// </summary>
+        Task SetAbacatePayApiKeyAsync(long storeId, string apiKey, string bearerToken, CancellationToken ct = default);
+
+        /// <summary>
+        /// Returns whether the authenticated user's ProxyPay store has an AbacatePay
+        /// API key configured, via GraphQL `myStore { hasAbacatePayApiKey }`.
+        /// Returns false on any failure.
+        /// </summary>
+        Task<bool> GetHasAbacatePayApiKeyAsync(string bearerToken, CancellationToken ct = default);
+
+        /// <summary>
+        /// Dev/test only: triggers ProxyPay's simulate-payment for an invoice so it
+        /// flips to paid without a real transfer. Anonymous (tenant header). Throws on non-success.
+        /// </summary>
+        Task SimulatePaymentAsync(long proxypayInvoiceId, CancellationToken ct = default);
     }
 }

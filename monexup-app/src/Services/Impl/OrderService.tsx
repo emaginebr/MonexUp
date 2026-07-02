@@ -10,13 +10,17 @@ const OrderService: IOrderService = {
     init: function (htppClient: IHttpClient): void {
         _httpClient = htppClient;
     },
-    createPixPayment: async (productSlug: string, documentId: string, networkSlug: string, sellerSlug: string, token: string) => {
+    createPixPayment: async (productSlug: string, documentId: string, cellphone: string, networkSlug: string, sellerSlug: string, token: string, amount?: number) => {
         let ret: PixPaymentResult;
         const body = {
             networkSlug: networkSlug || null,
             productSlug,
             sellerSlug: sellerSlug || null,
             documentId,
+            cellphone: cellphone || null,
+            // Optional: open-amount donations pass the buyer-typed value so
+            // backend can override product.Price. Omitted for fixed-price.
+            amount: amount && amount > 0 ? amount : null,
         };
         let request = await _httpClient.doPostAuth<PixPaymentResult>("/Order/createPixPayment", body, token);
         if (request.success) {
@@ -32,6 +36,15 @@ const OrderService: IOrderService = {
             return request.data;
         }
         return { sucesso: false, status: "ERROR", paid: false };
+    },
+    simulatePixPayment: async (proxyPayInvoiceId: number, token: string) => {
+        // Dev-only: MonexUp proxies ProxyPay's simulate-payment. Browser never
+        // touches ProxyPay directly.
+        let request = await _httpClient.doPostAuth<any>("/Order/simulatePixPayment/" + proxyPayInvoiceId, {}, token);
+        if (request.success) {
+            return request.data;
+        }
+        return { sucesso: false, mensagem: request.messageError };
     },
     search: async (networkId: number, userId: number, sellerId: number, pageNum: number, token: string) => {
         return await _httpClient.doPostAuth<OrderListPagedResult>("/Order/search", {

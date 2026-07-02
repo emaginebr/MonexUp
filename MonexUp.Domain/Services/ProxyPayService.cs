@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MonexUp.Domain.Interfaces.Factory;
@@ -57,11 +58,16 @@ namespace MonexUp.Domain.Impl.Services
 
             _networkFactory.BuildNetworkModel().TrySetProxyPayStore(network.NetworkId, created.StoreId, created.ClientId);
 
-            var refreshed = _networkFactory.BuildNetworkModel().GetById(network.NetworkId, _networkFactory);
-            return refreshed ?? network;
+            // Persisted via raw SQL (ExecuteSqlInterpolated bypasses the EF change
+            // tracker). Reflect the values on the in-memory model instead of
+            // rereading — GetById/Find would return the stale tracked instance
+            // from the same DbContext scope, with proxypay_store_id still null.
+            network.ProxyPayStoreId = created.StoreId;
+            network.ProxyPayClientId = created.ClientId;
+            return network;
         }
 
-        public async Task<ProxyPayQRCodeResponse> CreateQRCode(UserInfo user, LofnProductInfo product, INetworkModel network, UserInfo seller, string documentId)
+        public async Task<ProxyPayQRCodeResponse> CreateQRCode(UserInfo user, LofnProductInfo product, INetworkModel network, UserInfo seller, decimal? unitPriceOverride = null)
         {
             if (network == null || string.IsNullOrEmpty(network.ProxyPayClientId))
             {
@@ -72,13 +78,25 @@ namespace MonexUp.Domain.Impl.Services
                 };
             }
 
+            // Open-amount donations send the buyer-typed value via
+            // unitPriceOverride. Anything else (fixed price products, fixed
+            // donations) falls back to the product's stored Price.
+            // ProxyPayItem.UnitPrice is double — cast at the boundary.
+            var unitPrice = unitPriceOverride.HasValue && unitPriceOverride.Value > 0
+                ? (double)unitPriceOverride.Value
+                : product.Price;
+
+            // Buyer identity is sourced from the NAuth UserInfo (already
+            // merged with any body-supplied values upstream).
+            var customerCellphone = user.Phones?.FirstOrDefault()?.Phone ?? string.Empty;
+
             var request = new ProxyPayQRCodeRequest
             {
                 ClientId = network.ProxyPayClientId,
                 CustomerName = user.Name,
                 CustomerEmail = user.Email,
-                CustomerDocumentId = documentId,
-                CustomerCellphone = string.Empty,
+                CustomerDocumentId = user.IdDocument,
+                CustomerCellphone = customerCellphone,
                 Items = new List<ProxyPayItem>
                 {
                     new ProxyPayItem
@@ -86,7 +104,7 @@ namespace MonexUp.Domain.Impl.Services
                         Id = product.ProductId.ToString(),
                         Description = product.Name,
                         Quantity = 1,
-                        UnitPrice = product.Price
+                        UnitPrice = unitPrice
                     }
                 }
             };
@@ -97,6 +115,27 @@ namespace MonexUp.Domain.Impl.Services
         public async Task<ProxyPayQRCodeStatusResponse> CheckQRCodeStatus(string proxyPayInvoiceId)
         {
             return await _proxyPayAppService.CheckQRCodeStatusAsync(proxyPayInvoiceId);
+        }
+
+        public async Task SetAbacatePayApiKey(long networkId, string apiKey, string bearerToken, CancellationToken ct = default)
+        {
+            var network = _networkFactory.BuildNetworkModel().GetById(networkId, _networkFactory);
+            if (network == null)
+                throw new InvalidOperationException("Network not found.");
+            if (!network.ProxyPayStoreId.HasValue || network.ProxyPayStoreId.Value <= 0)
+                throw new InvalidOperationException("Network has no ProxyPay store provisioned.");
+
+            await _proxyPayClient.SetAbacatePayApiKeyAsync(network.ProxyPayStoreId.Value, apiKey, bearerToken, ct);
+        }
+
+        public async Task<bool> GetHasAbacatePayApiKey(string bearerToken, CancellationToken ct = default)
+        {
+            return await _proxyPayClient.GetHasAbacatePayApiKeyAsync(bearerToken, ct);
+        }
+
+        public async Task SimulatePayment(long proxyPayInvoiceId, CancellationToken ct = default)
+        {
+            await _proxyPayClient.SimulatePaymentAsync(proxyPayInvoiceId, ct);
         }
 
         public Task SyncPendingInvoices()

@@ -9,6 +9,7 @@ using NAuth.ACL.Interfaces;
 using NAuth.DTO.User;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -40,7 +41,7 @@ namespace MonexUp.Domain.Impl.Services
             _lofnProductClient = lofnProductClient;
         }
 
-        public async Task<PixPaymentResult> CreatePixPayment(long productId, long userId, long? networkId, long? sellerId, string documentId, string token, CancellationToken ct = default)
+        public async Task<PixPaymentResult> CreatePixPayment(long productId, long userId, long? networkId, long? sellerId, string documentId, string cellphone, string token, decimal? amount = null, CancellationToken ct = default)
         {
             var product = await _lofnProductClient.GetByIdAsync(productId);
             if (product == null)
@@ -64,6 +65,74 @@ namespace MonexUp.Domain.Impl.Services
                 network = await _proxyPayService.EnsureStoreAsync(network, token, ct);
             }
 
+            // Step 1: complete the buyer's NAuth profile with whatever the
+            // checkout body brought in. Body wins for non-empty values.
+            var user = await _userClient.GetByIdAsync(userId, token);
+            if (user == null)
+            {
+                return new PixPaymentResult { Sucesso = false, Mensagem = "User not found" };
+            }
+
+            var needsUpdate = false;
+
+            if (!string.IsNullOrWhiteSpace(documentId) && documentId != user.IdDocument)
+            {
+                user.IdDocument = documentId;
+                needsUpdate = true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(cellphone))
+            {
+                var currentFirstPhone = user.Phones?.FirstOrDefault()?.Phone;
+                if (cellphone != currentFirstPhone)
+                {
+                    var phones = user.Phones?.ToList() ?? new List<UserPhoneInfo>();
+                    if (phones.Count == 0)
+                    {
+                        phones.Add(new UserPhoneInfo { Phone = cellphone });
+                    }
+                    else
+                    {
+                        phones[0] = new UserPhoneInfo { Phone = cellphone };
+                    }
+                    user.Phones = phones;
+                    needsUpdate = true;
+                }
+            }
+
+            if (needsUpdate)
+            {
+                await _userClient.UpdateAsync(user, token);
+                user = await _userClient.GetByIdAsync(userId, token);
+            }
+
+            if (string.IsNullOrWhiteSpace(user.IdDocument))
+            {
+                return new PixPaymentResult { Sucesso = false, Mensagem = "CPF é obrigatório para criar o pagamento PIX." };
+            }
+
+            // Compute the effective unit amount for this purchase:
+            //  - product with a fixed price wins; body `amount` is ignored.
+            //  - product without price (open-amount donation) requires
+            //    `amount` from the body; otherwise 400.
+            decimal effectiveAmount;
+            if (product.Price > 0)
+            {
+                effectiveAmount = (decimal)product.Price;
+            }
+            else
+            {
+                if (!amount.HasValue || amount.Value <= 0)
+                {
+                    return new PixPaymentResult
+                    {
+                        Sucesso = false,
+                        Mensagem = "Valor é obrigatório para produtos sem preço definido."
+                    };
+                }
+                effectiveAmount = amount.Value;
+            }
+
             UserInfo seller = null;
             if (sellerId.HasValue && sellerId.Value > 0)
             {
@@ -83,14 +152,14 @@ namespace MonexUp.Domain.Impl.Services
                     {
                         new OrderItemInfo {
                             ProductId = productId,
-                            Quantity = 1
+                            Quantity = 1,
+                            Amount = effectiveAmount
                         }
                     }
                 });
             }
 
-            var user = await _userClient.GetByIdAsync(order.UserId, token);
-            var qrCodeResponse = await _proxyPayService.CreateQRCode(user, product, network, seller, documentId);
+            var qrCodeResponse = await _proxyPayService.CreateQRCode(user, product, network, seller, effectiveAmount);
 
             if (!qrCodeResponse.Sucesso)
             {

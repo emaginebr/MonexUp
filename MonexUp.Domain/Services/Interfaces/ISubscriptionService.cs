@@ -12,6 +12,6 @@ namespace MonexUp.Domain.Interfaces.Services
     public interface ISubscriptionService
     {
         Task<SubscriptionInfo> CreateSubscription(long productId, long userId, long? networkId, long? sellerId, string token);
-        Task<PixPaymentResult> CreatePixPayment(long productId, long userId, long? networkId, long? sellerId, string documentId, string token, CancellationToken ct = default);
+        Task<PixPaymentResult> CreatePixPayment(long productId, long userId, long? networkId, long? sellerId, string documentId, string cellphone, string token, decimal? amount = null, CancellationToken ct = default);
     }
 }

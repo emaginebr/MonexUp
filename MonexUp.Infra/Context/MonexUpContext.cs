@@ -189,6 +189,9 @@ public partial class MonexUpContext : DbContext
             entity.Property(e => e.Quantity)
                 .HasDefaultValue(1)
                 .HasColumnName("quantity");
+            entity.Property(e => e.Amount)
+                .HasColumnType("numeric")
+                .HasColumnName("amount");
 
             entity.HasOne(d => d.Order).WithMany(p => p.OrderItems)
                 .HasForeignKey(d => d.OrderId)

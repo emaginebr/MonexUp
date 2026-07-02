@@ -15,6 +15,10 @@ namespace DB.Infra.Services
         private const int STATUS_PAID = 3;
         private const int STATUS_REFUNDED = 6;
 
+        // MonexUp order lifecycle (OrderStatusEnum): Incoming = 1, Active (paid) = 2.
+        private const int ORDER_STATUS_INCOMING = 1;
+        private const int ORDER_STATUS_ACTIVE = 2;
+
         private readonly MonexUpContext _context;
         private readonly IProxyPayClient _proxyPayClient;
         private readonly IBillingFeeService _billingFeeService;
@@ -60,6 +64,24 @@ namespace DB.Infra.Services
                                 outcome.FeesRecorded += _billingFeeService.RecordPaidProxyPayInvoice(
                                     inv.InvoiceId, net.NetworkId, paidAmountCents, inv.PaidAt ?? DateTime.UtcNow);
                             }
+
+                            // Backstop for the browser-closed case: advance the order to
+                            // Active (paid). Idempotent — only touches Incoming orders.
+                            var order = await _context.Orders
+                                .FirstOrDefaultAsync(o => o.ProxyPayInvoiceId == inv.InvoiceId, ct);
+                            if (order == null)
+                            {
+                                _logger.LogWarning(
+                                    "Paid ProxyPay invoice {InvoiceId} (store {StoreId}) has no matching MonexUp order.",
+                                    inv.InvoiceId, net.ProxyPayStoreId);
+                            }
+                            else if (order.Status == ORDER_STATUS_INCOMING)
+                            {
+                                order.Status = ORDER_STATUS_ACTIVE;
+                                order.UpdatedAt = DateTime.Now;
+                                await _context.SaveChangesAsync(ct);
+                                outcome.OrdersMarkedPaid++;
+                            }
                         }
                         else if (inv.Status == STATUS_REFUNDED)
                         {
@@ -80,8 +102,8 @@ namespace DB.Infra.Services
             }
 
             _logger.LogInformation(
-                "ProxyPay reconciliation: networks={Networks} invoices={Invoices} recorded={Recorded} reversed={Reversed} errors={Errors}",
-                outcome.NetworksScanned, outcome.InvoicesProcessed, outcome.FeesRecorded, outcome.FeesReversed, outcome.Errors);
+                "ProxyPay reconciliation: networks={Networks} invoices={Invoices} recorded={Recorded} reversed={Reversed} ordersPaid={OrdersPaid} errors={Errors}",
+                outcome.NetworksScanned, outcome.InvoicesProcessed, outcome.FeesRecorded, outcome.FeesReversed, outcome.OrdersMarkedPaid, outcome.Errors);
 
             return outcome;
         }

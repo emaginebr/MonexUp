@@ -359,5 +359,93 @@ namespace MonexUp.ApiTests.Controllers
 
             response.StatusCode.Should().NotBe(401);
         }
+
+        // --- AbacatePay API key (served through MonexUp, relayed to ProxyPay) ---
+
+        [Fact]
+        public async Task SetAbacatePayApiKey_WithoutAuth_ShouldReturn401()
+        {
+            var response = await _fixture.CreateAnonymousRequest("/network/1/abacatepay-apikey")
+                .AllowAnyHttpStatus()
+                .PutJsonAsync(new AbacatePayApiKeyRequest { ApiKey = "abc_live_dummy" });
+
+            response.StatusCode.Should().Be(401);
+        }
+
+        [Fact]
+        public async Task SetAbacatePayApiKey_WithAuth_EmptyKey_ShouldReturn400()
+        {
+            // Controller validates apiKey before reaching the provider — deterministic 400.
+            var response = await _fixture.CreateAuthenticatedRequest("/network/1/abacatepay-apikey")
+                .AllowAnyHttpStatus()
+                .PutJsonAsync(new AbacatePayApiKeyRequest { ApiKey = string.Empty });
+
+            response.StatusCode.Should().Be(400, "apiKey is required");
+        }
+
+        [Fact]
+        public async Task SetAbacatePayApiKey_WithAuthAndProvisionedStore_ShouldNotReturn401Or500()
+        {
+            // Insert auto-provisions a ProxyPay store, so the key set reaches the provider.
+            var network = await CreateNetworkAsync();
+
+            var response = await _fixture.CreateAuthenticatedRequest($"/network/{network.NetworkId}/abacatepay-apikey")
+                .AllowAnyHttpStatus()
+                .PutJsonAsync(new AbacatePayApiKeyRequest { ApiKey = "abc_live_dummy_key" });
+
+            // Provider may accept (204) or reject a dummy key (400) / non-owner (403);
+            // it must never be an auth failure or an unhandled 500.
+            ((int)response.StatusCode).Should().BeOneOf(204, 400, 403);
+        }
+
+        [Fact]
+        public async Task GetAbacatePayApiKeyStatus_WithoutAuth_ShouldReturn401()
+        {
+            var response = await _fixture.CreateAnonymousRequest("/network/1/abacatepay-apikey/status")
+                .AllowAnyHttpStatus()
+                .GetAsync();
+
+            response.StatusCode.Should().Be(401);
+        }
+
+        [Fact]
+        public async Task GetAbacatePayApiKeyStatus_WithAuth_ShouldReturnIndicatorShape()
+        {
+            var network = await CreateNetworkAsync();
+
+            var response = await _fixture.CreateAuthenticatedRequest($"/network/{network.NetworkId}/abacatepay-apikey/status")
+                .AllowAnyHttpStatus()
+                .GetAsync();
+
+            response.StatusCode.Should().NotBe(401);
+            if ((int)response.StatusCode == 200)
+            {
+                var body = await response.GetJsonAsync<AbacatePayStatusResult>();
+                body.Sucesso.Should().BeTrue();
+                // hasAbacatePayApiKey is a bool indicator. Its value depends on the
+                // caller's ProxyPay store state (one store per user, shared across
+                // networks), so we assert the response shape, not a specific value.
+            }
+        }
+
+        private async Task<NetworkInfo> CreateNetworkAsync()
+        {
+            var payload = TestDataHelper.CreateNetworkInsertInfo();
+            var response = await _fixture.CreateAuthenticatedRequest("/network/insert")
+                .AllowAnyHttpStatus()
+                .PostJsonAsync(payload);
+
+            response.StatusCode.Should().Be(200, "network must be created (auto-provisions the ProxyPay store)");
+            return await response.GetJsonAsync<NetworkInfo>();
+        }
+
+        private class AbacatePayStatusResult
+        {
+            [JsonPropertyName("sucesso")]
+            public bool Sucesso { get; set; }
+
+            [JsonPropertyName("hasAbacatePayApiKey")]
+            public bool HasAbacatePayApiKey { get; set; }
+        }
     }
 }
