@@ -84,6 +84,28 @@ namespace MonexUp.Domain.Impl.Services
             return _orderFactory.BuildOrderModel().GetById(orderId, _orderFactory);
         }
 
+        public IOrderModel GetByProxyPayInvoiceId(long proxyPayInvoiceId)
+        {
+            return _orderFactory.BuildOrderModel().GetByProxyPayInvoiceId(proxyPayInvoiceId, _orderFactory);
+        }
+
+        public IOrderModel MarkPaidByInvoiceId(long proxyPayInvoiceId)
+        {
+            var order = _orderFactory.BuildOrderModel().GetByProxyPayInvoiceId(proxyPayInvoiceId, _orderFactory);
+            if (order == null)
+            {
+                return null;
+            }
+            // Idempotent: only advance from Incoming. Already-Active (or any other
+            // terminal state) is left untouched so a re-check never double-processes.
+            if (order.Status == OrderStatusEnum.Incoming)
+            {
+                order.Status = OrderStatusEnum.Active;
+                order.Update(_orderFactory);
+            }
+            return order;
+        }
+
         public IOrderModel Get(long productId, long userId, long? sellerId, OrderStatusEnum status)
         {
             return _orderFactory.BuildOrderModel().Get(productId, userId, sellerId, status, _orderFactory);

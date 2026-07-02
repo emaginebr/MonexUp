@@ -3,6 +3,6 @@ import IProxyPayStoreService from '../../Services/Interfaces/IProxyPayStoreServi
 
 export default interface IProxyPayStoreBusiness {
   init: (service: IProxyPayStoreService) => void;
-  setAbacatePayApiKey: (storeId: number, apiKey: string) => Promise<BusinessResult<void>>;
-  getHasAbacatePayApiKey: () => Promise<boolean>;
+  setAbacatePayApiKey: (networkId: number, apiKey: string) => Promise<BusinessResult<void>>;
+  getHasAbacatePayApiKey: (networkId: number) => Promise<boolean>;
 }

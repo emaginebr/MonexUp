@@ -28,6 +28,7 @@ namespace MonexUp.API.Controllers
         private readonly ILofnStoreProvisioningService _lofnStoreProvisioning;
         private readonly IBillingService _billingService;
         private readonly IValidator<EnsureStoreRequest> _ensureStoreValidator;
+        private readonly IProxyPayService _proxyPayService;
 
         public NetworkController(
             INetworkDomainFactory networkFactory,
@@ -37,7 +38,8 @@ namespace MonexUp.API.Controllers
             IProfileService profileService,
             ILofnStoreProvisioningService lofnStoreProvisioning,
             IBillingService billingService,
-            IValidator<EnsureStoreRequest> ensureStoreValidator
+            IValidator<EnsureStoreRequest> ensureStoreValidator,
+            IProxyPayService proxyPayService
         )
         {
             _networkFactory = networkFactory;
@@ -48,6 +50,7 @@ namespace MonexUp.API.Controllers
             _lofnStoreProvisioning = lofnStoreProvisioning;
             _billingService = billingService;
             _ensureStoreValidator = ensureStoreValidator;
+            _proxyPayService = proxyPayService;
         }
 
         [Authorize]
@@ -280,6 +283,54 @@ namespace MonexUp.API.Controllers
             UserNetworkStatusEnum status = (UserNetworkStatusEnum)changeStatus.Status;
             await _networkService.ChangeStatus(changeStatus.NetworkId, changeStatus.UserId, status, userSession.UserId, token);
             return Ok();
+        }
+
+        // AbacatePay API key — served through MonexUp, relayed to ProxyPay
+        // server-side (browser never calls the provider). Write-only.
+        [Authorize]
+        [HttpPut("{networkId}/abacatepay-apikey")]
+        public async Task<IActionResult> SetAbacatePayApiKey(long networkId, [FromBody] AbacatePayApiKeyRequest request, CancellationToken ct)
+        {
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
+
+            var token = HttpContext.GetBearerToken();
+            if (string.IsNullOrEmpty(token)) return Unauthorized();
+
+            if (request == null || string.IsNullOrWhiteSpace(request.ApiKey))
+            {
+                return BadRequest(new { sucesso = false, mensagem = "apiKey é obrigatória." });
+            }
+
+            try
+            {
+                await _proxyPayService.SetAbacatePayApiKey(networkId, request.ApiKey, token, ct);
+                return NoContent();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { sucesso = false, mensagem = ex.Message });
+            }
+            catch (System.Net.Http.HttpRequestException ex)
+            {
+                // Surface provider ownership (403) / validation (400) verbatim-ish.
+                var code = ex.Message.Contains("403") ? 403 : 400;
+                return StatusCode(code, new { sucesso = false, mensagem = ex.Message });
+            }
+        }
+
+        [Authorize]
+        [HttpGet("{networkId}/abacatepay-apikey/status")]
+        public async Task<IActionResult> GetAbacatePayApiKeyStatus(long networkId, CancellationToken ct)
+        {
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
+
+            var token = HttpContext.GetBearerToken();
+            if (string.IsNullOrEmpty(token)) return Unauthorized();
+
+            var hasKey = await _proxyPayService.GetHasAbacatePayApiKey(token, ct);
+            return Ok(new { sucesso = true, hasAbacatePayApiKey = hasKey });
         }
 
         [Authorize]

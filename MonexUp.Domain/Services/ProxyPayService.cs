@@ -58,8 +58,13 @@ namespace MonexUp.Domain.Impl.Services
 
             _networkFactory.BuildNetworkModel().TrySetProxyPayStore(network.NetworkId, created.StoreId, created.ClientId);
 
-            var refreshed = _networkFactory.BuildNetworkModel().GetById(network.NetworkId, _networkFactory);
-            return refreshed ?? network;
+            // Persisted via raw SQL (ExecuteSqlInterpolated bypasses the EF change
+            // tracker). Reflect the values on the in-memory model instead of
+            // rereading — GetById/Find would return the stale tracked instance
+            // from the same DbContext scope, with proxypay_store_id still null.
+            network.ProxyPayStoreId = created.StoreId;
+            network.ProxyPayClientId = created.ClientId;
+            return network;
         }
 
         public async Task<ProxyPayQRCodeResponse> CreateQRCode(UserInfo user, LofnProductInfo product, INetworkModel network, UserInfo seller, decimal? unitPriceOverride = null)
@@ -110,6 +115,27 @@ namespace MonexUp.Domain.Impl.Services
         public async Task<ProxyPayQRCodeStatusResponse> CheckQRCodeStatus(string proxyPayInvoiceId)
         {
             return await _proxyPayAppService.CheckQRCodeStatusAsync(proxyPayInvoiceId);
+        }
+
+        public async Task SetAbacatePayApiKey(long networkId, string apiKey, string bearerToken, CancellationToken ct = default)
+        {
+            var network = _networkFactory.BuildNetworkModel().GetById(networkId, _networkFactory);
+            if (network == null)
+                throw new InvalidOperationException("Network not found.");
+            if (!network.ProxyPayStoreId.HasValue || network.ProxyPayStoreId.Value <= 0)
+                throw new InvalidOperationException("Network has no ProxyPay store provisioned.");
+
+            await _proxyPayClient.SetAbacatePayApiKeyAsync(network.ProxyPayStoreId.Value, apiKey, bearerToken, ct);
+        }
+
+        public async Task<bool> GetHasAbacatePayApiKey(string bearerToken, CancellationToken ct = default)
+        {
+            return await _proxyPayClient.GetHasAbacatePayApiKeyAsync(bearerToken, ct);
+        }
+
+        public async Task SimulatePayment(long proxyPayInvoiceId, CancellationToken ct = default)
+        {
+            await _proxyPayClient.SimulatePaymentAsync(proxyPayInvoiceId, ct);
         }
 
         public Task SyncPendingInvoices()

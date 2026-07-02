@@ -1,9 +1,9 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { PixPayment } from "proxypay-react";
 import OrderContext from "../../Contexts/Order/OrderContext";
 import IOrderProvider from "../../DTO/Contexts/IOrderProvider";
+import PixQrView from "../StorefrontPage/PixQrView";
 
 interface PixPaymentFormProps {
     productSlug: string;
@@ -37,27 +37,25 @@ export default function PixPaymentForm(props: PixPaymentFormProps) {
     };
 
     if (showQrCode && orderContext.pixPaymentResult?.qrCode) {
+        const qr = orderContext.pixPaymentResult.qrCode;
         return (
-            <PixPayment
-                customer={{ name: "", documentId: cpf, cellphone: "", email: "" }}
-                items={[{ id: "1", description: "Payment", quantity: 1, unitPrice: 0, discount: 0 }]}
-                onSuccess={() => {
-                    props.setMessageSuccess(t('payment_success'));
-                    navigate('/checkout/success');
-                }}
-                onError={(err: Error) => {
-                    props.setMessageError(err.message || t('payment_error'));
-                    setShowQrCode(false);
-                }}
-                pollInterval={5000}
-            >
-                <div className="text-center p-4">
-                    <h5>{t('pix_payment_title')}</h5>
-                    <button className="btn btn-success btn-lg">
-                        {t('pay_with_pix')}
-                    </button>
-                </div>
-            </PixPayment>
+            <div className="text-center p-4">
+                <h5 className="mb-3">{t('pix_payment_title')}</h5>
+                <PixQrView
+                    invoiceId={qr.invoiceId}
+                    brCode={qr.brCode}
+                    brCodeBase64={qr.brCodeBase64}
+                    expiredAt={qr.expiredAt}
+                    onPaid={() => {
+                        props.setMessageSuccess(t('payment_success'));
+                        navigate('/checkout/success');
+                    }}
+                    onError={(msg) => {
+                        props.setMessageError(msg || t('payment_error'));
+                        setShowQrCode(false);
+                    }}
+                />
+            </div>
         );
     }
 

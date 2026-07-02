@@ -49,6 +49,12 @@ export default function OrderProvider(props: any) {
                 };
             }
         },
+        checkPixStatus: async (invoiceId: number) => {
+            return await OrderFactory.OrderBusiness.checkPixStatus(invoiceId);
+        },
+        simulatePixPayment: async (invoiceId: number) => {
+            return await OrderFactory.OrderBusiness.simulatePixPayment(invoiceId);
+        },
         search: async (networkId: number, userId: number, sellerId: number, pageNum: number) => {
             let ret: Promise<ProviderResult>;
             setLoadingSearch(true);

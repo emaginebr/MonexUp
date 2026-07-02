@@ -18,7 +18,7 @@
  * soon" toast and does NOT call the backend. Backend wiring for Boleto/Card
  * is out of scope for this iteration.
  */
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import NetworkContext from "../../Contexts/Network/NetworkContext";
@@ -80,47 +80,72 @@ export default function VendorProductPage() {
     });
     const isLoggedIn = Boolean(authContext.sessionInfo);
 
-    // Whenever the session changes (login/logout), refill the readonly name +
-    // email fields from `sessionInfo`. CPF + phone aren't carried in the
-    // client AuthSession — fetch them from NAuth via userContext.getMe() so
-    // pre-registered buyers don't have to retype.
+    // Whenever the logged-in user changes, refill buyer form. Depends on
+    // sessionInfo.userId (primitive) not the whole object — nauth.refreshUser()
+    // mutates the sessionInfo reference on every call, which would otherwise
+    // cause an infinite getMe loop.
+    const loadedForUserIdRef = useRef<number | null>(null);
+    const sessionUserId = authContext.sessionInfo?.userId ?? null;
+    const sessionName = authContext.sessionInfo?.name || "";
+    const sessionEmail = authContext.sessionInfo?.email || "";
+
     useEffect(() => {
-        const s = authContext.sessionInfo;
-        if (!s) return;
+        if (!sessionUserId) {
+            loadedForUserIdRef.current = null;
+            return;
+        }
 
         // Seed name + email immediately from the session.
         setBuyer((b) => ({
             ...b,
-            name: s.name || "",
-            email: s.email || "",
+            name: sessionName,
+            email: sessionEmail,
         }));
 
-        // Fetch full UserInfo (idDocument + phones[]) for the logged user.
-        // Best-effort: if the request fails the form just stays editable.
+        // Guard: skip once we've already loaded usable data for this userId.
+        // We only mark ref as loaded when we ACTUALLY received idDocument or
+        // phone — otherwise the next mount/effect retries. This prevents a
+        // stale partial refresh from permanently blocking the fetch.
+        if (loadedForUserIdRef.current === sessionUserId) return;
+
         let cancelled = false;
+        // NAuth's refresh sometimes resolves before the session is fully
+        // hydrated and returns a user without phones/idDocument. Retry with
+        // exponential backoff until we get something usable or hit the cap.
+        const delays = [0, 400, 1200, 2500];
         (async () => {
-            try {
-                const ret = await userContext.getMe();
+            for (const wait of delays) {
                 if (cancelled) return;
-                const u = ret?.user;
-                if (!u) return;
-                const phoneDigits = u.phones?.[0]?.phone || "";
-                setBuyer((b) => ({
-                    ...b,
-                    name: u.name || b.name,
-                    email: u.email || b.email,
-                    cpf: u.idDocument || b.cpf,
-                    phone: phoneDigits || b.phone,
-                }));
-            } catch {
-                // Swallow — buyer fields stay with whatever the user typed.
+                if (wait) await new Promise((r) => setTimeout(r, wait));
+                if (cancelled) return;
+                try {
+                    const ret = await userContext.getMe();
+                    if (cancelled) return;
+                    const u = ret?.user;
+                    if (!u) continue;
+                    const phoneDigits = u.phones?.[0]?.phone || "";
+                    const gotUsable = Boolean(u.idDocument || phoneDigits);
+                    setBuyer((b) => ({
+                        ...b,
+                        name: u.name || b.name,
+                        email: u.email || b.email,
+                        cpf: u.idDocument || b.cpf,
+                        phone: phoneDigits || b.phone,
+                    }));
+                    if (gotUsable) {
+                        loadedForUserIdRef.current = sessionUserId;
+                        return;
+                    }
+                } catch {
+                    // Try again on next tick.
+                }
             }
         })();
         return () => {
             cancelled = true;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [authContext.sessionInfo]);
+    }, [sessionUserId, sessionName, sessionEmail]);
 
     const patchBuyer = (patch: Partial<VendorBuyer>) =>
         setBuyer((b) => ({ ...b, ...patch }));
@@ -131,6 +156,7 @@ export default function VendorProductPage() {
         // buyer fields so the form is editable again. PixModal state stays
         // intact — user only resets identity, not the cart.
         if (ret?.sucesso !== false) {
+            loadedForUserIdRef.current = null;
             setBuyer({ name: "", email: "", phone: "", cpf: "" });
         }
     };
@@ -383,12 +409,13 @@ export default function VendorProductPage() {
             {pixCustomer && (
                 <PixModalContainer
                     open={pixOpen}
-                    productId={view.product.productId}
-                    productName={view.product.name}
-                    amount={isDonation(view.product) ? amount : view.product.price}
-                    customer={pixCustomer}
                     onClose={() => setPixOpen(false)}
                     onError={(msg) => showError(msg)}
+                    invoiceId={orderContext.pixPaymentResult?.qrCode?.invoiceId ?? null}
+                    brCode={orderContext.pixPaymentResult?.qrCode?.brCode ?? ""}
+                    brCodeBase64={orderContext.pixPaymentResult?.qrCode?.brCodeBase64 ?? ""}
+                    expiredAt={orderContext.pixPaymentResult?.qrCode?.expiredAt}
+                    returnUrl={`/${networkSlug}/store/${sellerSlug}`}
                 />
             )}
         </>

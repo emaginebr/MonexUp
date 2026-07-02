@@ -143,5 +143,78 @@ namespace DB.Infra.AppServices
             IList<ProxyPayInvoiceStatusInfo> empty = new List<ProxyPayInvoiceStatusInfo>();
             return Task.FromResult(empty);
         }
+
+        public async Task SetAbacatePayApiKeyAsync(long storeId, string apiKey, string bearerToken, CancellationToken ct = default)
+        {
+            if (storeId <= 0)
+                throw new ArgumentException("storeId is required.", nameof(storeId));
+            if (string.IsNullOrWhiteSpace(apiKey))
+                throw new ArgumentException("apiKey is required.", nameof(apiKey));
+            if (string.IsNullOrWhiteSpace(bearerToken))
+                throw new ArgumentException("bearerToken is required.", nameof(bearerToken));
+
+            using var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("X-Tenant-Id", _tenantId);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+
+            var payload = JsonSerializer.Serialize(new { apiKey });
+            using var content = new StringContent(payload, Encoding.UTF8, "application/json");
+
+            var requestUri = $"{_proxyPayApiUrl.TrimEnd('/')}/Store/{storeId}/abacatepay-apikey";
+            using var response = await client.PutAsync(requestUri, content, ct);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var body = await response.Content.ReadAsStringAsync(ct);
+                throw new HttpRequestException(
+                    $"ProxyPay set AbacatePay key failed ({(int)response.StatusCode}): {body}");
+            }
+        }
+
+        public async Task<bool> GetHasAbacatePayApiKeyAsync(string bearerToken, CancellationToken ct = default)
+        {
+            if (string.IsNullOrWhiteSpace(bearerToken))
+                throw new ArgumentException("bearerToken is required.", nameof(bearerToken));
+
+            using var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("X-Tenant-Id", _tenantId);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+
+            var query = "{\"query\":\"{ myStore { storeId hasAbacatePayApiKey } }\"}";
+            using var content = new StringContent(query, Encoding.UTF8, "application/json");
+
+            var requestUri = $"{_proxyPayApiUrl.TrimEnd('/')}/graphql";
+            using var response = await client.PostAsync(requestUri, content, ct);
+            if (!response.IsSuccessStatusCode)
+                return false;
+
+            var body = await response.Content.ReadAsStringAsync(ct);
+            using var doc = JsonDocument.Parse(body);
+            if (!doc.RootElement.TryGetProperty("data", out var data))
+                return false;
+            if (!data.TryGetProperty("myStore", out var arr) || arr.ValueKind != JsonValueKind.Array || arr.GetArrayLength() == 0)
+                return false;
+
+            var first = arr[0];
+            return first.TryGetProperty("hasAbacatePayApiKey", out var flag)
+                && flag.ValueKind == JsonValueKind.True;
+        }
+
+        public async Task SimulatePaymentAsync(long proxypayInvoiceId, CancellationToken ct = default)
+        {
+            using var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("X-Tenant-Id", _tenantId);
+
+            using var content = new StringContent("{}", Encoding.UTF8, "application/json");
+            var requestUri = $"{_proxyPayApiUrl.TrimEnd('/')}/Payment/simulate-payment/{proxypayInvoiceId}";
+            using var response = await client.PostAsync(requestUri, content, ct);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var body = await response.Content.ReadAsStringAsync(ct);
+                throw new HttpRequestException(
+                    $"ProxyPay simulate-payment failed ({(int)response.StatusCode}): {body}");
+            }
+        }
     }
 }

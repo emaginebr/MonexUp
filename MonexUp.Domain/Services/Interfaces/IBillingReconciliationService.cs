@@ -14,6 +14,7 @@ namespace MonexUp.Domain.Interfaces.Services
         public int InvoicesProcessed { get; set; }
         public int FeesRecorded { get; set; }
         public int FeesReversed { get; set; }
+        public int OrdersMarkedPaid { get; set; }
         public int Errors { get; set; }
     }
 }

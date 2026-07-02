@@ -76,8 +76,10 @@ productLinkServiceImpl.init(httpClientAuth);
 const billingServiceImpl : IBillingService = BillingService;
 billingServiceImpl.init(httpClientAuth);
 
+// AbacatePay API Key config now talks to the MonexUp API (per networkId),
+// not to the ProxyPay API directly — reuse the MonexUp auth client.
 const proxyPayStoreServiceImpl: IProxyPayStoreService = ProxyPayStoreService;
-proxyPayStoreServiceImpl.init(httpClientProxyPay);
+proxyPayStoreServiceImpl.init(httpClientAuth);
 
 // Initialize template package (Dedalo API)
 const httpClientDedalo: IHttpClient = HttpClient();

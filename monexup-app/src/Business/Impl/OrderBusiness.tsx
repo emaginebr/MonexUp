@@ -34,6 +34,37 @@ const OrderBusiness: IOrderBusiness = {
         throw new Error("Failed to create PIX payment");
       }
   },
+  checkPixStatus: async (invoiceId: number) => {
+    try {
+      let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+      if (!session) {
+        return { paid: false, status: "NO_SESSION", sucesso: false };
+      }
+      let retServ = await _orderService.checkPixStatus(String(invoiceId), session.token);
+      return {
+        paid: retServ?.paid === true,
+        status: retServ?.status ?? "UNKNOWN",
+        sucesso: retServ?.sucesso !== false,
+      };
+    } catch {
+      throw new Error("Failed to check PIX status");
+    }
+  },
+  simulatePixPayment: async (invoiceId: number) => {
+    try {
+      let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+      if (!session) {
+        return { sucesso: false, mensagem: "Not logged" };
+      }
+      let retServ = await _orderService.simulatePixPayment(invoiceId, session.token);
+      return {
+        sucesso: retServ?.sucesso !== false,
+        mensagem: retServ?.mensagem,
+      };
+    } catch {
+      throw new Error("Failed to simulate PIX payment");
+    }
+  },
   search: async (networkId: number, userId: number, sellerId: number, pageNum: number) => {
     try {
       let ret: BusinessResult<OrderListPagedInfo>;

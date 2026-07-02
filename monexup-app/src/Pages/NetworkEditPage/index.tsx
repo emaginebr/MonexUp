@@ -390,6 +390,7 @@ export default function NetworkEditPage() {
 
         {/* 3b. AbacatePay payment key ----------------------------------- */}
         <AbacatePayApiKeySection
+          networkId={network?.networkId}
           storeId={network?.proxypayStoreId}
           onSuccess={showSuccessMessage}
           onError={throwError}

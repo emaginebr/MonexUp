@@ -4,6 +4,7 @@ using MonexUp.ApiTests.Fixtures;
 using MonexUp.ApiTests.Helpers;
 using MonexUp.DTO.Billing;
 using MonexUp.DTO.Network;
+using MonexUp.DTO.Order;
 using MonexUp.DTO.Payment;
 using System.Text.Json.Serialization;
 
@@ -61,36 +62,6 @@ namespace MonexUp.ApiTests.Controllers
         }
 
         [Fact]
-        public async Task CreatePixPayment_WithLinkedProductAndNetworkSlug_ShouldReturnSuccess()
-        {
-            var network = await CreateNetworkAsync();
-            var userId = _fixture.ExtractUserIdFromToken();
-            var lofnStore = await CreateLofnStoreAsync();
-            var lofnProduct = await CreateLofnProductAsync(lofnStore.Slug);
-            await UpsertLinkAsync(lofnProduct.ProductId, network.NetworkId, userId);
-            await EnsureProxyPayStoreAsync(network.NetworkId);
-
-            var payload = TestDataHelper.CreatePixPaymentRequest(
-                productSlug: lofnProduct.Slug,
-                networkSlug: network.Slug);
-            var response = await _fixture.CreateAuthenticatedRequest("/order/createPixPayment")
-                .AllowAnyHttpStatus()
-                .PostJsonAsync(payload);
-
-            await EnsureSuccessOrReportAsync(response,
-                $"createPixPayment with networkSlug='{network.Slug}', productSlug='{lofnProduct.Slug}'");
-
-            var body = await response.GetJsonAsync<PixPaymentResult>();
-            body.Sucesso.Should().BeTrue();
-            body.Order.Should().NotBeNull();
-            body.Order.OrderId.Should().BeGreaterThan(0);
-            body.Order.NetworkId.Should().Be(network.NetworkId);
-            body.Order.Items.Should().Contain(x => x.ProductId == lofnProduct.ProductId);
-            body.QrCode.Should().NotBeNull();
-            body.QrCode.InvoiceId.Should().BeGreaterThan(0);
-        }
-
-        [Fact]
         public async Task CreatePixPayment_WithoutDocumentId_ShouldReturn400()
         {
             var payload = TestDataHelper.CreatePixPaymentRequest(
@@ -126,6 +97,80 @@ namespace MonexUp.ApiTests.Controllers
                 var body = await response.GetStringAsync();
                 body.Should().NotContain("telefone", "cellphone is optional and must not block checkout");
             }
+        }
+
+        [Fact]
+        public async Task Purchase_CreateThenSimulatePayment_ShouldMarkOrderActive()
+        {
+            // Full purchase: create the charge, pay it (ProxyPay dev simulate),
+            // then confirm the MonexUp order transitions Incoming -> Active.
+            var network = await CreateNetworkAsync();
+            var userId = _fixture.ExtractUserIdFromToken();
+            var lofnStore = await CreateLofnStoreAsync();
+            var lofnProduct = await CreateLofnProductAsync(lofnStore.Slug);
+            await UpsertLinkAsync(lofnProduct.ProductId, network.NetworkId, userId);
+            await EnsureProxyPayStoreAsync(network.NetworkId);
+
+            // AbacatePay key must be configured before the charge, otherwise the
+            // provider rejects PIX generation with "invalid/inactive API key".
+            await ConfigureAbacatePayKeyAsync(network.NetworkId);
+
+            var payload = TestDataHelper.CreatePixPaymentRequest(
+                productSlug: lofnProduct.Slug,
+                networkSlug: network.Slug);
+            var createResp = await _fixture.CreateAuthenticatedRequest("/order/createPixPayment")
+                .AllowAnyHttpStatus()
+                .PostJsonAsync(payload);
+            await EnsureSuccessOrReportAsync(createResp, "createPixPayment for full-purchase test");
+            var created = await createResp.GetJsonAsync<PixPaymentResult>();
+            var invoiceId = created.QrCode.InvoiceId;
+            var orderId = created.Order.OrderId;
+
+            // Order starts as Incoming (awaiting payment).
+            created.Order.Status.Should().Be(OrderStatusEnum.Incoming);
+
+            // Pay the charge via the MonexUp simulate proxy (browser/tests never
+            // call ProxyPay directly — MonexUp relays to the provider).
+            var sim = await _fixture.CreateAuthenticatedRequest($"/order/simulatePixPayment/{invoiceId}")
+                .AllowAnyHttpStatus()
+                .PostJsonAsync(new { });
+            ((int)sim.StatusCode).Should().Be(200,
+                "MonexUp simulate-payment proxy must succeed to complete the purchase");
+
+            // Poll the MonexUp status endpoint (this is what drives the order transition).
+            var paid = false;
+            for (var attempt = 0; attempt < 5 && !paid; attempt++)
+            {
+                if (attempt > 0) await Task.Delay(2000);
+                var statusResp = await _fixture.CreateAuthenticatedRequest($"/order/checkPixStatus/{invoiceId}")
+                    .AllowAnyHttpStatus()
+                    .GetAsync();
+                statusResp.StatusCode.Should().Be(200);
+                var status = await statusResp.GetJsonAsync<PixStatusResult>();
+                paid = status.Paid;
+            }
+            paid.Should().BeTrue("the simulated payment must be reported as paid through MonexUp");
+
+            // The order must now be Active (paid).
+            var orderResp = await _fixture.CreateAuthenticatedRequest($"/order/getById/{orderId}")
+                .AllowAnyHttpStatus()
+                .GetAsync();
+            orderResp.StatusCode.Should().Be(200);
+            var order = await orderResp.GetJsonAsync<OrderInfo>();
+            order.Status.Should().Be(OrderStatusEnum.Active,
+                "paying the PIX charge must advance the order Incoming -> Active");
+        }
+
+        private class PixStatusResult
+        {
+            [JsonPropertyName("sucesso")]
+            public bool Sucesso { get; set; }
+
+            [JsonPropertyName("status")]
+            public string Status { get; set; } = string.Empty;
+
+            [JsonPropertyName("paid")]
+            public bool Paid { get; set; }
         }
 
         [Fact]
@@ -273,6 +318,24 @@ namespace MonexUp.ApiTests.Controllers
 
             response.StatusCode.Should().Be(200, $"Lofn product insert must succeed for store {storeSlug}");
             return await response.GetJsonAsync<LofnProductResponse>();
+        }
+
+        private async Task ConfigureAbacatePayKeyAsync(long networkId)
+        {
+            _fixture.AbacatePayApiKey.Should().NotBeNullOrWhiteSpace(
+                "AbacatePayApiKey must be set in appsettings.Test.json to complete a real purchase");
+
+            var response = await _fixture.CreateAuthenticatedRequest($"/network/{networkId}/abacatepay-apikey")
+                .AllowAnyHttpStatus()
+                .PutJsonAsync(new AbacatePayApiKeyRequest { ApiKey = _fixture.AbacatePayApiKey });
+
+            var status = (int)response.StatusCode;
+            if (status != 204)
+            {
+                var body = await response.GetStringAsync();
+                throw new Xunit.Sdk.XunitException(
+                    $"AbacatePay key config seed failed for networkId={networkId}. Status: {status}. Body: {body}");
+            }
         }
 
         private async Task EnsureProxyPayStoreAsync(long networkId)

@@ -7,18 +7,25 @@ import SectionHeader from "./SectionHeader";
 import FormField from "./FormField";
 
 interface Props {
+  networkId: number | null | undefined;
   storeId: number | null | undefined;
   onSuccess: (message: string) => void;
   onError: (message: string) => void;
 }
 
 /**
- * Seção write-only para a API Key do AbacatePay da loja ProxyPay da rede.
- * - Indicador "Configurada / Não configurada" via GraphQL hasAbacatePayApiKey.
+ * Seção write-only para a API Key do AbacatePay da rede.
+ * - Indicador "Configurada / Não configurada" via MonexUp API (hasAbacatePayApiKey).
+ * - As chamadas (status/save) usam `networkId` — a API MonexUp é por rede.
  * - Input nunca reexibe o valor; após salvar (204) limpa o campo e re-checa.
- * - Renderiza hint se a loja ainda não foi provisionada (sem storeId).
+ * - `storeId` é usado apenas para decidir o hint de "loja ainda não provisionada".
  */
-export default function AbacatePayApiKeySection({ storeId, onSuccess, onError }: Props) {
+export default function AbacatePayApiKeySection({
+  networkId,
+  storeId,
+  onSuccess,
+  onError,
+}: Props) {
   const { t } = useTranslation();
 
   const [apiKey, setApiKey] = useState<string>("");
@@ -28,8 +35,8 @@ export default function AbacatePayApiKeySection({ storeId, onSuccess, onError }:
   const hasStore = !!storeId && storeId > 0;
 
   const refreshIndicator = () => {
-    if (!hasStore) return;
-    ProxyPayStoreFactory.ProxyPayStoreBusiness.getHasAbacatePayApiKey()
+    if (!hasStore || !networkId) return;
+    ProxyPayStoreFactory.ProxyPayStoreBusiness.getHasAbacatePayApiKey(networkId)
       .then((value) => setHasKey(value))
       .catch(() => setHasKey(false));
   };
@@ -37,7 +44,7 @@ export default function AbacatePayApiKeySection({ storeId, onSuccess, onError }:
   useEffect(() => {
     refreshIndicator();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [storeId]);
+  }, [networkId, storeId]);
 
   const handleSave = async () => {
     const trimmed = apiKey.trim();
@@ -47,7 +54,7 @@ export default function AbacatePayApiKeySection({ storeId, onSuccess, onError }:
     }
     setSaving(true);
     const ret = await ProxyPayStoreFactory.ProxyPayStoreBusiness.setAbacatePayApiKey(
-      storeId as number,
+      networkId as number,
       trimmed
     );
     setSaving(false);

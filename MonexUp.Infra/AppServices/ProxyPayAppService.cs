@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MonexUp.Infra.Interfaces.AppServices;
 
@@ -13,8 +14,13 @@ namespace MonexUp.Infra.AppServices
 {
     public class ProxyPayAppService : IProxyPayAppService
     {
+        // ProxyPay invoice status code for a paid charge (see GetInvoiceAsync /
+        // BillingReconciliationService which use the same numeric contract).
+        private const int STATUS_PAID = 3;
+
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ProxyPaySetting _settings;
+        private readonly ILogger<ProxyPayAppService> _logger;
 
         private static readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
         {
@@ -22,10 +28,11 @@ namespace MonexUp.Infra.AppServices
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
         };
 
-        public ProxyPayAppService(IHttpClientFactory httpClientFactory, IOptions<ProxyPaySetting> settings)
+        public ProxyPayAppService(IHttpClientFactory httpClientFactory, IOptions<ProxyPaySetting> settings, ILogger<ProxyPayAppService> logger)
         {
             _httpClientFactory = httpClientFactory;
             _settings = settings.Value;
+            _logger = logger;
         }
 
         private HttpClient CreateClient()
@@ -99,6 +106,7 @@ namespace MonexUp.Infra.AppServices
             }
             catch (Exception ex)
             {
+                _logger.LogWarning(ex, "Error calling ProxyPay CreateQRCode for clientId {ClientId}", request?.ClientId);
                 return new ProxyPayQRCodeResponse
                 {
                     Sucesso = false,
@@ -118,6 +126,8 @@ namespace MonexUp.Infra.AppServices
 
                 if (!response.IsSuccessStatusCode)
                 {
+                    _logger.LogWarning("ProxyPay CheckQRCodeStatus returned {StatusCode} for invoice {InvoiceId}: {Body}",
+                        (int)response.StatusCode, invoiceId, responseBody);
                     return new ProxyPayQRCodeStatusResponse
                     {
                         Sucesso = false,
@@ -126,16 +136,58 @@ namespace MonexUp.Infra.AppServices
                     };
                 }
 
-                var result = JsonSerializer.Deserialize<ProxyPayQRCodeStatusResponse>(responseBody, _jsonOptions);
-                return result ?? new ProxyPayQRCodeStatusResponse
+                // ProxyPay's qrcode/status endpoint returns `status` as a NUMBER
+                // (same contract as GetInvoiceAsync: 3 = paid), not a string, and
+                // has no `paid` boolean. Parse manually and derive Paid so the
+                // order transition (Incoming -> Active) actually fires.
+                using var doc = JsonDocument.Parse(responseBody);
+                var root = doc.RootElement;
+
+                var paid = false;
+                var statusLabel = "unknown";
+                if (root.TryGetProperty("status", out var st))
                 {
-                    Sucesso = false,
-                    Status = "error",
-                    Paid = false
+                    if (st.ValueKind == JsonValueKind.Number)
+                    {
+                        var code = st.GetInt32();
+                        statusLabel = code.ToString();
+                        paid = code == STATUS_PAID;
+                    }
+                    else if (st.ValueKind == JsonValueKind.String)
+                    {
+                        statusLabel = st.GetString() ?? "unknown";
+                        paid = statusLabel.Equals("PAID", StringComparison.OrdinalIgnoreCase)
+                            || statusLabel.Equals("APPROVED", StringComparison.OrdinalIgnoreCase)
+                            || statusLabel.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase);
+                    }
+                }
+                if (!paid && root.TryGetProperty("paid", out var pd) && pd.ValueKind == JsonValueKind.True)
+                {
+                    paid = true;
+                }
+
+                DateTime? expiresAt = null;
+                foreach (var name in new[] { "dueDate", "expiresAt", "expiredAt" })
+                {
+                    if (root.TryGetProperty(name, out var ex) && ex.ValueKind == JsonValueKind.String
+                        && DateTime.TryParse(ex.GetString(), out var exDate))
+                    {
+                        expiresAt = exDate;
+                        break;
+                    }
+                }
+
+                return new ProxyPayQRCodeStatusResponse
+                {
+                    Sucesso = true,
+                    Status = statusLabel,
+                    Paid = paid,
+                    ExpiresAt = expiresAt
                 };
             }
             catch (Exception ex)
             {
+                _logger.LogWarning(ex, "Error calling ProxyPay CheckQRCodeStatus for invoice {InvoiceId}", invoiceId);
                 return new ProxyPayQRCodeStatusResponse
                 {
                     Sucesso = false,

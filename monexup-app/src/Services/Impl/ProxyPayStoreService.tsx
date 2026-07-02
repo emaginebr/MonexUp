@@ -3,8 +3,9 @@ import IProxyPayStoreService from '../Interfaces/IProxyPayStoreService';
 
 let _httpClient: IHttpClient;
 
-interface MyStoreGraphQLResponse {
-  data?: { myStore?: Array<{ storeId: number; hasAbacatePayApiKey: boolean }> };
+interface AbacatePayStatusResponse {
+  sucesso?: boolean;
+  hasAbacatePayApiKey?: boolean;
 }
 
 const ProxyPayStoreService: IProxyPayStoreService = {
@@ -12,25 +13,23 @@ const ProxyPayStoreService: IProxyPayStoreService = {
     _httpClient = httpClient;
   },
 
-  setAbacatePayApiKey: async (storeId: number, apiKey: string, token: string) => {
+  setAbacatePayApiKey: async (networkId: number, apiKey: string, token: string) => {
     return await _httpClient.doPutAuth<void>(
-      `/Store/${storeId}/abacatepay-apikey`,
+      `/Network/${networkId}/abacatepay-apikey`,
       { apiKey },
       token
     );
   },
 
-  getHasAbacatePayApiKey: async (token: string) => {
-    const request = await _httpClient.doPostAuth<MyStoreGraphQLResponse>(
-      '/graphql',
-      { query: '{ myStore { storeId hasAbacatePayApiKey } }' },
+  getHasAbacatePayApiKey: async (networkId: number, token: string) => {
+    const request = await _httpClient.doGetAuth<AbacatePayStatusResponse>(
+      `/Network/${networkId}/abacatepay-apikey/status`,
       token
     );
     if (!request.success) {
       return false;
     }
-    const store = request.data?.data?.myStore?.[0];
-    return store?.hasAbacatePayApiKey === true;
+    return request.data?.hasAbacatePayApiKey === true;
   },
 };
 

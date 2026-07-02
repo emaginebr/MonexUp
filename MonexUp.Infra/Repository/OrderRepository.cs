@@ -77,16 +77,27 @@ namespace DB.Infra.Repository
             _ccsContext.Add(row);
             _ccsContext.SaveChanges();
             model.OrderId = row.OrderId;
+            // Reflect the persisted timestamps back on the returned model — the
+            // caller (e.g. GetOrderInfo right after checkout) reads the model, not
+            // the DB row, so without this CreatedAt/UpdatedAt stay at MinValue.
+            model.CreatedAt = row.CreatedAt;
+            model.UpdatedAt = row.UpdatedAt;
             return model;
         }
 
         public IOrderModel Update(IOrderModel model, IOrderDomainFactory factory)
         {
             var row = _ccsContext.Orders.Find(model.OrderId);
+            // CreatedAt is immutable — preserve the persisted value so an update
+            // with a stale/empty model.CreatedAt cannot clobber created_at.
+            var createdAt = row.CreatedAt;
             ModelToDb(model, row);
+            row.CreatedAt = createdAt;
             row.UpdatedAt = DateTime.Now;
             _ccsContext.Orders.Update(row);
             _ccsContext.SaveChanges();
+            model.CreatedAt = row.CreatedAt;
+            model.UpdatedAt = row.UpdatedAt;
             return model;
         }
 

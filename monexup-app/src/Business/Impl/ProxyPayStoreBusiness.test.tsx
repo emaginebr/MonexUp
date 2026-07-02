@@ -51,12 +51,12 @@ describe('ProxyPayStoreBusiness', () => {
     expect(ret.sucesso).toBe(false);
   });
 
-  it('getHasAbacatePayApiKey delega ao service com o token', async () => {
+  it('getHasAbacatePayApiKey delega ao service com networkId e token', async () => {
     (svc.getHasAbacatePayApiKey as any).mockResolvedValue(true);
 
-    const ret = await ProxyPayStoreBusiness.getHasAbacatePayApiKey();
+    const ret = await ProxyPayStoreBusiness.getHasAbacatePayApiKey(9);
 
-    expect(svc.getHasAbacatePayApiKey).toHaveBeenCalledWith('tok');
+    expect(svc.getHasAbacatePayApiKey).toHaveBeenCalledWith(9, 'tok');
     expect(ret).toBe(true);
   });
 });

@@ -37,6 +37,15 @@ const OrderService: IOrderService = {
         }
         return { sucesso: false, status: "ERROR", paid: false };
     },
+    simulatePixPayment: async (proxyPayInvoiceId: number, token: string) => {
+        // Dev-only: MonexUp proxies ProxyPay's simulate-payment. Browser never
+        // touches ProxyPay directly.
+        let request = await _httpClient.doPostAuth<any>("/Order/simulatePixPayment/" + proxyPayInvoiceId, {}, token);
+        if (request.success) {
+            return request.data;
+        }
+        return { sucesso: false, mensagem: request.messageError };
+    },
     search: async (networkId: number, userId: number, sellerId: number, pageNum: number, token: string) => {
         return await _httpClient.doPostAuth<OrderListPagedResult>("/Order/search", {
             networkId: networkId,

@@ -11,25 +11,25 @@ const ProxyPayStoreBusiness: IProxyPayStoreBusiness = {
     _service = service;
   },
 
-  setAbacatePayApiKey: async (storeId: number, apiKey: string) => {
+  setAbacatePayApiKey: async (networkId: number, apiKey: string) => {
     let ret: BusinessResult<void>;
     const session: AuthSession = AuthFactory.AuthBusiness.getSession();
     if (!session) {
       return { ...ret, sucesso: false, mensagem: 'Not logged' };
     }
-    const retServ = await _service.setAbacatePayApiKey(storeId, apiKey, session.token);
+    const retServ = await _service.setAbacatePayApiKey(networkId, apiKey, session.token);
     if (retServ.success) {
       return { ...ret, sucesso: true };
     }
     return { ...ret, sucesso: false, mensagem: retServ.messageError };
   },
 
-  getHasAbacatePayApiKey: async () => {
+  getHasAbacatePayApiKey: async (networkId: number) => {
     const session: AuthSession = AuthFactory.AuthBusiness.getSession();
     if (!session) {
       return false;
     }
-    return await _service.getHasAbacatePayApiKey(session.token);
+    return await _service.getHasAbacatePayApiKey(networkId, session.token);
   },
 };
 
