@@ -348,8 +348,8 @@ export default function SellerAddPage() {
                                         title={t("sellerAddPage.sectionAddress")}
                                     />
 
-                                    <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
-                                        <div className="md:col-span-4">
+                                    <div className="grid grid-cols-12 gap-3">
+                                        <div className="col-span-4">
                                             <label className={labelBase} htmlFor="seller-zip">
                                                 {t("sellerAddPage.zipCodeLabel")}
                                             </label>
@@ -375,7 +375,7 @@ export default function SellerAddPage() {
                                             </div>
                                         </div>
 
-                                        <div className="md:col-span-8">
+                                        <div className="col-span-8">
                                             <label className={labelBase} htmlFor="seller-address">
                                                 {t("sellerAddPage.addressLabel")}
                                             </label>
@@ -401,7 +401,7 @@ export default function SellerAddPage() {
                                             </div>
                                         </div>
 
-                                        <div className="md:col-span-6">
+                                        <div className="col-span-6">
                                             <label className={labelBase} htmlFor="seller-complement">
                                                 {t("sellerAddPage.complementLabel")}
                                             </label>
@@ -427,7 +427,7 @@ export default function SellerAddPage() {
                                             </div>
                                         </div>
 
-                                        <div className="md:col-span-6">
+                                        <div className="col-span-6">
                                             <label
                                                 className={labelBase}
                                                 htmlFor="seller-neighborhood"
@@ -456,7 +456,7 @@ export default function SellerAddPage() {
                                             </div>
                                         </div>
 
-                                        <div className="md:col-span-8">
+                                        <div className="col-span-8">
                                             <label className={labelBase} htmlFor="seller-city">
                                                 {t("sellerAddPage.cityLabel")}
                                             </label>
@@ -477,7 +477,7 @@ export default function SellerAddPage() {
                                             </div>
                                         </div>
 
-                                        <div className="md:col-span-4">
+                                        <div className="col-span-4">
                                             <label className={labelBase} htmlFor="seller-state">
                                                 {t("sellerAddPage.stateLabel")}
                                             </label>
@@ -508,7 +508,7 @@ export default function SellerAddPage() {
                                             title={t("sellerAddPage.sectionPassword")}
                                         />
 
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-2 gap-4">
                                             <div>
                                                 <label
                                                     className={labelBase}
