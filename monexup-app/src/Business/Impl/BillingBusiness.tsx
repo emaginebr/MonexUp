@@ -2,6 +2,8 @@ import BusinessResult from "../../DTO/Business/BusinessResult";
 import AuthSession from "../../DTO/Domain/AuthSession";
 import BillingListItemInfo from "../../DTO/Domain/BillingListItemInfo";
 import EnsureStoreResponse from "../../DTO/Domain/EnsureStoreResponse";
+import InvoiceSearchParam from "../../DTO/Domain/InvoiceSearchParam";
+import InvoiceListPagedResult from "../../DTO/Services/InvoiceListPagedResult";
 import IBillingService from "../../Services/Interfaces/IBillingService";
 import AuthFactory from "../Factory/AuthFactory";
 import IBillingBusiness from "../Interfaces/IBillingBusiness";
@@ -36,6 +38,16 @@ const BillingBusiness: IBillingBusiness = {
     const session = getSession();
     if (!session) return { ...ret, sucesso: false, mensagem: "Not logged" };
     const resp = await _service.list(networkId, pageNum, pageSize, session.token);
+    return resp.success
+      ? { ...ret, dataResult: resp.data, sucesso: true }
+      : { ...ret, sucesso: false, mensagem: resp.messageError };
+  },
+
+  async searchInvoices(param: InvoiceSearchParam) {
+    const ret = emptyResult<InvoiceListPagedResult>();
+    const session = getSession();
+    if (!session) return { ...ret, sucesso: false, mensagem: "Not logged" };
+    const resp = await _service.searchInvoices(param, session.token);
     return resp.success
       ? { ...ret, dataResult: resp.data, sucesso: true }
       : { ...ret, sucesso: false, mensagem: resp.messageError };

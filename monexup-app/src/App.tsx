@@ -46,6 +46,8 @@ import RequestAccessPage from './Pages/RequestAccessPage';
 import OrderProvider from './Contexts/Order/OrderProvider';
 import Error404Page from './Pages/Error404Page';
 import OrderSearchPage from './Pages/OrderSearchPage';
+import OrderDetailPage from './Pages/OrderDetailPage';
+import InvoiceDetailPage from './Pages/InvoiceDetailPage';
 import SellerAddPage from './Pages/SellerAddPage';
 import SellerPage from './Pages/SellerPage';
 import StorefrontPage from './Pages/StorefrontPage';
@@ -234,6 +236,8 @@ function App() {
             <Route path=":pageNum" element={<UserSearchPage />} />
           </Route>
           <Route path="orders" element={<OrderSearchPage />} />
+          <Route path="orders/:orderId" element={<OrderDetailPage />} />
+          <Route path="orders/:orderId/invoices/:invoiceId" element={<InvoiceDetailPage />} />
           <Route path="products">
             <Route index element={<ProductSearchPage />} />
             <Route path="new" element={<ProductFormPage />} />

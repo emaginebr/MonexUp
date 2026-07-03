@@ -17,6 +17,10 @@ export interface UserSearchRowLabels {
   roleLabel: string;
   /** Column header / dl label for "Status" */
   statusLabel: string;
+  /** Column header for "Profile" */
+  profileLabel: string;
+  /** Fallback when the user has no profile assigned. */
+  profileMissing: string;
   /** Translated role text for this user. */
   roleText: string;
   /** Translated status text for this user. */
@@ -263,7 +267,7 @@ export default function UserSearchRow({
         role="row"
       >
         {/* User cell */}
-        <div className="col-span-5 min-w-0 flex items-center gap-3" role="cell">
+        <div className="col-span-4 min-w-0 flex items-center gap-3" role="cell">
           <span
             aria-hidden="true"
             className="inline-flex w-8 h-8 items-center justify-center rounded-full bg-orange-500/10 text-orange-700 ring-1 ring-orange-500/20 text-[0.7rem] font-bold tabular-nums shrink-0"
@@ -282,8 +286,19 @@ export default function UserSearchRow({
           </div>
         </div>
 
+        {/* Profile chip */}
+        <div className="col-span-2 flex items-center" role="cell">
+          {user.profile ? (
+            <span className="inline-flex items-center h-[26px] px-2 rounded-full bg-graphite-100 text-graphite-700 ring-1 ring-graphite-200 text-xs font-semibold truncate max-w-full">
+              {user.profile}
+            </span>
+          ) : (
+            <span className="text-xs italic text-graphite-400">{labels.profileMissing}</span>
+          )}
+        </div>
+
         {/* Role chip */}
-        <div className="col-span-3 flex items-center justify-end" role="cell">
+        <div className="col-span-2 flex items-center justify-end" role="cell">
           <span className="inline-flex items-center gap-1 h-[26px] px-2 rounded-full bg-orange-500/10 text-orange-700 ring-1 ring-orange-500/20 text-xs font-semibold">
             <ShieldCheck size={12} aria-hidden="true" />
             {labels.roleText}
@@ -334,6 +349,11 @@ export default function UserSearchRow({
           </div>
         </div>
         <div className="mt-3 flex flex-wrap items-center gap-2">
+          {user.profile && (
+            <span className="inline-flex items-center h-[24px] px-2 rounded-full bg-graphite-100 text-graphite-700 ring-1 ring-graphite-200 text-[11px] font-semibold">
+              {user.profile}
+            </span>
+          )}
           <span className="inline-flex items-center gap-1 h-[24px] px-2 rounded-full bg-orange-500/10 text-orange-700 ring-1 ring-orange-500/20 text-[11px] font-semibold">
             <ShieldCheck size={11} aria-hidden="true" />
             {labels.roleText}

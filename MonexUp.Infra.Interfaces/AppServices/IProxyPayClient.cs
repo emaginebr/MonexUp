@@ -22,6 +22,37 @@ namespace MonexUp.Infra.Interfaces.AppServices
         public string Url { get; set; }
     }
 
+    public class ProxyPayInvoiceItemInfo
+    {
+        public long InvoiceItemId { get; set; }
+        public string Description { get; set; }
+        public int Quantity { get; set; }
+        public double UnitPrice { get; set; }
+        public double Discount { get; set; }
+    }
+
+    /// <summary>
+    /// Full invoice payload from ProxyPay's `/Invoice/getById/{id}` endpoint.
+    /// Distinct from `ProxyPayInvoiceStatusInfo` which is a light polling shape
+    /// returned by `/Payment/qrcode/status/{id}`.
+    /// </summary>
+    public class ProxyPayFullInvoiceInfo
+    {
+        public long InvoiceId { get; set; }
+        public string InvoiceNumber { get; set; }
+        public string Notes { get; set; }
+        public int Status { get; set; }
+        public int PaymentMethod { get; set; }
+        public double Discount { get; set; }
+        public System.DateTime DueDate { get; set; }
+        public System.DateTime? ExpiresAt { get; set; }
+        public System.DateTime? PaidAt { get; set; }
+        public System.DateTime CreatedAt { get; set; }
+        public System.DateTime UpdatedAt { get; set; }
+        public string ExternalCode { get; set; }
+        public IList<ProxyPayInvoiceItemInfo> Items { get; set; }
+    }
+
     public interface IProxyPayClient
     {
         /// <summary>
@@ -40,6 +71,13 @@ namespace MonexUp.Infra.Interfaces.AppServices
         /// Reads a single ProxyPay invoice. Anonymous; clientId in URL or query.
         /// </summary>
         Task<ProxyPayInvoiceStatusInfo> GetInvoiceAsync(long proxypayInvoiceId, string clientId, CancellationToken ct = default);
+
+        /// <summary>
+        /// Reads the full invoice payload including items, invoice number,
+        /// discount and dates. Hits ProxyPay's `/Invoice/getById/{id}`.
+        /// Returns null when the invoice does not exist.
+        /// </summary>
+        Task<ProxyPayFullInvoiceInfo> GetFullInvoiceAsync(long proxypayInvoiceId, CancellationToken ct = default);
 
         /// <summary>
         /// Returns invoices on a store that are NOT yet in a terminal status.

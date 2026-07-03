@@ -11,7 +11,6 @@ import {
     Home,
     Building2,
     Lock,
-    DollarSign,
     Save,
     ArrowLeft,
     Zap,
@@ -163,9 +162,9 @@ export default function SellerAddPage() {
 
     // Tailwind utility presets — kept inline so this page stays self-contained.
     const inputBase =
-        "w-full h-12 pl-11 pr-3 rounded-md bg-white border border-graphite-200 text-graphite-900 placeholder:text-graphite-400 outline-none transition-colors duration-fast focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30";
+        "w-full h-11 md:h-10 pl-10 md:pl-9 pr-3 rounded-md bg-white border border-graphite-200 text-graphite-900 placeholder:text-graphite-400 outline-none transition-colors duration-fast focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30";
     const labelBase =
-        "block text-xs font-semibold uppercase tracking-wider text-graphite-500 mb-2";
+        "block text-xs font-semibold uppercase tracking-wider text-graphite-500 mb-1.5";
     const iconWrap =
         "absolute left-3 top-1/2 -translate-y-1/2 text-graphite-400 pointer-events-none";
 
@@ -184,16 +183,18 @@ export default function SellerAddPage() {
                     className="hero-grid absolute inset-0 pointer-events-none"
                     aria-hidden="true"
                 />
-                <div className="relative max-w-container mx-auto px-shell pt-16 lg:pt-20 pb-14 lg:pb-20">
+                <div className="relative max-w-container mx-auto px-shell pt-8 lg:pt-10 pb-6 lg:pb-8">
                     <div className="max-w-3xl animate-fade-up">
-                        <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide uppercase text-orange-200 bg-orange-500/10 border border-orange-500/30">
-                            <Zap size={12} aria-hidden="true" />
-                            {t("sellerAddPage.eyebrow")}
-                        </span>
-                        <h1 className="display-headline text-mnx-neutral-50 mt-6 text-4xl sm:text-5xl lg:text-6xl">
-                            {t("sellerAddPage.title")}
-                        </h1>
-                        <p className="mt-5 text-graphite-200 text-base lg:text-lg leading-relaxed max-w-2xl">
+                        <div className="flex flex-wrap items-center gap-3">
+                            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide uppercase text-orange-200 bg-orange-500/10 border border-orange-500/30">
+                                <Zap size={12} aria-hidden="true" />
+                                {t("sellerAddPage.eyebrow")}
+                            </span>
+                            <h1 className="display-headline text-mnx-neutral-50 mt-3 text-2xl sm:text-3xl lg:text-[2rem]">
+                                {t("sellerAddPage.title")}
+                            </h1>
+                        </div>
+                        <p className="mt-3 text-sm text-graphite-200 leading-relaxed max-w-2xl">
                             {t("sellerAddPage.subtitle")}
                         </p>
                     </div>
@@ -201,20 +202,20 @@ export default function SellerAddPage() {
             </section>
 
             {/* Form surface — light, elevated card on a soft canvas --------- */}
-            <section className="mnx-surface-light bg-mnx-neutral-50 py-14 lg:py-20">
+            <section className="mnx-surface-light bg-mnx-neutral-50 py-8 lg:py-10">
                 <div className="max-w-container mx-auto px-shell">
                     <div className="max-w-4xl mx-auto">
                         <div className="rounded-2xl bg-white border border-graphite-200 shadow-lg overflow-hidden">
                             {/* Card header band */}
-                            <div className="px-6 lg:px-10 py-6 border-b border-graphite-200 bg-mnx-neutral-50">
-                                <p className="text-sm text-graphite-600 leading-relaxed">
+                            <div className="px-6 lg:px-10 py-3 bg-mnx-neutral-50">
+                                <p className="text-xs text-graphite-600 leading-relaxed">
                                     {t("sellerAddPage.registrationNote")}
                                 </p>
                             </div>
 
                             <form
                                 onSubmit={handleSubmit}
-                                className="px-6 lg:px-10 py-8 lg:py-10 space-y-10"
+                                className="px-6 lg:px-10 py-5 lg:py-6 space-y-5"
                                 noValidate
                             >
                                 {/* Section: Personal --------------------- */}
@@ -224,14 +225,14 @@ export default function SellerAddPage() {
                                         title={t("sellerAddPage.sectionPersonal")}
                                     />
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
-                                        <div className="md:col-span-2">
+                                    <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+                                        <div className="md:col-span-6">
                                             <label className={labelBase} htmlFor="seller-name">
                                                 {t("sellerAddPage.nameLabel")}
                                             </label>
                                             <div className="relative">
                                                 <span className={iconWrap}>
-                                                    <User size={18} aria-hidden="true" />
+                                                    <User size={16} aria-hidden="true" />
                                                 </span>
                                                 <input
                                                     id="seller-name"
@@ -246,13 +247,13 @@ export default function SellerAddPage() {
                                             </div>
                                         </div>
 
-                                        <div>
+                                        <div className="md:col-span-3">
                                             <label className={labelBase} htmlFor="seller-cpf">
                                                 {t("sellerAddPage.cpfLabel")}
                                             </label>
                                             <div className="relative">
                                                 <span className={iconWrap}>
-                                                    <IdCard size={18} aria-hidden="true" />
+                                                    <IdCard size={16} aria-hidden="true" />
                                                 </span>
                                                 <input
                                                     id="seller-cpf"
@@ -270,13 +271,13 @@ export default function SellerAddPage() {
                                             </div>
                                         </div>
 
-                                        <div>
+                                        <div className="md:col-span-3">
                                             <label className={labelBase} htmlFor="seller-birthday">
                                                 {t("sellerAddPage.birthdayLabel")}
                                             </label>
                                             <div className="relative">
                                                 <span className={iconWrap}>
-                                                    <Calendar size={18} aria-hidden="true" />
+                                                    <Calendar size={16} aria-hidden="true" />
                                                 </span>
                                                 <input
                                                     id="seller-birthday"
@@ -296,13 +297,13 @@ export default function SellerAddPage() {
                                             </div>
                                         </div>
 
-                                        <div>
+                                        <div className="md:col-span-4">
                                             <label className={labelBase} htmlFor="seller-email">
                                                 {t("sellerAddPage.emailLabel")}
                                             </label>
                                             <div className="relative">
                                                 <span className={iconWrap}>
-                                                    <Mail size={18} aria-hidden="true" />
+                                                    <Mail size={16} aria-hidden="true" />
                                                 </span>
                                                 <input
                                                     id="seller-email"
@@ -317,13 +318,13 @@ export default function SellerAddPage() {
                                             </div>
                                         </div>
 
-                                        <div>
+                                        <div className="md:col-span-2">
                                             <label className={labelBase} htmlFor="seller-phone">
                                                 {t("sellerAddPage.phoneLabel")}
                                             </label>
                                             <div className="relative">
                                                 <span className={iconWrap}>
-                                                    <Phone size={18} aria-hidden="true" />
+                                                    <Phone size={16} aria-hidden="true" />
                                                 </span>
                                                 <input
                                                     id="seller-phone"
@@ -347,14 +348,14 @@ export default function SellerAddPage() {
                                         title={t("sellerAddPage.sectionAddress")}
                                     />
 
-                                    <div className="grid grid-cols-1 md:grid-cols-6 gap-5 mt-6">
-                                        <div className="md:col-span-2">
+                                    <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+                                        <div className="md:col-span-4">
                                             <label className={labelBase} htmlFor="seller-zip">
                                                 {t("sellerAddPage.zipCodeLabel")}
                                             </label>
                                             <div className="relative">
                                                 <span className={iconWrap}>
-                                                    <MapPin size={18} aria-hidden="true" />
+                                                    <MapPin size={16} aria-hidden="true" />
                                                 </span>
                                                 <input
                                                     id="seller-zip"
@@ -374,13 +375,13 @@ export default function SellerAddPage() {
                                             </div>
                                         </div>
 
-                                        <div className="md:col-span-4">
+                                        <div className="md:col-span-8">
                                             <label className={labelBase} htmlFor="seller-address">
                                                 {t("sellerAddPage.addressLabel")}
                                             </label>
                                             <div className="relative">
                                                 <span className={iconWrap}>
-                                                    <Home size={18} aria-hidden="true" />
+                                                    <Home size={16} aria-hidden="true" />
                                                 </span>
                                                 <input
                                                     id="seller-address"
@@ -400,13 +401,13 @@ export default function SellerAddPage() {
                                             </div>
                                         </div>
 
-                                        <div className="md:col-span-3">
+                                        <div className="md:col-span-6">
                                             <label className={labelBase} htmlFor="seller-complement">
                                                 {t("sellerAddPage.complementLabel")}
                                             </label>
                                             <div className="relative">
                                                 <span className={iconWrap}>
-                                                    <Building2 size={18} aria-hidden="true" />
+                                                    <Building2 size={16} aria-hidden="true" />
                                                 </span>
                                                 <input
                                                     id="seller-complement"
@@ -426,7 +427,7 @@ export default function SellerAddPage() {
                                             </div>
                                         </div>
 
-                                        <div className="md:col-span-3">
+                                        <div className="md:col-span-6">
                                             <label
                                                 className={labelBase}
                                                 htmlFor="seller-neighborhood"
@@ -435,7 +436,7 @@ export default function SellerAddPage() {
                                             </label>
                                             <div className="relative">
                                                 <span className={iconWrap}>
-                                                    <MapPin size={18} aria-hidden="true" />
+                                                    <MapPin size={16} aria-hidden="true" />
                                                 </span>
                                                 <input
                                                     id="seller-neighborhood"
@@ -455,13 +456,13 @@ export default function SellerAddPage() {
                                             </div>
                                         </div>
 
-                                        <div className="md:col-span-4">
+                                        <div className="md:col-span-8">
                                             <label className={labelBase} htmlFor="seller-city">
                                                 {t("sellerAddPage.cityLabel")}
                                             </label>
                                             <div className="relative">
                                                 <span className={iconWrap}>
-                                                    <Building2 size={18} aria-hidden="true" />
+                                                    <Building2 size={16} aria-hidden="true" />
                                                 </span>
                                                 <input
                                                     id="seller-city"
@@ -476,13 +477,13 @@ export default function SellerAddPage() {
                                             </div>
                                         </div>
 
-                                        <div className="md:col-span-2">
+                                        <div className="md:col-span-4">
                                             <label className={labelBase} htmlFor="seller-state">
                                                 {t("sellerAddPage.stateLabel")}
                                             </label>
                                             <div className="relative">
                                                 <span className={iconWrap}>
-                                                    <MapPin size={18} aria-hidden="true" />
+                                                    <MapPin size={16} aria-hidden="true" />
                                                 </span>
                                                 <input
                                                     id="seller-state"
@@ -499,44 +500,15 @@ export default function SellerAddPage() {
                                     </div>
                                 </div>
 
-                                {/* Section: PIX ---------------------------- */}
-                                <div>
-                                    <SectionHeading
-                                        index="03"
-                                        title={t("sellerAddPage.sectionPix")}
-                                    />
-
-                                    <div className="mt-6">
-                                        <label className={labelBase} htmlFor="seller-pix">
-                                            {t("sellerAddPage.pixKeyLabel")}
-                                        </label>
-                                        <div className="relative">
-                                            <span className={iconWrap}>
-                                                <DollarSign size={18} aria-hidden="true" />
-                                            </span>
-                                            <input
-                                                id="seller-pix"
-                                                type="text"
-                                                className={inputBase}
-                                                placeholder={t("sellerAddPage.pixKeyPlaceholder")}
-                                                value={user?.pixkey ?? ""}
-                                                onChange={(e) =>
-                                                    setUser({ ...user, pixkey: e.target.value })
-                                                }
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-
                                 {/* Section: Password (insert only) -------- */}
                                 {insertMode && (
                                     <div>
                                         <SectionHeading
-                                            index="04"
+                                            index="03"
                                             title={t("sellerAddPage.sectionPassword")}
                                         />
 
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
                                                 <label
                                                     className={labelBase}
@@ -546,7 +518,7 @@ export default function SellerAddPage() {
                                                 </label>
                                                 <div className="relative">
                                                     <span className={iconWrap}>
-                                                        <Lock size={18} aria-hidden="true" />
+                                                        <Lock size={16} aria-hidden="true" />
                                                     </span>
                                                     <input
                                                         id="seller-password"
@@ -575,7 +547,7 @@ export default function SellerAddPage() {
                                                 </label>
                                                 <div className="relative">
                                                     <span className={iconWrap}>
-                                                        <Lock size={18} aria-hidden="true" />
+                                                        <Lock size={16} aria-hidden="true" />
                                                     </span>
                                                     <input
                                                         id="seller-confirm-password"
@@ -605,17 +577,17 @@ export default function SellerAddPage() {
                                         onClick={() =>
                                             navigate(networkSlug ? "/" + networkSlug : "/")
                                         }
-                                        className="inline-flex h-12 items-center justify-center px-5 rounded-md text-sm font-semibold text-graphite-700 border border-graphite-300 hover:border-graphite-500 hover:bg-graphite-50 transition-colors duration-fast"
+                                        className="inline-flex h-11 md:h-10 items-center justify-center px-5 rounded-md text-sm font-semibold text-graphite-700 border border-graphite-300 hover:border-graphite-500 hover:bg-graphite-50 transition-colors duration-fast"
                                     >
-                                        <ArrowLeft size={18} className="mr-2" aria-hidden="true" />
+                                        <ArrowLeft size={16} className="mr-2" aria-hidden="true" />
                                         {t("buttons.back")}
                                     </button>
                                     <button
                                         type="submit"
                                         disabled={userContext.loadingUpdate}
-                                        className="cta-primary inline-flex h-12 items-center justify-center px-7 rounded-md text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-fast shadow-glow-md disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-orange-500"
+                                        className="cta-primary inline-flex h-11 md:h-10 items-center justify-center px-7 rounded-md text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-fast shadow-glow-md disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-orange-500"
                                     >
-                                        <Save size={18} className="mr-2" aria-hidden="true" />
+                                        <Save size={16} className="mr-2" aria-hidden="true" />
                                         {userContext.loadingUpdate
                                             ? t("loading")
                                             : t("buttons.save")}
@@ -636,11 +608,11 @@ export default function SellerAddPage() {
  */
 function SectionHeading({ index, title }: { index: string; title: string }) {
     return (
-        <div className="flex items-baseline gap-4 border-b border-graphite-200 pb-3">
+        <div className="flex items-baseline gap-3 border-b border-mnx-neutral-100 pb-2 mb-4">
             <span className="font-display text-sm font-bold tracking-wider text-orange-500">
                 {index}
             </span>
-            <h2 className="font-display text-xl lg:text-2xl font-bold text-graphite-900 tracking-tight">
+            <h2 className="font-display text-base lg:text-lg font-bold text-graphite-900 tracking-tight">
                 {title}
             </h2>
         </div>

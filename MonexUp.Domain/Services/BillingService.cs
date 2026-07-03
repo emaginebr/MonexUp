@@ -1,9 +1,11 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Billing;
 using MonexUp.DTO.Invoice;
+using MonexUp.DTO.Order;
 using MonexUp.DTO.User;
 using MonexUp.Infra.Interfaces.AppServices;
 using NAuth.ACL.Interfaces;
@@ -32,6 +34,7 @@ namespace MonexUp.Domain.Impl.Services
         private readonly IUserClient _userClient;
         private readonly ILofnProductClient _lofnProductClient;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<BillingService> _logger;
 
         public BillingService(
             INetworkDomainFactory networkFactory,
@@ -46,7 +49,8 @@ namespace MonexUp.Domain.Impl.Services
             IBillingFeeService billingFeeService,
             IUserClient userClient,
             ILofnProductClient lofnProductClient,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ILogger<BillingService> logger)
         {
             _networkFactory = networkFactory;
             _userNetworkFactory = userNetworkFactory;
@@ -61,6 +65,7 @@ namespace MonexUp.Domain.Impl.Services
             _userClient = userClient;
             _lofnProductClient = lofnProductClient;
             _configuration = configuration;
+            _logger = logger;
         }
 
         public async Task<EnsureStoreResult> EnsureStoreAsync(long networkId, long callerUserId, string bearerToken, CancellationToken ct = default)
@@ -229,12 +234,277 @@ namespace MonexUp.Domain.Impl.Services
             return _feeFactory.BuildInvoiceFeeModel().GetAvailableBalance(userId);
         }
 
+        public async Task<InvoiceListPagedResult> SearchInvoicesAsync(InvoiceSearchParam param, long callerUserId, string token, CancellationToken ct = default)
+        {
+            var empty = new InvoiceListPagedResult
+            {
+                Invoices = new List<InvoiceListItemInfo>(),
+                PageNum = param?.PageNum ?? 1,
+                PageSize = Math.Min(Math.Max(param?.PageSize ?? 20, 1), 50),
+                TotalCount = 0,
+                TotalPages = 0,
+                PageCount = 0
+            };
+
+            if (param == null || param.NetworkId <= 0)
+            {
+                return empty;
+            }
+
+            // Cap pageSize hard at 50 to bound the N+1 damage to ProxyPay until
+            // the batch list endpoint documented in docs/PROXYPAY_FIXES_NEEDED.md
+            // item 6 lands.
+            var pageSize = Math.Min(Math.Max(param.PageSize <= 0 ? 20 : param.PageSize, 1), 50);
+            var pageNum = param.PageNum <= 0 ? 1 : param.PageNum;
+
+            _logger?.LogWarning(
+                "SearchInvoicesAsync runs N+1 HTTP calls to ProxyPay (one per order) — pending a fast-path list endpoint from ProxyPay (see docs/PROXYPAY_FIXES_NEEDED.md item 6). NetworkId={NetworkId} pageSize={PageSize}",
+                param.NetworkId, pageSize);
+
+            // Role gate: mirrors OrderSearchPage rules.
+            //  - Administrator / NetworkManager: no per-user filter
+            //  - Seller: order.SellerId == callerUserId
+            //  - User: order.UserId == callerUserId
+            var un = _userNetworkFactory.BuildUserNetworkModel().Get(param.NetworkId, callerUserId, _userNetworkFactory);
+            var role = un?.Role ?? UserRoleEnum.MoRole;
+
+            long? filterUserId = null;
+            long? filterSellerId = null;
+            switch (role)
+            {
+                case UserRoleEnum.Administrator:
+                case UserRoleEnum.NetworkManager:
+                    break;
+                case UserRoleEnum.Seller:
+                    filterSellerId = callerUserId;
+                    break;
+                case UserRoleEnum.User:
+                    filterUserId = callerUserId;
+                    break;
+                default:
+                    // Anyone without a valid role in the network gets nothing —
+                    // the controller already 401/403s upstream, this is a safety net.
+                    return empty;
+            }
+
+            // Pull every matching order for the network+role. Uses the existing
+            // IOrderModel.Search paginated call in a loop because there is no
+            // "list all for network" repository method today. Filters like status
+            // and date range are applied AFTER we fetch each ProxyPay invoice
+            // (status only lives on the invoice, not on the order).
+            var orderModel = _orderFactory.BuildOrderModel();
+            var orders = new List<IOrderModel>();
+            int p = 1;
+            int pageCount;
+            do
+            {
+                var batch = orderModel
+                    .Search(param.NetworkId, filterUserId, filterSellerId, p, out pageCount, _orderFactory)
+                    .ToList();
+                orders.AddRange(batch);
+                p++;
+            } while (p <= pageCount);
+
+            // Fetch full invoice per order (N+1 into ProxyPay). Enrich with buyer
+            // and seller from NAuth, order id, and computed total. Skip orders
+            // without an invoice id or whose invoice fetch fails.
+            var items = new List<InvoiceListItemInfo>();
+            foreach (var order in orders)
+            {
+                if (!order.ProxyPayInvoiceId.HasValue || order.ProxyPayInvoiceId.Value <= 0)
+                {
+                    continue;
+                }
+
+                InvoiceInfo invoice;
+                try
+                {
+                    invoice = await GetInvoice(param.NetworkId, order.ProxyPayInvoiceId.Value, ct);
+                }
+                catch (Exception ex)
+                {
+                    _logger?.LogWarning(ex,
+                        "SearchInvoicesAsync: failed to fetch ProxyPay invoice {InvoiceId} for order {OrderId} (network {NetworkId}) — row skipped",
+                        order.ProxyPayInvoiceId.Value, order.OrderId, param.NetworkId);
+                    continue;
+                }
+                if (invoice == null)
+                {
+                    continue;
+                }
+
+                string buyerName = null;
+                string buyerEmail = null;
+                var buyer = await _userClient.GetByIdAsync(order.UserId, token);
+                if (buyer != null)
+                {
+                    buyerName = buyer.Name;
+                    buyerEmail = buyer.Email;
+                }
+
+                string sellerName = null;
+                if (order.SellerId.HasValue)
+                {
+                    var seller = await _userClient.GetByIdAsync(order.SellerId.Value, token);
+                    sellerName = seller?.Name;
+                }
+
+                items.Add(new InvoiceListItemInfo
+                {
+                    InvoiceId = invoice.InvoiceId,
+                    InvoiceNumber = invoice.InvoiceNumber,
+                    DueDate = invoice.DueDate,
+                    PaidAt = invoice.PaidAt,
+                    CreatedAt = invoice.CreatedAt,
+                    Status = invoice.Status,
+                    Total = ComputeInvoiceTotal(invoice),
+                    OrderId = order.OrderId,
+                    BuyerId = order.UserId,
+                    BuyerName = buyerName,
+                    BuyerEmail = buyerEmail,
+                    SellerId = order.SellerId,
+                    SellerName = sellerName
+                });
+            }
+
+            // In-memory filters.
+            if (param.Status.HasValue)
+            {
+                var statusFilter = (InvoiceStatusEnum)param.Status.Value;
+                items = items.Where(i => i.Status == statusFilter).ToList();
+            }
+            if (param.FromDate.HasValue)
+            {
+                var from = param.FromDate.Value;
+                items = items.Where(i => i.CreatedAt >= from).ToList();
+            }
+            if (param.ToDate.HasValue)
+            {
+                var to = param.ToDate.Value;
+                items = items.Where(i => i.CreatedAt <= to).ToList();
+            }
+            if (!string.IsNullOrWhiteSpace(param.Keyword))
+            {
+                var kw = param.Keyword.Trim();
+                items = items.Where(i =>
+                    (!string.IsNullOrEmpty(i.InvoiceNumber) && i.InvoiceNumber.Contains(kw, StringComparison.OrdinalIgnoreCase))
+                    || (!string.IsNullOrEmpty(i.BuyerName) && i.BuyerName.Contains(kw, StringComparison.OrdinalIgnoreCase))
+                    || (!string.IsNullOrEmpty(i.BuyerEmail) && i.BuyerEmail.Contains(kw, StringComparison.OrdinalIgnoreCase))
+                    || (!string.IsNullOrEmpty(i.SellerName) && i.SellerName.Contains(kw, StringComparison.OrdinalIgnoreCase))
+                ).ToList();
+            }
+
+            var sorted = items.OrderByDescending(i => i.CreatedAt).ToList();
+            var totalCount = sorted.Count;
+            var totalPages = totalCount == 0 ? 0 : (int)Math.Ceiling((double)totalCount / pageSize);
+
+            var pageItems = sorted
+                .Skip(pageSize * (pageNum - 1))
+                .Take(pageSize)
+                .ToList();
+
+            return new InvoiceListPagedResult
+            {
+                Invoices = pageItems,
+                PageNum = pageNum,
+                PageSize = pageSize,
+                TotalCount = totalCount,
+                TotalPages = totalPages,
+                PageCount = totalPages
+            };
+        }
+
+        private static double ComputeInvoiceTotal(InvoiceInfo invoice)
+        {
+            if (invoice?.Items == null)
+            {
+                return 0;
+            }
+            var subtotal = invoice.Items.Sum(i => (i.UnitPrice * i.Quantity) - i.Discount);
+            var total = subtotal - invoice.Discount;
+            return total < 0 ? 0 : total;
+        }
+
+        public async Task<IList<InvoiceInfo>> ListInvoicesForOrderAsync(long networkId, long? proxyPayInvoiceId, CancellationToken ct = default)
+        {
+            var invoices = new List<InvoiceInfo>();
+            if (!proxyPayInvoiceId.HasValue || proxyPayInvoiceId.Value <= 0)
+            {
+                return invoices;
+            }
+
+            try
+            {
+                var invoice = await GetInvoice(networkId, proxyPayInvoiceId.Value, ct);
+                if (invoice != null)
+                {
+                    invoices.Add(invoice);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogWarning(ex,
+                    "Failed to fetch ProxyPay invoice {ProxyPayInvoiceId} for network {NetworkId}",
+                    proxyPayInvoiceId.Value, networkId);
+                return new List<InvoiceInfo>();
+            }
+
+            return invoices
+                .OrderByDescending(i => i.CreatedAt)
+                .ToList();
+        }
+
         public async Task<InvoiceInfo> GetInvoice(long networkId, long proxypayInvoiceId, CancellationToken ct = default)
         {
             var network = _networkFactory.BuildNetworkModel().GetById(networkId, _networkFactory);
             if (network == null || string.IsNullOrEmpty(network.ProxyPayClientId))
             {
                 return null;
+            }
+
+            // Prefer the full `/Invoice/getById/{id}` response so consumers get
+            // items, invoice number, discount, dates. Fall back to the lightweight
+            // qrcode/status shape if the full endpoint fails for any reason.
+            try
+            {
+                var full = await _proxyPayClient.GetFullInvoiceAsync(proxypayInvoiceId, ct);
+                if (full != null)
+                {
+                    return new InvoiceInfo
+                    {
+                        InvoiceId = full.InvoiceId,
+                        InvoiceNumber = full.InvoiceNumber,
+                        Notes = full.Notes,
+                        Status = (InvoiceStatusEnum)full.Status,
+                        PaymentMethod = full.PaymentMethod > 0
+                            ? (MonexUp.DTO.Invoice.PaymentMethodEnum)full.PaymentMethod
+                            : MonexUp.DTO.Invoice.PaymentMethodEnum.Pix,
+                        Discount = full.Discount,
+                        DueDate = full.DueDate,
+                        ExpiresAt = full.ExpiresAt,
+                        PaidAt = full.PaidAt,
+                        CreatedAt = full.CreatedAt,
+                        UpdatedAt = full.UpdatedAt,
+                        ExternalCode = full.ExternalCode,
+                        Items = (full.Items ?? new List<ProxyPayInvoiceItemInfo>())
+                            .Select(i => new InvoiceItemInfo
+                            {
+                                InvoiceItemId = i.InvoiceItemId,
+                                InvoiceId = full.InvoiceId,
+                                Description = i.Description,
+                                Quantity = i.Quantity,
+                                UnitPrice = i.UnitPrice,
+                                Discount = i.Discount
+                            })
+                            .ToList()
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogWarning(ex,
+                    "GetFullInvoiceAsync failed for invoice {InvoiceId} — falling back to lightweight status",
+                    proxypayInvoiceId);
             }
 
             var status = await _proxyPayClient.GetInvoiceAsync(proxypayInvoiceId, network.ProxyPayClientId, ct);

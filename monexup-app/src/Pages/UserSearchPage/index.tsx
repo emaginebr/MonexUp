@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, type FormEvent } from "react";
+import { useContext, useEffect, useMemo, useState, type FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -127,10 +127,37 @@ export default function UserSearchPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // NAuth's searchUsers doesn't carry MonexUp profile data. Pull the full
+  // network team list once (already used elsewhere via networkContext) so we
+  // can join `profile` per userId when rendering the row.
+  useEffect(() => {
+    const slug = networkContext.network?.slug;
+    if (!slug) return;
+    networkContext.listByNetwork(slug);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [networkContext.network?.slug]);
+
+  const profileByUserId = useMemo(() => {
+    const map = new Map<number, string>();
+    const teams = (networkContext as any).teams as any[] | undefined;
+    if (!teams) return map;
+    for (const t of teams) {
+      const uid = t?.userId ?? t?.user?.userId;
+      const name = t?.profile?.name || t?.profile?.title || "";
+      if (uid && name) map.set(uid, name);
+    }
+    return map;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [(networkContext as any).teams]);
+
   // -- Per-row action handlers (preserve legacy behavior verbatim) --------
   const refreshCurrentPage = () => {
     const current = userContext.searchResult?.pageNum ?? 1;
     searchUsers(current);
+    // Also re-pull team list so profile chip reflects the new profile after
+    // promote/demote (which change UserNetwork.ProfileId server-side).
+    const slug = networkContext.network?.slug;
+    if (slug) networkContext.listByNetwork(slug);
   };
 
   const handlers: UserSearchRowHandlers = {
@@ -247,6 +274,8 @@ export default function UserSearchPage() {
   const baseRowLabels = {
     roleLabel: t("userSearchPage.tableHeaders.role"),
     statusLabel: t("userSearchPage.tableHeaders.status"),
+    profileLabel: t("userSearchPage.tableHeaders.profile", "Perfil"),
+    profileMissing: t("userSearchPage.profileMissing", "Sem perfil"),
     promote: t("userSearchPage.actions.promote"),
     demote: t("userSearchPage.actions.demote"),
     remove: t("userSearchPage.actions.remove"),
@@ -363,13 +392,19 @@ export default function UserSearchPage() {
                 role="row"
               >
                 <div
-                  className="col-span-5 text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500"
+                  className="col-span-4 text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500"
                   role="columnheader"
                 >
                   {t("userSearchPage.tableHeaders.seller")}
                 </div>
                 <div
-                  className="col-span-3 text-right text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500"
+                  className="col-span-2 text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500"
+                  role="columnheader"
+                >
+                  {t("userSearchPage.tableHeaders.profile", "Perfil")}
+                </div>
+                <div
+                  className="col-span-2 text-right text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500"
                   role="columnheader"
                 >
                   {t("userSearchPage.tableHeaders.role")}
@@ -399,14 +434,15 @@ export default function UserSearchPage() {
                     key={idx}
                     className="px-4 h-14 hidden md:!grid grid-cols-12 items-center gap-4"
                   >
-                    <div className="col-span-5 flex items-center gap-3">
+                    <div className="col-span-4 flex items-center gap-3">
                       <Skeleton className="w-8 h-8 rounded-full" />
                       <div className="flex-1 space-y-1.5">
                         <Skeleton className="h-3 w-2/3" />
                         <Skeleton className="h-2.5 w-1/2" />
                       </div>
                     </div>
-                    <Skeleton className="col-span-3 h-5 ml-auto w-24 rounded-full" />
+                    <Skeleton className="col-span-2 h-5 w-20 rounded-full" />
+                    <Skeleton className="col-span-2 h-5 ml-auto w-24 rounded-full" />
                     <Skeleton className="col-span-2 h-5 ml-auto w-20 rounded-full" />
                     <Skeleton className="col-span-2 h-4 ml-auto w-28" />
                   </div>
@@ -459,10 +495,16 @@ export default function UserSearchPage() {
                     roleText: showRole(user.role),
                     statusText: showStatus(user.status),
                   };
+                  // Enrich the NAuth-search user with the MonexUp profile name
+                  // pulled from networkContext.teams (loaded above).
+                  const enriched = {
+                    ...user,
+                    profile: user.profile || profileByUserId.get(user.userId) || "",
+                  };
                   return (
                     <UserSearchRow
                       key={`${user.userId}-${user.networkId}`}
-                      user={user}
+                      user={enriched}
                       labels={labels}
                       handlers={handlers}
                       networkSlug={networkSlug}

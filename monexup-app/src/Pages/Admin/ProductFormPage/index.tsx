@@ -322,6 +322,8 @@ export default function ProductFormPage() {
                 isDonation && values.donationMode === DonationModeEnum.Free;
             const effectivePrice = isFreeDonation ? 0 : values.price;
             const effectiveDiscount = isDonation ? 0 : values.discount;
+            // Lofn valida `frequency == 0` para produtos de doação.
+            const effectiveFrequency = isDonation ? 0 : values.frequency;
             const effectiveDonationMode = isDonation ? values.donationMode : null;
             const effectiveMinimumDonationAmount = isDonation
                 ? values.minimumDonationAmount
@@ -337,7 +339,7 @@ export default function ProductFormPage() {
                     description: values.description,
                     price: effectivePrice,
                     discount: effectiveDiscount,
-                    frequency: editing.frequency ?? 0,
+                    frequency: effectiveFrequency,
                     limit: editing.limit ?? 0,
                     status: values.status,
                     productType: values.productType as unknown as ProductUpdateInfoExt["productType"],
@@ -356,7 +358,7 @@ export default function ProductFormPage() {
                     description: values.description,
                     price: effectivePrice,
                     discount: effectiveDiscount,
-                    frequency: 0,
+                    frequency: effectiveFrequency,
                     limit: 0,
                     status: values.status,
                     productType: values.productType as unknown as ProductInsertInfoExt["productType"],

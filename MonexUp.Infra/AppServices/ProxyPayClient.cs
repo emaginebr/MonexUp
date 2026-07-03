@@ -135,6 +135,73 @@ namespace DB.Infra.AppServices
             };
         }
 
+        public async Task<ProxyPayFullInvoiceInfo> GetFullInvoiceAsync(long proxypayInvoiceId, CancellationToken ct = default)
+        {
+            using var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("X-Tenant-Id", _tenantId);
+
+            var requestUri = $"{_proxyPayApiUrl.TrimEnd('/')}/Invoice/getById/{proxypayInvoiceId}";
+            using var response = await client.GetAsync(requestUri, ct);
+            var body = await response.Content.ReadAsStringAsync(ct);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException(
+                    $"ProxyPay get full invoice failed ({(int)response.StatusCode}): {body}");
+            }
+
+            using var doc = JsonDocument.Parse(body);
+            var root = doc.RootElement;
+
+            static DateTime GetDt(JsonElement e, string prop)
+            {
+                if (!e.TryGetProperty(prop, out var v) || v.ValueKind != JsonValueKind.String) return default;
+                return DateTime.TryParse(v.GetString(), out var d) ? d : default;
+            }
+            static DateTime? GetDtNullable(JsonElement e, string prop)
+            {
+                if (!e.TryGetProperty(prop, out var v) || v.ValueKind != JsonValueKind.String) return null;
+                return DateTime.TryParse(v.GetString(), out var d) ? d : (DateTime?)null;
+            }
+
+            var items = new List<ProxyPayInvoiceItemInfo>();
+            if (root.TryGetProperty("items", out var itemsEl) && itemsEl.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var it in itemsEl.EnumerateArray())
+                {
+                    items.Add(new ProxyPayInvoiceItemInfo
+                    {
+                        InvoiceItemId = it.TryGetProperty("invoiceItemId", out var iid) && iid.ValueKind == JsonValueKind.Number ? iid.GetInt64() : 0,
+                        Description = it.TryGetProperty("description", out var d) && d.ValueKind == JsonValueKind.String ? d.GetString() : null,
+                        Quantity = it.TryGetProperty("quantity", out var q) && q.ValueKind == JsonValueKind.Number ? q.GetInt32() : 0,
+                        UnitPrice = it.TryGetProperty("unitPrice", out var u) && u.ValueKind == JsonValueKind.Number ? u.GetDouble() : 0,
+                        Discount = it.TryGetProperty("discount", out var dc) && dc.ValueKind == JsonValueKind.Number ? dc.GetDouble() : 0
+                    });
+                }
+            }
+
+            return new ProxyPayFullInvoiceInfo
+            {
+                InvoiceId = root.TryGetProperty("invoiceId", out var iv) && iv.ValueKind == JsonValueKind.Number ? iv.GetInt64() : proxypayInvoiceId,
+                InvoiceNumber = root.TryGetProperty("invoiceNumber", out var inum) && inum.ValueKind == JsonValueKind.String ? inum.GetString() : null,
+                Notes = root.TryGetProperty("notes", out var nt) && nt.ValueKind == JsonValueKind.String ? nt.GetString() : null,
+                Status = root.TryGetProperty("status", out var stf) && stf.ValueKind == JsonValueKind.Number ? stf.GetInt32() : 0,
+                PaymentMethod = root.TryGetProperty("paymentMethod", out var pm) && pm.ValueKind == JsonValueKind.Number ? pm.GetInt32() : 0,
+                Discount = root.TryGetProperty("discount", out var dis) && dis.ValueKind == JsonValueKind.Number ? dis.GetDouble() : 0,
+                DueDate = GetDt(root, "dueDate"),
+                ExpiresAt = GetDtNullable(root, "expiresAt"),
+                PaidAt = GetDtNullable(root, "paidAt"),
+                CreatedAt = GetDt(root, "createdAt"),
+                UpdatedAt = GetDt(root, "updatedAt"),
+                ExternalCode = root.TryGetProperty("externalCode", out var ec) && ec.ValueKind == JsonValueKind.String ? ec.GetString() : null,
+                Items = items
+            };
+        }
+
         public Task<IList<ProxyPayInvoiceStatusInfo>> ListPendingInvoicesAsync(long storeId, CancellationToken ct = default)
         {
             // GraphQL implementation deferred — returns empty list for now.

@@ -395,7 +395,7 @@ export default function OrderSearchPage() {
                       key={order.orderId}
                       order={order}
                       labels={labels}
-                      detailsHref="/admin/orders"
+                      detailsHref={`/admin/orders/${order.orderId}`}
                       formatTotal={formatTotal}
                       formatDate={formatDate}
                     />

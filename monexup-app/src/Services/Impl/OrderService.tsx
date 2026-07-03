@@ -56,6 +56,15 @@ const OrderService: IOrderService = {
     },
     getById: async (orderId: number, token: string) => {
         return await _httpClient.doGetAuth<OrderInfo>("/Order/getById/" + orderId, token);
+    },
+    update: async (order: OrderInfo, token: string) => {
+        return await _httpClient.doPostAuth<OrderInfo>("/Order/update", order, token);
+    },
+    listInvoices: async (orderId: number, token: string) => {
+        return await _httpClient.doGetAuth<any[]>("/Order/listInvoices/" + orderId, token);
+    },
+    getInvoice: async (orderId: number, invoiceId: number, token: string) => {
+        return await _httpClient.doGetAuth<any>("/Order/getInvoice/" + orderId + "/" + invoiceId, token);
     }
 }
 

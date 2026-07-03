@@ -18,6 +18,7 @@ import {
 
 import NetworkContext from "../../../Contexts/Network/NetworkContext";
 import AuthContext from "../../../Contexts/Auth/AuthContext";
+import UserContext from "../../../Contexts/User/UserContext";
 import { UserRoleEnum } from "../../../DTO/Enum/UserRoleEnum";
 import { MessageToastEnum } from "../../../DTO/Enum/MessageToastEnum";
 import MessageToast from "../../../Components/MessageToast";
@@ -57,7 +58,27 @@ export default function ProductSearchPage() {
 
   const networkContext = useContext(NetworkContext);
   const authContext = useContext(AuthContext);
+  const userContext = useContext(UserContext);
   const productApi = useProduct();
+
+  // Vendor product URL needs sellerSlug (the logged user's slug). AuthSession
+  // only carries userId — fetch the full user once to resolve the slug and
+  // enable the "Visualizar" affordance on each row.
+  const [sellerSlug, setSellerSlug] = useState<string>("");
+  useEffect(() => {
+    if (!authContext?.sessionInfo?.userId || sellerSlug) return;
+    let cancelled = false;
+    (async () => {
+      const ret = await userContext.getMe();
+      if (cancelled) return;
+      const slug = ret?.user?.slug || "";
+      if (slug) setSellerSlug(slug);
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authContext?.sessionInfo?.userId]);
 
   const network = networkContext?.network ?? networkContext?.userNetwork?.network ?? null;
   const session = authContext?.sessionInfo;
@@ -252,13 +273,21 @@ export default function ProductSearchPage() {
     }
   };
 
-  const baseRowLabels: Omit<ProductSearchRowLabels, "statusText" | "typeText" | "donationModeText"> = {
+  const baseRowLabels: Omit<ProductSearchRowLabels, "statusText" | "typeText" | "donationModeText" | "frequencyText"> = {
     edit: t("product_manage_updated", "Editar"),
+    view: t("view", "Visualizar"),
+    viewDisabledHint: t(
+      "productSearchPage.viewDisabledHint",
+      "Slug de rede ou vendedor indisponível",
+    ),
     currency: t("productSearchPage.currency", "R$"),
     priceLabel: t("product_edit_price_label", "Preço"),
     typeLabel: t("admin_product_field_type", "Tipo"),
+    frequencyLabel: t("admin_product_field_frequency", "Frequência"),
     statusLabel: t("product_edit_status_label", "Status"),
   };
+
+  const networkSlug = (network as any)?.slug || "";
 
   // Translate ProductTypeExtended → label; Donation also surfaces the donation mode.
   const showProductType = (productType: number | undefined): string => {
@@ -277,6 +306,28 @@ export default function ProductSearchPage() {
     if (mode === DonationModeEnum.Fixed) return t("admin_product_donation_mode_fixed", "Fixo");
     if (mode === DonationModeEnum.Free) return t("admin_product_donation_mode_free", "Livre");
     return undefined;
+  };
+
+  // Frequência (dias) → label do combo. 0 (doações) → "—".
+  const showFrequency = (frequency: number | undefined | null): string => {
+    switch (frequency) {
+      case 1:
+        return t("admin_product_frequency_once", "Apenas uma vez");
+      case 7:
+        return t("admin_product_frequency_weekly", "Semanal");
+      case 30:
+        return t("admin_product_frequency_monthly", "Mensal");
+      case 60:
+        return t("admin_product_frequency_bimonthly", "Bimestral");
+      case 90:
+        return t("admin_product_frequency_quarterly", "Trimestral");
+      case 150:
+        return t("admin_product_frequency_biannual", "Semestral");
+      case 365:
+        return t("admin_product_frequency_annual", "Anual");
+      default:
+        return "—";
+    }
   };
 
   return (
@@ -389,7 +440,7 @@ export default function ProductSearchPage() {
                 role="row"
               >
                 <div
-                  className="col-span-5 text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500"
+                  className="col-span-4 text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500"
                   role="columnheader"
                 >
                   {t("productSearchPage.tableHeaders.product", "Produto")}
@@ -399,6 +450,12 @@ export default function ProductSearchPage() {
                   role="columnheader"
                 >
                   {t("admin_product_field_type", "Tipo")}
+                </div>
+                <div
+                  className="col-span-2 text-left text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500"
+                  role="columnheader"
+                >
+                  {t("admin_product_field_frequency", "Frequência")}
                 </div>
                 <div
                   className="col-span-2 text-right text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500"
@@ -413,7 +470,7 @@ export default function ProductSearchPage() {
                   {t("productSearchPage.tableHeaders.status", "Status")}
                 </div>
                 <div
-                  className="col-span-2 text-right text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500"
+                  className="col-span-1 text-right text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500"
                   role="columnheader"
                 >
                   <span className="sr-only">
@@ -434,7 +491,7 @@ export default function ProductSearchPage() {
                     key={idx}
                     className="px-4 h-14 hidden md:!grid grid-cols-12 items-center gap-4"
                   >
-                    <div className="col-span-5 flex items-center gap-3">
+                    <div className="col-span-4 flex items-center gap-3">
                       <Skeleton className="w-8 h-8 rounded-md" />
                       <div className="flex-1 space-y-1.5">
                         <Skeleton className="h-3 w-2/3" />
@@ -442,9 +499,10 @@ export default function ProductSearchPage() {
                       </div>
                     </div>
                     <Skeleton className="col-span-2 h-5 w-20 rounded-full" />
+                    <Skeleton className="col-span-2 h-5 w-20 rounded-full" />
                     <Skeleton className="col-span-2 h-4 ml-auto w-20" />
                     <Skeleton className="col-span-1 h-5 ml-auto w-16 rounded-full" />
-                    <Skeleton className="col-span-2 h-4 ml-auto w-20" />
+                    <Skeleton className="col-span-1 h-4 ml-auto w-9" />
                   </div>
                 ))}
                 {[0, 1, 2].map((idx) => (
@@ -509,6 +567,7 @@ export default function ProductSearchPage() {
                     ...baseRowLabels,
                     statusText: showStatus(product.status),
                     typeText: showProductType(ext.productType as number | undefined),
+                    frequencyText: showFrequency(ext.frequency as number | null | undefined),
                     donationModeText:
                       ext.productType === ProductTypeExtended.Donation
                         ? showDonationMode(ext.donationMode as number | null | undefined)
@@ -519,6 +578,8 @@ export default function ProductSearchPage() {
                       key={product.productId}
                       product={ext}
                       labels={labels}
+                      networkSlug={networkSlug}
+                      sellerSlug={sellerSlug}
                     />
                   );
                 })}

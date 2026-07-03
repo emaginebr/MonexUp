@@ -11,4 +11,7 @@ export default interface IOrderBusiness {
   simulatePixPayment: (invoiceId: number) => Promise<{ sucesso: boolean; mensagem?: string }>;
   search: (networkId: number, userId: number, sellerId: number, pageNum: number) => Promise<BusinessResult<OrderListPagedInfo>>;
   getById: (orderId: number) => Promise<BusinessResult<OrderInfo>>;
+  update: (order: OrderInfo) => Promise<BusinessResult<OrderInfo>>;
+  listInvoices: (orderId: number) => Promise<BusinessResult<any[]>>;
+  getInvoice: (orderId: number, invoiceId: number) => Promise<BusinessResult<any>>;
 }

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MonexUp.API.Extensions;
+using MonexUp.DTO.User;
 
 namespace MonexUp.API.Controllers
 {
@@ -24,6 +25,7 @@ namespace MonexUp.API.Controllers
         private readonly INetworkService _networkService;
         private readonly ILofnProductClient _lofnProductClient;
         private readonly IProxyPayService _proxyPayService;
+        private readonly IBillingService _billingService;
         private readonly ILogger<OrderController> _logger;
 
         public OrderController(
@@ -33,6 +35,7 @@ namespace MonexUp.API.Controllers
             INetworkService networkService,
             ILofnProductClient lofnProductClient,
             IProxyPayService proxyPayService,
+            IBillingService billingService,
             ILogger<OrderController> logger
         )
         {
@@ -42,6 +45,7 @@ namespace MonexUp.API.Controllers
             _networkService = networkService;
             _lofnProductClient = lofnProductClient;
             _proxyPayService = proxyPayService;
+            _billingService = billingService;
             _logger = logger;
         }
 
@@ -187,6 +191,88 @@ namespace MonexUp.API.Controllers
             if (userSession == null) return Unauthorized();
 
             return Ok(await _orderService.GetOrderInfo(_orderService.GetById(orderId), HttpContext.GetBearerToken()));
+        }
+
+        /// <summary>
+        /// Lists the invoices tied to a given order. Today an order maps to at most one
+        /// ProxyPay invoice (<c>order.ProxyPayInvoiceId</c>), so the list has 0 or 1 items.
+        /// Kept as a list so recurring subscriptions can grow without a contract change.
+        /// Ordered by <see cref="MonexUp.DTO.Invoice.InvoiceInfo.CreatedAt"/> descending.
+        /// </summary>
+        [Authorize]
+        [HttpGet("listInvoices/{orderId}")]
+        public async Task<IActionResult> ListInvoices(long orderId, CancellationToken ct)
+        {
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
+
+            var order = _orderService.GetById(orderId);
+            if (order == null) return NotFound();
+
+            // Role gate: mirrors the OrderSearchPage rules.
+            //  - NetworkManager / Administrator on the order's network: always allowed
+            //  - Seller: only if they own the sale (order.SellerId == session.UserId)
+            //  - User: only if they placed the order (order.UserId == session.UserId)
+            var un = _networkService.GetUserNetwork(order.NetworkId, userSession.UserId);
+            var role = un?.Role ?? UserRoleEnum.MoRole;
+            var isPrivileged = role == UserRoleEnum.NetworkManager || role == UserRoleEnum.Administrator;
+            var isOwningSeller = role == UserRoleEnum.Seller
+                && order.SellerId.HasValue && order.SellerId.Value == userSession.UserId;
+            var isOwningBuyer = order.UserId == userSession.UserId;
+
+            if (!isPrivileged && !isOwningSeller && !isOwningBuyer)
+            {
+                return Forbid();
+            }
+
+            var invoices = await _billingService.ListInvoicesForOrderAsync(
+                order.NetworkId, order.ProxyPayInvoiceId, ct);
+            return Ok(invoices);
+        }
+
+        /// <summary>
+        /// Returns a single fully-populated ProxyPay invoice (with items) for a given order.
+        /// The <paramref name="invoiceId"/> must match <c>order.ProxyPayInvoiceId</c> — this
+        /// blocks URL tampering to view an unrelated invoice via someone else's order.
+        /// </summary>
+        [Authorize]
+        [HttpGet("getInvoice/{orderId}/{invoiceId}")]
+        public async Task<IActionResult> GetInvoice(long orderId, long invoiceId, CancellationToken ct)
+        {
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
+
+            var order = _orderService.GetById(orderId);
+            if (order == null) return NotFound();
+
+            // Role gate: mirrors listInvoices (and OrderSearchPage rules).
+            //  - NetworkManager / Administrator on the order's network: always allowed
+            //  - Seller: only if they own the sale (order.SellerId == session.UserId)
+            //  - User: only if they placed the order (order.UserId == session.UserId)
+            var un = _networkService.GetUserNetwork(order.NetworkId, userSession.UserId);
+            var role = un?.Role ?? UserRoleEnum.MoRole;
+            var isPrivileged = role == UserRoleEnum.NetworkManager || role == UserRoleEnum.Administrator;
+            var isOwningSeller = role == UserRoleEnum.Seller
+                && order.SellerId.HasValue && order.SellerId.Value == userSession.UserId;
+            var isOwningBuyer = order.UserId == userSession.UserId;
+
+            if (!isPrivileged && !isOwningSeller && !isOwningBuyer)
+            {
+                return Forbid();
+            }
+
+            // Sanity check: the invoice must belong to this order. This blocks a user
+            // from viewing an unrelated invoice by tampering with the URL after passing
+            // the role gate on an order they legitimately own.
+            if (!order.ProxyPayInvoiceId.HasValue || order.ProxyPayInvoiceId.Value != invoiceId)
+            {
+                return BadRequest();
+            }
+
+            var invoice = await _billingService.GetInvoice(order.NetworkId, invoiceId, ct);
+            if (invoice == null) return NotFound();
+
+            return Ok(invoice);
         }
     }
 }

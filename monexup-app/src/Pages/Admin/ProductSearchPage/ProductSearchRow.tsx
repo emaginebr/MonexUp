@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Check, Circle, Pencil, X } from "lucide-react";
+import { Check, Circle, Eye, Pencil, X } from "lucide-react";
 import { ProductStatusEnum } from "lofn-react";
 import {
   DonationModeEnum,
@@ -12,21 +12,34 @@ export interface ProductSearchRowLabels {
   statusText: string;
   /** Translated product type text (Físico / Infoproduto / Doação). */
   typeText: string;
+  /** Translated frequency label (Mensal / Anual / …) or "—". */
+  frequencyText: string;
   /** Optional donation mode text appended in parentheses when Donation. */
   donationModeText?: string;
   /** Action labels (used as aria-label + title). */
   edit: string;
+  /** aria-label + title for the "Visualizar" affordance. */
+  view: string;
+  /** aria-label + title when networkSlug/sellerSlug are missing. */
+  viewDisabledHint: string;
   /** Currency code prefix shown before the price. */
   currency: string;
   /** dl labels (mobile stacked card). */
   priceLabel: string;
   typeLabel: string;
+  frequencyLabel: string;
   statusLabel: string;
 }
 
 export interface ProductSearchRowProps {
   product: ProductInfoExt;
   labels: ProductSearchRowLabels;
+  /** Current network slug — combined with sellerSlug + product.slug to build
+   *  the public vendor product URL for the "Visualizar" affordance. */
+  networkSlug?: string;
+  /** Logged-in user slug (used as vendor seller). When either slug is empty
+   *  the view button renders in a disabled state. */
+  sellerSlug?: string;
 }
 
 /**
@@ -82,6 +95,8 @@ function StatusIcon({ status }: { status: ProductStatusEnum }) {
 export default function ProductSearchRow({
   product,
   labels,
+  networkSlug,
+  sellerSlug,
 }: ProductSearchRowProps) {
   const editHref = `/admin/products/${product.productId}/edit`;
   const initials = getInitials(product.name);
@@ -89,6 +104,15 @@ export default function ProductSearchRow({
   const typeChipText = labels.donationModeText
     ? `${labels.typeText} · ${labels.donationModeText}`
     : labels.typeText;
+
+  // Vendor product URL — public storefront lives at
+  // /{networkSlug}/store/{sellerSlug}/{productSlug}. Missing any part → button
+  // renders in a disabled visual, mirroring UserSearchRow's storefront pattern.
+  const viewDisabled = !networkSlug || !sellerSlug || !product.slug;
+  const viewHref = viewDisabled
+    ? null
+    : `/${networkSlug}/store/${sellerSlug}/${product.slug}`;
+  const viewHint = viewDisabled ? labels.viewDisabledHint : labels.view;
 
   // Lofn ProductInfo carries a top-level `imageUrl` plus a richer `images[]`.
   const thumb = product.imageUrl || product.images?.[0]?.imageUrl || "";
@@ -109,7 +133,7 @@ export default function ProductSearchRow({
         role="row"
       >
         {/* Product cell */}
-        <div className="col-span-5 min-w-0 flex items-center gap-3" role="cell">
+        <div className="col-span-4 min-w-0 flex items-center gap-3" role="cell">
           {thumb ? (
             <img
               src={thumb}
@@ -147,6 +171,13 @@ export default function ProductSearchRow({
           </span>
         </div>
 
+        {/* Frequency chip — same visual weight as the type chip */}
+        <div className="col-span-2 flex items-center justify-start" role="cell">
+          <span className="inline-flex items-center h-[24px] px-2 rounded-full bg-graphite-100 text-graphite-700 ring-1 ring-graphite-200 text-[11px] font-semibold truncate max-w-full">
+            {labels.frequencyText}
+          </span>
+        </div>
+
         {/* Price */}
         <div
           className="col-span-2 text-right text-sm text-graphite-900 font-semibold mnx-num tabular-nums"
@@ -170,9 +201,32 @@ export default function ProductSearchRow({
 
         {/* Actions */}
         <div
-          className="col-span-2 flex items-center justify-end gap-1"
+          className="col-span-1 flex items-center justify-end gap-1"
           role="cell"
         >
+          {viewDisabled ? (
+            <button
+              type="button"
+              disabled
+              aria-disabled="true"
+              aria-label={viewHint}
+              title={viewHint}
+              className="inline-flex w-9 h-9 items-center justify-center rounded-md text-graphite-300 cursor-not-allowed bg-mnx-neutral-50"
+            >
+              <Eye size={16} aria-hidden="true" />
+            </button>
+          ) : (
+            <a
+              href={viewHref!}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={viewHint}
+              title={viewHint}
+              className="inline-flex w-9 h-9 items-center justify-center rounded-md transition-colors duration-fast focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 text-graphite-500 hover:text-orange-700 hover:bg-orange-500/10"
+            >
+              <Eye size={16} aria-hidden="true" />
+            </a>
+          )}
           <Link
             to={editHref}
             aria-label={labels.edit}
@@ -221,6 +275,27 @@ export default function ProductSearchRow({
             </div>
           </div>
           <div className="flex items-center gap-1 shrink-0">
+            {viewDisabled ? (
+              <button
+                type="button"
+                disabled
+                aria-disabled="true"
+                aria-label={viewHint}
+                className="inline-flex w-9 h-9 items-center justify-center rounded-md text-graphite-300 cursor-not-allowed bg-mnx-neutral-50"
+              >
+                <Eye size={16} aria-hidden="true" />
+              </button>
+            ) : (
+              <a
+                href={viewHref!}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={viewHint}
+                className="inline-flex w-9 h-9 items-center justify-center rounded-md transition-colors duration-fast focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 text-graphite-500 hover:text-orange-700 hover:bg-orange-500/10"
+              >
+                <Eye size={16} aria-hidden="true" />
+              </a>
+            )}
             <Link
               to={editHref}
               aria-label={labels.edit}
@@ -249,6 +324,14 @@ export default function ProductSearchRow({
                 {labels.currency}
               </span>
               {formatPrice(priceValue)}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-[0.65rem] uppercase tracking-wider font-semibold text-graphite-400">
+              {labels.frequencyLabel}
+            </dt>
+            <dd className="mt-0.5 text-sm text-graphite-900 truncate">
+              {labels.frequencyText}
             </dd>
           </div>
         </dl>

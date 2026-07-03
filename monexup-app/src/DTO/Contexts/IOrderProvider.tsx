@@ -19,6 +19,9 @@ interface IOrderProvider {
     simulatePixPayment: (invoiceId: number) => Promise<{ sucesso: boolean; mensagem?: string }>;
     search: (networkId: number, userId: number, sellerId: number, pageNum: number) => Promise<ProviderResult>;
     getById: (orderId: number) => Promise<OrderProviderResult>;
+    update: (order: OrderInfo) => Promise<OrderProviderResult>;
+    listInvoices: (orderId: number) => Promise<{ sucesso: boolean; invoices: any[]; mensagemErro?: string }>;
+    getInvoice: (orderId: number, invoiceId: number) => Promise<{ sucesso: boolean; invoice: any | null; mensagemErro?: string }>;
 }
 
 export default IOrderProvider;

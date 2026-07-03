@@ -1,0 +1,906 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>BillingPage — /admin/billing — MonexUp Mockup</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- ------------------------------------------------------------------
+         MOCKUP-ONLY CDN + TOKEN SHIMS
+         ------------------------------------------------------------------
+         The real app uses Tailwind + PostCSS with the tokens declared in
+         `monexup-app/tailwind.config.js` and the `mnx-*` / `auth-card`
+         utilities from `monexup-app/src/styles/globals.css`. This HTML
+         file re-declares the SUBSET of those tokens the mockup uses so
+         it renders standalone in a browser.
+
+         The frontend engineer must NOT copy the <script>/<style> blocks
+         below into the .tsx — they are shims to visualize the Tailwind
+         classes as they would resolve inside the app. Use the exact
+         class names on the JSX; the tokens already exist.
+    ------------------------------------------------------------------- -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              orange: {
+                50:  "#FFF7ED",
+                500: "#F97316",
+                600: "#EA580C",
+                700: "#C2410C",
+              },
+              graphite: {
+                50:  "#F7F6F3",
+                100: "#EDEBE6",
+                200: "#D9D5CB",
+                300: "#B8B2A4",
+                400: "#8A8577",
+                500: "#635E51",
+                700: "#3A362E",
+                900: "#1A1815",
+              },
+              "mnx-neutral": {
+                50:  "#FAF8F4",
+                100: "#F1EEE7",
+                200: "#E4DFD3",
+                300: "#CFC8B7",
+              },
+              emerald: { 500: "#10B981", 700: "#047857" },
+              amber:   { 500: "#F59E0B", 700: "#B45309" },
+              rose:    { 500: "#F43F5E", 700: "#BE123C" },
+              sky:     { 500: "#0EA5E9", 700: "#0369A1" },
+            },
+            fontFamily: {
+              display: ["'Fraunces'", "'Playfair Display'", "Georgia", "serif"],
+              sans:    ["'Inter'", "system-ui", "sans-serif"],
+              mono:    ["'JetBrains Mono'", "ui-monospace", "monospace"],
+            },
+            boxShadow: {
+              "glow-md": "0 4px 14px 0 rgb(249 115 22 / 0.28)",
+            },
+            maxWidth: {
+              container: "1200px",
+            },
+            spacing: {
+              shell: "1.25rem",
+            },
+            transitionDuration: {
+              fast: "150ms",
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Utility classes that already ship in the MonexUp SCSS.
+         Re-declared here purely so the mockup is self-contained. */
+      html, body { background: #FAF8F4; }
+      body { font-family: "Inter", system-ui, sans-serif; color: #1A1815; }
+
+      .display-headline {
+        font-family: "Fraunces", "Playfair Display", Georgia, serif;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+      .font-mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+      .mnx-num, .tabular-nums { font-variant-numeric: tabular-nums; }
+
+      /* auth-card matches monexup-app/src/styles/globals.css */
+      .auth-card {
+        background: #FFFFFF;
+        border: 1px solid #E4DFD3;
+        border-radius: 20px;
+        box-shadow:
+          0 1px 0 rgba(26, 24, 21, 0.02),
+          0 24px 48px -32px rgba(26, 24, 21, 0.12);
+      }
+
+      /* Stat chip — orange variant, from globals.css .mnx-stat-chip. */
+      .mnx-stat-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.75rem;
+        height: 2.75rem;
+        border-radius: 0.75rem;
+        flex-shrink: 0;
+      }
+      .mnx-stat-chip--orange { background: #FFF7ED; color: #C2410C; }
+
+      /* Skeleton pulse copied from Components/ui/skeleton.tsx. */
+      .skeleton {
+        background: #EDEBE6;
+        border-radius: 6px;
+        animation: pulse 1.6s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50%      { opacity: 0.55; }
+      }
+
+      .mock-chrome-hint {
+        border: 1px dashed #CFC8B7;
+        color: #635E51;
+        border-radius: 12px;
+      }
+
+      /* Section marker — labels the two role-view blocks side-by-side
+         for the frontend engineer. Not part of the real page. */
+      .mock-role-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 0.6875rem;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+      }
+      .mock-role-tag--manager { background: rgba(249,115,22,0.12); color: #C2410C; }
+      .mock-role-tag--seller  { background: rgba(14,165,233,0.12); color: #0369A1; }
+      .mock-role-tag--empty   { background: rgba(99,94,81,0.10);   color: #3A362E; }
+      .mock-role-tag--skel    { background: rgba(99,94,81,0.10);   color: #3A362E; }
+
+      .mock-section-divider {
+        border-top: 1px dashed #CFC8B7;
+        margin: 3rem 0 2rem;
+      }
+
+      /* Filter-chip styling — matches the visual weight of pills but for
+         non-status toggles (Todas / Pagas / Pendentes / Vencidas / Canceladas). */
+      .filter-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        height: 32px;
+        padding: 0 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #635E51;
+        background: transparent;
+        border: 1px solid #E4DFD3;
+        transition: background 150ms, color 150ms, border-color 150ms;
+        cursor: pointer;
+      }
+      .filter-chip:hover { background: #F1EEE7; color: #1A1815; }
+      .filter-chip--active {
+        background: rgba(249,115,22,0.10);
+        color: #C2410C;
+        border-color: rgba(249,115,22,0.30);
+      }
+      .filter-chip .dot {
+        width: 6px; height: 6px; border-radius: 9999px;
+        background: currentColor; opacity: 0.75;
+      }
+
+      .icon { width: 1em; height: 1em; display: inline-block; vertical-align: -0.125em; }
+    </style>
+  </head>
+
+  <body class="min-h-screen bg-mnx-neutral-50">
+    <!--
+      Mock frame hint — NOT part of the deliverable.
+      LayoutAdmin already renders the dark sidebar + top NavBar.
+    -->
+    <div class="max-w-container mx-auto px-shell pt-4 pb-2">
+      <p class="mock-chrome-hint text-xs px-3 py-2 mb-4">
+        Mockup frame — the real page is rendered inside <code>LayoutAdmin</code>
+        (dark sidebar + top NavBar). The blocks below reproduce ONLY the page
+        body, matching the width and gutters of <code>OrderSearchPage</code>
+        and <code>ProductSearchPage</code>. Both role views + a mobile card +
+        a skeleton block are stacked here for reference; at runtime only ONE
+        of them renders per request depending on the caller's role.
+      </p>
+    </div>
+
+    <main class="mnx-surface-light bg-mnx-neutral-50 min-h-screen">
+      <div class="max-w-container mx-auto px-shell pt-6 pb-12">
+
+        <!-- =====================================================
+             1. Page header band
+             2px orange accent + display-headline + breadcrumb.
+             CTA cluster intentionally EMPTY — invoices are auto-
+             created by the checkout/ProxyPay pipeline, there is
+             no manual "new invoice" flow.
+             ===================================================== -->
+        <section
+          class="flex flex-row items-start sm:items-center justify-between gap-4 mb-6 lg:mb-8"
+          aria-labelledby="billing-page-title"
+        >
+          <div class="min-w-0">
+            <div class="flex items-center gap-3">
+              <span
+                aria-hidden="true"
+                class="inline-block"
+                style="width:2px;height:20px;border-radius:9999px;background:#F97316;"
+              ></span>
+              <h1
+                id="billing-page-title"
+                class="display-headline text-graphite-900 text-2xl sm:text-3xl lg:text-[2rem] leading-tight"
+              >
+                Cobranças
+              </h1>
+            </div>
+            <nav aria-label="Breadcrumb" class="mt-2 ml-[14px] text-sm">
+              <ol class="flex items-center gap-1 text-graphite-500">
+                <li>
+                  <a
+                    href="#"
+                    class="hover:text-orange-600 transition-colors duration-fast"
+                  >Minha Rede</a>
+                </li>
+                <li aria-hidden="true" class="text-graphite-300">
+                  <!-- lucide: ChevronRight -->
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </li>
+                <li aria-current="page" class="font-medium text-graphite-700 truncate max-w-[14rem]">
+                  Cobranças
+                </li>
+              </ol>
+            </nav>
+          </div>
+
+          <div class="flex items-center gap-1.5 shrink-0">
+            <!-- Empty by design — no manual "new invoice" flow. -->
+          </div>
+        </section>
+
+        <!-- ============================================================
+             ROLE VIEW A — NetworkManager / Administrator (desktop grid)
+             Full column set: Nº fatura / Comprador / Vendedor /
+             Vencimento / Valor / Status / Ações
+             ============================================================ -->
+        <div class="flex items-center gap-2 mb-3">
+          <span class="mock-role-tag mock-role-tag--manager">
+            <!-- ShieldCheck -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+            View: NetworkManager / Administrator
+          </span>
+        </div>
+
+        <section class="auth-card relative p-4 sm:p-6 mb-8" aria-label="Cobranças (NetworkManager)">
+          <!-- Toolbar: search + status filter chips (single row on md+) -->
+          <form class="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <!-- Search — mirrors OrderSearchPage FormField shape -->
+            <div class="w-full md:max-w-sm">
+              <label for="billing-search-manager" class="block text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500 mb-1.5">
+                Buscar
+              </label>
+              <div class="flex items-center h-11 rounded-lg border border-mnx-neutral-200 bg-white pl-3 pr-2 focus-within:ring-2 focus-within:ring-orange-500 focus-within:border-orange-500 transition-colors duration-fast">
+                <!-- lucide: Search -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A8577" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 shrink-0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input
+                  id="billing-search-manager"
+                  type="search"
+                  value="Ana"
+                  placeholder="Buscar por número, cliente ou vendedor"
+                  class="flex-1 min-w-0 h-full bg-transparent text-sm text-graphite-900 placeholder:text-graphite-400 focus:outline-none pr-2"
+                />
+              </div>
+            </div>
+
+            <!-- Status filter chips -->
+            <div class="flex items-center gap-1.5 flex-wrap" role="group" aria-label="Filtro por status">
+              <button type="button" class="filter-chip filter-chip--active">Todas <span class="tabular-nums opacity-70">6</span></button>
+              <button type="button" class="filter-chip"><span class="dot" style="background:#10B981"></span>Pagas</button>
+              <button type="button" class="filter-chip"><span class="dot" style="background:#F59E0B"></span>Pendentes</button>
+              <button type="button" class="filter-chip"><span class="dot" style="background:#F97316"></span>Vencidas</button>
+              <button type="button" class="filter-chip"><span class="dot" style="background:#635E51"></span>Canceladas</button>
+            </div>
+          </form>
+
+          <!-- Table shell -->
+          <div class="rounded-xl border border-mnx-neutral-200 overflow-hidden bg-white">
+            <!-- Column header (md+) -->
+            <div class="hidden md:!grid grid-cols-12 gap-4 px-4 h-11 items-center bg-mnx-neutral-50 border-b border-mnx-neutral-200" role="row">
+              <div class="col-span-2 text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500" role="columnheader">Nº fatura</div>
+              <div class="col-span-3 text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500" role="columnheader">Comprador</div>
+              <div class="col-span-2 text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500" role="columnheader">Vendedor</div>
+              <div class="col-span-1 text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500" role="columnheader">Vencimento</div>
+              <div class="col-span-2 text-right text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500" role="columnheader">Valor</div>
+              <div class="col-span-1 text-right text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500" role="columnheader">Status</div>
+              <div class="col-span-1 text-right text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500" role="columnheader"><span class="sr-only">Ações</span></div>
+            </div>
+
+            <!-- Rows -->
+            <div role="rowgroup">
+              <!-- Row 1 — Paid -->
+              <div class="hidden md:!grid grid-cols-12 items-center gap-4 px-4 h-14 border-b border-mnx-neutral-100 hover:bg-orange-500/5 transition-colors duration-fast" role="row">
+                <div class="col-span-2 min-w-0" role="cell">
+                  <a href="#" class="text-sm font-semibold text-graphite-900 hover:text-orange-700 transition-colors duration-fast font-mono">INV-2026-000056</a>
+                </div>
+                <div class="col-span-3 min-w-0" role="cell">
+                  <div class="text-sm font-semibold text-graphite-900 truncate">Ana Beatriz Ferreira</div>
+                  <div class="text-[11px] text-graphite-500 truncate font-mono">ana.ferreira@example.com</div>
+                </div>
+                <div class="col-span-2 min-w-0" role="cell">
+                  <div class="text-sm text-graphite-700 truncate">Ricardo Melo</div>
+                </div>
+                <div class="col-span-1 min-w-0" role="cell">
+                  <div class="text-sm text-graphite-700 mnx-num tabular-nums">12/06/2026</div>
+                </div>
+                <div class="col-span-2 text-right text-sm text-graphite-900 font-semibold mnx-num tabular-nums" role="cell">
+                  <span class="text-graphite-400 font-normal mr-1">R$</span>489,00
+                </div>
+                <div class="col-span-1 flex items-center justify-end" role="cell">
+                  <span class="inline-flex items-center gap-1 h-[24px] text-[11px] px-2 rounded-full font-semibold ring-1 bg-emerald-500/10 text-emerald-700 ring-emerald-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Pago
+                  </span>
+                </div>
+                <div class="col-span-1 flex items-center justify-end gap-1" role="cell">
+                  <a href="#" aria-label="Ver detalhes" title="Ver detalhes"
+                     class="inline-flex w-9 h-9 items-center justify-center rounded-md text-graphite-500 hover:text-graphite-900 hover:bg-mnx-neutral-100 transition-colors duration-fast focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500">
+                    <!-- lucide: Eye -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Row 2 — Pending -->
+              <div class="hidden md:!grid grid-cols-12 items-center gap-4 px-4 h-14 border-b border-mnx-neutral-100 hover:bg-orange-500/5 transition-colors duration-fast" role="row">
+                <div class="col-span-2 min-w-0" role="cell">
+                  <a href="#" class="text-sm font-semibold text-graphite-900 hover:text-orange-700 transition-colors duration-fast font-mono">INV-2026-000057</a>
+                </div>
+                <div class="col-span-3 min-w-0" role="cell">
+                  <div class="text-sm font-semibold text-graphite-900 truncate">Bruno Camargo</div>
+                  <div class="text-[11px] text-graphite-500 truncate font-mono">bruno.c@example.com</div>
+                </div>
+                <div class="col-span-2 min-w-0" role="cell">
+                  <div class="text-sm text-graphite-700 truncate">Ricardo Melo</div>
+                </div>
+                <div class="col-span-1 min-w-0" role="cell">
+                  <div class="text-sm text-graphite-700 mnx-num tabular-nums">18/06/2026</div>
+                </div>
+                <div class="col-span-2 text-right text-sm text-graphite-900 font-semibold mnx-num tabular-nums" role="cell">
+                  <span class="text-graphite-400 font-normal mr-1">R$</span>120,00
+                </div>
+                <div class="col-span-1 flex items-center justify-end" role="cell">
+                  <span class="inline-flex items-center gap-1 h-[24px] text-[11px] px-2 rounded-full font-semibold ring-1 bg-amber-500/10 text-amber-700 ring-amber-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    Pendente
+                  </span>
+                </div>
+                <div class="col-span-1 flex items-center justify-end gap-1" role="cell">
+                  <a href="#" aria-label="Ver detalhes" title="Ver detalhes" class="inline-flex w-9 h-9 items-center justify-center rounded-md text-graphite-500 hover:text-graphite-900 hover:bg-mnx-neutral-100 transition-colors duration-fast focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Row 3 — Sent -->
+              <div class="hidden md:!grid grid-cols-12 items-center gap-4 px-4 h-14 border-b border-mnx-neutral-100 hover:bg-orange-500/5 transition-colors duration-fast" role="row">
+                <div class="col-span-2 min-w-0" role="cell">
+                  <a href="#" class="text-sm font-semibold text-graphite-900 hover:text-orange-700 transition-colors duration-fast font-mono">INV-2026-000058</a>
+                </div>
+                <div class="col-span-3 min-w-0" role="cell">
+                  <div class="text-sm font-semibold text-graphite-900 truncate">Camila Duarte</div>
+                  <div class="text-[11px] text-graphite-500 truncate font-mono">camila.duarte@example.com</div>
+                </div>
+                <div class="col-span-2 min-w-0" role="cell">
+                  <div class="text-sm text-graphite-700 truncate">Julia Nogueira</div>
+                </div>
+                <div class="col-span-1 min-w-0" role="cell">
+                  <div class="text-sm text-graphite-700 mnx-num tabular-nums">22/06/2026</div>
+                </div>
+                <div class="col-span-2 text-right text-sm text-graphite-900 font-semibold mnx-num tabular-nums" role="cell">
+                  <span class="text-graphite-400 font-normal mr-1">R$</span>2.140,50
+                </div>
+                <div class="col-span-1 flex items-center justify-end" role="cell">
+                  <span class="inline-flex items-center gap-1 h-[24px] text-[11px] px-2 rounded-full font-semibold ring-1 bg-sky-500/10 text-sky-700 ring-sky-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                    Enviada
+                  </span>
+                </div>
+                <div class="col-span-1 flex items-center justify-end gap-1" role="cell">
+                  <a href="#" aria-label="Ver detalhes" title="Ver detalhes" class="inline-flex w-9 h-9 items-center justify-center rounded-md text-graphite-500 hover:text-graphite-900 hover:bg-mnx-neutral-100 transition-colors duration-fast focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Row 4 — Overdue -->
+              <div class="hidden md:!grid grid-cols-12 items-center gap-4 px-4 h-14 border-b border-mnx-neutral-100 hover:bg-orange-500/5 transition-colors duration-fast" role="row">
+                <div class="col-span-2 min-w-0" role="cell">
+                  <a href="#" class="text-sm font-semibold text-graphite-900 hover:text-orange-700 transition-colors duration-fast font-mono">INV-2026-000059</a>
+                </div>
+                <div class="col-span-3 min-w-0" role="cell">
+                  <div class="text-sm font-semibold text-graphite-900 truncate">Diego Espósito</div>
+                  <div class="text-[11px] text-graphite-500 truncate font-mono">d.esposito@example.com</div>
+                </div>
+                <div class="col-span-2 min-w-0" role="cell">
+                  <div class="text-sm text-graphite-700 truncate">Julia Nogueira</div>
+                </div>
+                <div class="col-span-1 min-w-0" role="cell">
+                  <div class="text-sm text-rose-700 mnx-num tabular-nums font-semibold">01/06/2026</div>
+                </div>
+                <div class="col-span-2 text-right text-sm text-graphite-900 font-semibold mnx-num tabular-nums" role="cell">
+                  <span class="text-graphite-400 font-normal mr-1">R$</span>360,00
+                </div>
+                <div class="col-span-1 flex items-center justify-end" role="cell">
+                  <span class="inline-flex items-center gap-1 h-[24px] text-[11px] px-2 rounded-full font-semibold ring-1 bg-orange-500/10 text-orange-700 ring-orange-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                    Vencida
+                  </span>
+                </div>
+                <div class="col-span-1 flex items-center justify-end gap-1" role="cell">
+                  <a href="#" aria-label="Ver detalhes" title="Ver detalhes" class="inline-flex w-9 h-9 items-center justify-center rounded-md text-graphite-500 hover:text-graphite-900 hover:bg-mnx-neutral-100 transition-colors duration-fast focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Row 5 — Cancelled -->
+              <div class="hidden md:!grid grid-cols-12 items-center gap-4 px-4 h-14 border-b border-mnx-neutral-100 hover:bg-orange-500/5 transition-colors duration-fast" role="row">
+                <div class="col-span-2 min-w-0" role="cell">
+                  <a href="#" class="text-sm font-semibold text-graphite-900 hover:text-orange-700 transition-colors duration-fast font-mono">INV-2026-000060</a>
+                </div>
+                <div class="col-span-3 min-w-0" role="cell">
+                  <div class="text-sm font-semibold text-graphite-900 truncate">Eduarda Freitas</div>
+                  <div class="text-[11px] text-graphite-500 truncate font-mono">eduarda.f@example.com</div>
+                </div>
+                <div class="col-span-2 min-w-0" role="cell">
+                  <div class="text-sm text-graphite-700 truncate">Ricardo Melo</div>
+                </div>
+                <div class="col-span-1 min-w-0" role="cell">
+                  <div class="text-sm text-graphite-700 mnx-num tabular-nums">28/06/2026</div>
+                </div>
+                <div class="col-span-2 text-right text-sm text-graphite-500 font-semibold mnx-num tabular-nums line-through" role="cell">
+                  <span class="text-graphite-400 font-normal mr-1">R$</span>89,90
+                </div>
+                <div class="col-span-1 flex items-center justify-end" role="cell">
+                  <span class="inline-flex items-center gap-1 h-[24px] text-[11px] px-2 rounded-full font-semibold ring-1 bg-graphite-100 text-graphite-700 ring-graphite-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>
+                    Cancelada
+                  </span>
+                </div>
+                <div class="col-span-1 flex items-center justify-end gap-1" role="cell">
+                  <a href="#" aria-label="Ver detalhes" title="Ver detalhes" class="inline-flex w-9 h-9 items-center justify-center rounded-md text-graphite-500 hover:text-graphite-900 hover:bg-mnx-neutral-100 transition-colors duration-fast focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Row 6 — Expired -->
+              <div class="hidden md:!grid grid-cols-12 items-center gap-4 px-4 h-14 hover:bg-orange-500/5 transition-colors duration-fast" role="row">
+                <div class="col-span-2 min-w-0" role="cell">
+                  <a href="#" class="text-sm font-semibold text-graphite-900 hover:text-orange-700 transition-colors duration-fast font-mono">INV-2026-000061</a>
+                </div>
+                <div class="col-span-3 min-w-0" role="cell">
+                  <div class="text-sm font-semibold text-graphite-900 truncate">Felipe Guimarães</div>
+                  <div class="text-[11px] text-graphite-500 truncate font-mono">felipe.g@example.com</div>
+                </div>
+                <div class="col-span-2 min-w-0" role="cell">
+                  <div class="text-sm text-graphite-700 truncate">Julia Nogueira</div>
+                </div>
+                <div class="col-span-1 min-w-0" role="cell">
+                  <div class="text-sm text-graphite-700 mnx-num tabular-nums">15/05/2026</div>
+                </div>
+                <div class="col-span-2 text-right text-sm text-graphite-900 font-semibold mnx-num tabular-nums" role="cell">
+                  <span class="text-graphite-400 font-normal mr-1">R$</span>1.250,00
+                </div>
+                <div class="col-span-1 flex items-center justify-end" role="cell">
+                  <span class="inline-flex items-center gap-1 h-[24px] text-[11px] px-2 rounded-full font-semibold ring-1 bg-rose-500/10 text-rose-700 ring-rose-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    Expirada
+                  </span>
+                </div>
+                <div class="col-span-1 flex items-center justify-end gap-1" role="cell">
+                  <a href="#" aria-label="Ver detalhes" title="Ver detalhes" class="inline-flex w-9 h-9 items-center justify-center rounded-md text-graphite-500 hover:text-graphite-900 hover:bg-mnx-neutral-100 transition-colors duration-fast focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <nav aria-label="Pagination" class="mt-4 flex items-center justify-between gap-3">
+            <button type="button" class="inline-flex h-9 items-center gap-1 px-3 rounded-md text-sm font-medium text-graphite-700 hover:bg-mnx-neutral-100 disabled:opacity-40 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-colors duration-fast focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500" disabled>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              <span>Anterior</span>
+            </button>
+            <span class="text-xs text-graphite-500 mnx-num tabular-nums">1 de 4</span>
+            <button type="button" class="inline-flex h-9 items-center gap-1 px-3 rounded-md text-sm font-medium text-graphite-700 hover:bg-mnx-neutral-100 disabled:opacity-40 transition-colors duration-fast focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500">
+              <span>Próxima</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </nav>
+        </section>
+
+        <div class="mock-section-divider"></div>
+
+        <!-- ============================================================
+             ROLE VIEW B — Seller (desktop grid)
+             Fewer columns — no Vendedor cell (implicitly = current
+             session user). Nº fatura widens to col-span-3, Comprador
+             widens to col-span-4.
+             ============================================================ -->
+        <div class="flex items-center gap-2 mb-3">
+          <span class="mock-role-tag mock-role-tag--seller">
+            <!-- Store -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><path d="M22 7v3a2 2 0 0 1-2 2v0a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12v0a2 2 0 0 1-2-2V7"/></svg>
+            View: Seller
+          </span>
+        </div>
+
+        <section class="auth-card relative p-4 sm:p-6 mb-8" aria-label="Cobranças (Seller)">
+          <!-- Toolbar: search + status chips -->
+          <form class="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div class="w-full md:max-w-sm">
+              <label for="billing-search-seller" class="block text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500 mb-1.5">Buscar</label>
+              <div class="flex items-center h-11 rounded-lg border border-mnx-neutral-200 bg-white pl-3 pr-2 focus-within:ring-2 focus-within:ring-orange-500 focus-within:border-orange-500 transition-colors duration-fast">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A8577" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 shrink-0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input id="billing-search-seller" type="search" placeholder="Buscar por número ou cliente" class="flex-1 min-w-0 h-full bg-transparent text-sm text-graphite-900 placeholder:text-graphite-400 focus:outline-none pr-2" />
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 flex-wrap" role="group" aria-label="Filtro por status">
+              <button type="button" class="filter-chip filter-chip--active">Todas <span class="tabular-nums opacity-70">3</span></button>
+              <button type="button" class="filter-chip"><span class="dot" style="background:#10B981"></span>Pagas</button>
+              <button type="button" class="filter-chip"><span class="dot" style="background:#F59E0B"></span>Pendentes</button>
+              <button type="button" class="filter-chip"><span class="dot" style="background:#F97316"></span>Vencidas</button>
+              <button type="button" class="filter-chip"><span class="dot" style="background:#635E51"></span>Canceladas</button>
+            </div>
+          </form>
+
+          <!-- Table shell -->
+          <div class="rounded-xl border border-mnx-neutral-200 overflow-hidden bg-white">
+            <div class="hidden md:!grid grid-cols-12 gap-4 px-4 h-11 items-center bg-mnx-neutral-50 border-b border-mnx-neutral-200" role="row">
+              <div class="col-span-3 text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500" role="columnheader">Nº fatura</div>
+              <div class="col-span-4 text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500" role="columnheader">Comprador</div>
+              <div class="col-span-1 text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500" role="columnheader">Vencimento</div>
+              <div class="col-span-2 text-right text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500" role="columnheader">Valor</div>
+              <div class="col-span-1 text-right text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500" role="columnheader">Status</div>
+              <div class="col-span-1 text-right text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500" role="columnheader"><span class="sr-only">Ações</span></div>
+            </div>
+
+            <div role="rowgroup">
+              <!-- Seller row 1 — Paid -->
+              <div class="hidden md:!grid grid-cols-12 items-center gap-4 px-4 h-14 border-b border-mnx-neutral-100 hover:bg-orange-500/5 transition-colors duration-fast" role="row">
+                <div class="col-span-3 min-w-0" role="cell">
+                  <a href="#" class="text-sm font-semibold text-graphite-900 hover:text-orange-700 transition-colors duration-fast font-mono">INV-2026-000056</a>
+                </div>
+                <div class="col-span-4 min-w-0" role="cell">
+                  <div class="text-sm font-semibold text-graphite-900 truncate">Ana Beatriz Ferreira</div>
+                  <div class="text-[11px] text-graphite-500 truncate font-mono">ana.ferreira@example.com</div>
+                </div>
+                <div class="col-span-1 min-w-0" role="cell">
+                  <div class="text-sm text-graphite-700 mnx-num tabular-nums">12/06/2026</div>
+                </div>
+                <div class="col-span-2 text-right text-sm text-graphite-900 font-semibold mnx-num tabular-nums" role="cell">
+                  <span class="text-graphite-400 font-normal mr-1">R$</span>489,00
+                </div>
+                <div class="col-span-1 flex items-center justify-end" role="cell">
+                  <span class="inline-flex items-center gap-1 h-[24px] text-[11px] px-2 rounded-full font-semibold ring-1 bg-emerald-500/10 text-emerald-700 ring-emerald-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Pago
+                  </span>
+                </div>
+                <div class="col-span-1 flex items-center justify-end gap-1" role="cell">
+                  <a href="#" aria-label="Ver detalhes" title="Ver detalhes" class="inline-flex w-9 h-9 items-center justify-center rounded-md text-graphite-500 hover:text-graphite-900 hover:bg-mnx-neutral-100 transition-colors duration-fast focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Seller row 2 — Pending -->
+              <div class="hidden md:!grid grid-cols-12 items-center gap-4 px-4 h-14 border-b border-mnx-neutral-100 hover:bg-orange-500/5 transition-colors duration-fast" role="row">
+                <div class="col-span-3 min-w-0" role="cell">
+                  <a href="#" class="text-sm font-semibold text-graphite-900 hover:text-orange-700 transition-colors duration-fast font-mono">INV-2026-000057</a>
+                </div>
+                <div class="col-span-4 min-w-0" role="cell">
+                  <div class="text-sm font-semibold text-graphite-900 truncate">Bruno Camargo</div>
+                  <div class="text-[11px] text-graphite-500 truncate font-mono">bruno.c@example.com</div>
+                </div>
+                <div class="col-span-1 min-w-0" role="cell">
+                  <div class="text-sm text-graphite-700 mnx-num tabular-nums">18/06/2026</div>
+                </div>
+                <div class="col-span-2 text-right text-sm text-graphite-900 font-semibold mnx-num tabular-nums" role="cell">
+                  <span class="text-graphite-400 font-normal mr-1">R$</span>120,00
+                </div>
+                <div class="col-span-1 flex items-center justify-end" role="cell">
+                  <span class="inline-flex items-center gap-1 h-[24px] text-[11px] px-2 rounded-full font-semibold ring-1 bg-amber-500/10 text-amber-700 ring-amber-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    Pendente
+                  </span>
+                </div>
+                <div class="col-span-1 flex items-center justify-end gap-1" role="cell">
+                  <a href="#" aria-label="Ver detalhes" title="Ver detalhes" class="inline-flex w-9 h-9 items-center justify-center rounded-md text-graphite-500 hover:text-graphite-900 hover:bg-mnx-neutral-100 transition-colors duration-fast focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Seller row 3 — Overdue -->
+              <div class="hidden md:!grid grid-cols-12 items-center gap-4 px-4 h-14 hover:bg-orange-500/5 transition-colors duration-fast" role="row">
+                <div class="col-span-3 min-w-0" role="cell">
+                  <a href="#" class="text-sm font-semibold text-graphite-900 hover:text-orange-700 transition-colors duration-fast font-mono">INV-2026-000059</a>
+                </div>
+                <div class="col-span-4 min-w-0" role="cell">
+                  <div class="text-sm font-semibold text-graphite-900 truncate">Diego Espósito</div>
+                  <div class="text-[11px] text-graphite-500 truncate font-mono">d.esposito@example.com</div>
+                </div>
+                <div class="col-span-1 min-w-0" role="cell">
+                  <div class="text-sm text-rose-700 mnx-num tabular-nums font-semibold">01/06/2026</div>
+                </div>
+                <div class="col-span-2 text-right text-sm text-graphite-900 font-semibold mnx-num tabular-nums" role="cell">
+                  <span class="text-graphite-400 font-normal mr-1">R$</span>360,00
+                </div>
+                <div class="col-span-1 flex items-center justify-end" role="cell">
+                  <span class="inline-flex items-center gap-1 h-[24px] text-[11px] px-2 rounded-full font-semibold ring-1 bg-orange-500/10 text-orange-700 ring-orange-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                    Vencida
+                  </span>
+                </div>
+                <div class="col-span-1 flex items-center justify-end gap-1" role="cell">
+                  <a href="#" aria-label="Ver detalhes" title="Ver detalhes" class="inline-flex w-9 h-9 items-center justify-center rounded-md text-graphite-500 hover:text-graphite-900 hover:bg-mnx-neutral-100 transition-colors duration-fast focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <nav aria-label="Pagination" class="mt-4 flex items-center justify-between gap-3">
+            <button type="button" class="inline-flex h-9 items-center gap-1 px-3 rounded-md text-sm font-medium text-graphite-700 hover:bg-mnx-neutral-100 disabled:opacity-40 transition-colors duration-fast" disabled>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              <span>Anterior</span>
+            </button>
+            <span class="text-xs text-graphite-500 mnx-num tabular-nums">1 de 1</span>
+            <button type="button" class="inline-flex h-9 items-center gap-1 px-3 rounded-md text-sm font-medium text-graphite-400 disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+              <span>Próxima</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </nav>
+        </section>
+
+        <div class="mock-section-divider"></div>
+
+        <!-- ============================================================
+             MOBILE STACKED CARD — single row rendered as it would
+             appear on <md. Same data as manager row 4 (Overdue). One
+             sample suffices; the JSX loops over all rows exactly like
+             OrderSearchRow does.
+             ============================================================ -->
+        <div class="flex items-center gap-2 mb-3">
+          <span class="mock-role-tag mock-role-tag--manager">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17.75 5.828 21l1.179-6.873L2 9.269l6.9-1.002L12 2l3.1 6.267 6.9 1.002-5.007 4.858L18.172 21z"/></svg>
+            Mobile card (&lt;md) — reused across both roles
+          </span>
+        </div>
+
+        <section class="auth-card relative p-4 mb-8 max-w-sm" aria-label="Cobranças mobile card">
+          <div class="rounded-xl border border-mnx-neutral-200 overflow-hidden bg-white">
+            <div class="border-b border-mnx-neutral-100 px-4 py-4 hover:bg-orange-500/5 transition-colors duration-fast">
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <a href="#" class="text-base font-semibold text-graphite-900 hover:text-orange-700 transition-colors duration-fast font-mono">INV-2026-000059</a>
+                    <span class="inline-flex items-center gap-1 h-[24px] text-[11px] px-2 rounded-full font-semibold ring-1 bg-orange-500/10 text-orange-700 ring-orange-500/20">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                      Vencida
+                    </span>
+                  </div>
+                  <div class="mt-0.5 text-sm text-graphite-700 truncate">Diego Espósito</div>
+                  <div class="text-[11px] text-graphite-500 truncate font-mono">d.esposito@example.com</div>
+                </div>
+                <div class="flex items-center gap-1 shrink-0">
+                  <a href="#" aria-label="Ver detalhes" title="Ver detalhes" class="inline-flex w-9 h-9 items-center justify-center rounded-md text-graphite-500 hover:text-graphite-900 hover:bg-mnx-neutral-100 transition-colors duration-fast focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                  </a>
+                </div>
+              </div>
+
+              <!-- role="NetworkManager" surfaces Vendedor as a dl row;
+                   role="Seller" omits that row (see README). -->
+              <dl class="mt-3 grid grid-cols-2 gap-3">
+                <div>
+                  <dt class="text-[0.65rem] uppercase tracking-wider font-semibold text-graphite-400">Vendedor</dt>
+                  <dd class="mt-0.5 text-sm text-graphite-700 truncate">Julia Nogueira</dd>
+                </div>
+                <div class="text-right">
+                  <dt class="text-[0.65rem] uppercase tracking-wider font-semibold text-graphite-400">Vencimento</dt>
+                  <dd class="mt-0.5 text-xs text-rose-700 font-semibold mnx-num tabular-nums">01/06/2026</dd>
+                </div>
+                <div>
+                  <dt class="text-[0.65rem] uppercase tracking-wider font-semibold text-graphite-400">Valor</dt>
+                  <dd class="mt-0.5 text-sm text-graphite-900 font-semibold mnx-num tabular-nums">
+                    <span class="text-graphite-400 font-normal mr-1">R$</span>360,00
+                  </dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+        </section>
+
+        <div class="mock-section-divider"></div>
+
+        <!-- ============================================================
+             EMPTY STATE — no invoices for this store.
+             Same visual as OrderSearchPage empty: mnx-stat-chip--orange
+             + title + body. Icon: FileText from lucide.
+             ============================================================ -->
+        <div class="flex items-center gap-2 mb-3">
+          <span class="mock-role-tag mock-role-tag--empty">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg>
+            Empty state (no invoices)
+          </span>
+        </div>
+
+        <section class="auth-card relative p-4 sm:p-6 mb-8" aria-label="Cobranças empty">
+          <div class="rounded-xl border border-mnx-neutral-200 overflow-hidden bg-white">
+            <div class="px-6 py-14 text-center">
+              <span class="mnx-stat-chip mnx-stat-chip--orange mx-auto" aria-hidden="true">
+                <!-- lucide: FileText -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+              </span>
+              <h3 class="mt-4 font-display font-bold text-graphite-900 text-lg sm:text-xl tracking-tight">
+                Nenhuma cobrança emitida
+              </h3>
+              <p class="mt-2 mx-auto max-w-md text-sm text-graphite-500 leading-relaxed">
+                Assim que uma fatura for gerada pelo checkout ou pela ProxyPay para essa rede, ela aparecerá aqui com status, vencimento e valor.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================================
+             INLINE EMPTY (filter returns no matches) — rendered inside
+             the table body, smaller, no chip.
+             ============================================================ -->
+        <div class="flex items-center gap-2 mb-3">
+          <span class="mock-role-tag mock-role-tag--empty">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            Inline empty (filter miss)
+          </span>
+        </div>
+
+        <section class="auth-card relative p-4 sm:p-6 mb-8" aria-label="Cobranças filter miss">
+          <div class="rounded-xl border border-mnx-neutral-200 overflow-hidden bg-white">
+            <!-- Column header stays visible so users see WHERE the miss is. -->
+            <div class="hidden md:!grid grid-cols-12 gap-4 px-4 h-11 items-center bg-mnx-neutral-50 border-b border-mnx-neutral-200" role="row">
+              <div class="col-span-2 text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500" role="columnheader">Nº fatura</div>
+              <div class="col-span-3 text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500" role="columnheader">Comprador</div>
+              <div class="col-span-2 text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500" role="columnheader">Vendedor</div>
+              <div class="col-span-1 text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500" role="columnheader">Vencimento</div>
+              <div class="col-span-2 text-right text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500" role="columnheader">Valor</div>
+              <div class="col-span-1 text-right text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500" role="columnheader">Status</div>
+              <div class="col-span-1 text-right text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500" role="columnheader"><span class="sr-only">Ações</span></div>
+            </div>
+            <div class="px-6 py-10 text-center">
+              <p class="text-sm text-graphite-700 font-semibold">Nenhuma fatura corresponde ao filtro.</p>
+              <p class="mt-1 mx-auto max-w-md text-xs text-graphite-500 leading-relaxed">
+                Tente outro termo ou volte para <button type="button" class="text-orange-700 font-semibold hover:underline">Todas</button>.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <div class="mock-section-divider"></div>
+
+        <!-- ============================================================
+             SKELETON — 3 desktop rows + 3 mobile cards, matching the
+             shape of OrderSearchPage skeleton.
+             ============================================================ -->
+        <div class="flex items-center gap-2 mb-3">
+          <span class="mock-role-tag mock-role-tag--skel">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+            Skeleton (loading)
+          </span>
+        </div>
+
+        <section class="auth-card relative p-4 sm:p-6" aria-label="Cobranças skeleton" aria-busy="true">
+          <!-- Toolbar skeleton -->
+          <div class="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div class="skeleton h-11 w-full md:max-w-sm rounded-lg"></div>
+            <div class="flex gap-1.5">
+              <div class="skeleton h-8 w-16 rounded-full"></div>
+              <div class="skeleton h-8 w-20 rounded-full"></div>
+              <div class="skeleton h-8 w-24 rounded-full"></div>
+              <div class="skeleton h-8 w-20 rounded-full"></div>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-mnx-neutral-200 overflow-hidden bg-white">
+            <!-- Header stays real so the shape reads immediately -->
+            <div class="hidden md:!grid grid-cols-12 gap-4 px-4 h-11 items-center bg-mnx-neutral-50 border-b border-mnx-neutral-200">
+              <div class="col-span-2 text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500">Nº fatura</div>
+              <div class="col-span-3 text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500">Comprador</div>
+              <div class="col-span-2 text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500">Vendedor</div>
+              <div class="col-span-1 text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500">Vencimento</div>
+              <div class="col-span-2 text-right text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500">Valor</div>
+              <div class="col-span-1 text-right text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500">Status</div>
+              <div class="col-span-1"></div>
+            </div>
+
+            <div class="divide-y divide-mnx-neutral-100">
+              <!-- Desktop skeleton rows -->
+              <div class="px-4 h-14 hidden md:!grid grid-cols-12 items-center gap-4">
+                <div class="col-span-2"><div class="skeleton h-3 w-32"></div></div>
+                <div class="col-span-3 space-y-1.5">
+                  <div class="skeleton h-3 w-2/3"></div>
+                  <div class="skeleton h-2.5 w-1/2"></div>
+                </div>
+                <div class="col-span-2"><div class="skeleton h-3 w-3/4"></div></div>
+                <div class="col-span-1"><div class="skeleton h-3 w-20"></div></div>
+                <div class="col-span-2 flex justify-end"><div class="skeleton h-3 w-20"></div></div>
+                <div class="col-span-1 flex justify-end"><div class="skeleton h-5 w-16 rounded-full"></div></div>
+                <div class="col-span-1 flex justify-end"><div class="skeleton h-7 w-9"></div></div>
+              </div>
+              <div class="px-4 h-14 hidden md:!grid grid-cols-12 items-center gap-4">
+                <div class="col-span-2"><div class="skeleton h-3 w-32"></div></div>
+                <div class="col-span-3 space-y-1.5">
+                  <div class="skeleton h-3 w-3/4"></div>
+                  <div class="skeleton h-2.5 w-2/3"></div>
+                </div>
+                <div class="col-span-2"><div class="skeleton h-3 w-2/3"></div></div>
+                <div class="col-span-1"><div class="skeleton h-3 w-20"></div></div>
+                <div class="col-span-2 flex justify-end"><div class="skeleton h-3 w-24"></div></div>
+                <div class="col-span-1 flex justify-end"><div class="skeleton h-5 w-16 rounded-full"></div></div>
+                <div class="col-span-1 flex justify-end"><div class="skeleton h-7 w-9"></div></div>
+              </div>
+              <div class="px-4 h-14 hidden md:!grid grid-cols-12 items-center gap-4">
+                <div class="col-span-2"><div class="skeleton h-3 w-32"></div></div>
+                <div class="col-span-3 space-y-1.5">
+                  <div class="skeleton h-3 w-1/2"></div>
+                  <div class="skeleton h-2.5 w-1/2"></div>
+                </div>
+                <div class="col-span-2"><div class="skeleton h-3 w-3/4"></div></div>
+                <div class="col-span-1"><div class="skeleton h-3 w-20"></div></div>
+                <div class="col-span-2 flex justify-end"><div class="skeleton h-3 w-16"></div></div>
+                <div class="col-span-1 flex justify-end"><div class="skeleton h-5 w-16 rounded-full"></div></div>
+                <div class="col-span-1 flex justify-end"><div class="skeleton h-7 w-9"></div></div>
+              </div>
+
+              <!-- Mobile skeleton cards -->
+              <div class="px-4 py-4 md:hidden space-y-3">
+                <div class="flex items-center gap-2">
+                  <div class="skeleton h-4 w-32"></div>
+                  <div class="skeleton h-5 w-20 rounded-full"></div>
+                </div>
+                <div class="skeleton h-3 w-1/2"></div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="skeleton h-4"></div>
+                  <div class="skeleton h-4"></div>
+                </div>
+              </div>
+              <div class="px-4 py-4 md:hidden space-y-3">
+                <div class="flex items-center gap-2">
+                  <div class="skeleton h-4 w-32"></div>
+                  <div class="skeleton h-5 w-20 rounded-full"></div>
+                </div>
+                <div class="skeleton h-3 w-1/2"></div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="skeleton h-4"></div>
+                  <div class="skeleton h-4"></div>
+                </div>
+              </div>
+              <div class="px-4 py-4 md:hidden space-y-3">
+                <div class="flex items-center gap-2">
+                  <div class="skeleton h-4 w-32"></div>
+                  <div class="skeleton h-5 w-20 rounded-full"></div>
+                </div>
+                <div class="skeleton h-3 w-1/2"></div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="skeleton h-4"></div>
+                  <div class="skeleton h-4"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </body>
+</html>

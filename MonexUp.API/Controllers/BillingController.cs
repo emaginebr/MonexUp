@@ -4,6 +4,7 @@ using MonexUp.API.Extensions;
 using MonexUp.Domain.Interfaces.Services;
 using MonexUp.DTO.Billing;
 using MonexUp.DTO.Invoice;
+using MonexUp.DTO.User;
 using NAuth.ACL.Interfaces;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,13 +16,16 @@ namespace MonexUp.API.Controllers
     public class BillingController : ControllerBase
     {
         private readonly IBillingService _service;
+        private readonly INetworkService _networkService;
         private readonly IUserClient _userClient;
 
         public BillingController(
             IBillingService service,
+            INetworkService networkService,
             IUserClient userClient)
         {
             _service = service;
+            _networkService = networkService;
             _userClient = userClient;
         }
 
@@ -34,6 +38,37 @@ namespace MonexUp.API.Controllers
 
             var result = _service.List(networkId, session.UserId, pageNum, pageSize);
             return result.Sucesso ? Ok(result) : StatusCode(403, result);
+        }
+
+        /// <summary>
+        /// Paginated, role-filtered invoice search backing the <c>/admin/billing</c> page.
+        /// Administrator / NetworkManager on the target network see every invoice; Seller
+        /// sees only sales they closed; User sees only their own purchases. Callers
+        /// without a valid role in the network get 403.
+        /// </summary>
+        [Authorize]
+        [HttpPost("searchInvoices")]
+        public async Task<IActionResult> SearchInvoices([FromBody] InvoiceSearchParam param, CancellationToken ct)
+        {
+            var session = _userClient.GetUserInSession(HttpContext);
+            if (session == null) return Unauthorized();
+            if (param == null || param.NetworkId <= 0) return BadRequest();
+
+            // Role gate mirrors OrderSearchPage rules — the service enforces the same
+            // check as a safety net, we do it here to return 403 explicitly.
+            var un = _networkService.GetUserNetwork(param.NetworkId, session.UserId);
+            var role = un?.Role ?? UserRoleEnum.MoRole;
+            if (role != UserRoleEnum.Administrator
+                && role != UserRoleEnum.NetworkManager
+                && role != UserRoleEnum.Seller
+                && role != UserRoleEnum.User)
+            {
+                return Forbid();
+            }
+
+            var token = HttpContext.GetBearerToken();
+            var result = await _service.SearchInvoicesAsync(param, session.UserId, token, ct);
+            return Ok(result);
         }
 
         [AllowAnonymous]

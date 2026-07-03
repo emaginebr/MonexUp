@@ -11,4 +11,7 @@ export default interface IOrderService {
     simulatePixPayment: (proxyPayInvoiceId: number, token: string) => Promise<any>;
     search: (networkId: number, userId: number, sellerId: number, pageNum: number, token: string) => Promise<ApiResponse<OrderListPagedResult>>;
     getById: (orderId: number, token: string) => Promise<ApiResponse<OrderInfo>>;
+    update: (order: OrderInfo, token: string) => Promise<ApiResponse<OrderInfo>>;
+    listInvoices: (orderId: number, token: string) => Promise<ApiResponse<any[]>>;
+    getInvoice: (orderId: number, invoiceId: number, token: string) => Promise<ApiResponse<any>>;
 }

@@ -129,6 +129,54 @@ const OrderBusiness: IOrderBusiness = {
     } catch {
       throw new Error("Failed to get user by email");
     }
+  },
+  update: async (order: OrderInfo) => {
+    try {
+      let ret: BusinessResult<OrderInfo>;
+      let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+      if (!session) {
+        return { ...ret, sucesso: false, mensagem: "Not logged" };
+      }
+      let retServ = await _orderService.update(order, session.token);
+      if (retServ.success) {
+        return { ...ret, dataResult: retServ.data, sucesso: true };
+      }
+      return { ...ret, sucesso: false, mensagem: retServ.messageError };
+    } catch {
+      throw new Error("Failed to update order");
+    }
+  },
+  listInvoices: async (orderId: number) => {
+    try {
+      let ret: BusinessResult<any[]>;
+      let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+      if (!session) {
+        return { ...ret, sucesso: false, mensagem: "Not logged" };
+      }
+      let retServ = await _orderService.listInvoices(orderId, session.token);
+      if (retServ.success) {
+        return { ...ret, dataResult: retServ.data || [], sucesso: true };
+      }
+      return { ...ret, sucesso: false, mensagem: retServ.messageError };
+    } catch {
+      throw new Error("Failed to list invoices");
+    }
+  },
+  getInvoice: async (orderId: number, invoiceId: number) => {
+    try {
+      let ret: BusinessResult<any>;
+      let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+      if (!session) {
+        return { ...ret, sucesso: false, mensagem: "Not logged" };
+      }
+      let retServ = await _orderService.getInvoice(orderId, invoiceId, session.token);
+      if (retServ.success) {
+        return { ...ret, dataResult: retServ.data, sucesso: true };
+      }
+      return { ...ret, sucesso: false, mensagem: retServ.messageError };
+    } catch {
+      throw new Error("Failed to get invoice");
+    }
   }
 }
 

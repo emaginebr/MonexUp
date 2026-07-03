@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SellerAddPage — Compact Redesign · MonexUp</title>
+
+<!-- Tailwind Play CDN (mockup-only; production app uses local Tailwind) -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Fonts (mirror @fontsource used in the app) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+<!-- Lucide icons -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+<!-- ==========================================================================
+     TOKEN SHIM — mirrors monexup-app/src/styles/tokens.css (primitives +
+     semantics we actually consume on this page). No new tokens invented.
+     ========================================================================== -->
+<style>
+  :root {
+    /* Orange */
+    --color-orange-50:#FFF3EC; --color-orange-100:#FFE0CC; --color-orange-200:#FFC199;
+    --color-orange-300:#FFA266; --color-orange-400:#FF8033; --color-orange-500:#E85A1A;
+    --color-orange-600:#C64A14; --color-orange-700:#9E3A0F;
+
+    /* Graphite */
+    --color-graphite-50:#F4F4F5; --color-graphite-100:#E4E4E7; --color-graphite-200:#C8C8CE;
+    --color-graphite-300:#9A9AA3; --color-graphite-400:#6B6B75; --color-graphite-500:#3F3F46;
+    --color-graphite-600:#27272A; --color-graphite-700:#1B1B1F; --color-graphite-800:#131317;
+    --color-graphite-900:#0A0A0D;
+
+    /* Neutral */
+    --color-neutral-0:#FFFFFF; --color-neutral-50:#FAFAF9; --color-neutral-100:#F4F4F2;
+    --color-neutral-200:#E7E7E4; --color-neutral-300:#D4D4D1;
+
+    --font-display:"Space Grotesk","Inter",ui-sans-serif,system-ui,sans-serif;
+    --font-sans:"Inter",ui-sans-serif,system-ui,sans-serif;
+
+    --shadow-lg: 0 10px 15px -3px rgba(10,10,13,.10), 0 4px 6px -2px rgba(10,10,13,.05);
+    --shadow-glow-orange-md: 0 0 0 0 rgba(232,90,26,.6), 0 12px 32px -8px rgba(232,90,26,.55);
+
+    --container-max: 1200px;
+    --container-pad: clamp(1rem, 4vw, 2rem);
+  }
+
+  html, body { font-family: var(--font-sans); background: var(--color-neutral-100); color: var(--color-graphite-900); }
+  .font-display { font-family: var(--font-display); }
+
+  /* Container + shell */
+  .max-w-container { max-width: var(--container-max); }
+  .px-shell { padding-left: var(--container-pad); padding-right: var(--container-pad); }
+
+  /* Colors bound to CSS vars — mirror tailwind.config.js theme.extend.colors */
+  .text-graphite-200 { color: var(--color-graphite-200); }
+  .text-graphite-400 { color: var(--color-graphite-400); }
+  .text-graphite-500 { color: var(--color-graphite-500); }
+  .text-graphite-600 { color: var(--color-graphite-600); }
+  .text-graphite-700 { color: var(--color-graphite-700); }
+  .text-graphite-900 { color: var(--color-graphite-900); }
+  .text-orange-200 { color: var(--color-orange-200); }
+  .text-orange-500 { color: var(--color-orange-500); }
+  .text-mnx-neutral-50 { color: var(--color-neutral-50); }
+  .bg-white { background: var(--color-neutral-0); }
+  .bg-mnx-neutral-50 { background: var(--color-neutral-50); }
+  .bg-mnx-neutral-100 { background: var(--color-neutral-100); }
+  .bg-orange-500 { background: var(--color-orange-500); }
+  .hover\:bg-orange-600:hover { background: var(--color-orange-600); }
+  .bg-orange-500\/10 { background: rgba(232,90,26,.10); }
+  .border-orange-500\/30 { border-color: rgba(232,90,26,.30); }
+  .border-graphite-200 { border-color: var(--color-graphite-200); }
+  .border-graphite-300 { border-color: var(--color-graphite-300); }
+  .border-mnx-neutral-100 { border-color: var(--color-neutral-100); }
+  .border-mnx-neutral-200 { border-color: var(--color-neutral-200); }
+  .shadow-lg { box-shadow: var(--shadow-lg); }
+  .shadow-glow-md { box-shadow: var(--shadow-glow-orange-md); }
+
+  /* Editorial primitives (from globals.css) */
+  .display-headline {
+    font-family: var(--font-display); font-weight: 700; letter-spacing: -0.04em;
+    line-height: 1.05;
+  }
+  .mnx-surface-dark {
+    background: var(--color-graphite-900); color: var(--color-neutral-50);
+  }
+  .mnx-surface-light {
+    background: var(--color-neutral-50); color: var(--color-graphite-900);
+  }
+  .bg-mesh-hero {
+    background-image:
+      radial-gradient(ellipse 80% 60% at 75% 30%, rgba(232,90,26,.28), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 15% 80%, rgba(232,90,26,.10), transparent 65%),
+      linear-gradient(180deg, #0A0A0D 0%, #131317 100%);
+  }
+  .hero-grid {
+    background-image:
+      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black, transparent 75%);
+  }
+  .cta-primary { position: relative; isolation: isolate; }
+  .cta-primary::after {
+    content:""; position:absolute; inset:-2px; border-radius:calc(.375rem + 2px); z-index:-1;
+    background: linear-gradient(120deg, rgba(232,90,26,.55), rgba(232,90,26,0) 45%, rgba(232,90,26,.55));
+    opacity:.85; filter: blur(6px);
+  }
+
+  /* Mockup harness (not part of the app) */
+  .mock-frame {
+    background: var(--color-neutral-0);
+    border: 1px solid var(--color-neutral-200);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px -20px rgba(0,0,0,.15);
+  }
+  .mock-label {
+    font-family: var(--font-display);
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--color-graphite-500);
+  }
+  .mock-label .pill {
+    display:inline-block; padding: 2px 8px; border-radius: 999px;
+    background: var(--color-graphite-900); color: var(--color-neutral-50);
+    font-size: 10px; letter-spacing:.14em;
+  }
+  .viewport-guide {
+    position: relative;
+  }
+  .viewport-guide::before {
+    content:"~ fold (viewport ~900px)";
+    position: absolute; left: 8px; top: 900px;
+    font-family: var(--font-display); font-size: 10px; letter-spacing:.14em;
+    color: var(--color-orange-500); text-transform: uppercase;
+    border-top: 1px dashed rgba(232,90,26,.5);
+    padding-top: 4px; width: calc(100% - 16px);
+  }
+
+  /* Chip */
+  .eyebrow-chip {
+    display:inline-flex; align-items:center; gap:.5rem;
+    padding: 5px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 500; letter-spacing:.08em; text-transform: uppercase;
+    color: var(--color-orange-200);
+    background: rgba(232,90,26,.10);
+    border: 1px solid rgba(232,90,26,.30);
+  }
+
+  /* Icon field baseline (mobile-first h-11, md+ h-10) */
+  .field-input {
+    width:100%; height: 44px; padding: 0 12px 0 40px;
+    border-radius: .375rem;
+    background: var(--color-neutral-0);
+    border: 1px solid var(--color-graphite-200);
+    color: var(--color-graphite-900);
+    font-size: 14px;
+    outline: none; transition: border-color .15s, box-shadow .15s;
+  }
+  @media (min-width: 768px) {
+    .field-input { height: 40px; padding-left: 36px; font-size: 14px; }
+  }
+  .field-input::placeholder { color: var(--color-graphite-400); }
+  .field-input:focus {
+    border-color: var(--color-orange-500);
+    box-shadow: 0 0 0 3px rgba(232,90,26,.30);
+  }
+  .field-label {
+    display:block; font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--color-graphite-500); margin-bottom: 6px;
+  }
+  .field-icon {
+    position:absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: var(--color-graphite-400); pointer-events:none;
+  }
+  @media (min-width: 768px) {
+    .field-icon { left: 10px; }
+  }
+</style>
+</head>
+<body class="antialiased">
+
+<!-- Mockup wrapper (not part of the app) ==================================== -->
+<div class="max-w-[1360px] mx-auto p-6 md:p-10 space-y-12">
+
+  <header class="space-y-2">
+    <div class="mock-label"><span class="pill">DESIGN</span> &nbsp; SellerAddPage · Compact Redesign · Editorial-Brutalist DNA preserved</div>
+    <h1 class="font-display text-2xl md:text-3xl font-bold text-graphite-900" style="letter-spacing:-0.02em;">
+      /new-seller — collapse the hero, tighten the form, keep the voice
+    </h1>
+    <p class="text-sm text-graphite-600 max-w-3xl">
+      Both variants stacked below. Orange dashed line marks the ~900px fold.
+      The full form now clears the fold on md+ desktop while retaining the
+      dark hero strip, brand chip, numbered sections and CTA glow.
+    </p>
+  </header>
+
+  <!-- =====================================================================
+       VARIANT A — LOGGED-IN (edit mode) · 2 sections
+       ===================================================================== -->
+  <section>
+    <div class="mock-label mb-3"><span class="pill">A</span> &nbsp; Logged-in variant — <code>insertMode = false</code> · 2 sections (Personal, Address)</div>
+
+    <div class="mock-frame viewport-guide">
+
+      <!-- Hero strip (compact) -->
+      <section class="mnx-surface-dark bg-mesh-hero relative overflow-hidden">
+        <div class="hero-grid absolute inset-0 pointer-events-none" aria-hidden="true"></div>
+        <div class="relative max-w-container mx-auto px-shell py-6 lg:py-8">
+          <div class="max-w-3xl">
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="eyebrow-chip">
+                <i data-lucide="zap" style="width:12px;height:12px"></i>
+                Seja um representante
+              </span>
+              <h1 class="display-headline text-mnx-neutral-50 text-2xl sm:text-3xl lg:text-[2rem] leading-tight">
+                Cadastro de Vendedor
+              </h1>
+            </div>
+            <p class="mt-2 text-graphite-200 text-sm lg:text-base leading-relaxed max-w-2xl">
+              Complete seus dados para receber comissões e acompanhar suas transações.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Form surface -->
+      <section class="mnx-surface-light bg-mnx-neutral-50 py-8 lg:py-10">
+        <div class="max-w-container mx-auto px-shell">
+          <div class="max-w-4xl mx-auto">
+            <div class="rounded-2xl bg-white border border-graphite-200 shadow-lg overflow-hidden">
+
+              <!-- Info strip (compact) -->
+              <div class="px-6 lg:px-10 py-3 bg-mnx-neutral-50">
+                <p class="text-xs text-graphite-600 leading-relaxed">
+                  O registro não é obrigatório para fazer trocas, mas você pode fazê-lo para acessar seu histórico de transações.
+                </p>
+              </div>
+
+              <form class="px-6 lg:px-10 py-6 lg:py-8 space-y-6">
+
+                <!-- SECTION 01 · Personal -->
+                <div>
+                  <div class="flex items-baseline gap-3 border-b border-mnx-neutral-100 pb-2 mb-4">
+                    <span class="font-display text-xs font-bold tracking-wider text-orange-500">01</span>
+                    <h2 class="font-display text-base lg:text-lg font-bold text-graphite-900" style="letter-spacing:-0.01em;">
+                      Dados pessoais
+                    </h2>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+                    <!-- Nome — span 6 -->
+                    <div class="md:col-span-6">
+                      <label class="field-label" for="a-name">Nome</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="user" style="width:16px;height:16px"></i></span>
+                        <input id="a-name" type="text" class="field-input" value="Ana Beatriz Ferreira" />
+                      </div>
+                    </div>
+                    <!-- CPF — span 3 -->
+                    <div class="md:col-span-3">
+                      <label class="field-label" for="a-cpf">CPF</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="id-card" style="width:16px;height:16px"></i></span>
+                        <input id="a-cpf" type="text" class="field-input" value="123.456.789-00" />
+                      </div>
+                    </div>
+                    <!-- Data nasc. — span 3 -->
+                    <div class="md:col-span-3">
+                      <label class="field-label" for="a-birth">Data de nasc.</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="calendar" style="width:16px;height:16px"></i></span>
+                        <input id="a-birth" type="text" class="field-input" value="14/03/1992" />
+                      </div>
+                    </div>
+                    <!-- Email — span 4 -->
+                    <div class="md:col-span-4">
+                      <label class="field-label" for="a-email">Email</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="mail" style="width:16px;height:16px"></i></span>
+                        <input id="a-email" type="email" class="field-input" value="ana.ferreira@monexup.io" />
+                      </div>
+                    </div>
+                    <!-- Telefone — span 2 -->
+                    <div class="md:col-span-2">
+                      <label class="field-label" for="a-phone">Telefone</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="phone" style="width:16px;height:16px"></i></span>
+                        <input id="a-phone" type="text" class="field-input" value="(11) 98444-2201" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SECTION 02 · Address -->
+                <div>
+                  <div class="flex items-baseline gap-3 border-b border-mnx-neutral-100 pb-2 mb-4">
+                    <span class="font-display text-xs font-bold tracking-wider text-orange-500">02</span>
+                    <h2 class="font-display text-base lg:text-lg font-bold text-graphite-900" style="letter-spacing:-0.01em;">
+                      Endereço
+                    </h2>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+                    <!-- CEP — span 2 -->
+                    <div class="md:col-span-2">
+                      <label class="field-label" for="a-zip">CEP</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="map-pin" style="width:16px;height:16px"></i></span>
+                        <input id="a-zip" type="text" class="field-input" value="04547-000" />
+                      </div>
+                    </div>
+                    <!-- Endereço — span 4 -->
+                    <div class="md:col-span-4">
+                      <label class="field-label" for="a-addr">Endereço</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="home" style="width:16px;height:16px"></i></span>
+                        <input id="a-addr" type="text" class="field-input" value="Rua Funchal, 418" />
+                      </div>
+                    </div>
+                    <!-- Complemento — span 2 -->
+                    <div class="md:col-span-2">
+                      <label class="field-label" for="a-comp">Complemento</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="building-2" style="width:16px;height:16px"></i></span>
+                        <input id="a-comp" type="text" class="field-input" value="Conj. 172" />
+                      </div>
+                    </div>
+                    <!-- Bairro — span 3 -->
+                    <div class="md:col-span-3">
+                      <label class="field-label" for="a-neigh">Bairro</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="map-pin" style="width:16px;height:16px"></i></span>
+                        <input id="a-neigh" type="text" class="field-input" value="Vila Olímpia" />
+                      </div>
+                    </div>
+                    <!-- Cidade — span 2 -->
+                    <div class="md:col-span-2">
+                      <label class="field-label" for="a-city">Cidade</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="building-2" style="width:16px;height:16px"></i></span>
+                        <input id="a-city" type="text" class="field-input" value="São Paulo" />
+                      </div>
+                    </div>
+                    <!-- Estado — span 1 -->
+                    <div class="md:col-span-1">
+                      <label class="field-label" for="a-state">Estado</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="map-pin" style="width:16px;height:16px"></i></span>
+                        <input id="a-state" type="text" class="field-input" value="SP" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="pt-3 border-t border-mnx-neutral-100 flex flex-col-reverse sm:flex-row justify-end gap-3">
+                  <button type="button"
+                    class="inline-flex h-11 md:h-10 items-center justify-center px-5 rounded-md text-sm font-semibold text-graphite-700 border border-graphite-300 hover:bg-mnx-neutral-100">
+                    <i data-lucide="arrow-left" style="width:16px;height:16px" class="mr-2"></i>
+                    Voltar
+                  </button>
+                  <button type="button"
+                    class="cta-primary inline-flex h-11 md:h-10 items-center justify-center px-7 rounded-md text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 shadow-glow-md">
+                    <i data-lucide="save" style="width:16px;height:16px" class="mr-2"></i>
+                    Salvar
+                  </button>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       VARIANT B — INSERT MODE · 3 sections
+       ===================================================================== -->
+  <section>
+    <div class="mock-label mb-3"><span class="pill">B</span> &nbsp; Insert variant — <code>insertMode = true</code> · 3 sections (Personal, Address, Password)</div>
+
+    <div class="mock-frame viewport-guide">
+
+      <!-- Hero strip -->
+      <section class="mnx-surface-dark bg-mesh-hero relative overflow-hidden">
+        <div class="hero-grid absolute inset-0 pointer-events-none" aria-hidden="true"></div>
+        <div class="relative max-w-container mx-auto px-shell py-6 lg:py-8">
+          <div class="max-w-3xl">
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="eyebrow-chip">
+                <i data-lucide="zap" style="width:12px;height:12px"></i>
+                Seja um representante
+              </span>
+              <h1 class="display-headline text-mnx-neutral-50 text-2xl sm:text-3xl lg:text-[2rem] leading-tight">
+                Cadastro de Vendedor
+              </h1>
+            </div>
+            <p class="mt-2 text-graphite-200 text-sm lg:text-base leading-relaxed max-w-2xl">
+              Complete seus dados para receber comissões e acompanhar suas transações.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="mnx-surface-light bg-mnx-neutral-50 py-8 lg:py-10">
+        <div class="max-w-container mx-auto px-shell">
+          <div class="max-w-4xl mx-auto">
+            <div class="rounded-2xl bg-white border border-graphite-200 shadow-lg overflow-hidden">
+
+              <div class="px-6 lg:px-10 py-3 bg-mnx-neutral-50">
+                <p class="text-xs text-graphite-600 leading-relaxed">
+                  O registro não é obrigatório para fazer trocas, mas você pode fazê-lo para acessar seu histórico de transações.
+                </p>
+              </div>
+
+              <form class="px-6 lg:px-10 py-6 lg:py-8 space-y-6">
+
+                <!-- SECTION 01 · Personal -->
+                <div>
+                  <div class="flex items-baseline gap-3 border-b border-mnx-neutral-100 pb-2 mb-4">
+                    <span class="font-display text-xs font-bold tracking-wider text-orange-500">01</span>
+                    <h2 class="font-display text-base lg:text-lg font-bold text-graphite-900" style="letter-spacing:-0.01em;">
+                      Dados pessoais
+                    </h2>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+                    <div class="md:col-span-6">
+                      <label class="field-label" for="b-name">Nome</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="user" style="width:16px;height:16px"></i></span>
+                        <input id="b-name" type="text" class="field-input" placeholder="Seu nome" />
+                      </div>
+                    </div>
+                    <div class="md:col-span-3">
+                      <label class="field-label" for="b-cpf">CPF</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="id-card" style="width:16px;height:16px"></i></span>
+                        <input id="b-cpf" type="text" class="field-input" placeholder="000.000.000-00" />
+                      </div>
+                    </div>
+                    <div class="md:col-span-3">
+                      <label class="field-label" for="b-birth">Data de nasc.</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="calendar" style="width:16px;height:16px"></i></span>
+                        <input id="b-birth" type="text" class="field-input" placeholder="dd/mm/aaaa" />
+                      </div>
+                    </div>
+                    <div class="md:col-span-4">
+                      <label class="field-label" for="b-email">Email</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="mail" style="width:16px;height:16px"></i></span>
+                        <input id="b-email" type="email" class="field-input" placeholder="voce@exemplo.com" />
+                      </div>
+                    </div>
+                    <div class="md:col-span-2">
+                      <label class="field-label" for="b-phone">Telefone</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="phone" style="width:16px;height:16px"></i></span>
+                        <input id="b-phone" type="text" class="field-input" placeholder="(00) 00000-0000" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SECTION 02 · Address -->
+                <div>
+                  <div class="flex items-baseline gap-3 border-b border-mnx-neutral-100 pb-2 mb-4">
+                    <span class="font-display text-xs font-bold tracking-wider text-orange-500">02</span>
+                    <h2 class="font-display text-base lg:text-lg font-bold text-graphite-900" style="letter-spacing:-0.01em;">
+                      Endereço
+                    </h2>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+                    <div class="md:col-span-2">
+                      <label class="field-label" for="b-zip">CEP</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="map-pin" style="width:16px;height:16px"></i></span>
+                        <input id="b-zip" type="text" class="field-input" placeholder="00000-000" />
+                      </div>
+                    </div>
+                    <div class="md:col-span-4">
+                      <label class="field-label" for="b-addr">Endereço</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="home" style="width:16px;height:16px"></i></span>
+                        <input id="b-addr" type="text" class="field-input" placeholder="Rua, número" />
+                      </div>
+                    </div>
+                    <div class="md:col-span-2">
+                      <label class="field-label" for="b-comp">Complemento</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="building-2" style="width:16px;height:16px"></i></span>
+                        <input id="b-comp" type="text" class="field-input" placeholder="Apto, sala…" />
+                      </div>
+                    </div>
+                    <div class="md:col-span-3">
+                      <label class="field-label" for="b-neigh">Bairro</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="map-pin" style="width:16px;height:16px"></i></span>
+                        <input id="b-neigh" type="text" class="field-input" placeholder="Seu bairro" />
+                      </div>
+                    </div>
+                    <div class="md:col-span-2">
+                      <label class="field-label" for="b-city">Cidade</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="building-2" style="width:16px;height:16px"></i></span>
+                        <input id="b-city" type="text" class="field-input" placeholder="Sua cidade" />
+                      </div>
+                    </div>
+                    <div class="md:col-span-1">
+                      <label class="field-label" for="b-state">Estado</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="map-pin" style="width:16px;height:16px"></i></span>
+                        <input id="b-state" type="text" class="field-input" placeholder="UF" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SECTION 03 · Password (insert only) -->
+                <div>
+                  <div class="flex items-baseline gap-3 border-b border-mnx-neutral-100 pb-2 mb-4">
+                    <span class="font-display text-xs font-bold tracking-wider text-orange-500">03</span>
+                    <h2 class="font-display text-base lg:text-lg font-bold text-graphite-900" style="letter-spacing:-0.01em;">
+                      Senha
+                    </h2>
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label class="field-label" for="b-pwd">Senha</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="lock" style="width:16px;height:16px"></i></span>
+                        <input id="b-pwd" type="password" class="field-input" placeholder="••••••••" />
+                      </div>
+                    </div>
+                    <div>
+                      <label class="field-label" for="b-pwd2">Confirmar senha</label>
+                      <div class="relative">
+                        <span class="field-icon"><i data-lucide="lock" style="width:16px;height:16px"></i></span>
+                        <input id="b-pwd2" type="password" class="field-input" placeholder="••••••••" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="pt-3 border-t border-mnx-neutral-100 flex flex-col-reverse sm:flex-row justify-end gap-3">
+                  <button type="button"
+                    class="inline-flex h-11 md:h-10 items-center justify-center px-5 rounded-md text-sm font-semibold text-graphite-700 border border-graphite-300 hover:bg-mnx-neutral-100">
+                    <i data-lucide="arrow-left" style="width:16px;height:16px" class="mr-2"></i>
+                    Voltar
+                  </button>
+                  <button type="button"
+                    class="cta-primary inline-flex h-11 md:h-10 items-center justify-center px-7 rounded-md text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 shadow-glow-md">
+                    <i data-lucide="save" style="width:16px;height:16px" class="mr-2"></i>
+                    Cadastrar
+                  </button>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </section>
+
+  <!-- Change legend ============================================================ -->
+  <section class="rounded-xl bg-white border border-graphite-200 p-6 md:p-8">
+    <h2 class="font-display text-lg font-bold text-graphite-900 mb-4" style="letter-spacing:-0.02em;">
+      What changed vs. current
+    </h2>
+    <ul class="space-y-2 text-sm text-graphite-700">
+      <li><span class="font-semibold text-graphite-900">Hero band:</span> <code>pt-16 lg:pt-20 pb-14 lg:pb-20</code> → <code>py-6 lg:py-8</code>. Eyebrow + h1 share one row on md+; subtitle on line 2 in <code>max-w-2xl</code>. H1 scale: <code>text-4xl→text-6xl</code> → <code>text-2xl sm:text-3xl lg:text-[2rem]</code>. Hero drops from ~360-420px to ~140-160px.</li>
+      <li><span class="font-semibold text-graphite-900">Form section outer:</span> <code>py-14 lg:py-20</code> → <code>py-8 lg:py-10</code>. Card form <code>py-8 lg:py-10</code> → <code>py-6 lg:py-8</code>. Inter-section <code>space-y-10</code> → <code>space-y-6</code>.</li>
+      <li><span class="font-semibold text-graphite-900">Info banner:</span> <code>py-6 border-b</code> → <code>py-3</code>, borderless, <code>text-sm</code> → <code>text-xs</code>. Now reads as a subtle info strip.</li>
+      <li><span class="font-semibold text-graphite-900">Section headings:</span> <code>text-xl lg:text-2xl</code> + <code>border-graphite-200 pb-3</code> → <code>text-base lg:text-lg</code> + hairline <code>border-mnx-neutral-100 pb-2 mb-4</code>. Rhythm kept, weight halved.</li>
+      <li><span class="font-semibold text-graphite-900">Personal grid:</span> <code>md:grid-cols-2</code> → <code>md:grid-cols-6</code>. Nome/6, CPF/3, Data/3, Email/4, Telefone/2. Fits 5 fields in 3 rows instead of 5.</li>
+      <li><span class="font-semibold text-graphite-900">Address grid:</span> already 6-col, retuned to CEP/2, Endereço/4, Complemento/2, Bairro/3, Cidade/2, Estado/1. Endereço/Complemento share row 2.</li>
+      <li><span class="font-semibold text-graphite-900">Inputs:</span> <code>h-12</code> → <code>h-11</code> mobile / <code>md:h-10</code> desktop. Icons <code>size={18}</code> → <code>size={16}</code>. Padding <code>pl-11</code> → <code>pl-10 md:pl-9</code>. Field gap <code>gap-5</code> → <code>gap-4</code>. Tap target still ≥ 44px on mobile.</li>
+      <li><span class="font-semibold text-graphite-900">Actions row:</span> <code>pt-4 border-graphite-200</code> → <code>pt-3 border-mnx-neutral-100</code>. Buttons match input heights (44/40).</li>
+    </ul>
+  </section>
+
+</div>
+
+<script>
+  // Render lucide icons after DOM is ready
+  if (window.lucide) { window.lucide.createIcons(); }
+</script>
+</body>
+</html>

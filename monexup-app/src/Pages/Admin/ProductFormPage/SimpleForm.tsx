@@ -8,6 +8,7 @@ import {
     Percent,
     HandCoins,
     Layers,
+    Repeat,
     ArrowLeft,
     Save,
 } from "lucide-react";
@@ -28,6 +29,7 @@ export interface SimpleFormValues {
     price: number;
     minimumDonationAmount: number;
     discount: number;
+    frequency: number;
     status: ProductStatusEnum;
     imageFile: File | null;
     existingImageUrl: string | null;
@@ -48,6 +50,7 @@ const DEFAULTS: SimpleFormValues = {
     price: 0,
     minimumDonationAmount: 0,
     discount: 0,
+    frequency: 1,
     status: ProductStatusEnum.Active,
     imageFile: null,
     existingImageUrl: null,
@@ -67,6 +70,7 @@ export default function SimpleForm({ initial, onSubmit, onCancel, submitting }: 
                 price: Number(initial.price ?? 0),
                 minimumDonationAmount: Number(initial.minimumDonationAmount ?? 0),
                 discount: Number(initial.discount ?? 0),
+                frequency: Number(initial.frequency ?? 1),
                 status: initial.status ?? ProductStatusEnum.Active,
                 imageFile: null,
                 existingImageUrl: initial.images?.[0]?.imageUrl ?? null,
@@ -79,6 +83,7 @@ export default function SimpleForm({ initial, onSubmit, onCancel, submitting }: 
     const isFixedDonation = isDonation && values.donationMode === DonationModeEnum.Fixed;
     const priceDisabled = isFreeDonation;
     const discountDisabled = isDonation;
+    const frequencyDisabled = isDonation;
     const donationModeDisabled = !isDonation;
     const minimumDonationDisabled = !isDonation || isFixedDonation;
 
@@ -274,7 +279,7 @@ export default function SimpleForm({ initial, onSubmit, onCancel, submitting }: 
                 </FormField>
             </div>
 
-            {/* 8 + 9. Desconto + Situação ------------------------------- */}
+            {/* 8 + 9. Desconto + Frequência ----------------------------- */}
             <div className="grid sm:grid-cols-2 gap-5">
                 <FormField
                     id="simple-discount"
@@ -296,6 +301,47 @@ export default function SimpleForm({ initial, onSubmit, onCancel, submitting }: 
                     />
                 </FormField>
 
+                <FormField
+                    id="simple-frequency"
+                    label={t("admin_product_field_frequency", "Frequência")}
+                    icon={Repeat}
+                >
+                    <select
+                        id="simple-frequency"
+                        value={values.frequency}
+                        disabled={frequencyDisabled}
+                        onChange={(e) =>
+                            setValues((v) => ({ ...v, frequency: Number(e.target.value) }))
+                        }
+                        className="flex-1 min-w-0 h-full bg-transparent text-sm text-graphite-900 focus:outline-none pr-3 appearance-none cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                        <option value={1}>
+                            {t("admin_product_frequency_once", "Apenas uma vez")}
+                        </option>
+                        <option value={7}>
+                            {t("admin_product_frequency_weekly", "Semanal")}
+                        </option>
+                        <option value={30}>
+                            {t("admin_product_frequency_monthly", "Mensal")}
+                        </option>
+                        <option value={60}>
+                            {t("admin_product_frequency_bimonthly", "Bimestral")}
+                        </option>
+                        <option value={90}>
+                            {t("admin_product_frequency_quarterly", "Trimestral")}
+                        </option>
+                        <option value={150}>
+                            {t("admin_product_frequency_biannual", "Semestral")}
+                        </option>
+                        <option value={365}>
+                            {t("admin_product_frequency_annual", "Anual")}
+                        </option>
+                    </select>
+                </FormField>
+            </div>
+
+            {/* 10. Situação --------------------------------------------- */}
+            <div className="grid sm:grid-cols-2 gap-5">
                 <FormField
                     id="simple-status"
                     label={t("admin_product_field_status", "Situação")}

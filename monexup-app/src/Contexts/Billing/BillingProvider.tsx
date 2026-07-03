@@ -1,8 +1,9 @@
 import { useState } from "react";
-import IBillingProvider from "../../DTO/Contexts/IBillingProvider";
+import IBillingProvider, { BillingSearchInvoicesResult } from "../../DTO/Contexts/IBillingProvider";
 import ProviderResult from "../../DTO/Contexts/ProviderResult";
 import BillingListItemInfo from "../../DTO/Domain/BillingListItemInfo";
 import EnsureStoreResponse from "../../DTO/Domain/EnsureStoreResponse";
+import InvoiceSearchParam from "../../DTO/Domain/InvoiceSearchParam";
 import BillingFactory from "../../Business/Factory/BillingFactory";
 import BillingContext from "./BillingContext";
 
@@ -38,6 +39,32 @@ export default function BillingProvider(props: any) {
         return { ...ret, sucesso: true };
       }
       return { ...ret, sucesso: false, mensagemErro: brt.mensagem };
+    },
+
+    async searchInvoices(param: InvoiceSearchParam) {
+      const ret = {} as BillingSearchInvoicesResult;
+      setLoading(true);
+      const brt = await BillingFactory.BillingBusiness.searchInvoices(param);
+      setLoading(false);
+      if (brt.sucesso && brt.dataResult) {
+        return {
+          ...ret,
+          sucesso: true,
+          invoices: brt.dataResult.invoices || [],
+          pageNum: brt.dataResult.pageNum || 1,
+          pageCount: brt.dataResult.totalPages || 1,
+          totalCount: brt.dataResult.totalCount || 0,
+        };
+      }
+      return {
+        ...ret,
+        sucesso: false,
+        invoices: [],
+        pageNum: param.pageNum,
+        pageCount: 1,
+        totalCount: 0,
+        mensagemErro: brt.mensagem,
+      };
     },
   };
 

@@ -99,6 +99,36 @@ export default function OrderProvider(props: any) {
                     mensagemErro: brt.mensagem
                 };
             }
+        },
+        listInvoices: async (orderId: number) => {
+            const brt = await OrderFactory.OrderBusiness.listInvoices(orderId);
+            if (brt.sucesso) {
+                return { sucesso: true, invoices: brt.dataResult || [] };
+            }
+            return { sucesso: false, invoices: [], mensagemErro: brt.mensagem };
+        },
+        getInvoice: async (orderId: number, invoiceId: number) => {
+            const brt = await OrderFactory.OrderBusiness.getInvoice(orderId, invoiceId);
+            if (brt.sucesso) {
+                return { sucesso: true, invoice: brt.dataResult };
+            }
+            return { sucesso: false, invoice: null, mensagemErro: brt.mensagem };
+        },
+        update: async (order: OrderInfo) => {
+            let ret: Promise<OrderProviderResult>;
+            setLoadingUpdate(true);
+            let brt = await OrderFactory.OrderBusiness.update(order);
+            setLoadingUpdate(false);
+            if (brt.sucesso) {
+                setOrder(brt.dataResult);
+                return {
+                    ...ret,
+                    sucesso: true,
+                    order: brt.dataResult,
+                    mensagemSucesso: "Order updated"
+                };
+            }
+            return { ...ret, sucesso: false, mensagemErro: brt.mensagem };
         }
     }
 
