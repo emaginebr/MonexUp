@@ -19,6 +19,7 @@ namespace MonexUp.UnitTests.Services
         private readonly Mock<IUserProfileDomainFactory> _userProfileFactory;
         private readonly Mock<IProfileService> _profileService;
         private readonly Mock<IFileClient> _fileClient;
+        private readonly Mock<IInviteTokenSigner> _inviteTokenSigner;
         private readonly NetworkService _service;
 
         public NetworkServiceTests()
@@ -29,6 +30,7 @@ namespace MonexUp.UnitTests.Services
             _userProfileFactory = new Mock<IUserProfileDomainFactory>();
             _profileService = new Mock<IProfileService>();
             _fileClient = new Mock<IFileClient>();
+            _inviteTokenSigner = new Mock<IInviteTokenSigner>();
 
             _service = new NetworkService(
                 _userClient.Object,
@@ -37,6 +39,7 @@ namespace MonexUp.UnitTests.Services
                 _userProfileFactory.Object,
                 _profileService.Object,
                 _fileClient.Object,
+                _inviteTokenSigner.Object,
                 new Mock<ILogger<NetworkService>>().Object
             );
         }

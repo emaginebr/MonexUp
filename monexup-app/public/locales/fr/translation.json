@@ -446,11 +446,47 @@
     "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
     "uploadDocumentLabel": "Télécharger le Fichier du Document",
     "uploadDocumentPlaceholder": "Votre pièce d'identité",
+    "inviteJoined": "Invitation acceptée ! Vous faites désormais partie du réseau.",
     "errors": {
       "passwordEmpty": "Le mot de passe est vide",
       "confirmPasswordEmpty": "La confirmation du mot de passe est vide",
       "passwordsNotEqual": "Le mot de passe et la confirmation ne sont pas identiques"
     }
+  },
+  "inviteModal": {
+    "title": "Inviter au réseau",
+    "emailLabel": "Email de l'invité",
+    "emailPlaceholder": "email@exemple.com",
+    "generateButton": "Générer l'invitation",
+    "generating": "Génération...",
+    "linkLabel": "Lien d'invitation",
+    "copyButton": "Copier",
+    "copied": "Copié !",
+    "newAccountHint": "Cette personne n'a pas encore de compte. Envoyez-lui le lien pour qu'elle crée un compte et rejoigne le réseau.",
+    "existingAccountHint": "Cette personne a déjà un compte. Envoyez-lui le lien pour qu'elle accepte l'invitation et rejoigne le réseau.",
+    "alreadyMember": "Cette personne fait déjà partie du réseau.",
+    "invalidEmail": "Veuillez saisir un email valide.",
+    "successGenerated": "Invitation générée avec succès.",
+    "errorGeneric": "Impossible de générer l'invitation.",
+    "close": "Fermer"
+  },
+  "acceptInvitePage": {
+    "eyebrow": "Invitation au réseau",
+    "title": "Vous avez été invité",
+    "invitedBy": "{{inviter}} vous a invité à rejoindre le réseau {{network}}.",
+    "accept": "Accepter l'invitation",
+    "decline": "Refuser",
+    "declineConfirmTitle": "Refuser l'invitation",
+    "declineConfirmMessage": "Êtes-vous sûr de vouloir refuser cette invitation ?",
+    "alreadyMemberTitle": "Vous en faites déjà partie",
+    "alreadyMemberBody": "Vous êtes déjà membre actif du réseau {{network}}.",
+    "wrongAccountTitle": "Mauvais compte",
+    "wrongAccountBody": "Cette invitation a été envoyée à un autre compte. Connectez-vous avec le compte invité pour l'accepter.",
+    "acceptedSuccess": "Invitation acceptée ! Bienvenue dans le réseau.",
+    "declinedSuccess": "Invitation refusée.",
+    "errorGeneric": "Impossible de charger l'invitation.",
+    "goToDashboard": "Aller au tableau de bord",
+    "backHome": "Retour à l'accueil"
   },
   "userPage": {
     "changeImage": "Changer d'Image",

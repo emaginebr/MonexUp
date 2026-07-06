@@ -493,11 +493,47 @@
     "confirmPasswordPlaceholder": "Confirm your password",
     "uploadDocumentLabel": "Upload Document File",
     "uploadDocumentPlaceholder": "Your ID document",
+    "inviteJoined": "Invite accepted! You are now part of the network.",
     "errors": {
       "passwordEmpty": "Password is empty",
       "confirmPasswordEmpty": "Password confirmation is empty",
       "passwordsNotEqual": "Password and confirmation are not equal"
     }
+  },
+  "inviteModal": {
+    "title": "Invite to the network",
+    "emailLabel": "Guest email",
+    "emailPlaceholder": "email@example.com",
+    "generateButton": "Generate invite",
+    "generating": "Generating...",
+    "linkLabel": "Invite link",
+    "copyButton": "Copy",
+    "copied": "Copied!",
+    "newAccountHint": "This person does not have an account yet. Send them the link so they can create an account and join the network.",
+    "existingAccountHint": "This person already has an account. Send them the link so they can accept the invite and join the network.",
+    "alreadyMember": "This person is already part of the network.",
+    "invalidEmail": "Please enter a valid email.",
+    "successGenerated": "Invite generated successfully.",
+    "errorGeneric": "Could not generate the invite.",
+    "close": "Close"
+  },
+  "acceptInvitePage": {
+    "eyebrow": "Network invite",
+    "title": "You have been invited",
+    "invitedBy": "{{inviter}} invited you to join the {{network}} network.",
+    "accept": "Accept invite",
+    "decline": "Decline",
+    "declineConfirmTitle": "Decline invite",
+    "declineConfirmMessage": "Are you sure you want to decline this invite?",
+    "alreadyMemberTitle": "You already belong",
+    "alreadyMemberBody": "You are already an active member of the {{network}} network.",
+    "wrongAccountTitle": "Wrong account",
+    "wrongAccountBody": "This invite was sent to a different account. Sign in with the invited account to accept it.",
+    "acceptedSuccess": "Invite accepted! Welcome to the network.",
+    "declinedSuccess": "Invite declined.",
+    "errorGeneric": "Could not load the invite.",
+    "goToDashboard": "Go to dashboard",
+    "backHome": "Back to home"
   },
   "userPage": {
     "changeImage": "Change Image",

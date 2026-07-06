@@ -90,6 +90,7 @@ namespace MonexUp.Application
 
             #region Service
             injectDependency(typeof(INetworkService), typeof(NetworkService), services, scoped);
+            injectDependency(typeof(IInviteTokenSigner), typeof(InviteTokenSigner), services, scoped);
             injectDependency(typeof(IProfileService), typeof(ProfileService), services, scoped);
             injectDependency(typeof(IProductLinkService), typeof(ProductLinkService), services, scoped);
             injectDependency(typeof(ILofnStoreProvisioningService), typeof(LofnStoreProvisioningService), services, scoped);

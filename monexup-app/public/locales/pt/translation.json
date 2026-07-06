@@ -493,11 +493,47 @@
     "confirmPasswordPlaceholder": "Confirme sua senha",
     "uploadDocumentLabel": "Enviar Arquivo do Documento",
     "uploadDocumentPlaceholder": "Seu documento de identidade",
+    "inviteJoined": "Convite aceito! Você agora faz parte da rede.",
     "errors": {
       "passwordEmpty": "Senha está vazia",
       "confirmPasswordEmpty": "Confirmação de senha está vazia",
       "passwordsNotEqual": "Senha e confirmação não são iguais"
     }
+  },
+  "inviteModal": {
+    "title": "Convidar para a rede",
+    "emailLabel": "Email do convidado",
+    "emailPlaceholder": "email@exemplo.com",
+    "generateButton": "Gerar convite",
+    "generating": "Gerando...",
+    "linkLabel": "Link do convite",
+    "copyButton": "Copiar",
+    "copied": "Copiado!",
+    "newAccountHint": "Esta pessoa ainda não tem conta. Envie o link para ela criar a conta e entrar na rede.",
+    "existingAccountHint": "Esta pessoa já tem conta. Envie o link para ela aceitar o convite e entrar na rede.",
+    "alreadyMember": "Esta pessoa já faz parte da rede.",
+    "invalidEmail": "Informe um email válido.",
+    "successGenerated": "Convite gerado com sucesso.",
+    "errorGeneric": "Não foi possível gerar o convite.",
+    "close": "Fechar"
+  },
+  "acceptInvitePage": {
+    "eyebrow": "Convite para a rede",
+    "title": "Você foi convidado",
+    "invitedBy": "{{inviter}} convidou você para participar da rede {{network}}.",
+    "accept": "Aceitar convite",
+    "decline": "Recusar",
+    "declineConfirmTitle": "Recusar convite",
+    "declineConfirmMessage": "Tem certeza de que deseja recusar este convite?",
+    "alreadyMemberTitle": "Você já faz parte",
+    "alreadyMemberBody": "Você já é membro ativo da rede {{network}}.",
+    "wrongAccountTitle": "Conta incorreta",
+    "wrongAccountBody": "Este convite foi enviado para outra conta. Entre com a conta convidada para aceitá-lo.",
+    "acceptedSuccess": "Convite aceito! Bem-vindo à rede.",
+    "declinedSuccess": "Convite recusado.",
+    "errorGeneric": "Não foi possível carregar o convite.",
+    "goToDashboard": "Ir para o painel",
+    "backHome": "Voltar ao início"
   },
   "userPage": {
     "changeImage": "Alterar Imagem",

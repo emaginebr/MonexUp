@@ -10,6 +10,35 @@ import UserProviderResult from "../../DTO/Contexts/UserProviderResult";
 import { UserRoleEnum } from "../../DTO/Enum/UserRoleEnum";
 import { UserNetworkStatusEnum } from "../../DTO/Enum/UserNetworkStatusEnum";
 
+/**
+ * Extracts a human-readable message from a rejected nauth-react call.
+ * The nauth-react client rejects with `{ message, status, errors }` where
+ * `errors` is the raw NAuth response body (which uses Portuguese fields like
+ * `mensagemErro`/`mensagem`). We surface that instead of the generic
+ * "Request failed with status code 400" so validation reasons are visible.
+ */
+function extractNAuthError(err: any): string {
+    // The nauth-react client can surface the response body under either
+    // `err.errors` (its own shape) or `err.response.data` (axios). Try both.
+    const body = err?.response?.data ?? err?.errors ?? err;
+    if (body && typeof body === "object") {
+        // Field-level errors take priority so we surface actual causes instead
+        // of the generic "One or more validation errors occurred." from `title`.
+        if (body.errors && typeof body.errors === "object") {
+            const flat = Object.values(body.errors).flat().filter(Boolean);
+            if (flat.length) return flat.join(" ");
+        }
+        const msg = body.mensagemErro || body.mensagem || body.message;
+        if (msg) return msg;
+        // Fall back to the ProblemDetails title only if nothing more specific
+        // was surfaced above.
+        if (body.title) return body.title;
+        try { return JSON.stringify(body); } catch { /* fall through */ }
+    }
+    if (typeof body === "string") return body;
+    return err?.message || "Erro desconhecido";
+}
+
 function mapNAuthUserToLocal(nauthUser: NAuthUserInfo): UserInfo {
     if (!nauthUser) return null;
     return {
@@ -167,10 +196,12 @@ export default function UserProvider(props: any) {
             }
             catch (err: any) {
                 setLoadingUpdate(false);
+                // eslint-disable-next-line no-console
+                console.error("nauth.createUser failed:", err);
                 return {
                     ...ret,
                     sucesso: false,
-                    mensagemErro: err?.message || JSON.stringify(err)
+                    mensagemErro: extractNAuthError(err)
                 };
             }
         },

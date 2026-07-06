@@ -273,6 +273,79 @@ namespace MonexUp.API.Controllers
         }
 
         [Authorize]
+        [HttpPost("invite")]
+        public async Task<IActionResult> Invite([FromBody] InviteRequestInfo request)
+        {
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
+
+            var token = HttpContext.GetBearerToken();
+            var result = await _networkService.InviteByEmail(request.NetworkId, request.Email, userSession.UserId, token);
+            if (!result.Sucesso) return BadRequest(result);
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpPost("invite/join")]
+        public async Task<IActionResult> InviteJoin([FromBody] InviteActionInfo request)
+        {
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
+
+            await _networkService.JoinFromInvite(userSession.UserId, request.Token);
+            return Ok(new { sucesso = true });
+        }
+
+        [Authorize]
+        [HttpGet("invite/detail")]
+        public async Task<IActionResult> InviteDetail([FromQuery] string token)
+        {
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
+
+            var bearer = HttpContext.GetBearerToken();
+            var detail = await _networkService.GetInviteDetail(userSession.UserId, token, bearer);
+            if (!detail.Sucesso) return BadRequest(detail);
+            return Ok(detail);
+        }
+
+        [Authorize]
+        [HttpPost("invite/accept")]
+        public async Task<IActionResult> InviteAccept([FromBody] InviteActionInfo request)
+        {
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
+
+            try
+            {
+                await _networkService.AcceptInvite(userSession.UserId, request.Token);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(403, new { sucesso = false, mensagemErro = ex.Message });
+            }
+            return Ok(new { sucesso = true });
+        }
+
+        [Authorize]
+        [HttpPost("invite/decline")]
+        public async Task<IActionResult> InviteDecline([FromBody] InviteActionInfo request)
+        {
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
+
+            try
+            {
+                await _networkService.DeclineInvite(userSession.UserId, request.Token);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(403, new { sucesso = false, mensagemErro = ex.Message });
+            }
+            return Ok(new { sucesso = true });
+        }
+
+        [Authorize]
         [HttpPost("changeStatus")]
         public async Task<IActionResult> ChangeStatus([FromBody] NetworkChangeStatusInfo changeStatus)
         {
@@ -341,7 +414,11 @@ namespace MonexUp.API.Controllers
             if (userSession == null) return Unauthorized();
 
             var token = HttpContext.GetBearerToken();
-            await _networkService.Promote(networkId, userId, userSession.UserId, token);
+            var changed = await _networkService.Promote(networkId, userId, userSession.UserId, token);
+            if (!changed)
+            {
+                return BadRequest(new { sucesso = false, mensagemErro = "Não há perfil superior disponível para promover este vendedor. Cadastre um em Estrutura da Equipe." });
+            }
             return Ok();
         }
 
@@ -353,7 +430,11 @@ namespace MonexUp.API.Controllers
             if (userSession == null) return Unauthorized();
 
             var token = HttpContext.GetBearerToken();
-            await _networkService.Demote(networkId, userId, userSession.UserId, token);
+            var changed = await _networkService.Demote(networkId, userId, userSession.UserId, token);
+            if (!changed)
+            {
+                return BadRequest(new { sucesso = false, mensagemErro = "Não há perfil inferior disponível para rebaixar este vendedor. Cadastre um em Estrutura da Equipe." });
+            }
             return Ok();
         }
     }

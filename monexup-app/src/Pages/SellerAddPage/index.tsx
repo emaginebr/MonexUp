@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
     User,
     IdCard,
@@ -17,12 +17,11 @@ import {
 } from "lucide-react";
 import AuthContext from "../../Contexts/Auth/AuthContext";
 import UserContext from "../../Contexts/User/UserContext";
+import InviteContext from "../../Contexts/Invite/InviteContext";
 import MessageToast from "../../Components/MessageToast";
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 import UserEditInfo from "../../DTO/Domain/UserEditInfo";
 import UserInfo from "../../DTO/Domain/UserInfo";
-import UserPhoneInfo from "../../DTO/Domain/UserPhoneInfo";
-import UserAddressInfo from "../../DTO/Domain/UserAddressInfo";
 
 /**
  * SellerAddPage — public seller signup, redesigned to match the Home
@@ -35,6 +34,7 @@ export default function SellerAddPage() {
 
     const authContext = useContext(AuthContext);
     const userContext = useContext(UserContext);
+    const inviteContext = useContext(InviteContext);
 
     const [insertMode, setInsertMode] = useState<boolean>(false);
     const [user, setUser] = useState<UserEditInfo>(null);
@@ -45,6 +45,11 @@ export default function SellerAddPage() {
 
     let { networkSlug } = useParams();
     let navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    // Referrer invite token (no-account flow). When present, the new account
+    // is joined to the network via the MonexUp `/Network/invite/join` endpoint
+    // right after signup + auto-login. Absent → the legacy behavior is intact.
+    const inviteToken = searchParams.get("invite");
 
     const throwError = (message: string) => {
         setDialog(MessageToastEnum.Error);
@@ -113,40 +118,73 @@ export default function SellerAddPage() {
             return;
         }
 
-        let userFull: UserInfo;
-        let userPhone: UserPhoneInfo;
-        let userAddr: UserAddressInfo;
-
-        userFull = {
-            ...userFull,
-            userId: user.userId,
-            name: user.name,
-            email: user.email,
-            idDocument: user.iddocument,
-            birthDate: user.birthDate,
-            pixKey: user.pixkey,
+        // Full payload — NAuth requires slug/imageUrl/isAdmin/roles even when
+        // empty. Missing them triggers a 400 with ModelState validation errors.
+        const userFull: UserInfo = {
+            userId: user.userId ?? 0,
+            slug: "",
+            imageUrl: "",
+            name: user.name || "",
+            email: user.email || "",
+            hash: "",
+            isAdmin: false,
+            birthDate: user.birthDate || "",
+            idDocument: user.iddocument || "",
+            pixKey: user.pixkey || "",
             password: user.password,
-            phones: [],
-            addresses: [],
+            roles: [],
+            phones: user.phone ? [{ phone: user.phone }] : [],
+            addresses: (user.zipCode || user.address)
+                ? [{
+                    zipCode: user.zipCode || "",
+                    address: user.address || "",
+                    complement: user.complement || "",
+                    neighborhood: user.neighborhood || "",
+                    city: user.city || "",
+                    state: user.state || "",
+                }]
+                : [],
+            createAt: "",
+            updateAt: "",
         };
-        userFull.phones.push({
-            ...userPhone,
-            phone: user.phone,
-        });
-        userFull.addresses.push({
-            ...userAddr,
-            zipCode: user.zipCode,
-            address: user.address,
-            complement: user.complement,
-            neighborhood: user.neighborhood,
-            city: user.city,
-            state: user.state,
-        });
 
         if (insertMode) {
             let ret = await userContext.insert(userFull);
             if (ret.sucesso) {
+                // Referrer-invite (no-account) flow: log the freshly created
+                // account in, then join it to the network via the invite token.
+                if (inviteToken) {
+                    const retLogin = await authContext.loginWithEmail(
+                        user.email,
+                        user.password
+                    );
+                    if (!retLogin.sucesso) {
+                        throwError(retLogin.mensagemErro);
+                        return;
+                    }
+                    const retJoin = await inviteContext.join(inviteToken);
+                    if (!retJoin.sucesso) {
+                        throwError(retJoin.mensagemErro);
+                        return;
+                    }
+                    showSuccessMessage(t("sellerAddPage.inviteJoined"));
+                    navigate(networkSlug ? "/" + networkSlug : "/admin/dashboard");
+                    return;
+                }
+                // Regular signup: log in with the fresh credentials and hand
+                // the user off to the admin dashboard.
+                const retLogin = await authContext.loginWithEmail(
+                    user.email,
+                    user.password
+                );
                 showSuccessMessage(ret.mensagemSucesso);
+                if (retLogin?.sucesso === false) {
+                    // Login failed for some reason — send to login page as
+                    // fallback rather than dropping the user on a broken state.
+                    navigate("/account/login");
+                    return;
+                }
+                navigate("/admin/dashboard");
             } else {
                 throwError(ret.mensagemErro);
             }
@@ -154,6 +192,7 @@ export default function SellerAddPage() {
             let ret = await userContext.update(userFull);
             if (ret.sucesso) {
                 showSuccessMessage(ret.mensagemSucesso);
+                navigate("/admin/dashboard");
             } else {
                 throwError(ret.mensagemErro);
             }

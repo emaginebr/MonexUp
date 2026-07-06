@@ -19,6 +19,8 @@ import NetworkContext from "../../Contexts/Network/NetworkContext";
 import UserContext from "../../Contexts/User/UserContext";
 import FormField from "../NetworkEditPage/FormField";
 
+import InviteModal from "../Admin/InviteModal";
+
 import UserSearchRow, {
   UserSearchRowHandlers,
   UserSearchRowLabels,
@@ -56,6 +58,7 @@ export default function UserSearchPage() {
   const [showMessage, setShowMessage] = useState<boolean>(false);
   const [messageText, setMessageText] = useState<string>("");
   const [keyword, setKeyword] = useState<string>("");
+  const [inviteOpen, setInviteOpen] = useState<boolean>(false);
 
   const throwError = (message: string) => {
     setDialog(MessageToastEnum.Error);
@@ -131,11 +134,16 @@ export default function UserSearchPage() {
   // network team list once (already used elsewhere via networkContext) so we
   // can join `profile` per userId when rendering the row.
   useEffect(() => {
-    const slug = networkContext.network?.slug;
+    const slug =
+      networkContext.network?.slug ||
+      (networkContext.userNetwork as any)?.network?.slug;
     if (!slug) return;
     networkContext.listByNetwork(slug);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [networkContext.network?.slug]);
+  }, [
+    networkContext.network?.slug,
+    (networkContext.userNetwork as any)?.network?.slug,
+  ]);
 
   const profileByUserId = useMemo(() => {
     const map = new Map<number, string>();
@@ -156,7 +164,9 @@ export default function UserSearchPage() {
     searchUsers(current);
     // Also re-pull team list so profile chip reflects the new profile after
     // promote/demote (which change UserNetwork.ProfileId server-side).
-    const slug = networkContext.network?.slug;
+    const slug =
+      networkContext.network?.slug ||
+      (networkContext.userNetwork as any)?.network?.slug;
     if (slug) networkContext.listByNetwork(slug);
   };
 
@@ -289,6 +299,10 @@ export default function UserSearchPage() {
   };
 
   const networkSlug = networkContext.network?.slug;
+  const inviteNetworkId =
+    networkContext.network?.networkId ??
+    networkContext.userNetwork?.networkId ??
+    null;
 
   return (
     <main className="mnx-surface-light bg-mnx-neutral-50 min-h-screen">
@@ -298,6 +312,14 @@ export default function UserSearchPage() {
         messageText={messageText}
         onClose={() => setShowMessage(false)}
       />
+
+      {inviteNetworkId != null && (
+        <InviteModal
+          show={inviteOpen}
+          networkId={inviteNetworkId}
+          onClose={() => setInviteOpen(false)}
+        />
+      )}
 
       <div className="max-w-container mx-auto px-shell pt-6 pb-12">
         {/* 1. Page header band ------------------------------------------ */}
@@ -344,9 +366,9 @@ export default function UserSearchPage() {
           <div className="flex items-center gap-1.5 shrink-0">
             <button
               type="button"
-              disabled
+              onClick={() => setInviteOpen(true)}
+              disabled={inviteNetworkId == null}
               className="cta-primary inline-flex h-9 items-center gap-2 px-4 rounded-md bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold shadow-glow-md transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-orange-500"
-              aria-disabled="true"
             >
               <Mail size={16} aria-hidden="true" />
               {t("userSearchPage.inviteButton")}
