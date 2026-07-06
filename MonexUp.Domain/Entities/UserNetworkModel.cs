@@ -56,6 +56,11 @@ namespace MonexUp.Domain.Impl.Models
             return _repositoryNetwork.ListByNetwork(networkId, factory);
         }
 
+        public IEnumerable<IUserNetworkModel> GetByReferrer(long networkId, long referrerId, IUserNetworkDomainFactory factory)
+        {
+            return _repositoryNetwork.GetByReferrer(networkId, referrerId, factory);
+        }
+
         public IEnumerable<IUserNetworkModel> Search(long networkId, string keyword, long? profileId, int pageNum, out int pageCount, IUserNetworkDomainFactory factory)
         {
             return _repositoryNetwork.Search(networkId, keyword, profileId, pageNum, out pageCount, factory);

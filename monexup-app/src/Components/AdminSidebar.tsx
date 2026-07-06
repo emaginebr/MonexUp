@@ -19,6 +19,7 @@ import {
   Search,
   Package,
   Tag,
+  Share2,
 } from "lucide-react";
 import { useIsAdmin } from "../Hooks/useIsAdmin";
 
@@ -374,6 +375,13 @@ export default function AdminSidebar() {
                 active={isActive("/admin/teams")}
                 collapsed={collapsed}
                 onClick={() => navigate("/admin/teams")}
+              />
+              <SidebarItem
+                icon={Share2}
+                label={t("hierarchy")}
+                active={isActive("/admin/hierarchy")}
+                collapsed={collapsed}
+                onClick={() => navigate("/admin/hierarchy")}
               />
             </>
           )}

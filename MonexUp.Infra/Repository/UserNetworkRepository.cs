@@ -84,6 +84,15 @@ namespace DB.Infra.Repository
             return rows.Select(x => DbToModel(factory, x));
         }
 
+        public IEnumerable<IUserNetworkModel> GetByReferrer(long networkId, long referrerId, IUserNetworkDomainFactory factory)
+        {
+            // All statuses — the hierarchy tree shows Active, WaitForApproval,
+            // Inactive and Blocked members (unlike ListByNetwork, which filters Active).
+            var rows = _ccsContext.UserNetworks
+                .Where(x => x.NetworkId == networkId && x.ReferrerId == referrerId).ToList();
+            return rows.Select(x => DbToModel(factory, x));
+        }
+
         public IUserNetworkModel Get(long networkId, long userId, IUserNetworkDomainFactory factory)
         {
             var row = _ccsContext.UserNetworks

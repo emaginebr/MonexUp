@@ -26,6 +26,7 @@
   "preferences": "Preferências",
   "team_structure": "Estrutura da Equipe",
   "teams": "Equipes",
+  "hierarchy": "Hierarquia",
   "finances": "Finanças",
   "orders": "Assinaturas",
   "invoices": "Faturas",
@@ -611,6 +612,25 @@
     "pageOf": "Página {{current}} de {{total}}",
     "emptyTitle": "Sua equipe ainda está vazia",
     "emptyBody": "Quando vendedores entrarem na sua rede, eles aparecerão aqui para você gerenciar funções e acessos."
+  },
+  "hierarchyPage": {
+    "title": "Árvore Hierárquica",
+    "breadcrumb": "Hierarquia",
+    "you": "Você",
+    "topOfTree": "Topo da rede",
+    "childrenLabel": "Convidados",
+    "collapse": "Recolher",
+    "expandChildren": "Expandir {{count}} convidados",
+    "collapsedSummary": "{{count}} convidados recolhidos",
+    "ancestorsLabel": "Cadeia de patrocinadores",
+    "descendantsLabel": "Convidados de {{name}}",
+    "emptyAncestorsTitle": "Você está no topo",
+    "emptyAncestorsBody": "Ninguém convidou você para esta rede — você é o ponto de partida da sua árvore.",
+    "emptyDescendantsTitle": "Nenhum convidado ainda",
+    "emptyDescendantsBody": "Convide vendedores para começar a construir sua rede. Eles aparecerão aqui abaixo de você.",
+    "loading": "Carregando árvore hierárquica",
+    "loadError": "Não foi possível carregar a árvore hierárquica.",
+    "errorTitle": "Não foi possível carregar a árvore"
   },
   "orderSearchPage": {
     "searchPlaceholder": "Buscar assinatura por comprador ou produto",

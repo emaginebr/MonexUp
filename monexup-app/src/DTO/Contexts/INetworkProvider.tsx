@@ -1,7 +1,9 @@
+import HierarchyInfo from "../Domain/HierarchyInfo";
 import NetworkInfo from "../Domain/NetworkInfo";
 import NetworkInsertInfo from "../Domain/NetworkInsertInfo";
 import UserNetworkInfo from "../Domain/UserNetworkInfo";
 import { UserRoleEnum } from "../Enum/UserRoleEnum";
+import HierarchyProviderResult from "./HierarchyProviderResult";
 import NetworkProviderResult from "./NetworkProviderResult";
 import ProviderResult from "./ProviderResult";
 
@@ -12,6 +14,7 @@ interface INetworkProvider {
     loadingSeller: boolean;
     loadingUpdate: boolean;
     loadingRequestAccess: boolean;
+    loadingHierarchy: boolean;
 
     network: NetworkInfo;
     networks: NetworkInfo[];
@@ -19,6 +22,7 @@ interface INetworkProvider {
     seller: UserNetworkInfo;
     userNetworks: UserNetworkInfo[];
     teams: UserNetworkInfo[];
+    hierarchy: HierarchyInfo;
     currentRole: UserRoleEnum;
 
     setNetwork: (network: NetworkInfo) => void;
@@ -37,6 +41,7 @@ interface INetworkProvider {
     getUserNetwork: (networkId: number) => Promise<ProviderResult>;
     getUserNetworkBySlug: (networkSlug: string) => Promise<ProviderResult>;
     getSellerBySlug: (networkSlug: string, userSlug: string) => Promise<ProviderResult>;
+    getHierarchy: (networkId: number) => Promise<HierarchyProviderResult>;
     requestAccess: (networkId: number, referrerId?: number) => Promise<ProviderResult>;
     changeStatus: (networkId: number, userId: number, status: number) => Promise<ProviderResult>;
     promote: (networkId: number, userId: number) => Promise<ProviderResult>;

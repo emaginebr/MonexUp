@@ -30,6 +30,7 @@ namespace MonexUp.Domain.Interfaces.Services
         Task<bool> Demote(long networkId, long userId, long manegerId, string token);
         IList<IUserNetworkModel> ListByUser(long userId);
         IList<IUserNetworkModel> ListByNetwork(long networkId);
+        Task<HierarchyInfo> BuildHierarchy(long networkId, long userId, string token);
 
     }
 }
