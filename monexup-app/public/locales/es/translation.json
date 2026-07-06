@@ -446,11 +446,47 @@
     "confirmPasswordPlaceholder": "Confirma tu contraseña",
     "uploadDocumentLabel": "Subir Archivo de Documento",
     "uploadDocumentPlaceholder": "Tu documento de identidad",
+    "inviteJoined": "¡Invitación aceptada! Ahora formas parte de la red.",
     "errors": {
       "passwordEmpty": "La contraseña está vacía",
       "confirmPasswordEmpty": "La confirmación de contraseña está vacía",
       "passwordsNotEqual": "La contraseña y la confirmación no son iguales"
     }
+  },
+  "inviteModal": {
+    "title": "Invitar a la red",
+    "emailLabel": "Email del invitado",
+    "emailPlaceholder": "email@ejemplo.com",
+    "generateButton": "Generar invitación",
+    "generating": "Generando...",
+    "linkLabel": "Enlace de invitación",
+    "copyButton": "Copiar",
+    "copied": "¡Copiado!",
+    "newAccountHint": "Esta persona aún no tiene cuenta. Envíale el enlace para que cree una cuenta y se una a la red.",
+    "existingAccountHint": "Esta persona ya tiene cuenta. Envíale el enlace para que acepte la invitación y se una a la red.",
+    "alreadyMember": "Esta persona ya forma parte de la red.",
+    "invalidEmail": "Introduce un email válido.",
+    "successGenerated": "Invitación generada con éxito.",
+    "errorGeneric": "No se pudo generar la invitación.",
+    "close": "Cerrar"
+  },
+  "acceptInvitePage": {
+    "eyebrow": "Invitación a la red",
+    "title": "Has sido invitado",
+    "invitedBy": "{{inviter}} te invitó a unirte a la red {{network}}.",
+    "accept": "Aceptar invitación",
+    "decline": "Rechazar",
+    "declineConfirmTitle": "Rechazar invitación",
+    "declineConfirmMessage": "¿Estás seguro de que deseas rechazar esta invitación?",
+    "alreadyMemberTitle": "Ya perteneces",
+    "alreadyMemberBody": "Ya eres miembro activo de la red {{network}}.",
+    "wrongAccountTitle": "Cuenta incorrecta",
+    "wrongAccountBody": "Esta invitación se envió a otra cuenta. Inicia sesión con la cuenta invitada para aceptarla.",
+    "acceptedSuccess": "¡Invitación aceptada! Bienvenido a la red.",
+    "declinedSuccess": "Invitación rechazada.",
+    "errorGeneric": "No se pudo cargar la invitación.",
+    "goToDashboard": "Ir al panel",
+    "backHome": "Volver al inicio"
   },
   "userPage": {
     "changeImage": "Cambiar Imagen",

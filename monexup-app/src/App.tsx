@@ -30,6 +30,7 @@ import FilterManagePage from './Pages/Admin/FilterManagePage';
 import RequireAdmin from './Components/Admin/RequireAdmin';
 import NetworkInsertPage from './Pages/NetworkInsertPage';
 import NetworkProvider from './Contexts/Network/NetworkProvider';
+import InviteProvider from './Contexts/Invite/InviteProvider';
 import ActiveNetworkProvider from './Contexts/ActiveNetwork/ActiveNetworkProvider';
 import ProfileProvider from './Contexts/Profile/ProfileProvider';
 import ProfileListPage from './Pages/ProfileListPage';
@@ -49,6 +50,7 @@ import OrderSearchPage from './Pages/OrderSearchPage';
 import OrderDetailPage from './Pages/OrderDetailPage';
 import InvoiceDetailPage from './Pages/InvoiceDetailPage';
 import SellerAddPage from './Pages/SellerAddPage';
+import AcceptInvitePage from './Pages/AcceptInvitePage';
 import SellerPage from './Pages/SellerPage';
 import StorefrontPage from './Pages/StorefrontPage';
 import VendorProductPage from './Pages/VendorProductPage';
@@ -180,7 +182,7 @@ function App() {
   // NetworkProvider (reads `userNetworks`), so it goes inside Network.
   const ContextContainer = ContextBuilder([
     TemplateProvider, ImageProvider, InvoiceProvider, OrderProvider, BillingProvider,
-    ProductLinkProvider, ProductProvider, ProfileProvider, ActiveNetworkProvider,
+    ProductLinkProvider, ProductProvider, ProfileProvider, InviteProvider, ActiveNetworkProvider,
     NetworkProvider, UserProvider, AuthProvider
   ]);
 
@@ -204,6 +206,9 @@ function App() {
           <Route path=":networkSlug/@/:sellerSlug/new-seller" element={<SellerAddPage />} />
           <Route path=":networkSlug/request-access" element={<RequestAccessPage />} />
           <Route path=":networkSlug/@/:sellerSlug/request-access" element={<RequestAccessPage />} />
+          {/* Accept/decline a referrer invite — login-gated inside the page
+              (redirects to /account/login when there is no session). */}
+          <Route path="invite/accept" element={<AcceptInvitePage />} />
         </Route>
         {/* Standalone: page owns its own chrome (cream vendor surface),
             no HomeHeader/HomeFooter wrap. */}

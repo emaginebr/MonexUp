@@ -32,7 +32,7 @@ namespace MonexUp.Domain.Interfaces.Models
         int GetQtdyUserByNetwork(long networkId);
         IUserNetworkModel Insert(IUserNetworkDomainFactory factory);
         IUserNetworkModel Update(IUserNetworkDomainFactory factory);
-        void Promote(long networkId, long userId);
-        void Demote(long networkId, long userId);
+        bool Promote(long networkId, long userId);
+        bool Demote(long networkId, long userId);
     }
 }

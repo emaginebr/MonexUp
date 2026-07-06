@@ -20,9 +20,14 @@ namespace MonexUp.Domain.Interfaces.Services
         INetworkModel Insert(NetworkInsertInfo network, long userId);
         Task<INetworkModel> Update(NetworkInfo network, long userId, string token);
         void RequestAccess(long networkId, long userId, long? referrerId);
+        Task<InviteResultInfo> InviteByEmail(long networkId, string email, long inviterUserId, string token);
+        Task JoinFromInvite(long joinerUserId, string inviteToken);
+        Task<InviteDetailInfo> GetInviteDetail(long callerUserId, string inviteToken, string token);
+        Task AcceptInvite(long callerUserId, string inviteToken);
+        Task DeclineInvite(long callerUserId, string inviteToken);
         Task ChangeStatus(long networkId, long userId, UserNetworkStatusEnum status, long managerId, string token);
-        Task Promote(long networkId, long userId, long manegerId, string token);
-        Task Demote(long networkId, long userId, long manegerId, string token);
+        Task<bool> Promote(long networkId, long userId, long manegerId, string token);
+        Task<bool> Demote(long networkId, long userId, long manegerId, string token);
         IList<IUserNetworkModel> ListByUser(long userId);
         IList<IUserNetworkModel> ListByNetwork(long networkId);
 

@@ -76,9 +76,11 @@ namespace DB.Infra.Repository
 
         public IEnumerable<IUserNetworkModel> ListByNetwork(long networkId, IUserNetworkDomainFactory factory)
         {
-            // Role >= Seller && Status = Active
+            // No role filter — /admin/teams needs every UserNetwork row so its
+            // profile chip can render for Users too. Status filter kept to hide
+            // Inactive/Blocked members.
             var rows = _ccsContext.UserNetworks
-                .Where(x => x.NetworkId == networkId && x.Role >= 2 && x.Status == 1).ToList();
+                .Where(x => x.NetworkId == networkId && x.Status == 1).ToList();
             return rows.Select(x => DbToModel(factory, x));
         }
 
@@ -116,14 +118,14 @@ namespace DB.Infra.Repository
             return rows.Select(x => DbToModel(factory, x));
         }
 
-        public void Promote(long networkId, long userId)
+        public bool Promote(long networkId, long userId)
         {
             var row = _ccsContext.UserNetworks
                 .Where(x => x.NetworkId == networkId && x.UserId == userId)
                 .FirstOrDefault();
             if (row == null)
             {
-                return;
+                return false;
             }
             int? level = row.Profile?.Level;
             if (!level.HasValue)
@@ -134,22 +136,24 @@ namespace DB.Infra.Repository
             var rowProfile = _ccsContext.UserProfiles
                 .Where(x => x.NetworkId == networkId && x.Level == level)
                 .FirstOrDefault();
-            if (rowProfile != null)
+            if (rowProfile == null)
             {
-                row.ProfileId = rowProfile.ProfileId;
-                _ccsContext.Update(row);
-                _ccsContext.SaveChanges();
+                return false;
             }
+            row.ProfileId = rowProfile.ProfileId;
+            _ccsContext.Update(row);
+            _ccsContext.SaveChanges();
+            return true;
         }
 
-        public void Demote(long networkId, long userId)
+        public bool Demote(long networkId, long userId)
         {
             var row = _ccsContext.UserNetworks
                 .Where(x => x.NetworkId == networkId && x.UserId == userId)
                 .FirstOrDefault();
             if (row == null)
             {
-                return;
+                return false;
             }
             int? level = row.Profile?.Level;
             if (!level.HasValue)
@@ -160,12 +164,14 @@ namespace DB.Infra.Repository
             var rowProfile = _ccsContext.UserProfiles
                 .Where(x => x.NetworkId == networkId && x.Level == level)
                 .FirstOrDefault();
-            if (rowProfile != null)
+            if (rowProfile == null)
             {
-                row.ProfileId = rowProfile.ProfileId;
-                _ccsContext.Update(row);
-                _ccsContext.SaveChanges();
+                return false;
             }
+            row.ProfileId = rowProfile.ProfileId;
+            _ccsContext.Update(row);
+            _ccsContext.SaveChanges();
+            return true;
         }
     }
 }

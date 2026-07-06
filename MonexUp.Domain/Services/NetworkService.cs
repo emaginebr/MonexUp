@@ -26,6 +26,7 @@ namespace MonexUp.Domain.Impl.Services
         private readonly IUserProfileDomainFactory _userProfileFactory;
         private readonly IProfileService _profileService;
         private readonly IFileClient _fileClient;
+        private readonly IInviteTokenSigner _inviteTokenSigner;
         private readonly ILogger<NetworkService> _logger;
 
         public NetworkService(
@@ -35,6 +36,7 @@ namespace MonexUp.Domain.Impl.Services
             IUserProfileDomainFactory userProfileFactory,
             IProfileService profileService,
             IFileClient fileClient,
+            IInviteTokenSigner inviteTokenSigner,
             ILogger<NetworkService> logger
         )
         {
@@ -44,6 +46,7 @@ namespace MonexUp.Domain.Impl.Services
             _userProfileFactory = userProfileFactory;
             _profileService = profileService;
             _fileClient = fileClient;
+            _inviteTokenSigner = inviteTokenSigner;
             _logger = logger;
         }
 
@@ -302,10 +305,20 @@ namespace MonexUp.Domain.Impl.Services
 
         public void RequestAccess(long networkId, long userId, long? referrerId)
         {
+            CreatePendingMembership(networkId, userId, referrerId);
+        }
+
+        /// <summary>
+        /// Creates a WaitForApproval membership (lowest profile, Seller role) with
+        /// the given referrer. Shared by self-service RequestAccess and the invite flows.
+        /// </summary>
+        private void CreatePendingMembership(long networkId, long userId, long? referrerId)
+        {
             var profiles = _userProfileFactory.BuildUserProfileModel().ListByNetwork(networkId, _userProfileFactory);
 
             var lowerProfile = profiles.OrderByDescending(x => x.Level).FirstOrDefault();
-            if (lowerProfile == null) {
+            if (lowerProfile == null)
+            {
                 throw new Exception("Lower profile not found");
             }
 
@@ -318,6 +331,219 @@ namespace MonexUp.Domain.Impl.Services
             model.ReferrerId = referrerId;
 
             model.Insert(_userNetworkFactory);
+        }
+
+        /// <summary>
+        /// Authorizes that <paramref name="managerId"/> may manage <paramref name="networkId"/>
+        /// (NetworkManager of the network, or a platform admin). Mirrors ValidateAccess
+        /// without requiring a pre-existing target membership.
+        /// </summary>
+        private async Task ValidateManager(long networkId, long managerId, string token)
+        {
+            var networkAccess = _userNetworkFactory.BuildUserNetworkModel().Get(networkId, managerId, _userNetworkFactory);
+            if (networkAccess == null)
+            {
+                throw new Exception("Your dont have access to this network");
+            }
+
+            if (networkAccess.Role != DTO.User.UserRoleEnum.NetworkManager)
+            {
+                var user = await _userClient.GetByIdAsync(managerId, token);
+                if (user == null || !user.IsAdmin)
+                {
+                    throw new Exception("Your dont have access to this network");
+                }
+            }
+        }
+
+        public async Task<InviteResultInfo> InviteByEmail(long networkId, string email, long inviterUserId, string token)
+        {
+            if (string.IsNullOrWhiteSpace(email) || !EmailValidator.IsValidEmail(email))
+            {
+                return new InviteResultInfo { Sucesso = false, MensagemErro = "E-mail inválido." };
+            }
+
+            await ValidateManager(networkId, inviterUserId, token);
+
+            var network = _networkFactory.BuildNetworkModel().GetById(networkId, _networkFactory);
+            if (network == null)
+            {
+                return new InviteResultInfo { Sucesso = false, MensagemErro = "Rede não encontrada." };
+            }
+
+            // NAuth GetByEmailAsync throws (EnsureSuccessStatusCode) when the
+            // email has no account — treat any failure as "no account" and log.
+            NAuth.DTO.User.UserInfo invitee = null;
+            try
+            {
+                invitee = await _userClient.GetByEmailAsync(email);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex, "NAuth GetByEmailAsync found no account for {Email} — treating as no-account invite.", email);
+                invitee = null;
+            }
+
+            if (invitee == null)
+            {
+                // No account → new-person invite; nothing created until sign-up + join.
+                var newToken = _inviteTokenSigner.Sign(networkId, inviterUserId, 0, false);
+                return new InviteResultInfo
+                {
+                    Sucesso = true,
+                    HasAccount = false,
+                    AlreadyMember = false,
+                    Token = newToken,
+                    NetworkSlug = network.Slug
+                };
+            }
+
+            if (invitee.UserId == inviterUserId)
+            {
+                return new InviteResultInfo { Sucesso = false, MensagemErro = "Você não pode convidar a si mesmo." };
+            }
+
+            var existing = _userNetworkFactory.BuildUserNetworkModel().Get(networkId, invitee.UserId, _userNetworkFactory);
+            var alreadyMember = false;
+
+            if (existing != null &&
+                (existing.Status == DTO.User.UserNetworkStatusEnum.Active
+                 || existing.Status == DTO.User.UserNetworkStatusEnum.WaitForApproval))
+            {
+                // Idempotent: already active/pending — surface state, no duplicate.
+                alreadyMember = true;
+            }
+            else if (existing != null)
+            {
+                // Inactive/Blocked → reactivate to pending with the new referrer.
+                existing.Status = DTO.User.UserNetworkStatusEnum.WaitForApproval;
+                existing.ReferrerId = inviterUserId;
+                existing.Update(_userNetworkFactory);
+            }
+            else
+            {
+                // Create the pending membership at invite time (per FR-007/FR-012).
+                CreatePendingMembership(networkId, invitee.UserId, inviterUserId);
+            }
+
+            var token2 = _inviteTokenSigner.Sign(networkId, inviterUserId, invitee.UserId, true);
+            return new InviteResultInfo
+            {
+                Sucesso = true,
+                HasAccount = true,
+                AlreadyMember = alreadyMember,
+                Token = token2,
+                NetworkSlug = network.Slug
+            };
+        }
+
+        public Task JoinFromInvite(long joinerUserId, string inviteToken)
+        {
+            if (!_inviteTokenSigner.TryVerify(inviteToken, out var payload))
+            {
+                throw new Exception("Convite inválido.");
+            }
+
+            var existing = _userNetworkFactory.BuildUserNetworkModel().Get(payload.NetworkId, joinerUserId, _userNetworkFactory);
+            if (existing != null &&
+                (existing.Status == DTO.User.UserNetworkStatusEnum.Active
+                 || existing.Status == DTO.User.UserNetworkStatusEnum.WaitForApproval))
+            {
+                // Idempotent — already active/pending.
+                return Task.CompletedTask;
+            }
+
+            if (existing != null)
+            {
+                existing.Status = DTO.User.UserNetworkStatusEnum.WaitForApproval;
+                existing.ReferrerId = payload.InviterUserId;
+                existing.Update(_userNetworkFactory);
+                return Task.CompletedTask;
+            }
+
+            CreatePendingMembership(payload.NetworkId, joinerUserId, payload.InviterUserId);
+            return Task.CompletedTask;
+        }
+
+        public async Task<InviteDetailInfo> GetInviteDetail(long callerUserId, string inviteToken, string token)
+        {
+            if (!_inviteTokenSigner.TryVerify(inviteToken, out var payload))
+            {
+                return new InviteDetailInfo { Sucesso = false, MensagemErro = "Convite inválido." };
+            }
+
+            var network = _networkFactory.BuildNetworkModel().GetById(payload.NetworkId, _networkFactory);
+
+            string inviterName = null;
+            try
+            {
+                var inviter = await _userClient.GetByIdAsync(payload.InviterUserId, token);
+                inviterName = inviter?.Name;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "NAuth GetByIdAsync failed for inviter {InviterId} — returning invite detail without inviter name.", payload.InviterUserId);
+            }
+
+            var existing = _userNetworkFactory.BuildUserNetworkModel().Get(payload.NetworkId, callerUserId, _userNetworkFactory);
+
+            return new InviteDetailInfo
+            {
+                Sucesso = true,
+                NetworkId = payload.NetworkId,
+                NetworkName = network?.Name,
+                InviterName = inviterName,
+                TargetUserId = payload.TargetUserId,
+                IsForCurrentUser = payload.TargetUserId == callerUserId,
+                AlreadyActiveMember = existing != null && existing.Status == DTO.User.UserNetworkStatusEnum.Active
+            };
+        }
+
+        public Task AcceptInvite(long callerUserId, string inviteToken)
+        {
+            if (!_inviteTokenSigner.TryVerify(inviteToken, out var payload))
+            {
+                throw new Exception("Convite inválido.");
+            }
+            if (payload.TargetUserId != callerUserId)
+            {
+                throw new UnauthorizedAccessException("Este convite não é para a sua conta.");
+            }
+
+            var existing = _userNetworkFactory.BuildUserNetworkModel().Get(payload.NetworkId, callerUserId, _userNetworkFactory);
+            if (existing == null)
+            {
+                // Pending row should already exist from invite time; recreate idempotently if missing.
+                CreatePendingMembership(payload.NetworkId, callerUserId, payload.InviterUserId);
+            }
+            else if (existing.Status == DTO.User.UserNetworkStatusEnum.Inactive)
+            {
+                existing.Status = DTO.User.UserNetworkStatusEnum.WaitForApproval;
+                existing.ReferrerId = payload.InviterUserId;
+                existing.Update(_userNetworkFactory);
+            }
+            // Active/WaitForApproval → no-op; still requires manager approval.
+            return Task.CompletedTask;
+        }
+
+        public Task DeclineInvite(long callerUserId, string inviteToken)
+        {
+            if (!_inviteTokenSigner.TryVerify(inviteToken, out var payload))
+            {
+                throw new Exception("Convite inválido.");
+            }
+            if (payload.TargetUserId != callerUserId)
+            {
+                throw new UnauthorizedAccessException("Este convite não é para a sua conta.");
+            }
+
+            var existing = _userNetworkFactory.BuildUserNetworkModel().Get(payload.NetworkId, callerUserId, _userNetworkFactory);
+            if (existing != null && existing.Status == DTO.User.UserNetworkStatusEnum.WaitForApproval)
+            {
+                existing.Status = DTO.User.UserNetworkStatusEnum.Inactive;
+                existing.Update(_userNetworkFactory);
+            }
+            return Task.CompletedTask;
         }
 
         private async Task ValidateAccess(long networkId, long userId, long managerId, string token)
@@ -357,18 +583,18 @@ namespace MonexUp.Domain.Impl.Services
             userNetwork.Update(_userNetworkFactory);
         }
 
-        public async Task Promote(long networkId, long userId, long managerId, string token)
+        public async Task<bool> Promote(long networkId, long userId, long managerId, string token)
         {
             await ValidateAccess(networkId, userId, managerId, token);
 
-            _userNetworkFactory.BuildUserNetworkModel().Promote(networkId, userId);
+            return _userNetworkFactory.BuildUserNetworkModel().Promote(networkId, userId);
         }
 
-        public async Task Demote(long networkId, long userId, long managerId, string token)
+        public async Task<bool> Demote(long networkId, long userId, long managerId, string token)
         {
             await ValidateAccess(networkId, userId, managerId, token);
 
-            _userNetworkFactory.BuildUserNetworkModel().Demote(networkId, userId);
+            return _userNetworkFactory.BuildUserNetworkModel().Demote(networkId, userId);
         }
     }
 }

@@ -50,6 +50,8 @@ services:
       ProxyPay__ReturnUrlBase: ${PROXYPAY_RETURN_URL_BASE}
       # Lofn
       Lofn__ApiURL: ${LOFN_API_URL:-http://localhost:5003}
+      # Invite (referrer invite link signing)
+      Invite__Secret: ${INVITE_SECRET:-}
       # Logging — surface Information + Error to container stdout
       Logging__LogLevel__Default: Information
       Logging__LogLevel__Microsoft: Warning

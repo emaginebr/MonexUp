@@ -20,6 +20,8 @@ import IBillingService from './Interfaces/IBillingService';
 import BillingService from './Impl/BillingService';
 import IProxyPayStoreService from './Interfaces/IProxyPayStoreService';
 import ProxyPayStoreService from './Impl/ProxyPayStoreService';
+import IInviteService from './Interfaces/IInviteService';
+import InviteService from './Impl/InviteService';
 import { TemplateFactory } from '../packages/template';
 
 const TENANT_HEADERS = { 'X-Tenant-Id': process.env.REACT_APP_TENANT_ID || 'monexup' };
@@ -81,6 +83,11 @@ billingServiceImpl.init(httpClientAuth);
 const proxyPayStoreServiceImpl: IProxyPayStoreService = ProxyPayStoreService;
 proxyPayStoreServiceImpl.init(httpClientAuth);
 
+// Invite flows go through the MonexUp API (/Network/invite*) — reuse the
+// authenticated MonexUp client. Never talk to ProxyPay/NAuth directly.
+const inviteServiceImpl: IInviteService = InviteService;
+inviteServiceImpl.init(httpClientAuth);
+
 // Initialize template package (Dedalo API)
 const httpClientDedalo: IHttpClient = HttpClient();
 httpClientDedalo.init(
@@ -100,6 +107,7 @@ const ServiceFactory = {
   ProductLinkService: productLinkServiceImpl,
   BillingService: billingServiceImpl,
   ProxyPayStoreService: proxyPayStoreServiceImpl,
+  InviteService: inviteServiceImpl,
   setLogoffCallback: (cb : () => void) => {
     httpClientAuth.setLogoff(cb);
   }
