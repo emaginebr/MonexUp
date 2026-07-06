@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Árvore Hierárquica — MonexUp · Design Mockup</title>
+<!--
+  MonexUp — "Árvore Hierárquica" (Hierarchy Tree) admin page design mockup.
+  Direction: Editorial-Brutalist light admin surface (orange accent, graphite
+  text, rounded cards with subtle ring) — identical vocabulary to
+  UserSearchPage / ProductSearchPage.
+
+  This file is a DESIGN MOCKUP ONLY. It reproduces the app's real design
+  tokens (src/styles/tokens.css) inline so it renders standalone. The
+  frontend engineer implements the actual page in React/Tailwind — see
+  hierarchy-tokens.md and hierarchy-component-spec.md.
+
+  It shows, top-to-bottom:
+    A. Populated tree — 3 ancestors up · current user · 3 descendant levels
+       down, including one WIDE node collapsed with a "+N" control.
+    B. Collapse/expand — the same wide node shown expanded.
+    C. Empty state — top-of-tree (no ancestors) + no invitees (no descendants).
+    D. Loading state — skeletons consistent with the app's <Skeleton>.
+-->
+<style>
+  /* ==========================================================================
+     LAYER 1 — PRIMITIVES  (mirror of src/styles/tokens.css)
+     ========================================================================== */
+  :root {
+    --color-orange-50:#FFF3EC; --color-orange-100:#FFE0CC; --color-orange-200:#FFC199;
+    --color-orange-300:#FFA266; --color-orange-400:#FF8033; --color-orange-500:#E85A1A;
+    --color-orange-600:#C64A14; --color-orange-700:#9E3A0F; --color-orange-800:#762B0A;
+
+    --color-graphite-50:#F4F4F5; --color-graphite-100:#E4E4E7; --color-graphite-200:#C8C8CE;
+    --color-graphite-300:#9A9AA3; --color-graphite-400:#6B6B75; --color-graphite-500:#3F3F46;
+    --color-graphite-700:#1B1B1F; --color-graphite-900:#0A0A0D;
+
+    --color-neutral-0:#FFFFFF; --color-neutral-50:#FAFAF9; --color-neutral-100:#F4F4F2;
+    --color-neutral-200:#E7E7E4; --color-neutral-300:#D4D4D1; --color-neutral-400:#A3A39F;
+
+    /* status tints reused verbatim from UserSearchRow.statusPillClasses */
+    --emerald-500:#10B981; --emerald-700:#047857;
+    --rose-500:#F43F5E;    --rose-700:#BE123C;
+    --amber-500:#F59E0B;   --amber-700:#B45309;
+
+    --font-display:"Space Grotesk","Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --font-sans:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+
+    --radius-md:0.5rem; --radius-lg:0.75rem; --radius-xl:1rem; --radius-2xl:1.5rem; --radius-full:9999px;
+    --duration-fast:150ms;
+    --ease-out:cubic-bezier(0.0,0.0,0.2,1);
+
+    --shadow-md:0 4px 6px -1px rgba(10,10,13,.10),0 2px 4px -1px rgba(10,10,13,.06);
+    --shadow-glow-orange-md:0 0 0 0 rgba(232,90,26,.6),0 12px 32px -8px rgba(232,90,26,.55);
+
+    /* connector line color for the tree */
+    --conn:#D4D4D1;
+  }
+
+  * { box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; }
+  body {
+    margin:0;
+    font-family:var(--font-sans);
+    background:var(--color-neutral-50);
+    color:var(--color-graphite-900);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ==========================================================================
+     Shared app chrome utilities (mirror globals.css)
+     ========================================================================== */
+  .shell { max-width:1200px; margin:0 auto; padding:24px clamp(1rem,4vw,2rem) 48px; }
+  .display-headline { font-family:var(--font-display); font-weight:700; letter-spacing:-0.04em; line-height:.95; }
+  .auth-card {
+    background:var(--color-neutral-0);
+    border:1px solid var(--color-neutral-200);
+    border-radius:var(--radius-2xl);
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.14),0 12px 24px -10px rgba(0,0,0,.10);
+    color:var(--color-graphite-900);
+  }
+  .mnx-stat-chip { display:inline-flex; align-items:center; justify-content:center; width:2.75rem; height:2.75rem; border-radius:var(--radius-lg); flex-shrink:0; }
+  .mnx-stat-chip--orange { background:var(--color-orange-50); color:var(--color-orange-700); }
+
+  /* Page header band ------------------------------------------------------- */
+  .page-head { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:28px; }
+  .page-head__accent { display:inline-block; width:2px; height:20px; border-radius:var(--radius-full); background:var(--color-orange-500); }
+  .page-head h1 { margin:0; font-size:2rem; line-height:1.1; color:var(--color-graphite-900); }
+  .titlerow { display:flex; align-items:center; gap:12px; }
+  .crumb { margin:8px 0 0 14px; font-size:.875rem; color:var(--color-graphite-500); display:flex; align-items:center; gap:6px; }
+  .crumb a { color:var(--color-graphite-500); text-decoration:none; }
+  .crumb a:hover { color:var(--color-orange-600); }
+  .crumb .sep { color:var(--color-graphite-300); }
+  .crumb .cur { color:var(--color-graphite-700); font-weight:500; }
+
+  .section-label {
+    font-family:var(--font-sans); font-size:.7rem; text-transform:uppercase; letter-spacing:.08em;
+    font-weight:700; color:var(--color-graphite-400); margin:0 0 4px;
+  }
+  .demo-band { margin:40px 0 12px; padding-bottom:8px; border-bottom:1px dashed var(--color-neutral-300); }
+  .demo-band h2 { font-family:var(--font-display); font-size:1.05rem; letter-spacing:-.02em; margin:0; color:var(--color-graphite-700); }
+  .demo-band p { margin:4px 0 0; font-size:.8rem; color:var(--color-graphite-400); }
+
+  /* ==========================================================================
+     NODE CARD
+     ========================================================================== */
+  .node {
+    position:relative;
+    width:236px;
+    text-align:left;
+    background:var(--color-neutral-0);
+    border:1px solid var(--color-neutral-200);
+    border-radius:var(--radius-xl);
+    box-shadow:var(--shadow-md);
+    padding:12px 12px 11px;
+    transition:box-shadow var(--duration-fast) var(--ease-out),
+               border-color var(--duration-fast) var(--ease-out),
+               transform var(--duration-fast) var(--ease-out);
+  }
+  .node:hover { border-color:var(--color-orange-200); box-shadow:0 10px 22px -8px rgba(10,10,13,.18); }
+  .node:focus-within { outline:none; box-shadow:0 0 0 3px rgba(232,90,26,.20); }
+
+  .node__top { display:flex; align-items:center; gap:10px; min-width:0; }
+  .avatar {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:34px; height:34px; border-radius:var(--radius-full); flex-shrink:0;
+    background:rgba(232,90,26,.10); color:var(--color-orange-700);
+    box-shadow:inset 0 0 0 1px rgba(232,90,26,.20);
+    font-size:.72rem; font-weight:700; font-variant-numeric:tabular-nums;
+  }
+  .node__id { min-width:0; }
+  .node__name { font-size:.875rem; font-weight:600; color:var(--color-graphite-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .node__profile { font-size:.75rem; color:var(--color-graphite-500); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  .node__chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+
+  /* Chips — reuse UserSearchRow chip geometry (h-26 px-2 rounded-full ring-1) */
+  .chip {
+    display:inline-flex; align-items:center; gap:4px; height:24px; padding:0 8px;
+    border-radius:var(--radius-full); font-size:11px; font-weight:600; line-height:1;
+    box-shadow:inset 0 0 0 1px transparent;
+  }
+  .chip svg { display:block; }
+  .chip--role  { background:rgba(232,90,26,.10); color:var(--color-orange-700); box-shadow:inset 0 0 0 1px rgba(232,90,26,.20); }
+  .chip--active   { background:rgba(16,185,129,.10); color:var(--emerald-700); box-shadow:inset 0 0 0 1px rgba(16,185,129,.20); }
+  .chip--inactive { background:rgba(244,63,94,.10);  color:var(--rose-700);    box-shadow:inset 0 0 0 1px rgba(244,63,94,.20); }
+  .chip--wait     { background:rgba(245,158,11,.12); color:var(--amber-700);   box-shadow:inset 0 0 0 1px rgba(245,158,11,.22); }
+  .chip--neutral  { background:var(--color-graphite-100); color:var(--color-graphite-700); box-shadow:inset 0 0 0 1px var(--color-graphite-200); }
+
+  /* Current-user emphasis --------------------------------------------------- */
+  .node--current {
+    border-color:transparent;
+    box-shadow:0 0 0 2px var(--color-orange-500), var(--shadow-glow-orange-md);
+    background:linear-gradient(180deg,#FFFBF8 0%,var(--color-neutral-0) 46%);
+  }
+  .node--current:hover { box-shadow:0 0 0 2px var(--color-orange-500), 0 16px 34px -10px rgba(232,90,26,.5); }
+  .node--current .avatar { background:var(--color-orange-500); color:#fff; box-shadow:none; }
+  .node__youbadge {
+    position:absolute; top:-10px; left:12px;
+    display:inline-flex; align-items:center; gap:4px; height:20px; padding:0 8px;
+    border-radius:var(--radius-full); background:var(--color-orange-500); color:#fff;
+    font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    box-shadow:0 4px 10px -3px rgba(232,90,26,.6);
+  }
+
+  /* Ancestor nodes read slightly quieter (they are context, not the subject) */
+  .node--ancestor { background:var(--color-neutral-50); }
+
+  /* ==========================================================================
+     COLLAPSE / EXPAND control
+     ========================================================================== */
+  .collapse-ctl {
+    display:inline-flex; align-items:center; gap:6px; height:26px; padding:0 8px 0 6px; margin-top:10px;
+    border:1px solid var(--color-neutral-200); border-radius:var(--radius-full);
+    background:var(--color-neutral-0); color:var(--color-graphite-700);
+    font-size:11px; font-weight:600; font-family:var(--font-sans); cursor:pointer;
+    transition:background var(--duration-fast) var(--ease-out),border-color var(--duration-fast) var(--ease-out),color var(--duration-fast) var(--ease-out);
+  }
+  .collapse-ctl:hover { background:var(--color-orange-50); border-color:var(--color-orange-200); color:var(--color-orange-700); }
+  .collapse-ctl:focus-visible { outline:none; box-shadow:0 0 0 3px rgba(232,90,26,.35); }
+  .collapse-ctl .chev { transition:transform var(--duration-fast) var(--ease-out); color:var(--color-orange-600); }
+  .collapse-ctl[aria-expanded="true"] .chev { transform:rotate(180deg); }
+  .collapse-ctl .count {
+    display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:16px; padding:0 4px;
+    border-radius:var(--radius-full); background:var(--color-orange-500); color:#fff; font-size:10px; font-weight:700;
+  }
+
+  /* ==========================================================================
+     ANCESTORS COLUMN — linear chain above (referrer chain)
+     ========================================================================== */
+  .ancestors { display:flex; flex-direction:column; align-items:center; }
+  .ancestors .node { margin-bottom:0; }
+  .link-v { width:2px; height:22px; background:var(--conn); }
+  .link-v--arrow { position:relative; }
+  .link-v--arrow::after {
+    content:""; position:absolute; left:50%; bottom:-1px; transform:translateX(-50%);
+    width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent;
+    border-top:6px solid var(--conn);
+  }
+  .top-tag {
+    display:inline-flex; align-items:center; gap:6px; margin-bottom:10px;
+    height:24px; padding:0 10px; border-radius:var(--radius-full);
+    background:var(--color-neutral-100); color:var(--color-graphite-500);
+    font-size:11px; font-weight:600; border:1px dashed var(--color-neutral-300);
+  }
+
+  /* ==========================================================================
+     DESCENDANTS TREE — branching below (pure-CSS org-chart connectors)
+     ========================================================================== */
+  .tree { display:flex; }
+  .tree ul { display:flex; padding-top:22px; margin:0; position:relative; list-style:none; padding-left:0; }
+  .tree li {
+    list-style:none; text-align:center; position:relative;
+    padding:22px 10px 0 10px; display:flex; flex-direction:column; align-items:center;
+  }
+  /* down connector from a parent into its children row */
+  .tree ul ul::before {
+    content:""; position:absolute; top:0; left:50%; width:0; height:22px;
+    border-left:2px solid var(--conn);
+  }
+  /* horizontal + vertical elbows for siblings */
+  .tree li::before, .tree li::after {
+    content:""; position:absolute; top:0; right:50%;
+    border-top:2px solid var(--conn); width:50%; height:22px;
+  }
+  .tree li::after { right:auto; left:50%; border-left:2px solid var(--conn); }
+  .tree li:only-child::after, .tree li:only-child::before { display:none; }
+  .tree li:only-child { padding-top:22px; }
+  .tree li:first-child::before, .tree li:last-child::after { border:0 none; }
+  .tree li:last-child::before { border-right:2px solid var(--conn); border-radius:0 6px 0 0; }
+  .tree li:first-child::after { border-radius:6px 0 0 0; }
+
+  .tree-scroll { overflow-x:auto; padding-bottom:8px; }
+  .tree-scroll::-webkit-scrollbar { height:8px; }
+  .tree-scroll::-webkit-scrollbar-thumb { background:var(--color-neutral-300); border-radius:99px; }
+
+  .stage { display:flex; flex-direction:column; align-items:center; }
+
+  /* collapsed leaf placeholder inside the tree */
+  .collapsed-hint { font-size:11px; color:var(--color-graphite-400); margin-top:6px; }
+
+  /* ==========================================================================
+     EMPTY STATES
+     ========================================================================== */
+  .empty { text-align:center; padding:40px 24px; }
+  .empty h3 { font-family:var(--font-display); font-weight:700; letter-spacing:-.02em; color:var(--color-graphite-900); font-size:1.125rem; margin:16px 0 0; }
+  .empty p { max-width:26rem; margin:8px auto 0; font-size:.875rem; color:var(--color-graphite-500); line-height:1.6; }
+
+  /* ==========================================================================
+     LOADING SKELETON  (rgba(154,154,163,0.18), animate-pulse, rounded)
+     ========================================================================== */
+  .sk { background:rgba(154,154,163,.18); border-radius:var(--radius-md); animation:pulse 1.5s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .node--skeleton { pointer-events:none; }
+  .node--skeleton .sk-line { height:10px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation:none !important; transition:none !important; }
+  }
+
+  /* ==========================================================================
+     RESPONSIVE — mobile stacks; the stage scrolls horizontally
+     ========================================================================== */
+  @media (max-width:640px) {
+    .page-head h1 { font-size:1.5rem; }
+    .node { width:210px; }
+    .stage { align-items:stretch; }
+  }
+</style>
+</head>
+<body class="mnx-surface-light">
+<div class="shell">
+
+  <!-- ============================ PAGE HEADER BAND ======================== -->
+  <header class="page-head">
+    <div style="min-width:0">
+      <div class="titlerow">
+        <span class="page-head__accent" aria-hidden="true"></span>
+        <h1 class="display-headline">Árvore Hierárquica</h1>
+      </div>
+      <nav class="crumb" aria-label="Breadcrumb">
+        <a href="#">Dashboard</a>
+        <span class="sep" aria-hidden="true">&rsaquo;</span>
+        <span class="cur" aria-current="page">Hierarquia</span>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ======================================================================
+       A. POPULATED TREE
+       ====================================================================== -->
+  <div class="demo-band">
+    <h2>A · Árvore populada</h2>
+    <p>3 níveis de patrocinadores acima · usuário atual (destaque laranja) · 3 níveis de convidados abaixo. O nó "Marcos" é largo e vem recolhido com controle "+N".</p>
+  </div>
+
+  <section class="auth-card" style="padding:24px 12px 28px" aria-label="Árvore hierárquica da rede">
+    <div class="tree-scroll">
+      <div class="stage" style="min-width:760px; margin:0 auto;">
+
+        <!-- ---------- ANCESTORS (linear, top → down) ---------- -->
+        <div class="ancestors" role="group" aria-label="Cadeia de patrocinadores">
+          <span class="top-tag" aria-hidden="true">▲ Topo da rede</span>
+
+          <!-- L-3 (topmost) -->
+          <div class="node node--ancestor" tabindex="0" aria-label="Patrocinador nível 3: Helena Costa, Administrador, Ativo">
+            <div class="node__top">
+              <span class="avatar">HC</span>
+              <div class="node__id">
+                <div class="node__name">Helena Costa</div>
+                <div class="node__profile">Gerente</div>
+              </div>
+            </div>
+            <div class="node__chips">
+              <span class="chip chip--role">🛡 Administrador</span>
+              <span class="chip chip--active">Ativo</span>
+            </div>
+          </div>
+          <span class="link-v link-v--arrow" aria-hidden="true"></span>
+
+          <!-- L-2 -->
+          <div class="node node--ancestor" tabindex="0" aria-label="Patrocinador nível 2: Rafael Nunes, Gestor de rede, Ativo">
+            <div class="node__top">
+              <span class="avatar">RN</span>
+              <div class="node__id">
+                <div class="node__name">Rafael Nunes</div>
+                <div class="node__profile">Gerente</div>
+              </div>
+            </div>
+            <div class="node__chips">
+              <span class="chip chip--role">🛡 Gestor de rede</span>
+              <span class="chip chip--active">Ativo</span>
+            </div>
+          </div>
+          <span class="link-v link-v--arrow" aria-hidden="true"></span>
+
+          <!-- L-1 (direct sponsor) -->
+          <div class="node node--ancestor" tabindex="0" aria-label="Patrocinador direto: Bruno Lima, Vendedor, Ativo">
+            <div class="node__top">
+              <span class="avatar">BL</span>
+              <div class="node__id">
+                <div class="node__name">Bruno Lima</div>
+                <div class="node__profile">Vendedor</div>
+              </div>
+            </div>
+            <div class="node__chips">
+              <span class="chip chip--role">🛡 Vendedor</span>
+              <span class="chip chip--active">Ativo</span>
+            </div>
+          </div>
+          <span class="link-v link-v--arrow" aria-hidden="true"></span>
+        </div>
+
+        <!-- ---------- CURRENT USER ---------- -->
+        <div class="node node--current" tabindex="0" aria-current="true" aria-label="Você: Ana Beatriz, Vendedor, Ativo">
+          <span class="node__youbadge">Você</span>
+          <div class="node__top">
+            <span class="avatar">AB</span>
+            <div class="node__id">
+              <div class="node__name">Ana Beatriz</div>
+              <div class="node__profile">Vendedor</div>
+            </div>
+          </div>
+          <div class="node__chips">
+            <span class="chip chip--role">🛡 Vendedor</span>
+            <span class="chip chip--active">Ativo</span>
+          </div>
+        </div>
+
+        <!-- ---------- DESCENDANTS (branching, down) ---------- -->
+        <div class="tree" role="tree" aria-label="Convidados abaixo de Ana Beatriz">
+          <ul>
+            <!-- D1 child A (branches further) -->
+            <li role="treeitem" aria-expanded="true">
+              <div class="node" tabindex="0" aria-label="Convidado: Carla Dias, Vendedor, Ativo">
+                <div class="node__top">
+                  <span class="avatar">CD</span>
+                  <div class="node__id">
+                    <div class="node__name">Carla Dias</div>
+                    <div class="node__profile">Vendedor</div>
+                  </div>
+                </div>
+                <div class="node__chips">
+                  <span class="chip chip--role">🛡 Vendedor</span>
+                  <span class="chip chip--active">Ativo</span>
+                </div>
+              </div>
+              <ul>
+                <li role="treeitem">
+                  <div class="node" tabindex="0" aria-label="Convidado: Diego Melo, Vendedor, Aguardando aprovação">
+                    <div class="node__top">
+                      <span class="avatar">DM</span>
+                      <div class="node__id">
+                        <div class="node__name">Diego Melo</div>
+                        <div class="node__profile">Vendedor</div>
+                      </div>
+                    </div>
+                    <div class="node__chips">
+                      <span class="chip chip--role">🛡 Vendedor</span>
+                      <span class="chip chip--wait">Aguardando aprovação</span>
+                    </div>
+                  </div>
+                </li>
+                <li role="treeitem">
+                  <div class="node" tabindex="0" aria-label="Convidado: Elisa Prado, Usuário, Inativo">
+                    <div class="node__top">
+                      <span class="avatar">EP</span>
+                      <div class="node__id">
+                        <div class="node__name">Elisa Prado</div>
+                        <div class="node__profile">—</div>
+                      </div>
+                    </div>
+                    <div class="node__chips">
+                      <span class="chip chip--role">🛡 Usuário</span>
+                      <span class="chip chip--inactive">Inativo</span>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </li>
+
+            <!-- D1 child B: WIDE node, COLLAPSED with +N control -->
+            <li role="treeitem" aria-expanded="false">
+              <div class="node" tabindex="0" aria-label="Convidado: Marcos Vieira, Gestor de rede, Ativo. 6 convidados recolhidos.">
+                <div class="node__top">
+                  <span class="avatar">MV</span>
+                  <div class="node__id">
+                    <div class="node__name">Marcos Vieira</div>
+                    <div class="node__profile">Gerente</div>
+                  </div>
+                </div>
+                <div class="node__chips">
+                  <span class="chip chip--role">🛡 Gestor de rede</span>
+                  <span class="chip chip--active">Ativo</span>
+                </div>
+                <button class="collapse-ctl" aria-expanded="false" aria-label="Expandir 6 convidados de Marcos Vieira">
+                  <span class="chev" aria-hidden="true">▾</span>
+                  Convidados <span class="count">+6</span>
+                </button>
+              </div>
+              <div class="collapsed-hint" aria-hidden="true">recolhido</div>
+            </li>
+
+            <!-- D1 child C: leaf -->
+            <li role="treeitem">
+              <div class="node" tabindex="0" aria-label="Convidado: Paula Reis, Usuário, Bloqueado">
+                <div class="node__top">
+                  <span class="avatar">PR</span>
+                  <div class="node__id">
+                    <div class="node__name">Paula Reis</div>
+                    <div class="node__profile">—</div>
+                  </div>
+                </div>
+                <div class="node__chips">
+                  <span class="chip chip--role">🛡 Usuário</span>
+                  <span class="chip chip--inactive">Bloqueado</span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================================
+       B. EXPANDED — the same wide node revealing its children
+       ====================================================================== -->
+  <div class="demo-band">
+    <h2>B · Nó expandido</h2>
+    <p>Mesmo nó "Marcos" após acionar o controle: chevron gira, os 3 primeiros filhos aparecem no próximo nível (nível 3, o mais profundo) e a contagem restante vira controle "+3".</p>
+  </div>
+
+  <section class="auth-card" style="padding:24px 12px 28px" aria-label="Árvore hierárquica — nó expandido">
+    <div class="tree-scroll">
+      <div class="stage" style="min-width:640px; margin:0 auto;">
+        <div class="tree" role="tree" aria-label="Convidados de Marcos Vieira">
+          <ul>
+            <li role="treeitem" aria-expanded="true">
+              <div class="node" tabindex="0" aria-label="Marcos Vieira, Gestor de rede, Ativo">
+                <div class="node__top">
+                  <span class="avatar">MV</span>
+                  <div class="node__id">
+                    <div class="node__name">Marcos Vieira</div>
+                    <div class="node__profile">Gerente</div>
+                  </div>
+                </div>
+                <div class="node__chips">
+                  <span class="chip chip--role">🛡 Gestor de rede</span>
+                  <span class="chip chip--active">Ativo</span>
+                </div>
+                <button class="collapse-ctl" aria-expanded="true" aria-label="Recolher convidados de Marcos Vieira">
+                  <span class="chev" aria-hidden="true">▾</span>
+                  Recolher
+                </button>
+              </div>
+              <ul>
+                <li role="treeitem">
+                  <div class="node" tabindex="0" aria-label="João Alves, Vendedor, Ativo">
+                    <div class="node__top"><span class="avatar">JA</span>
+                      <div class="node__id"><div class="node__name">João Alves</div><div class="node__profile">Vendedor</div></div>
+                    </div>
+                    <div class="node__chips"><span class="chip chip--role">🛡 Vendedor</span><span class="chip chip--active">Ativo</span></div>
+                  </div>
+                </li>
+                <li role="treeitem">
+                  <div class="node" tabindex="0" aria-label="Kátia Moro, Usuário, Aguardando aprovação">
+                    <div class="node__top"><span class="avatar">KM</span>
+                      <div class="node__id"><div class="node__name">Kátia Moro</div><div class="node__profile">—</div></div>
+                    </div>
+                    <div class="node__chips"><span class="chip chip--role">🛡 Usuário</span><span class="chip chip--wait">Aguardando aprovação</span></div>
+                  </div>
+                </li>
+                <li role="treeitem">
+                  <div class="node" tabindex="0" aria-label="Lucas Faria, Vendedor, Ativo. 3 convidados recolhidos.">
+                    <div class="node__top"><span class="avatar">LF</span>
+                      <div class="node__id"><div class="node__name">Lucas Faria</div><div class="node__profile">Vendedor</div></div>
+                    </div>
+                    <div class="node__chips"><span class="chip chip--role">🛡 Vendedor</span><span class="chip chip--active">Ativo</span></div>
+                    <button class="collapse-ctl" aria-expanded="false" aria-label="Expandir 3 convidados de Lucas Faria">
+                      <span class="chev" aria-hidden="true">▾</span> Convidados <span class="count">+3</span>
+                    </button>
+                  </div>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================================
+       C. EMPTY STATES
+       ====================================================================== -->
+  <div class="demo-band">
+    <h2>C · Estados vazios</h2>
+    <p>Sem patrocinadores (usuário no topo) e sem convidados. Reutiliza o padrão <code>mnx-stat-chip--orange</code> + título display + corpo do UserSearchPage.</p>
+  </div>
+
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px;">
+    <!-- empty ancestors -->
+    <section class="auth-card" aria-label="Sem patrocinadores">
+      <div class="empty">
+        <span class="mnx-stat-chip mnx-stat-chip--orange" aria-hidden="true" style="margin:0 auto; display:inline-flex;">▲</span>
+        <h3>Você está no topo</h3>
+        <p>Ninguém convidou você para esta rede — você é o ponto de partida da sua árvore.</p>
+        <div style="margin-top:20px;">
+          <div class="node node--current" style="margin:0 auto;" aria-current="true" aria-label="Você: Ana Beatriz, Vendedor, Ativo">
+            <span class="node__youbadge">Você</span>
+            <div class="node__top"><span class="avatar">AB</span>
+              <div class="node__id"><div class="node__name">Ana Beatriz</div><div class="node__profile">Vendedor</div></div>
+            </div>
+            <div class="node__chips"><span class="chip chip--role">🛡 Vendedor</span><span class="chip chip--active">Ativo</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- empty descendants -->
+    <section class="auth-card" aria-label="Sem convidados">
+      <div class="empty">
+        <div style="margin-bottom:20px;">
+          <div class="node node--current" style="margin:0 auto;" aria-current="true" aria-label="Você: Ana Beatriz, Vendedor, Ativo">
+            <span class="node__youbadge">Você</span>
+            <div class="node__top"><span class="avatar">AB</span>
+              <div class="node__id"><div class="node__name">Ana Beatriz</div><div class="node__profile">Vendedor</div></div>
+            </div>
+            <div class="node__chips"><span class="chip chip--role">🛡 Vendedor</span><span class="chip chip--active">Ativo</span></div>
+          </div>
+          <span class="link-v" aria-hidden="true" style="margin:0 auto; display:block;"></span>
+        </div>
+        <span class="mnx-stat-chip mnx-stat-chip--orange" aria-hidden="true" style="margin:0 auto; display:inline-flex;">＋</span>
+        <h3>Nenhum convidado ainda</h3>
+        <p>Convide vendedores para começar a construir sua rede. Eles aparecerão aqui abaixo de você.</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- ======================================================================
+       D. LOADING STATE
+       ====================================================================== -->
+  <div class="demo-band">
+    <h2>D · Carregando</h2>
+    <p>Esqueleto no formato da árvore: cadeia de patrocinadores + nó atual + linha de convidados. Usa o mesmo tom <code>rgba(154,154,163,.18)</code> + <code>animate-pulse</code> do &lt;Skeleton&gt;.</p>
+  </div>
+
+  <section class="auth-card" style="padding:24px 12px 28px" aria-busy="true" aria-label="Carregando árvore hierárquica">
+    <div class="stage" style="margin:0 auto;">
+
+      <!-- ancestor skeletons -->
+      <div class="ancestors">
+        <div class="node node--skeleton">
+          <div class="node__top">
+            <span class="sk" style="width:34px;height:34px;border-radius:9999px;"></span>
+            <div style="flex:1">
+              <div class="sk sk-line" style="width:60%;margin-bottom:6px;"></div>
+              <div class="sk sk-line" style="width:40%;height:8px;"></div>
+            </div>
+          </div>
+          <div class="node__chips">
+            <span class="sk" style="width:74px;height:22px;border-radius:9999px;"></span>
+            <span class="sk" style="width:52px;height:22px;border-radius:9999px;"></span>
+          </div>
+        </div>
+        <span class="link-v" aria-hidden="true"></span>
+        <div class="node node--skeleton">
+          <div class="node__top">
+            <span class="sk" style="width:34px;height:34px;border-radius:9999px;"></span>
+            <div style="flex:1">
+              <div class="sk sk-line" style="width:55%;margin-bottom:6px;"></div>
+              <div class="sk sk-line" style="width:35%;height:8px;"></div>
+            </div>
+          </div>
+          <div class="node__chips">
+            <span class="sk" style="width:70px;height:22px;border-radius:9999px;"></span>
+            <span class="sk" style="width:52px;height:22px;border-radius:9999px;"></span>
+          </div>
+        </div>
+        <span class="link-v" aria-hidden="true"></span>
+      </div>
+
+      <!-- current skeleton -->
+      <div class="node node--skeleton" style="box-shadow:0 0 0 2px var(--color-orange-200), var(--shadow-md);">
+        <div class="node__top">
+          <span class="sk" style="width:34px;height:34px;border-radius:9999px;"></span>
+          <div style="flex:1">
+            <div class="sk sk-line" style="width:58%;margin-bottom:6px;"></div>
+            <div class="sk sk-line" style="width:38%;height:8px;"></div>
+          </div>
+        </div>
+        <div class="node__chips">
+          <span class="sk" style="width:70px;height:22px;border-radius:9999px;"></span>
+          <span class="sk" style="width:52px;height:22px;border-radius:9999px;"></span>
+        </div>
+      </div>
+
+      <!-- descendant skeleton row -->
+      <span class="link-v" aria-hidden="true"></span>
+      <div style="display:flex; gap:20px; margin-top:2px;">
+        <div class="node node--skeleton">
+          <div class="node__top">
+            <span class="sk" style="width:34px;height:34px;border-radius:9999px;"></span>
+            <div style="flex:1"><div class="sk sk-line" style="width:60%;margin-bottom:6px;"></div><div class="sk sk-line" style="width:40%;height:8px;"></div></div>
+          </div>
+          <div class="node__chips"><span class="sk" style="width:70px;height:22px;border-radius:9999px;"></span><span class="sk" style="width:52px;height:22px;border-radius:9999px;"></span></div>
+        </div>
+        <div class="node node--skeleton">
+          <div class="node__top">
+            <span class="sk" style="width:34px;height:34px;border-radius:9999px;"></span>
+            <div style="flex:1"><div class="sk sk-line" style="width:55%;margin-bottom:6px;"></div><div class="sk sk-line" style="width:38%;height:8px;"></div></div>
+          </div>
+          <div class="node__chips"><span class="sk" style="width:70px;height:22px;border-radius:9999px;"></span><span class="sk" style="width:52px;height:22px;border-radius:9999px;"></span></div>
+        </div>
+        <div class="node node--skeleton">
+          <div class="node__top">
+            <span class="sk" style="width:34px;height:34px;border-radius:9999px;"></span>
+            <div style="flex:1"><div class="sk sk-line" style="width:58%;margin-bottom:6px;"></div><div class="sk sk-line" style="width:36%;height:8px;"></div></div>
+          </div>
+          <div class="node__chips"><span class="sk" style="width:70px;height:22px;border-radius:9999px;"></span><span class="sk" style="width:52px;height:22px;border-radius:9999px;"></span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <p style="margin-top:40px; font-size:.75rem; color:var(--color-graphite-400); text-align:center;">
+    Design mockup — MonexUp · Árvore Hierárquica. Não é código de produção. Ver hierarchy-tokens.md e hierarchy-component-spec.md.
+  </p>
+
+</div>
+</body>
+</html>

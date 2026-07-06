@@ -1,3 +1,4 @@
+import HierarchyInfo from "../../DTO/Domain/HierarchyInfo";
 import NetworkInfo from "../../DTO/Domain/NetworkInfo";
 import NetworkInsertInfo from "../../DTO/Domain/NetworkInsertInfo";
 import UserNetworkInfo from "../../DTO/Domain/UserNetworkInfo";
@@ -17,6 +18,7 @@ export default interface INetworkService {
     getUserNetwork: (networkId: number, token: string) => Promise<ApiResponse<UserNetworkInfo>>;
     getUserNetworkBySlug: (networkSlug: string, token: string) => Promise<ApiResponse<UserNetworkInfo>>;
     getSellerBySlug: (networkSlug: string, userSlug: string) => Promise<ApiResponse<UserNetworkInfo>>;
+    getHierarchy: (networkId: number, token: string) => Promise<ApiResponse<HierarchyInfo>>;
     requestAccess: (networkId: number, token: string, referrerId?: number) => Promise<ApiResponse<void>>;
     changeStatus: (networkId: number, userId: number, status: number, token: string) => Promise<ApiResponse<void>>;
     promote: (networkId: number, userId: number, token: string) => Promise<ApiResponse<void>>;

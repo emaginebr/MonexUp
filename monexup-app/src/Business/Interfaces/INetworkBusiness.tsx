@@ -1,4 +1,5 @@
 import BusinessResult from "../../DTO/Business/BusinessResult";
+import HierarchyInfo from "../../DTO/Domain/HierarchyInfo";
 import NetworkInfo from "../../DTO/Domain/NetworkInfo";
 import NetworkInsertInfo from "../../DTO/Domain/NetworkInsertInfo";
 import UserNetworkInfo from "../../DTO/Domain/UserNetworkInfo";
@@ -17,6 +18,7 @@ export default interface INetworkBusiness {
   getUserNetwork: (networkId: number) => Promise<BusinessResult<UserNetworkInfo>>;
   getUserNetworkBySlug: (networkSlug: string) => Promise<BusinessResult<UserNetworkInfo>>;
   getSellerBySlug: (networkSlug: string, userSlug: string) => Promise<BusinessResult<UserNetworkInfo>>;
+  getHierarchy: (networkId: number) => Promise<BusinessResult<HierarchyInfo>>;
   requestAccess: (networkId: number, referrerId?: number) => Promise<BusinessResult<boolean>>;
   changeStatus: (networkId: number, userId: number, status: number) => Promise<BusinessResult<boolean>>; 
   promote: (networkId: number, userId: number) => Promise<BusinessResult<boolean>>;

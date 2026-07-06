@@ -69,7 +69,7 @@ export interface UserSearchRowProps {
  * `handlers`. No legacy behavior changed.
  */
 
-function getInitials(name: string | undefined): string {
+export function getInitials(name: string | undefined | null): string {
   if (!name) return "—";
   const parts = name.trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return "—";
@@ -77,7 +77,7 @@ function getInitials(name: string | undefined): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-function statusPillClasses(status: UserNetworkStatusEnum): string {
+export function statusPillClasses(status: UserNetworkStatusEnum): string {
   // Three semantic tints: active = emerald, blocked = rose, otherwise neutral.
   if (status === UserNetworkStatusEnum.Active) {
     return "bg-emerald-500/10 text-emerald-700 ring-emerald-500/20";

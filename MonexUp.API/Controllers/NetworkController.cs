@@ -138,6 +138,22 @@ namespace MonexUp.API.Controllers
             return Ok(userNetworkInfos);
         }
 
+        [Authorize]
+        [HttpGet("hierarchy/{networkId}")]
+        public async Task<IActionResult> Hierarchy(long networkId)
+        {
+            var userSession = _userClient.GetUserInSession(HttpContext);
+            if (userSession == null) return Unauthorized();
+
+            var token = HttpContext.GetBearerToken();
+            var hierarchy = await _networkService.BuildHierarchy(networkId, userSession.UserId, token);
+            if (hierarchy == null)
+            {
+                return NotFound(new { sucesso = false, mensagemErro = "Membro não encontrado nesta rede." });
+            }
+            return Ok(hierarchy);
+        }
+
         [HttpGet("listByNetwork/{networkSlug}")]
         public async Task<IActionResult> ListByNetwork(string networkSlug)
         {

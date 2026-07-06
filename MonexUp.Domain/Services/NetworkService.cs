@@ -546,6 +546,118 @@ namespace MonexUp.Domain.Impl.Services
             return Task.CompletedTask;
         }
 
+        // ------------------------------------------------------------------
+        // Hierarchy tree (feature 010) — bounded 3 up / 3 down from the caller,
+        // built off UserNetwork.ReferrerId, all statuses, cycle-safe.
+        // ------------------------------------------------------------------
+        private const int HierarchyMaxDepth = 3;
+
+        public async Task<HierarchyInfo> BuildHierarchy(long networkId, long userId, string token)
+        {
+            var self = _userNetworkFactory.BuildUserNetworkModel().Get(networkId, userId, _userNetworkFactory);
+            if (self == null)
+            {
+                // Caller is not a member of this network — no tree.
+                return null;
+            }
+
+            var nameCache = new Dictionary<long, string>();
+            var visited = new HashSet<long> { userId };
+
+            var current = await ToHierarchyNode(self, token, nameCache);
+
+            // Ascend the referrer chain, up to HierarchyMaxDepth (immediate referrer first).
+            var ancestors = new List<HierarchyNodeInfo>();
+            var cursor = self;
+            for (var i = 0; i < HierarchyMaxDepth; i++)
+            {
+                if (!cursor.ReferrerId.HasValue) break;
+                var referrerId = cursor.ReferrerId.Value;
+                if (visited.Contains(referrerId)) break; // cycle guard
+                var referrer = _userNetworkFactory.BuildUserNetworkModel().Get(networkId, referrerId, _userNetworkFactory);
+                if (referrer == null) break; // referrer not in this network — chain ends
+                visited.Add(referrerId);
+                ancestors.Add(await ToHierarchyNode(referrer, token, nameCache));
+                cursor = referrer;
+            }
+
+            var descendants = await BuildDescendants(networkId, userId, HierarchyMaxDepth, token, nameCache, visited);
+
+            return new HierarchyInfo
+            {
+                NetworkId = networkId,
+                Current = current,
+                Ancestors = ancestors,
+                Descendants = descendants
+            };
+        }
+
+        private async Task<IList<HierarchyNodeInfo>> BuildDescendants(
+            long networkId, long parentUserId, int remainingDepth,
+            string token, Dictionary<long, string> nameCache, HashSet<long> visited)
+        {
+            var result = new List<HierarchyNodeInfo>();
+            if (remainingDepth <= 0) return result;
+
+            var children = _userNetworkFactory.BuildUserNetworkModel()
+                .GetByReferrer(networkId, parentUserId, _userNetworkFactory);
+
+            foreach (var child in children)
+            {
+                if (visited.Contains(child.UserId)) continue; // cycle / duplicate guard
+                visited.Add(child.UserId);
+                var node = await ToHierarchyNode(child, token, nameCache);
+                node.Children = await BuildDescendants(networkId, child.UserId, remainingDepth - 1, token, nameCache, visited);
+                result.Add(node);
+            }
+            return result;
+        }
+
+        private async Task<HierarchyNodeInfo> ToHierarchyNode(IUserNetworkModel model, string token, Dictionary<long, string> nameCache)
+        {
+            string profileName = null;
+            if (model.ProfileId.HasValue && model.ProfileId.Value > 0)
+            {
+                profileName = _userProfileFactory.BuildUserProfileModel()
+                    .GetById(model.ProfileId.Value, _userProfileFactory)?.Name;
+            }
+
+            return new HierarchyNodeInfo
+            {
+                UserId = model.UserId,
+                Name = await ResolveName(model.UserId, token, nameCache),
+                ProfileName = profileName,
+                Role = model.Role,
+                Status = model.Status,
+                Children = new List<HierarchyNodeInfo>()
+            };
+        }
+
+        private async Task<string> ResolveName(long userId, string token, Dictionary<long, string> nameCache)
+        {
+            if (nameCache.TryGetValue(userId, out var cached))
+            {
+                return cached;
+            }
+
+            string name = null;
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                try
+                {
+                    var user = await _userClient.GetByIdAsync(userId, token);
+                    name = user?.Name;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "NAuth GetByIdAsync failed for userId={UserId} — hierarchy node rendered without name.", userId);
+                }
+            }
+
+            nameCache[userId] = name;
+            return name;
+        }
+
         private async Task ValidateAccess(long networkId, long userId, long managerId, string token)
         {
             var userNetwork = _userNetworkFactory.BuildUserNetworkModel().Get(networkId, userId, _userNetworkFactory);

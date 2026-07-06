@@ -1,0 +1,118 @@
+/*
+ * Árvore Hierárquica — connector styling.
+ *
+ * Only the pure-CSS org-chart connectors live here — everything a Tailwind
+ * utility can express (node cards, chips, current-user emphasis, chevron
+ * rotation) stays in JSX per hierarchy-tokens.md. Connector color binds to the
+ * existing `--color-neutral-300` token (mnx-neutral-300 = #D4D4D1); no raw hex,
+ * no new design tokens. Classes are namespaced `mnx-hier-*` to avoid collisions.
+ */
+
+/* Ancestor chain — linear vertical connector (+ optional down-arrow) --------- */
+.mnx-hier-link-v {
+  width: 2px;
+  height: 22px;
+  background: var(--color-neutral-300);
+}
+.mnx-hier-link-v--arrow {
+  position: relative;
+}
+.mnx-hier-link-v--arrow::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -1px;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--color-neutral-300);
+}
+
+/* Descendant tree — classic ul/li elbow connectors -------------------------- */
+.mnx-hier-tree {
+  display: flex;
+}
+.mnx-hier-tree ul {
+  display: flex;
+  padding-top: 22px;
+  margin: 0;
+  position: relative;
+  list-style: none;
+  padding-left: 0;
+}
+.mnx-hier-tree li {
+  list-style: none;
+  text-align: center;
+  position: relative;
+  padding: 22px 10px 0 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+/* vertical drop from a parent into its children row */
+.mnx-hier-tree ul ul::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 0;
+  height: 22px;
+  border-left: 2px solid var(--color-neutral-300);
+}
+/* sibling elbows */
+.mnx-hier-tree li::before,
+.mnx-hier-tree li::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 50%;
+  border-top: 2px solid var(--color-neutral-300);
+  width: 50%;
+  height: 22px;
+}
+.mnx-hier-tree li::after {
+  right: auto;
+  left: 50%;
+  border-left: 2px solid var(--color-neutral-300);
+}
+.mnx-hier-tree li:only-child::after,
+.mnx-hier-tree li:only-child::before {
+  display: none;
+}
+.mnx-hier-tree li:only-child {
+  padding-top: 22px;
+}
+.mnx-hier-tree li:first-child::before,
+.mnx-hier-tree li:last-child::after {
+  border: 0 none;
+}
+.mnx-hier-tree li:last-child::before {
+  border-right: 2px solid var(--color-neutral-300);
+  border-radius: 0 6px 0 0;
+}
+.mnx-hier-tree li:first-child::after {
+  border-radius: 6px 0 0 0;
+}
+
+/* Horizontal pan container for wide levels ---------------------------------- */
+.mnx-hier-scroll {
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+.mnx-hier-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+.mnx-hier-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-neutral-300);
+  border-radius: 99px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mnx-hier-tree *,
+  .mnx-hier-scroll * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

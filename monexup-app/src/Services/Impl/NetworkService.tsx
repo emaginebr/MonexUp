@@ -1,3 +1,4 @@
+import HierarchyInfo from "../../DTO/Domain/HierarchyInfo";
 import NetworkInfo from "../../DTO/Domain/NetworkInfo";
 import NetworkInsertInfo from "../../DTO/Domain/NetworkInsertInfo";
 import UserNetworkInfo from "../../DTO/Domain/UserNetworkInfo";
@@ -42,6 +43,9 @@ const NetworkService: INetworkService = {
     },
     getSellerBySlug: async (networkSlug: string, userSlug: string) => {
         return await _httpClient.doGet<UserNetworkInfo>("/Network/getSellerBySlug/" + networkSlug + "/" + userSlug, {});
+    },
+    getHierarchy: async (networkId: number, token: string) => {
+        return await _httpClient.doGetAuth<HierarchyInfo>("/Network/hierarchy/" + networkId, token);
     },
     requestAccess: async (networkId: number, token: string, referrerId?: number) => {
         return await _httpClient.doPostAuth<void>("/Network/requestAccess", {

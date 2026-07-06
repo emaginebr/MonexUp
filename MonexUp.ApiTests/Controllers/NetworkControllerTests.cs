@@ -428,6 +428,52 @@ namespace MonexUp.ApiTests.Controllers
             }
         }
 
+        // --- Hierarchy (feature 010): GET /network/hierarchy/{networkId} ---
+
+        [Fact]
+        public async Task Hierarchy_WithoutAuth_ShouldReturn401()
+        {
+            var response = await _fixture.CreateAnonymousRequest("/network/hierarchy/1")
+                .AllowAnyHttpStatus()
+                .GetAsync();
+
+            response.StatusCode.Should().Be(401);
+        }
+
+        [Fact]
+        public async Task Hierarchy_WithAuthAsMember_ShouldReturnOkAndShape()
+        {
+            // The creator becomes a member of the network on insert.
+            var network = await CreateNetworkAsync();
+
+            var response = await _fixture.CreateAuthenticatedRequest($"/network/hierarchy/{network.NetworkId}")
+                .AllowAnyHttpStatus()
+                .GetAsync();
+
+            response.StatusCode.Should().Be(200, "the authenticated caller is a member of the network they just created");
+
+            var hierarchy = await response.GetJsonAsync<HierarchyInfo>();
+            hierarchy.Should().NotBeNull();
+            hierarchy.NetworkId.Should().Be(network.NetworkId);
+            hierarchy.Current.Should().NotBeNull("the logged-in member is the tree center");
+            hierarchy.Current.UserId.Should().BeGreaterThan(0);
+            hierarchy.Ancestors.Should().NotBeNull("ancestors must be a non-null collection (empty for the lone creator)");
+            hierarchy.Descendants.Should().NotBeNull("descendants must be a non-null collection (empty for the lone creator)");
+        }
+
+        [Fact]
+        public async Task Hierarchy_WithAuthNotMember_ShouldReturn404WithSucessoFalse()
+        {
+            // Caller does not belong to this networkId (very large, non-existent/foreign id).
+            var response = await _fixture.CreateAuthenticatedRequest("/network/hierarchy/999999999")
+                .AllowAnyHttpStatus()
+                .GetAsync();
+
+            response.StatusCode.Should().Be(404, "caller is not a member of the requested network");
+            var body = await response.GetJsonAsync<ErrorResult>();
+            body.Sucesso.Should().BeFalse();
+        }
+
         private async Task<NetworkInfo> CreateNetworkAsync()
         {
             var payload = TestDataHelper.CreateNetworkInsertInfo();

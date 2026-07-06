@@ -2,6 +2,8 @@ import { useContext, useEffect, useRef, useState } from "react";
 import ProviderResult from "../../DTO/Contexts/ProviderResult";
 import NetworkContext from "./NetworkContext";
 import INetworkProvider from "../../DTO/Contexts/INetworkProvider";
+import HierarchyInfo from "../../DTO/Domain/HierarchyInfo";
+import HierarchyProviderResult from "../../DTO/Contexts/HierarchyProviderResult";
 import NetworkInfo from "../../DTO/Domain/NetworkInfo";
 import UserNetworkInfo from "../../DTO/Domain/UserNetworkInfo";
 import NetworkInsertInfo from "../../DTO/Domain/NetworkInsertInfo";
@@ -18,6 +20,7 @@ export default function NetworkProvider(props: any) {
     const [loadingSeller, setLoadingSeller] = useState<boolean>(false);
     const [loadingUpdate, setLoadingUpdate] = useState<boolean>(false);
     const [loadingRequestAccess, setLoadingRequestAccess] = useState<boolean>(false);
+    const [loadingHierarchy, setLoadingHierarchy] = useState<boolean>(false);
 
     const [network, _setNetwork] = useState<NetworkInfo>(null);
     const [networks, setNetworks] = useState<NetworkInfo[]>([]);
@@ -25,6 +28,7 @@ export default function NetworkProvider(props: any) {
     const [seller, setSeller] = useState<UserNetworkInfo>(null);
     const [userNetworks, setUserNetworks] = useState<UserNetworkInfo[]>([]);
     const [teams, setTeams] = useState<UserNetworkInfo[]>([]);
+    const [hierarchy, setHierarchy] = useState<HierarchyInfo>(null);
     const [currentRole, _setCurrentRole] = useState<UserRoleEnum>(UserRoleEnum.User);
 
     const networkProviderValue: INetworkProvider = {
@@ -33,6 +37,7 @@ export default function NetworkProvider(props: any) {
         loadingSeller: loadingSeller,
         loadingUpdate: loadingUpdate,
         loadingRequestAccess: loadingRequestAccess,
+        loadingHierarchy: loadingHierarchy,
 
         network: network,
         networks: networks,
@@ -40,6 +45,7 @@ export default function NetworkProvider(props: any) {
         seller: seller,
         userNetworks: userNetworks,
         teams: teams,
+        hierarchy: hierarchy,
         currentRole: currentRole,
 
         setNetwork: (network: NetworkInfo) => {
@@ -69,6 +75,7 @@ export default function NetworkProvider(props: any) {
             setNetworks([]);
             setSeller(null);
             setTeams([]);
+            setHierarchy(null);
             clearSelection();
         },
         /*
@@ -461,6 +468,40 @@ export default function NetworkProvider(props: any) {
             }
             catch (err) {
                 setLoadingSeller(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: JSON.stringify(err)
+                };
+            }
+        },
+        getHierarchy: async (networkId: number) => {
+            let ret: Promise<HierarchyProviderResult>;
+            setLoadingHierarchy(true);
+            setHierarchy(null);
+            try {
+                let brt = await NetworkFactory.NetworkBusiness.getHierarchy(networkId);
+                if (brt.sucesso) {
+                    setLoadingHierarchy(false);
+                    setHierarchy(brt.dataResult);
+                    return {
+                        ...ret,
+                        hierarchy: brt.dataResult,
+                        sucesso: true,
+                        mensagemSucesso: "Load hierarchy"
+                    };
+                }
+                else {
+                    setLoadingHierarchy(false);
+                    return {
+                        ...ret,
+                        sucesso: false,
+                        mensagemErro: brt.mensagem
+                    };
+                }
+            }
+            catch (err) {
+                setLoadingHierarchy(false);
                 return {
                     ...ret,
                     sucesso: false,

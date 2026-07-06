@@ -36,6 +36,7 @@ import ProfileProvider from './Contexts/Profile/ProfileProvider';
 import ProfileListPage from './Pages/ProfileListPage';
 import ProfileEditPage from './Pages/ProfileEditPage';
 import UserSearchPage from './Pages/UserSearchPage';
+import HierarchyPage from './Pages/Admin/HierarchyPage';
 import ProductProvider from './Contexts/Product/ProductProvider';
 import ProductLinkProvider from './Contexts/ProductLink/ProductLinkProvider';
 import BillingProvider from './Contexts/Billing/BillingProvider';
@@ -240,6 +241,7 @@ function App() {
             <Route index element={<UserSearchPage />} />
             <Route path=":pageNum" element={<UserSearchPage />} />
           </Route>
+          <Route path="hierarchy" element={<HierarchyPage />} />
           <Route path="orders" element={<OrderSearchPage />} />
           <Route path="orders/:orderId" element={<OrderDetailPage />} />
           <Route path="orders/:orderId/invoices/:invoiceId" element={<InvoiceDetailPage />} />

@@ -26,6 +26,7 @@
   "preferences": "Preferencias",
   "team_structure": "Estructura del Equipo",
   "teams": "Equipos",
+  "hierarchy": "Jerarquía",
   "finances": "Finanzas",
   "orders": "Suscripciones",
   "invoices": "Facturas",
@@ -564,6 +565,25 @@
     "pageOf": "Página {{current}} de {{total}}",
     "emptyTitle": "Tu equipo aún está vacío",
     "emptyBody": "Cuando los vendedores se unan a tu red, aparecerán aquí para que puedas gestionar sus roles y accesos."
+  },
+  "hierarchyPage": {
+    "title": "Árbol Jerárquico",
+    "breadcrumb": "Jerarquía",
+    "you": "Tú",
+    "topOfTree": "Cima de la red",
+    "childrenLabel": "Invitados",
+    "collapse": "Contraer",
+    "expandChildren": "Expandir {{count}} invitados",
+    "collapsedSummary": "{{count}} invitados contraídos",
+    "ancestorsLabel": "Cadena de patrocinadores",
+    "descendantsLabel": "Invitados de {{name}}",
+    "emptyAncestorsTitle": "Estás en la cima",
+    "emptyAncestorsBody": "Nadie te invitó a esta red — eres el punto de partida de tu árbol.",
+    "emptyDescendantsTitle": "Aún no hay invitados",
+    "emptyDescendantsBody": "Invita a vendedores para empezar a construir tu red. Aparecerán aquí debajo de ti.",
+    "loading": "Cargando árbol jerárquico",
+    "loadError": "No se pudo cargar el árbol jerárquico.",
+    "errorTitle": "No se pudo cargar el árbol"
   },
   "orderSearchPage": {
     "searchPlaceholder": "Buscar suscripción por comprador o producto",

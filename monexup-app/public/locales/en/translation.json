@@ -26,6 +26,7 @@
   "preferences": "Preferences",
   "team_structure": "Team Structure",
   "teams": "Teams",
+  "hierarchy": "Hierarchy",
   "finances": "Finances",
   "orders": "Subscriptions",
   "invoices": "Invoices",
@@ -611,6 +612,25 @@
     "pageOf": "Page {{current}} of {{total}}",
     "emptyTitle": "No team members yet",
     "emptyBody": "When sellers join your network, they'll appear here so you can manage their roles and access."
+  },
+  "hierarchyPage": {
+    "title": "Hierarchy Tree",
+    "breadcrumb": "Hierarchy",
+    "you": "You",
+    "topOfTree": "Top of network",
+    "childrenLabel": "Invitees",
+    "collapse": "Collapse",
+    "expandChildren": "Expand {{count}} invitees",
+    "collapsedSummary": "{{count}} invitees collapsed",
+    "ancestorsLabel": "Sponsor chain",
+    "descendantsLabel": "Invitees of {{name}}",
+    "emptyAncestorsTitle": "You're at the top",
+    "emptyAncestorsBody": "No one invited you to this network — you are the starting point of your tree.",
+    "emptyDescendantsTitle": "No invitees yet",
+    "emptyDescendantsBody": "Invite sellers to start building your network. They'll appear here below you.",
+    "loading": "Loading hierarchy tree",
+    "loadError": "The hierarchy tree could not be loaded.",
+    "errorTitle": "The tree could not be loaded"
   },
   "orderSearchPage": {
     "searchPlaceholder": "Search subscriptions by buyer or product",

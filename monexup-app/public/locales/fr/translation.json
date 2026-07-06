@@ -26,6 +26,7 @@
   "preferences": "Préférences",
   "team_structure": "Structure de l'Équipe",
   "teams": "Équipes",
+  "hierarchy": "Hiérarchie",
   "finances": "Finances",
   "orders": "Abonnements",
   "invoices": "Factures",
@@ -564,6 +565,25 @@
     "pageOf": "Page {{current}} sur {{total}}",
     "emptyTitle": "Votre équipe est encore vide",
     "emptyBody": "Lorsque des vendeurs rejoindront votre réseau, ils apparaîtront ici afin de gérer leurs rôles et accès."
+  },
+  "hierarchyPage": {
+    "title": "Arbre Hiérarchique",
+    "breadcrumb": "Hiérarchie",
+    "you": "Vous",
+    "topOfTree": "Sommet du réseau",
+    "childrenLabel": "Invités",
+    "collapse": "Réduire",
+    "expandChildren": "Développer {{count}} invités",
+    "collapsedSummary": "{{count}} invités réduits",
+    "ancestorsLabel": "Chaîne de parrainage",
+    "descendantsLabel": "Invités de {{name}}",
+    "emptyAncestorsTitle": "Vous êtes au sommet",
+    "emptyAncestorsBody": "Personne ne vous a invité dans ce réseau — vous êtes le point de départ de votre arbre.",
+    "emptyDescendantsTitle": "Aucun invité pour l'instant",
+    "emptyDescendantsBody": "Invitez des vendeurs pour commencer à construire votre réseau. Ils apparaîtront ici sous vous.",
+    "loading": "Chargement de l'arbre hiérarchique",
+    "loadError": "Impossible de charger l'arbre hiérarchique.",
+    "errorTitle": "Impossible de charger l'arbre"
   },
   "orderSearchPage": {
     "searchPlaceholder": "Rechercher un abonnement par acheteur ou produit",

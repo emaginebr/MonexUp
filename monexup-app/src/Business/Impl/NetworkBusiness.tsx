@@ -1,5 +1,6 @@
 import BusinessResult from "../../DTO/Business/BusinessResult";
 import AuthSession from "../../DTO/Domain/AuthSession";
+import HierarchyInfo from "../../DTO/Domain/HierarchyInfo";
 import NetworkInfo from "../../DTO/Domain/NetworkInfo";
 import NetworkInsertInfo from "../../DTO/Domain/NetworkInsertInfo";
 import UserNetworkInfo from "../../DTO/Domain/UserNetworkInfo";
@@ -282,6 +283,35 @@ const NetworkBusiness: INetworkBusiness = {
         }
       } catch {
         throw new Error("Failed to get user by email");
+      }
+  },
+  getHierarchy: async (networkId: number) => {
+    try {
+        let ret: BusinessResult<HierarchyInfo>;
+        let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+        if (!session) {
+          return {
+            ...ret,
+            sucesso: false,
+            mensagem: "Not logged"
+          };
+        }
+        let retServ = await _networkService.getHierarchy(networkId, session.token);
+        if (retServ.success) {
+          return {
+            ...ret,
+            dataResult: retServ.data,
+            sucesso: true
+          };
+        } else {
+          return {
+            ...ret,
+            sucesso: false,
+            mensagem: retServ.messageError
+          };
+        }
+      } catch {
+        throw new Error("Failed to get hierarchy");
       }
   },
   requestAccess: async (networkId: number, referrerId?: number) => {
