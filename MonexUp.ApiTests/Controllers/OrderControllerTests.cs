@@ -7,6 +7,7 @@ using MonexUp.DTO.Invoice;
 using MonexUp.DTO.Network;
 using MonexUp.DTO.Order;
 using MonexUp.DTO.Payment;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 
@@ -248,6 +249,73 @@ namespace MonexUp.ApiTests.Controllers
             }
             // else: running API predates the fix — commission verification is deferred to the
             // unit tests; a live re-run against the fixed API will exercise the branch above.
+        }
+
+        [Fact]
+        public async Task Purchase_WhenPaid_ShouldNeverSurfaceZeroAmountCommission()
+        {
+            // REGRESSION for the zero-amount commission fix (BillingFeeService): the ProxyPay
+            // status-poll path can report the invoice amount as 0, which previously minted
+            // amount=0 fee rows. The fix derives the base from the order total and skips any
+            // fee that rounds to 0 → NO statement row may ever surface with amount == 0.
+            //
+            // Best-effort against a possibly-stale live API: we always drive the paid flow and
+            // assert the invariant on whatever the billing statement returns. If the deployed
+            // instance predates the fix, this test would catch a regression by surfacing a
+            // zero-amount row; a fully-seeded paid invoice with network/seller commission is
+            // required to positively assert a non-zero row is produced (covered at unit level).
+            var network = await CreateNetworkAsync();
+            var userId = _fixture.ExtractUserIdFromToken();
+            var lofnStore = await CreateLofnStoreAsync();
+            var lofnProduct = await CreateLofnProductAsync(lofnStore.Slug);
+            await UpsertLinkAsync(lofnProduct.ProductId, network.NetworkId, userId);
+            await EnsureProxyPayStoreAsync(network.NetworkId);
+            await ConfigureAbacatePayKeyAsync(network.NetworkId);
+
+            var payload = TestDataHelper.CreatePixPaymentRequest(
+                productSlug: lofnProduct.Slug,
+                networkSlug: network.Slug);
+            var createResp = await _fixture.CreateAuthenticatedRequest("/order/createPixPayment")
+                .AllowAnyHttpStatus()
+                .PostJsonAsync(payload);
+            await EnsureSuccessOrReportAsync(createResp, "createPixPayment for zero-amount-commission test");
+            var created = await createResp.GetJsonAsync<PixPaymentResult>();
+            var invoiceId = created.QrCode.InvoiceId;
+
+            // Pay via the MonexUp simulate proxy (never call ProxyPay directly).
+            var sim = await _fixture.CreateAuthenticatedRequest($"/order/simulatePixPayment/{invoiceId}")
+                .AllowAnyHttpStatus()
+                .PostJsonAsync(new { });
+            ((int)sim.StatusCode).Should().Be(200, "MonexUp simulate-payment proxy must succeed");
+
+            // Poll checkPixStatus — this is the path that records commission after payment.
+            var paid = false;
+            for (var attempt = 0; attempt < 5 && !paid; attempt++)
+            {
+                if (attempt > 0) await Task.Delay(2000);
+                var statusResp = await _fixture.CreateAuthenticatedRequest($"/order/checkPixStatus/{invoiceId}")
+                    .AllowAnyHttpStatus()
+                    .GetAsync();
+                statusResp.StatusCode.Should().Be(200);
+                var status = await statusResp.GetJsonAsync<PixStatusResult>();
+                paid = status.Paid;
+            }
+            paid.Should().BeTrue("checkPixStatus must report the simulated payment as paid");
+
+            // Read the whole billing statement for the network and assert the invariant:
+            // no commission row may be surfaced with a zero amount.
+            var searchResp = await _fixture.CreateAuthenticatedRequest("/billing/searchStatement")
+                .AllowAnyHttpStatus()
+                .PostJsonAsync(new StatementSearchParam { NetworkId = network.NetworkId, PageNum = 1 });
+            searchResp.StatusCode.Should().Be(200);
+            var statements = await searchResp.GetJsonAsync<StatementListPagedResult>();
+
+            // Invariant: no commission row may carry amount == 0. This holds vacuously when
+            // the live (possibly stale/limited) environment surfaces no statement rows, and
+            // fails loudly if a regression re-introduces a zero-amount row.
+            (statements.Statements ?? new List<StatementInfo>())
+                .Should().NotContain(s => s.Amount == 0,
+                    "the zero-amount commission fix must never surface a commission row with amount == 0");
         }
 
         private async Task<MemberBalanceInfo> GetNetworkBalanceAsync(long networkId)

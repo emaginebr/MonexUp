@@ -346,7 +346,7 @@ export default function InvoiceDetailPage() {
                                 <h2 className="text-[0.7rem] uppercase tracking-wider font-semibold text-graphite-500 mb-3">
                                     {t("invoiceDetailPage.section_meta")}
                                 </h2>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-2 gap-4">
                                     {/* Left dl — system dates + external code */}
                                     <dl className="rounded-xl border border-mnx-neutral-200 bg-white p-4 space-y-3">
                                         <div className="grid grid-cols-[9rem_1fr] gap-3 items-baseline">

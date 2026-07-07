@@ -279,6 +279,82 @@ namespace MonexUp.UnitTests.Services
             Assert.Equal(10.0, sellerFee.Amount);
         }
 
+        // ---- Zero-amount fix: never mint amount=0 commission rows ----
+
+        [Fact]
+        public void RecordPaidProxyPayInvoice_ZeroPaidAmountAndNoOrderTotal_CreatesNoRows()
+        {
+            using var ctx = NewContext();
+            // Commissioned seller profile (10%) AND a network cut (20%) are configured,
+            // but the ProxyPay poll path reports paidAmountCents=0 and the order carries
+            // NO items → there is no positive base from either source.
+            var (networkId, sellerId, invoiceId) = SeedOrderWithSeller(ctx, sellerCommission: 10);
+
+            var factory = NetworkFactoryReturning(networkId, NetworkPlanEnum.Standard, commission: 20, withdrawalPeriod: 30);
+            var sut = new BillingFeeService(ctx, factory.Object, NullLogger<BillingFeeService>.Instance);
+
+            var inserted = sut.RecordPaidProxyPayInvoice(invoiceId, networkId, paidAmountCents: 0, paidAt: DateTime.UtcNow);
+
+            // No commission to record → zero rows, not a single amount=0 ledger entry.
+            Assert.Equal(0, inserted);
+            Assert.Empty(ctx.InvoiceFees.ToList());
+            Assert.DoesNotContain(ctx.InvoiceFees.ToList(), f => f.Amount == 0);
+        }
+
+        [Fact]
+        public void RecordPaidProxyPayInvoice_ZeroPaidAmountButOrderTotalPositive_UsesOrderTotal()
+        {
+            using var ctx = NewContext();
+            // paidAmountCents=0 (status-poll path), but the order total is authoritative:
+            // 2 x 100.00 = 200.00 → effectiveCents = 20000.
+            var (networkId, sellerId, invoiceId) = SeedOrderWithSeller(ctx, sellerCommission: 10);
+            ctx.OrderItems.Add(new OrderItem { ItemId = 1, OrderId = 1, ProductId = 1, Quantity = 2, Amount = 100.00m });
+            ctx.SaveChanges();
+
+            var factory = NetworkFactoryReturning(networkId, NetworkPlanEnum.Standard, commission: 20, withdrawalPeriod: 30);
+            var sut = new BillingFeeService(ctx, factory.Object, NullLogger<BillingFeeService>.Instance);
+
+            var inserted = sut.RecordPaidProxyPayInvoice(invoiceId, networkId, paidAmountCents: 0, paidAt: DateTime.UtcNow);
+
+            Assert.Equal(2, inserted);
+
+            // Store/network cut: 20% of 200.00 = 40.00, base recorded = 20000 cents.
+            var storeCut = Assert.Single(ctx.InvoiceFees.Where(f => f.NetworkId == networkId && f.UserId == null).ToList());
+            Assert.Equal(40.0, storeCut.Amount);
+            Assert.Equal(20000, storeCut.PaidAmountCentsAtRecord);
+
+            // Seller row: 10% of 200.00 = 20.00, base recorded = 20000 cents.
+            var sellerFee = Assert.Single(ctx.InvoiceFees.Where(f => f.UserId == sellerId).ToList());
+            Assert.Equal(20.0, sellerFee.Amount);
+            Assert.Equal(20000, sellerFee.PaidAmountCentsAtRecord);
+
+            // No amount=0 row ever surfaces.
+            Assert.DoesNotContain(ctx.InvoiceFees.ToList(), f => f.Amount == 0);
+        }
+
+        [Fact]
+        public void RecordPaidProxyPayInvoice_FeeRoundsToZero_SkipsThatRow()
+        {
+            using var ctx = NewContext();
+            // Tiny sale: 0.01 paid. The network cut (1%) is 0.0001 → rounds to 0.00 and
+            // must be skipped, while the seller cut (60%) is 0.006 → rounds to 0.01 > 0.
+            var (networkId, sellerId, invoiceId) = SeedOrderWithSeller(ctx, sellerCommission: 60);
+
+            var factory = NetworkFactoryReturning(networkId, NetworkPlanEnum.Standard, commission: 1, withdrawalPeriod: 30);
+            var sut = new BillingFeeService(ctx, factory.Object, NullLogger<BillingFeeService>.Instance);
+
+            var inserted = sut.RecordPaidProxyPayInvoice(invoiceId, networkId, paidAmountCents: 1, paidAt: DateTime.UtcNow);
+
+            // Only the seller row survives; the store cut that rounds to 0.00 is not created.
+            Assert.Equal(1, inserted);
+            Assert.Empty(ctx.InvoiceFees.Where(f => f.NetworkId == networkId && f.UserId == null).ToList());
+            var sellerFee = Assert.Single(ctx.InvoiceFees.Where(f => f.UserId == sellerId).ToList());
+            Assert.Equal(0.01, sellerFee.Amount);
+
+            // No amount=0 row ever surfaces.
+            Assert.DoesNotContain(ctx.InvoiceFees.ToList(), f => f.Amount == 0);
+        }
+
         // ---- FR-004: idempotency — INTEGRATION ONLY ----
 
         [Fact(Skip = "Idempotency is enforced by the Postgres unique index (proxypay_invoice_id,user_id,role) " +

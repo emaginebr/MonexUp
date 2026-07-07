@@ -30,7 +30,31 @@ namespace DB.Infra.Services
             var network = _networkFactory.BuildNetworkModel().GetById(networkId, _networkFactory);
             if (network == null) return 0;
 
-            var paidAmount = paidAmountCents / 100.0;
+            var order = _context.Orders.FirstOrDefault(x => x.ProxyPayInvoiceId == proxypayInvoiceId);
+
+            // Authoritative commission base = the order's charged total. The ProxyPay
+            // invoice amount can arrive as 0 in the status-poll path, which would mint
+            // amount=0 fee rows; fall back to the order total in that case.
+            var effectiveCents = paidAmountCents;
+            if (effectiveCents <= 0 && order != null)
+            {
+                var orderTotal = _context.OrderItems
+                    .Where(oi => oi.OrderId == order.OrderId)
+                    .Sum(oi => (oi.Amount ?? 0m) * oi.Quantity);
+                effectiveCents = (long)Math.Round(orderTotal * 100m);
+            }
+
+            if (effectiveCents <= 0)
+            {
+                // No positive paid amount → there is no commission to record. Never
+                // create amount=0 fee rows.
+                _logger.LogWarning(
+                    "Commission skipped: no positive paid amount for invoice {InvoiceId} (network {NetworkId}, paidAmountCents={PaidAmountCents}).",
+                    proxypayInvoiceId, networkId, paidAmountCents);
+                return 0;
+            }
+
+            var paidAmount = effectiveCents / 100.0;
             var paidAtUnspec = DateTime.SpecifyKind(paidAt, DateTimeKind.Unspecified);
             var withdrawalDue = DateTime.SpecifyKind(paidAt.Date.AddDays(network.WithdrawalPeriod), DateTimeKind.Unspecified);
             var inserted = 0;
@@ -43,7 +67,7 @@ namespace DB.Infra.Services
                     userId: null,
                     role: null,
                     amount: Math.Round(paidAmount * PLATAFORM_FEE, 2),
-                    paidAmountCents: paidAmountCents,
+                    paidAmountCents: effectiveCents,
                     paidAt: paidAtUnspec,
                     withdrawalDueDate: withdrawalDue);
             }
@@ -56,12 +80,11 @@ namespace DB.Infra.Services
                     userId: null,
                     role: null,
                     amount: Math.Round(paidAmount * (network.Commission / 100.0), 2),
-                    paidAmountCents: paidAmountCents,
+                    paidAmountCents: effectiveCents,
                     paidAt: paidAtUnspec,
                     withdrawalDueDate: withdrawalDue);
             }
 
-            var order = _context.Orders.FirstOrDefault(x => x.ProxyPayInvoiceId == proxypayInvoiceId);
             if (order != null && order.SellerId.HasValue && order.SellerId.Value > 0)
             {
                 var profile = _context.UserNetworks
@@ -76,7 +99,7 @@ namespace DB.Infra.Services
                         userId: order.SellerId.Value,
                         role: null,
                         amount: Math.Round(paidAmount * (profile.Commission / 100.0), 2),
-                        paidAmountCents: paidAmountCents,
+                        paidAmountCents: effectiveCents,
                         paidAt: paidAtUnspec,
                         withdrawalDueDate: withdrawalDue);
                 }
@@ -111,6 +134,14 @@ namespace DB.Infra.Services
 
         private int InsertFeeIfAbsent(long proxypayInvoiceId, long? networkId, long? userId, int? role, double amount, long paidAmountCents, DateTime paidAt, DateTime withdrawalDueDate)
         {
+            // Never mint a zero (or negative) commission row. A fee that computes to 0
+            // (no percentage, or an amount too small to round to a cent) is simply "no
+            // commission" and must not create a ledger entry.
+            if (amount <= 0)
+            {
+                return 0;
+            }
+
             var row = new InvoiceFee
             {
                 ProxyPayInvoiceId = proxypayInvoiceId,

@@ -598,7 +598,7 @@ export default function NetworkInsertPage() {
                                         </div>
                                     </div>
 
-                                    <div className="pt-6 flex flex-col sm:flex-row sm:justify-end gap-3">
+                                    <div className="pt-6 flex flex-row justify-end gap-3">
                                         <button
                                             type="button"
                                             onClick={() => setStep(1)}

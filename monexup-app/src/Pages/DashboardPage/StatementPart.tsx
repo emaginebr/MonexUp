@@ -207,7 +207,9 @@ export default function StatementPart({
                     </span>
                   </td>
                   <td className="is-num">R$ {statement.amount}</td>
-                  <td>{statement.paidAt}</td>
+                  <td>
+                    <Moment format="DD/MM/YYYY HH:mm">{statement.paidAt}</Moment>
+                  </td>
                 </tr>
               ))}
 

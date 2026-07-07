@@ -2,10 +2,11 @@
 -- MonexUp Database Schema
 -- PostgreSQL
 -- Generated: 2026-04-03
--- Last updated: 2026-05-04 (Invoice entity removal — ProxyPay is canonical invoice)
+-- Last updated: 2026-07-07 (feature 009 referrer_id; order_items.amount +
+--               networks.template — migration AddOrderItemAmount)
 -- Prefix: monexup_
 --
--- Feature 005 changes (current state):
+-- Feature 005 changes:
 --   * monexup_networks: + proxypay_store_id, proxypay_client_id (lazy 1:1 store)
 --   * monexup_orders:
 --       - + proxypay_invoice_id  -> link to ProxyPay invoice issued at PIX QR creation
@@ -22,6 +23,19 @@
 --       - partial index on (network_id) WHERE reversed_at IS NULL  -> fast
 --         per-network commission balance
 --   * monexup_invoices: DROPPED  (canonical invoice now lives in ProxyPay)
+--
+-- Feature 009 (referrer-invite):
+--   * monexup_user_networks: + referrer_id  -> who referred this member into the
+--     network (nullable; drives the hierarchy tree in feature 010).
+--
+-- Feature 011 (commission ledger): no schema change — reuses monexup_invoice_fees
+--   (reversed_at / withdrawal_due_date power the balance + statement). Commission
+--   is generated on paid PIX and never written with amount = 0.
+--
+-- Migration AddOrderItemAmount (2026-07-07):
+--   * monexup_order_items: + amount NUMERIC NULL  -> per-item charged amount
+--     (authoritative commission base).
+--   * monexup_networks:    + template VARCHAR(20) NULL.
 -- ============================================================
 
 -- Sequences

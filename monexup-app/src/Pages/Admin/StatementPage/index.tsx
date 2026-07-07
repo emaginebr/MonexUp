@@ -336,7 +336,7 @@ export default function StatementPage() {
             {!loading && !isEmpty && (
               <>
                 {/* Desktop table --------------------------------------- */}
-                <div className="overflow-x-auto hidden md:block">
+                <div className="overflow-x-auto block">
                   <table className="mnx-stmt-table">
                     <caption className="sr-only">
                       {t(
@@ -414,7 +414,7 @@ export default function StatementPage() {
                 </div>
 
                 {/* Mobile stacked cards -------------------------------- */}
-                <div className="md:hidden divide-y divide-mnx-neutral-100">
+                <div className="hidden divide-y divide-mnx-neutral-100">
                   {rows.map((item, idx) => {
                     const status = resolveStatus(item);
                     const isReversed = status === "reversed";
