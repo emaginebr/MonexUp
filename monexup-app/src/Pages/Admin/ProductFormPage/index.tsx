@@ -166,8 +166,9 @@ export default function ProductFormPage() {
                 setEditing(item as ProductInfoExt);
                 const hasAdvancedData = (item.images?.length ?? 0) > 1;
                 setAdvancedDataWarning(hasAdvancedData);
-            } catch {
+            } catch (err) {
                 if (cancelled) return;
+                console.error("[ProductForm] failed to load product from Lofn:", err);
                 showToast(
                     MessageToastEnum.Error,
                     t("admin_lofn_unavailable", "Lofn indisponível, tente novamente."),
@@ -254,6 +255,11 @@ export default function ProductFormPage() {
             // the store exists even when the cached network info is stale.
             const r = await networkContext.ensureLofnStore(networkId);
             if (!r.sucesso || !r.network?.lofnStoreId) {
+                console.error(
+                    "[ProductForm] ensureLofnStore failed for networkId=%s:",
+                    networkId,
+                    (r as any).mensagemErro ?? r,
+                );
                 showToast(
                     MessageToastEnum.Error,
                     (r as any).mensagemErro ||
@@ -273,6 +279,9 @@ export default function ProductFormPage() {
                 || (import.meta as any).env?.VITE_LOFN_API_URL
                 || "";
             if (!lofnApiUrl) {
+                console.error(
+                    "[ProductForm] REACT_APP_LOFN_API_URL is not configured — cannot reach Lofn.",
+                );
                 showToast(
                     MessageToastEnum.Error,
                     t("admin_lofn_unavailable", "Lofn indisponível, tente novamente."),
@@ -300,6 +309,11 @@ export default function ProductFormPage() {
             const effectiveStoreSlug: string | undefined =
                 gqlJson?.data?.myStores?.items?.[0]?.slug;
             if (!effectiveStoreSlug) {
+                console.error(
+                    "[ProductForm] Lofn store slug not resolved (storeId=%s). GraphQL response:",
+                    effectiveStoreId,
+                    gqlJson?.errors ?? gqlJson,
+                );
                 showToast(
                     MessageToastEnum.Error,
                     t("admin_product_provision_error", "Falha ao provisionar a loja na Lofn."),
@@ -383,6 +397,12 @@ export default function ProductFormPage() {
                     auth.sessionInfo.userId,
                 );
                 if (!r.sucesso) {
+                    console.error(
+                        "[ProductForm] ProductLink upsert failed (productId=%s, networkId=%s):",
+                        saved.productId,
+                        networkContext.network.networkId,
+                        r.mensagemErro ?? r,
+                    );
                     showToast(
                         MessageToastEnum.Error,
                         r.mensagemErro ||
@@ -398,6 +418,7 @@ export default function ProductFormPage() {
             );
             setTimeout(() => navigate("/admin/products"), 800);
         } catch (err: any) {
+            console.error("[ProductForm] product save failed:", err);
             showToast(
                 MessageToastEnum.Error,
                 err?.message || t("admin_product_save_error", "Falha ao salvar produto"),

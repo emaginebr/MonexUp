@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
@@ -16,15 +17,18 @@ namespace MonexUp.Domain.Impl.Services
         private readonly IProductLinkDomainFactory _factory;
         private readonly IUserNetworkDomainFactory _userNetworkFactory;
         private readonly ILofnStoreProvisioningService _provisioning;
+        private readonly ILogger<ProductLinkService> _logger;
 
         public ProductLinkService(
             IProductLinkDomainFactory factory,
             IUserNetworkDomainFactory userNetworkFactory,
-            ILofnStoreProvisioningService provisioning)
+            ILofnStoreProvisioningService provisioning,
+            ILogger<ProductLinkService> logger)
         {
             _factory = factory;
             _userNetworkFactory = userNetworkFactory;
             _provisioning = provisioning;
+            _logger = logger;
         }
 
         public async Task<UpsertResult> UpsertAsync(
@@ -83,6 +87,9 @@ namespace MonexUp.Domain.Impl.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex,
+                    "Lofn store provisioning failed during ProductLink upsert. networkId={NetworkId}, userId={UserId}, lofnProductId={LofnProductId}",
+                    info.NetworkId, info.UserId, info.LofnProductId);
                 return new UpsertResult
                 {
                     StatusCode = 503,

@@ -267,11 +267,8 @@ export default function NetworkEditPage() {
                 icon={LayoutTemplate}
                 helper={t("network_edit_template_helper")}
               >
-                <input
+                <select
                   id="network-edit-template"
-                  type="text"
-                  maxLength={20}
-                  placeholder={t("network_edit_template_placeholder")}
                   value={network?.template ?? ""}
                   onChange={(e) =>
                     networkContext.setNetwork({
@@ -279,8 +276,11 @@ export default function NetworkEditPage() {
                       template: e.target.value,
                     })
                   }
-                  className="flex-1 min-w-0 h-full px-2 bg-transparent border-0 outline-none text-graphite-900 placeholder:text-graphite-400 font-mono text-sm"
-                />
+                  className="flex-1 min-w-0 h-full px-2 bg-transparent border-0 outline-none text-graphite-900 font-mono text-sm cursor-pointer"
+                >
+                  <option value="editorial">{t("network_edit_template_editorial", "Editorial")}</option>
+                  <option value="vibrant">{t("network_edit_template_vibrant", "Vibrant")}</option>
+                </select>
               </FormField>
 
               <FormField

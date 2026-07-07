@@ -203,7 +203,7 @@ export default function StatementPage() {
 
         {/* 2. Balance summary strip -------------------------------------- */}
         <section
-          className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 animate-fade-up"
+          className="grid grid-cols-3 gap-4 mb-6 animate-fade-up"
           aria-label={t("statementPage.balanceStripAria", "Resumo de saldo")}
         >
           {/* Focal dark tile — Saldo total */}

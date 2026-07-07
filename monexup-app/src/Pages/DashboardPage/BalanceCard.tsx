@@ -57,7 +57,7 @@ export default function BalanceCard({
 
   return (
     <article
-      className="mnx-surface-dark relative lg:col-span-4 rounded-2xl overflow-hidden bg-mesh-balance p-6 sm:p-7 text-mnx-neutral-50"
+      className="mnx-surface-dark relative lg:col-span-4 rounded-2xl overflow-hidden bg-mesh-balance p-5 sm:p-6 text-mnx-neutral-50"
       aria-labelledby="dashboard-balance-label"
     >
       <div
@@ -81,9 +81,9 @@ export default function BalanceCard({
           </span>
         </div>
 
-        <p className="mnx-num mt-3 flex items-baseline gap-1.5">
+        <p className="mnx-num mt-2 flex items-baseline gap-1.5">
           <span className="text-base text-graphite-300">R$</span>
-          <span className="text-4xl sm:text-5xl font-bold text-mnx-neutral-50">
+          <span className="text-3xl sm:text-4xl font-bold text-mnx-neutral-50">
             {loadingBalance ? (
               <Skeleton width={140} baseColor="#1B1B1F" highlightColor="#27272A" />
             ) : (
@@ -92,64 +92,48 @@ export default function BalanceCard({
           </span>
         </p>
 
-        {hasAvailable && (
-          <div className="mt-3 pt-3 border-t border-white/10">
-            <p className="text-xs text-graphite-300">{availableLabel}</p>
-            <p className="mnx-num mt-1 text-graphite-100">
-              <span className="text-xs text-graphite-300">R$ </span>
-              <span className="text-lg font-semibold">
-                {loadingAvailable ? (
-                  <Skeleton
-                    width={80}
-                    baseColor="#1B1B1F"
-                    highlightColor="#27272A"
-                  />
-                ) : (
-                  availableBalance
-                )}
-              </span>
-            </p>
+        {(hasAvailable || hasMaturing) && (
+          <div className="mt-2 pt-2 border-t border-white/10 grid grid-cols-2 gap-3">
+            {hasAvailable && (
+              <div>
+                <p className="text-xs text-graphite-300">{availableLabel}</p>
+                <p className="mnx-num mt-1 text-graphite-100">
+                  <span className="text-xs text-graphite-300">R$ </span>
+                  <span className="text-lg font-semibold">
+                    {loadingAvailable ? (
+                      <Skeleton
+                        width={80}
+                        baseColor="#1B1B1F"
+                        highlightColor="#27272A"
+                      />
+                    ) : (
+                      availableBalance
+                    )}
+                  </span>
+                </p>
+              </div>
+            )}
+            {hasMaturing && (
+              <div>
+                <p className="text-xs text-graphite-300">{maturingLabel}</p>
+                <p className="mnx-num mt-1 text-graphite-100">
+                  <span className="text-xs text-graphite-300">R$ </span>
+                  <span className="text-lg font-semibold">
+                    {loadingMaturing ? (
+                      <Skeleton
+                        width={80}
+                        baseColor="#1B1B1F"
+                        highlightColor="#27272A"
+                      />
+                    ) : (
+                      maturingBalance
+                    )}
+                  </span>
+                </p>
+              </div>
+            )}
           </div>
         )}
-
-        {hasMaturing && (
-          <div className="mt-3 pt-3 border-t border-white/10">
-            <p className="text-xs text-graphite-300">{maturingLabel}</p>
-            <p className="mnx-num mt-1 text-graphite-100">
-              <span className="text-xs text-graphite-300">R$ </span>
-              <span className="text-lg font-semibold">
-                {loadingMaturing ? (
-                  <Skeleton
-                    width={80}
-                    baseColor="#1B1B1F"
-                    highlightColor="#27272A"
-                  />
-                ) : (
-                  maturingBalance
-                )}
-              </span>
-            </p>
-          </div>
-        )}
-
-        {/* Sparkline — decorative, static recipe matching the mockup. */}
-        <div className="mt-5" aria-hidden="true">
-          <svg
-            viewBox="0 0 200 50"
-            width="100%"
-            height="44"
-            preserveAspectRatio="none"
-          >
-            <path
-              className="mnx-spark-fill"
-              d="M0,38 L18,32 L36,34 L54,28 L72,30 L90,22 L108,25 L126,18 L144,14 L162,16 L180,9 L200,11 L200,50 L0,50 Z"
-            />
-            <path
-              className="mnx-spark-stroke"
-              d="M0,38 L18,32 L36,34 L54,28 L72,30 L90,22 L108,25 L126,18 L144,14 L162,16 L180,9 L200,11"
-            />
-          </svg>
-        </div>
 
         <a
           href={ctaHref}
@@ -158,7 +142,7 @@ export default function BalanceCard({
           onClick={(event) => {
             if (ctaDisabled) event.preventDefault();
           }}
-          className={`cta-primary mt-6 inline-flex w-full h-12 items-center justify-center px-5 rounded-md text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-normal shadow-glow-md ${
+          className={`cta-primary mt-4 inline-flex w-full h-10 items-center justify-center px-5 rounded-md text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-normal shadow-glow-md ${
             ctaDisabled ? "opacity-60 cursor-not-allowed hover:bg-orange-500" : ""
           }`}
         >
