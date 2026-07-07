@@ -178,6 +178,68 @@ namespace MonexUp.Domain.Impl.Services
             return CompletionOk(inserted > 0 ? "Comissão registrada." : "Comissão já registrada.");
         }
 
+        public async Task<int> GenerateCommissionForPaidInvoiceAsync(long networkId, long proxypayInvoiceId, CancellationToken ct = default)
+        {
+            var network = _networkFactory.BuildNetworkModel().GetById(networkId, _networkFactory);
+            if (network == null || !network.ProxyPayStoreId.HasValue || string.IsNullOrEmpty(network.ProxyPayClientId))
+            {
+                _logger.LogWarning(
+                    "Commission generation skipped: network {NetworkId} has no ProxyPay config (invoice {InvoiceId}).",
+                    networkId, proxypayInvoiceId);
+                return 0;
+            }
+
+            ProxyPayInvoiceStatusInfo invoice;
+            try
+            {
+                invoice = await _proxyPayClient.GetInvoiceAsync(proxypayInvoiceId, network.ProxyPayClientId, ct);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex,
+                    "Commission generation skipped: ProxyPay GetInvoice failed for invoice {InvoiceId}, network {NetworkId}.",
+                    proxypayInvoiceId, networkId);
+                return 0;
+            }
+
+            if (invoice == null)
+            {
+                _logger.LogWarning(
+                    "Commission generation skipped: invoice {InvoiceId} not found at ProxyPay (network {NetworkId}).",
+                    proxypayInvoiceId, networkId);
+                return 0;
+            }
+
+            if (invoice.StoreId.HasValue && invoice.StoreId.Value != network.ProxyPayStoreId.Value)
+            {
+                _logger.LogWarning(
+                    "Commission generation skipped: invoice {InvoiceId} does not belong to network {NetworkId}.",
+                    proxypayInvoiceId, networkId);
+                return 0;
+            }
+
+            const int STATUS_PAID = 3;
+            if (invoice.Status != STATUS_PAID)
+            {
+                // Not paid yet — nothing to record. Not an error (poll may run before settlement).
+                return 0;
+            }
+
+            var paidAmountCents = (long)Math.Round(invoice.Amount * 100);
+            var paidAt = invoice.PaidAt ?? DateTime.UtcNow;
+
+            var inserted = _billingFeeService.RecordPaidProxyPayInvoice(
+                proxypayInvoiceId, networkId, paidAmountCents, paidAt);
+
+            if (inserted > 0)
+            {
+                _logger.LogInformation(
+                    "Commission recorded: {Count} fee row(s) for invoice {InvoiceId}, network {NetworkId}.",
+                    inserted, proxypayInvoiceId, networkId);
+            }
+            return inserted;
+        }
+
         public string BuildCompletionUrl(long networkId, long proxypayInvoiceId)
         {
             var baseUrl = _configuration["ProxyPay:CompletionUrlBase"]?.TrimEnd('/') ?? string.Empty;

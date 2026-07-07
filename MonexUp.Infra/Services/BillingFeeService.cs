@@ -1,8 +1,10 @@
 using DB.Infra.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MonexUp.Domain.Interfaces.Factory;
 using MonexUp.Domain.Interfaces.Models;
 using MonexUp.Domain.Interfaces.Services;
+using Npgsql;
 using System;
 using System.Linq;
 
@@ -14,11 +16,13 @@ namespace DB.Infra.Services
 
         private readonly MonexUpContext _context;
         private readonly INetworkDomainFactory _networkFactory;
+        private readonly ILogger<BillingFeeService> _logger;
 
-        public BillingFeeService(MonexUpContext context, INetworkDomainFactory networkFactory)
+        public BillingFeeService(MonexUpContext context, INetworkDomainFactory networkFactory, ILogger<BillingFeeService> logger)
         {
             _context = context;
             _networkFactory = networkFactory;
+            _logger = logger;
         }
 
         public int RecordPaidProxyPayInvoice(long proxypayInvoiceId, long networkId, long paidAmountCents, DateTime paidAt)
@@ -107,25 +111,41 @@ namespace DB.Infra.Services
 
         private int InsertFeeIfAbsent(long proxypayInvoiceId, long? networkId, long? userId, int? role, double amount, long paidAmountCents, DateTime paidAt, DateTime withdrawalDueDate)
         {
+            var row = new InvoiceFee
+            {
+                ProxyPayInvoiceId = proxypayInvoiceId,
+                NetworkId = networkId,
+                UserId = userId,
+                Role = role,
+                Amount = amount,
+                PaidAmountCentsAtRecord = paidAmountCents,
+                PaidAt = paidAt,
+                WithdrawalDueDate = withdrawalDueDate
+            };
             try
             {
-                var row = new InvoiceFee
-                {
-                    ProxyPayInvoiceId = proxypayInvoiceId,
-                    NetworkId = networkId,
-                    UserId = userId,
-                    Role = role,
-                    Amount = amount,
-                    PaidAmountCentsAtRecord = paidAmountCents,
-                    PaidAt = paidAt,
-                    WithdrawalDueDate = withdrawalDueDate
-                };
                 _context.Add(row);
                 _context.SaveChanges();
                 return 1;
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
+                // Detach the failed row so a subsequent SaveChanges (the next fee) isn't
+                // re-attempted against the broken entity and cascade-fail.
+                _context.Entry(row).State = EntityState.Detached;
+
+                // A unique-index violation (23505) is the expected idempotency signal:
+                // this fee was already recorded for (invoice, user, role). Anything else is
+                // a real failure (schema drift, FK, connectivity) that must NOT be swallowed
+                // silently — otherwise commissions vanish with no trace.
+                if (ex.InnerException is PostgresException pg && pg.SqlState == PostgresErrorCodes.UniqueViolation)
+                {
+                    return 0;
+                }
+
+                _logger.LogError(ex,
+                    "Failed to record commission fee row. proxypayInvoiceId={InvoiceId}, networkId={NetworkId}, userId={UserId}, role={Role}, amount={Amount}.",
+                    proxypayInvoiceId, networkId, userId, role, amount);
                 return 0;
             }
         }

@@ -100,7 +100,7 @@ namespace MonexUp.API.Controllers
 
         [Authorize]
         [HttpGet("checkPixStatus/{proxyPayInvoiceId}")]
-        public async Task<IActionResult> CheckPixStatus(string proxyPayInvoiceId)
+        public async Task<IActionResult> CheckPixStatus(string proxyPayInvoiceId, CancellationToken ct)
         {
             var userSession = _userClient.GetUserInSession(HttpContext);
             if (userSession == null) return Unauthorized();
@@ -116,6 +116,21 @@ namespace MonexUp.API.Controllers
                 if (order == null)
                 {
                     _logger.LogWarning("Paid ProxyPay invoice {InvoiceId} has no matching MonexUp order.", invoiceId);
+                }
+                else
+                {
+                    // Generate commission (network/store cut + seller) on the paid sale.
+                    // This is the primary trigger: the webhook may not be reachable and the
+                    // reconciliation background service may be disabled. Idempotent via the
+                    // invoice-fee unique index, so re-polling never double-records.
+                    var inserted = await _billingService.GenerateCommissionForPaidInvoiceAsync(
+                        order.NetworkId, invoiceId, ct);
+                    if (inserted == 0)
+                    {
+                        _logger.LogInformation(
+                            "No new commission rows for paid invoice {InvoiceId} (already recorded or commission not configured).",
+                            invoiceId);
+                    }
                 }
             }
 

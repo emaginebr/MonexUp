@@ -13,6 +13,16 @@ namespace MonexUp.Domain.Interfaces.Services
         Task<PaymentCompletionResult> ProcessPaymentCompletionAsync(PaymentCompletionInfo info, CancellationToken ct = default);
         string BuildCompletionUrl(long networkId, long proxypayInvoiceId);
 
+        /// <summary>
+        /// Idempotently records commission fee rows (network/store cut + seller) for a
+        /// ProxyPay invoice that is confirmed paid. Fetches the invoice from ProxyPay to
+        /// obtain the paid amount, verifies it is paid and belongs to the network, then
+        /// delegates to the billing-fee service (unique-index idempotent). Returns the
+        /// number of fee rows inserted (0 if not paid, already recorded, or misconfigured).
+        /// Safe to call from any paid-detection path (status poll, webhook, reconciliation).
+        /// </summary>
+        Task<int> GenerateCommissionForPaidInvoiceAsync(long networkId, long proxypayInvoiceId, CancellationToken ct = default);
+
         Task<StatementListPagedResult> SearchStatement(StatementSearchParam param, string token);
 
         /// <summary>
