@@ -187,6 +187,37 @@
   "dashboard_current_balance": "Current Balance",
   "dashboard_amount_released_for_withdrawal": "Amount released for withdrawal is",
   "dashboard_withdrawal": "Withdrawal",
+  "dashboard_balance_total": "Total balance",
+  "dashboard_balance_released": "Released for withdrawal",
+  "dashboard_balance_maturing": "Maturing",
+  "admin_statement_title": "Statement",
+  "statementPage": {
+    "title": "Statement",
+    "balanceStripAria": "Balance summary",
+    "balance": {
+      "total": "Total balance",
+      "released": "Released for withdrawal",
+      "maturing": "Still maturing"
+    },
+    "columns": {
+      "indicator": "Indicator",
+      "date": "Date",
+      "origin": "Origin",
+      "status": "Status",
+      "amount": "Amount"
+    },
+    "status": {
+      "released": "Released",
+      "maturing": "Maturing",
+      "reversed": "Reversed"
+    },
+    "reversedNote": "Payment reversed",
+    "currency": "R$",
+    "tableCaption": "Statement of received commissions, one row per commission.",
+    "emptyTitle": "No commission received yet",
+    "emptyBody": "When your networks generate sales, each commission will appear here with date, origin and maturation status.",
+    "notAuthorized": "You need to be a seller in the network to access the statement."
+  },
   "dashboard_statement": "Statement",
   "dashboard_orders_tab": "Orders",
   "dashboard_networks_title": "Networks",

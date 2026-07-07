@@ -11,10 +11,16 @@ export interface BalanceCardProps {
   loadingBalance?: boolean;
   /** Whether the available balance is loading (skeleton). */
   loadingAvailable?: boolean;
+  /** Pre-formatted still-maturing amount. Hidden when undefined. */
+  maturingBalance?: string | number;
+  /** Whether the maturing balance is loading (skeleton). */
+  loadingMaturing?: boolean;
   /** Localized label for the current balance ("Saldo Atual"). */
   balanceLabel: string;
   /** Localized label for the released-for-withdrawal section. */
   availableLabel?: string;
+  /** Localized label for the still-maturing section. */
+  maturingLabel?: string;
   /** Localized label for the CTA. */
   ctaLabel: string;
   /** Withdrawal CTA href (defaults to "#"). */
@@ -36,14 +42,18 @@ export default function BalanceCard({
   availableBalance,
   loadingBalance,
   loadingAvailable,
+  maturingBalance,
+  loadingMaturing,
   balanceLabel,
   availableLabel,
+  maturingLabel,
   ctaLabel,
   ctaHref = "#",
   ctaDisabled = true,
 }: BalanceCardProps) {
   const { t } = useTranslation();
   const hasAvailable = availableBalance !== undefined && availableLabel;
+  const hasMaturing = maturingBalance !== undefined && maturingLabel;
 
   return (
     <article
@@ -96,6 +106,26 @@ export default function BalanceCard({
                   />
                 ) : (
                   availableBalance
+                )}
+              </span>
+            </p>
+          </div>
+        )}
+
+        {hasMaturing && (
+          <div className="mt-3 pt-3 border-t border-white/10">
+            <p className="text-xs text-graphite-300">{maturingLabel}</p>
+            <p className="mnx-num mt-1 text-graphite-100">
+              <span className="text-xs text-graphite-300">R$ </span>
+              <span className="text-lg font-semibold">
+                {loadingMaturing ? (
+                  <Skeleton
+                    width={80}
+                    baseColor="#1B1B1F"
+                    highlightColor="#27272A"
+                  />
+                ) : (
+                  maturingBalance
                 )}
               </span>
             </p>

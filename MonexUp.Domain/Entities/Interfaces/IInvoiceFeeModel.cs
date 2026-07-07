@@ -13,10 +13,13 @@ namespace MonexUp.Domain.Interfaces.Models
         double Amount { get; set; }
         DateTime? PaidAt { get; set; }
         DateTime? WithdrawalDueDate { get; set; }
+        DateTime? ReversedAt { get; set; }
 
         IInvoiceFeeModel Insert(IInvoiceFeeDomainFactory factory);
         IList<IInvoiceFeeModel> Search(long? networkId, long? userId, DateTime? ini, DateTime? end, int pageNum, out int pageCount, IInvoiceFeeDomainFactory factory);
         double GetBalance(long? networkId, long? userId);
+        double GetTotalBalance(long? networkId, long? userId);
+        double GetReleasedBalance(long? networkId, long? userId);
         double GetAvailableBalance(long userId);
     }
 }

@@ -144,6 +144,37 @@
   "dashboard_current_balance": "Solde Actuel",
   "dashboard_amount_released_for_withdrawal": "Montant libéré pour retrait est",
   "dashboard_withdrawal": "Retrait",
+  "dashboard_balance_total": "Solde total",
+  "dashboard_balance_released": "Débloqué pour retrait",
+  "dashboard_balance_maturing": "En maturation",
+  "admin_statement_title": "Relevé",
+  "statementPage": {
+    "title": "Relevé",
+    "balanceStripAria": "Résumé du solde",
+    "balance": {
+      "total": "Solde total",
+      "released": "Débloqué pour retrait",
+      "maturing": "Encore en maturation"
+    },
+    "columns": {
+      "indicator": "Indicateur",
+      "date": "Date",
+      "origin": "Origine",
+      "status": "Statut",
+      "amount": "Montant"
+    },
+    "status": {
+      "released": "Débloqué",
+      "maturing": "En maturation",
+      "reversed": "Annulé"
+    },
+    "reversedNote": "Paiement annulé",
+    "currency": "R$",
+    "tableCaption": "Relevé des commissions reçues, une ligne par commission.",
+    "emptyTitle": "Aucune commission reçue pour le moment",
+    "emptyBody": "Lorsque vos réseaux génèrent des ventes, chaque commission apparaîtra ici avec la date, l'origine et le statut de maturation.",
+    "notAuthorized": "Vous devez être vendeur du réseau pour accéder au relevé."
+  },
   "dashboard_statement": "Relevé",
   "dashboard_orders_tab": "Commandes",
   "dashboard_networks_title": "Réseaux",

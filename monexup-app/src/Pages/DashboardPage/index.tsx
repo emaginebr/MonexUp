@@ -30,9 +30,10 @@ type DashboardTabKey = "statement" | "orders";
  *
  * Visual contract: `docs/design/dashboard-redesign.html` and the
  * per-component spec at `docs/design/dashboard-spec.md`. This rewrite
- * preserves 100% of the legacy data flow:
- *   - role-based fetching (`searchStatements`, `getBalance`,
- *     `getAvailableBalance`)
+ * preserves the legacy data flow, with the balance figures migrated to the
+ * per-network commission endpoints (feature 011):
+ *   - role-based fetching (`searchStatements` scoped to the active network,
+ *     `getMyBalance` for Seller / `getNetworkBalance` for NetworkManager)
  *   - role gating via `UserRoleEnum`
  *   - statement pagination via `StatementListPagedInfo`
  *   - error surface through `MessageToast`
@@ -57,18 +58,20 @@ export default function DashboardPage() {
     setShowMessage(true);
   };
 
+  // Both Seller and NetworkManager operate on their active network. The
+  // backend now derives identity from the session for the statement + balance
+  // endpoints, so all figures are scoped by `networkId` (never a client-sent
+  // userId).
+  const activeNetworkId = networkContext.userNetwork?.networkId;
+
   const searchStatements = async (pageNum: number) => {
-    let param: StatementSearchParam = { pageNum };
-    switch (networkContext.currentRole) {
-      case UserRoleEnum.NetworkManager:
-        param.networkId = networkContext.userNetwork.networkId;
-        break;
-      case UserRoleEnum.Seller:
-        param.userId = authContext.sessionInfo.userId;
-        break;
-      default:
-        return;
+    if (
+      networkContext.currentRole !== UserRoleEnum.NetworkManager &&
+      networkContext.currentRole !== UserRoleEnum.Seller
+    ) {
+      return;
     }
+    let param: StatementSearchParam = { pageNum, networkId: activeNetworkId };
     const ret = await invoiceContext.searchStatement(param);
     if (!ret.sucesso) {
       throwError(ret.mensagemErro);
@@ -77,23 +80,19 @@ export default function DashboardPage() {
 
   useEffect(() => {
     searchStatements(1);
+    if (!activeNetworkId) {
+      return;
+    }
     switch (networkContext.currentRole) {
       case UserRoleEnum.NetworkManager:
-        invoiceContext
-          .getBalance(networkContext.userNetwork.networkId)
-          .then((ret) => {
-            if (!ret.sucesso) {
-              throwError(ret.mensagemErro);
-            }
-          });
-        break;
-      case UserRoleEnum.Seller:
-        invoiceContext.getBalance().then((ret) => {
+        invoiceContext.getNetworkBalance(activeNetworkId).then((ret) => {
           if (!ret.sucesso) {
             throwError(ret.mensagemErro);
           }
         });
-        invoiceContext.getAvailableBalance().then((ret) => {
+        break;
+      case UserRoleEnum.Seller:
+        invoiceContext.getMyBalance(activeNetworkId).then((ret) => {
           if (!ret.sucesso) {
             throwError(ret.mensagemErro);
           }
@@ -107,6 +106,15 @@ export default function DashboardPage() {
   const isSeller = networkContext.currentRole === UserRoleEnum.Seller;
   const isNetworkManager =
     networkContext.currentRole === UserRoleEnum.NetworkManager;
+
+  // NetworkManager sees the network own-cut balance; Seller sees their own
+  // member balance. Both share the { total, released, maturing } shape.
+  const roleBalance = isNetworkManager
+    ? invoiceContext.networkBalance
+    : invoiceContext.memberBalance;
+  const loadingRoleBalance = isNetworkManager
+    ? invoiceContext.loadingNetworkBalance
+    : invoiceContext.loadingMemberBalance;
 
   const firstName =
     authContext.sessionInfo?.name?.split(" ")[0] ??
@@ -266,14 +274,15 @@ export default function DashboardPage() {
             </div>
 
             <BalanceCard
-              balanceLabel={t("dashboard_current_balance")}
-              balance={invoiceContext.balance ?? 0}
-              loadingBalance={invoiceContext.loadingBalance}
-              availableLabel={
-                isSeller ? t("dashboard_amount_released_for_withdrawal") : undefined
-              }
-              availableBalance={isSeller ? invoiceContext.availableBalance ?? 0 : undefined}
-              loadingAvailable={isSeller && invoiceContext.loadingAvailableBalance}
+              balanceLabel={t("dashboard_balance_total")}
+              balance={roleBalance?.total ?? 0}
+              loadingBalance={loadingRoleBalance}
+              availableLabel={t("dashboard_balance_released")}
+              availableBalance={roleBalance?.released ?? 0}
+              loadingAvailable={loadingRoleBalance}
+              maturingLabel={t("dashboard_balance_maturing")}
+              maturingBalance={roleBalance?.maturing ?? 0}
+              loadingMaturing={loadingRoleBalance}
               ctaLabel={t("dashboard_withdrawal")}
               ctaDisabled
             />

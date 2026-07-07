@@ -234,6 +234,33 @@ namespace MonexUp.Domain.Impl.Services
             return _feeFactory.BuildInvoiceFeeModel().GetAvailableBalance(userId);
         }
 
+        public MemberBalanceInfo GetMemberBalance(long networkId, long userId)
+        {
+            var fee = _feeFactory.BuildInvoiceFeeModel();
+            var total = fee.GetTotalBalance(networkId, userId);
+            var released = fee.GetReleasedBalance(networkId, userId);
+            return new MemberBalanceInfo
+            {
+                Total = total,
+                Released = released,
+                Maturing = total - released
+            };
+        }
+
+        public MemberBalanceInfo GetNetworkBalance(long networkId)
+        {
+            var fee = _feeFactory.BuildInvoiceFeeModel();
+            // userId == null → network own-cut rows (UserId IS NULL).
+            var total = fee.GetTotalBalance(networkId, null);
+            var released = fee.GetReleasedBalance(networkId, null);
+            return new MemberBalanceInfo
+            {
+                Total = total,
+                Released = released,
+                Maturing = total - released
+            };
+        }
+
         public async Task<InvoiceListPagedResult> SearchInvoicesAsync(InvoiceSearchParam param, long callerUserId, string token, CancellationToken ct = default)
         {
             var empty = new InvoiceListPagedResult
@@ -572,6 +599,21 @@ namespace MonexUp.Domain.Impl.Services
                 }
             }
 
+            var reversed = fee.ReversedAt.HasValue;
+            string status;
+            if (reversed)
+            {
+                status = "reversed";
+            }
+            else if (fee.WithdrawalDueDate.HasValue && fee.WithdrawalDueDate.Value <= DateTime.Today)
+            {
+                status = "released";
+            }
+            else
+            {
+                status = "maturing";
+            }
+
             return new StatementInfo
             {
                 ProxyPayInvoiceId = fee.ProxyPayInvoiceId,
@@ -585,7 +627,9 @@ namespace MonexUp.Domain.Impl.Services
                 Description = description,
                 Amount = fee.Amount,
                 PaidAt = fee.PaidAt,
-                WithdrawalDueDate = fee.WithdrawalDueDate
+                WithdrawalDueDate = fee.WithdrawalDueDate,
+                Reversed = reversed,
+                Status = status
             };
         }
 

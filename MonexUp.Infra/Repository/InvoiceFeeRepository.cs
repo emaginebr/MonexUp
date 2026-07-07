@@ -29,6 +29,7 @@ namespace DB.Infra.Repository
             md.Amount = row.Amount;
             md.PaidAt = row.PaidAt;
             md.WithdrawalDueDate = row.WithdrawalDueDate;
+            md.ReversedAt = row.ReversedAt;
             return md;
         }
 
@@ -64,6 +65,13 @@ namespace DB.Infra.Repository
             {
                 q = q.Where(x => x.UserId == userId.Value);
             }
+            else
+            {
+                // Own-cut scope (network manager view): rows with no recipient member.
+                // Callers now always pass either a positive member id or null (own-cut);
+                // this prevents a manager statement from leaking members' rows.
+                q = q.Where(x => x.UserId == null);
+            }
             if (ini.HasValue && end.HasValue)
             {
                 q = q.Where(x => x.PaidAt >= ini.Value && x.PaidAt <= end.Value);
@@ -85,7 +93,10 @@ namespace DB.Infra.Repository
 
         public double GetBalance(long? networkId, long? userId)
         {
-            var q = _ccsContext.InvoiceFees.Where(x => !x.PaidAt.HasValue);
+            // Fix: previously filtered `!x.PaidAt.HasValue`, which always summed ~0
+            // because every real fee row is written with PaidAt set. A commission
+            // counts toward the balance once it is paid and not reversed.
+            var q = _ccsContext.InvoiceFees.Where(x => x.PaidAt.HasValue && !x.ReversedAt.HasValue);
             if (networkId.HasValue)
             {
                 q = q.Where(x => x.NetworkId == networkId.Value);
@@ -99,6 +110,47 @@ namespace DB.Infra.Repository
                 q = q.Where(x => !x.NetworkId.HasValue && !x.UserId.HasValue);
             }
             return q.Sum(x => x.Amount);
+        }
+
+        /// <summary>
+        /// Σ amount of non-reversed, paid commissions scoped by network/recipient.
+        /// Member view: pass a positive <paramref name="userId"/>. Network own-cut view
+        /// (manager): pass <paramref name="userId"/> = null → only rows with UserId IS NULL.
+        /// </summary>
+        public double GetTotalBalance(long? networkId, long? userId)
+        {
+            return ScopedBalanceQuery(networkId, userId).Sum(x => x.Amount);
+        }
+
+        /// <summary>
+        /// Released (withdrawable) portion of <see cref="GetTotalBalance"/>: same scope,
+        /// additionally matured (WithdrawalDueDate set and &lt;= today).
+        /// </summary>
+        public double GetReleasedBalance(long? networkId, long? userId)
+        {
+            var today = DateTime.Today;
+            return ScopedBalanceQuery(networkId, userId)
+                .Where(x => x.WithdrawalDueDate.HasValue && x.WithdrawalDueDate.Value <= today)
+                .Sum(x => x.Amount);
+        }
+
+        private IQueryable<InvoiceFee> ScopedBalanceQuery(long? networkId, long? userId)
+        {
+            var q = _ccsContext.InvoiceFees.Where(x => x.PaidAt.HasValue && !x.ReversedAt.HasValue);
+            if (networkId.HasValue && networkId.Value > 0)
+            {
+                q = q.Where(x => x.NetworkId == networkId.Value);
+            }
+            if (userId.HasValue && userId.Value > 0)
+            {
+                q = q.Where(x => x.UserId == userId.Value);
+            }
+            else
+            {
+                // Own-cut scope: network's own commission rows have no recipient member.
+                q = q.Where(x => x.UserId == null);
+            }
+            return q;
         }
 
         public double GetAvailableBalance(long userId)

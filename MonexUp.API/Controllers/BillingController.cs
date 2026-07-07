@@ -85,12 +85,63 @@ namespace MonexUp.API.Controllers
             return StatusCode(result.StatusCode, result.Body);
         }
 
+        /// <summary>
+        /// Member commission balance in a single network: total / released / maturing.
+        /// Scoped to the session member; a member with no commissions gets all zeros.
+        /// </summary>
+        [Authorize]
+        [HttpGet("my-balance/{networkId}")]
+        public IActionResult MyBalance(long networkId)
+        {
+            var session = _userClient.GetUserInSession(HttpContext);
+            if (session == null) return Unauthorized();
+            return Ok(_service.GetMemberBalance(networkId, session.UserId));
+        }
+
+        /// <summary>
+        /// Network own-cut balance (UserId IS NULL rows) for a network. Restricted to the
+        /// network's manager: callers who are not a NetworkManager of <paramref name="networkId"/>
+        /// get 403.
+        /// </summary>
+        [Authorize]
+        [HttpGet("network-balance/{networkId}")]
+        public IActionResult NetworkBalance(long networkId)
+        {
+            var session = _userClient.GetUserInSession(HttpContext);
+            if (session == null) return Unauthorized();
+
+            var un = _networkService.GetUserNetwork(networkId, session.UserId);
+            if (un == null || un.Role != UserRoleEnum.NetworkManager)
+            {
+                return StatusCode(403);
+            }
+
+            return Ok(_service.GetNetworkBalance(networkId));
+        }
+
         [Authorize]
         [HttpPost("searchStatement")]
         public async Task<IActionResult> SearchStatement([FromBody] StatementSearchParam param)
         {
             var session = _userClient.GetUserInSession(HttpContext);
             if (session == null) return Unauthorized();
+            if (param == null) return BadRequest();
+
+            // Server-side scoping — never trust a client-supplied userId.
+            //  - NetworkManager of the requested network → network own-cut (userId = null).
+            //  - Any other member → forced to their own rows (userId = session).
+            //    A member asking for a network they don't belong to simply gets their
+            //    own (empty) rows — no cross-member leak.
+            var un = _networkService.GetUserNetwork(param.NetworkId ?? 0, session.UserId);
+            if (un != null && un.Role == UserRoleEnum.NetworkManager)
+            {
+                param.UserId = null;
+            }
+            else
+            {
+                param.UserId = session.UserId;
+            }
+
             var token = HttpContext.GetBearerToken();
             return Ok(await _service.SearchStatement(param, token));
         }
@@ -101,8 +152,10 @@ namespace MonexUp.API.Controllers
         {
             var session = _userClient.GetUserInSession(HttpContext);
             if (session == null) return Unauthorized();
-            long? newNetworkId = (networkId > 0) ? networkId : 0;
-            return Ok(_service.GetBalance(newNetworkId, newNetworkId.HasValue ? null : session.UserId));
+            // Session-derived scoping: the member's own non-reversed paid balance,
+            // in the given network when provided, else across all their networks.
+            long? scopedNetworkId = networkId > 0 ? networkId : (long?)null;
+            return Ok(_service.GetBalance(scopedNetworkId, session.UserId));
         }
 
         [Authorize]

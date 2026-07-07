@@ -26,6 +26,7 @@ namespace MonexUp.Domain.Impl.Models
         public double Amount { get; set; }
         public DateTime? PaidAt { get; set; }
         public DateTime? WithdrawalDueDate { get; set; }
+        public DateTime? ReversedAt { get; set; }
 
         public double GetAvailableBalance(long userId)
         {
@@ -35,6 +36,16 @@ namespace MonexUp.Domain.Impl.Models
         public double GetBalance(long? networkId, long? userId)
         {
             return _repositoryFee.GetBalance(networkId, userId);
+        }
+
+        public double GetTotalBalance(long? networkId, long? userId)
+        {
+            return _repositoryFee.GetTotalBalance(networkId, userId);
+        }
+
+        public double GetReleasedBalance(long? networkId, long? userId)
+        {
+            return _repositoryFee.GetReleasedBalance(networkId, userId);
         }
 
         public IInvoiceFeeModel Insert(IInvoiceFeeDomainFactory factory)

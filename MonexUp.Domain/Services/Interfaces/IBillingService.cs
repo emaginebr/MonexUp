@@ -28,6 +28,20 @@ namespace MonexUp.Domain.Interfaces.Services
 
         double GetBalance(long? networkId, long? userId);
         double GetAvailableBalance(long userId);
+
+        /// <summary>
+        /// Commission balance for a member in a single network: total (non-reversed paid),
+        /// released (matured), and maturing (total − released). Callers must pass the
+        /// session-derived <paramref name="userId"/>; never a client-supplied value.
+        /// </summary>
+        MemberBalanceInfo GetMemberBalance(long networkId, long userId);
+
+        /// <summary>
+        /// Network own-cut balance (rows with UserId IS NULL) for a single network.
+        /// Same three sums as <see cref="GetMemberBalance"/>. Ownership (NetworkManager)
+        /// must be verified by the caller before invoking.
+        /// </summary>
+        MemberBalanceInfo GetNetworkBalance(long networkId);
         Task<InvoiceInfo> GetInvoice(long networkId, long proxypayInvoiceId, CancellationToken ct = default);
 
         /// <summary>

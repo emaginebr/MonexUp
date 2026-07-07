@@ -29,5 +29,9 @@ namespace MonexUp.DTO.Invoice
         public DateTime? PaidAt { get; set; }
         [JsonPropertyName("withdrawalDueDate")]
         public DateTime? WithdrawalDueDate { get; set; }
+        [JsonPropertyName("reversed")]
+        public bool Reversed { get; set; }
+        [JsonPropertyName("status")]
+        public string Status { get; set; }
     }
 }

@@ -7,6 +7,7 @@ import {
   Network as NetworkIcon,
   Users,
   ListOrdered,
+  ReceiptText,
   DollarSign,
   UserCog,
   Lock,
@@ -111,18 +112,21 @@ export default function AdminSidebar() {
   const switchRole = async (target: UserRoleEnum) => {
     if (!networkContext) return;
     networkContext.setCurrentRole(target);
+    // Balance + statement are always scoped to the active network; the backend
+    // derives identity from the session (no client-sent userId), so the old
+    // cross-network getBalance/getAvailableBalance are no longer used here.
+    const activeNetworkId = networkContext.userNetwork?.networkId;
     if (target === UserRoleEnum.Seller) {
-      await invoiceContext?.getBalance?.();
-      await invoiceContext?.getAvailableBalance?.();
+      if (activeNetworkId) await invoiceContext?.getMyBalance?.(activeNetworkId);
       const param: StatementSearchParam = {
-        userId: networkContext.userNetwork?.userId,
+        networkId: activeNetworkId,
         pageNum: 1,
       } as StatementSearchParam;
       await invoiceContext?.searchStatement?.(param);
     } else if (target === UserRoleEnum.NetworkManager) {
-      await invoiceContext?.getBalance?.(networkContext.userNetwork?.networkId);
+      if (activeNetworkId) await invoiceContext?.getNetworkBalance?.(activeNetworkId);
       const param: StatementSearchParam = {
-        networkId: networkContext.userNetwork?.networkId,
+        networkId: activeNetworkId,
         pageNum: 1,
       } as StatementSearchParam;
       await invoiceContext?.searchStatement?.(param);
@@ -416,6 +420,13 @@ export default function AdminSidebar() {
               active={isActive("/admin/orders")}
               collapsed={collapsed}
               onClick={() => navigate("/admin/orders")}
+            />
+            <SidebarItem
+              icon={ReceiptText}
+              label={t("admin_statement_title", "Extrato")}
+              active={isActive("/admin/statement")}
+              collapsed={collapsed}
+              onClick={() => navigate("/admin/statement")}
             />
             {role >= UserRoleEnum.NetworkManager && (
               <SidebarItem

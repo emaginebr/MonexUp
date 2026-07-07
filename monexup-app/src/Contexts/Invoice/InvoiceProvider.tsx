@@ -3,6 +3,7 @@ import ProviderResult from "../../DTO/Contexts/ProviderResult";
 import IInvoiceProvider from "../../DTO/Contexts/IInvoiceProvider";
 import InvoiceContext from "./InvoiceContext";
 import InvoiceFactory from "../../Business/Factory/InvoiceFactory";
+import MemberBalanceInfo from "../../DTO/Domain/MemberBalanceInfo";
 import StatementListPagedInfo from "../../DTO/Domain/StatementListPagedInfo";
 import StatementSearchParam from "../../DTO/Domain/StatementSearchParam";
 
@@ -11,9 +12,13 @@ export default function InvoiceProvider(props: any) {
     const [loadingSearch, setLoadingSearch] = useState<boolean>(false);
     const [loadingBalance, setLoadingBalance] = useState<boolean>(false);
     const [loadingAvailableBalance, setLoadingAvailableBalance] = useState<boolean>(false);
+    const [loadingMemberBalance, setLoadingMemberBalance] = useState<boolean>(false);
+    const [loadingNetworkBalance, setLoadingNetworkBalance] = useState<boolean>(false);
 
     const [balance, setBalance] = useState<number>(0);
     const [availableBalance, setAvailableBalance] = useState<number>(0);
+    const [memberBalance, setMemberBalance] = useState<MemberBalanceInfo>(null);
+    const [networkBalance, setNetworkBalance] = useState<MemberBalanceInfo>(null);
 
     const [statementResult, setStatementResult] = useState<StatementListPagedInfo>(null);
 
@@ -21,9 +26,13 @@ export default function InvoiceProvider(props: any) {
         loadingSearch: loadingSearch,
         loadingBalance: loadingBalance,
         loadingAvailableBalance: loadingAvailableBalance,
+        loadingMemberBalance: loadingMemberBalance,
+        loadingNetworkBalance: loadingNetworkBalance,
 
         balance: balance,
         availableBalance: availableBalance,
+        memberBalance: memberBalance,
+        networkBalance: networkBalance,
 
         statementResult: statementResult,
 
@@ -89,6 +98,52 @@ export default function InvoiceProvider(props: any) {
             }
             else {
                 setLoadingAvailableBalance(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: brt.mensagem
+                };
+            }
+        },
+        getMyBalance: async (networkId: number) => {
+            let ret: Promise<ProviderResult>;
+            setLoadingMemberBalance(true);
+            let brt = await InvoiceFactory.InvoiceBusiness.getMyBalance(networkId);
+            if (brt.sucesso) {
+                setLoadingMemberBalance(false);
+                setMemberBalance(brt.dataResult);
+                return {
+                    ...ret,
+                    sucesso: true,
+                    clientSecret: brt.dataResult,
+                    mensagemSucesso: "Member balance loaded"
+                };
+            }
+            else {
+                setLoadingMemberBalance(false);
+                return {
+                    ...ret,
+                    sucesso: false,
+                    mensagemErro: brt.mensagem
+                };
+            }
+        },
+        getNetworkBalance: async (networkId: number) => {
+            let ret: Promise<ProviderResult>;
+            setLoadingNetworkBalance(true);
+            let brt = await InvoiceFactory.InvoiceBusiness.getNetworkBalance(networkId);
+            if (brt.sucesso) {
+                setLoadingNetworkBalance(false);
+                setNetworkBalance(brt.dataResult);
+                return {
+                    ...ret,
+                    sucesso: true,
+                    clientSecret: brt.dataResult,
+                    mensagemSucesso: "Network balance loaded"
+                };
+            }
+            else {
+                setLoadingNetworkBalance(false);
                 return {
                     ...ret,
                     sucesso: false,
