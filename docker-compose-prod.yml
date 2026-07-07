@@ -15,6 +15,7 @@ services:
       ASPNETCORE_URLS: http://+:80
       ConnectionStrings__MonexUpContext: ${MONEXUP_CONNECTION_STRING}
       NAuth__JwtSecret: ${MONEXUP_JWT_SECRET}
+      Invite__Secret: ${MONEXUP_INVITE_SECRET}
     networks:
       - emagine-network
 

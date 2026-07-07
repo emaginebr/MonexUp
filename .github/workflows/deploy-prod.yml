@@ -52,6 +52,7 @@ jobs:
             cat > .env.prod <<ENVEOF
             MONEXUP_CONNECTION_STRING=${{ secrets.MONEXUP_CONNECTION_STRING }}
             MONEXUP_JWT_SECRET=${{ secrets.MONEXUP_JWT_SECRET }}
+            MONEXUP_INVITE_SECRET=${{ secrets.MONEXUP_INVITE_SECRET }}
             ENVEOF
 
             sed -i 's/^[[:space:]]*//' .env.prod
