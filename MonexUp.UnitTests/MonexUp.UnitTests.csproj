@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.8" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.8" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="Moq" Version="4.20.72" />
@@ -20,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MonexUp.Domain\MonexUp.Domain.csproj" />
     <ProjectReference Include="..\MonexUp.DTO\MonexUp.DTO.csproj" />
+    <ProjectReference Include="..\MonexUp.Infra\MonexUp.Infra.csproj" />
     <ProjectReference Include="..\MonexUp.Infra.Interfaces\MonexUp.Infra.Interfaces.csproj" />
   </ItemGroup>
 

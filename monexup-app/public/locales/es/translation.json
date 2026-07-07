@@ -144,6 +144,37 @@
   "dashboard_current_balance": "Saldo Actual",
   "dashboard_amount_released_for_withdrawal": "Monto liberado para retiro es",
   "dashboard_withdrawal": "Retiro",
+  "dashboard_balance_total": "Saldo total",
+  "dashboard_balance_released": "Liberado para retiro",
+  "dashboard_balance_maturing": "Madurando",
+  "admin_statement_title": "Extracto",
+  "statementPage": {
+    "title": "Extracto",
+    "balanceStripAria": "Resumen de saldo",
+    "balance": {
+      "total": "Saldo total",
+      "released": "Liberado para retiro",
+      "maturing": "Aún madurando"
+    },
+    "columns": {
+      "indicator": "Indicador",
+      "date": "Fecha",
+      "origin": "Origen",
+      "status": "Estado",
+      "amount": "Valor"
+    },
+    "status": {
+      "released": "Liberado",
+      "maturing": "Madurando",
+      "reversed": "Reembolsado"
+    },
+    "reversedNote": "Pago reembolsado",
+    "currency": "R$",
+    "tableCaption": "Extracto de comisiones recibidas, una fila por comisión.",
+    "emptyTitle": "Aún no se ha recibido ninguna comisión",
+    "emptyBody": "Cuando tus redes generen ventas, cada comisión aparecerá aquí con fecha, origen y estado de maduración.",
+    "notAuthorized": "Debes ser vendedor de la red para acceder al extracto."
+  },
   "dashboard_statement": "Extracto",
   "dashboard_orders_tab": "Pedidos",
   "dashboard_networks_title": "Redes",

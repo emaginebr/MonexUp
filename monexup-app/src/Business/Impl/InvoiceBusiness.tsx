@@ -1,5 +1,6 @@
 import BusinessResult from "../../DTO/Business/BusinessResult";
 import AuthSession from "../../DTO/Domain/AuthSession";
+import MemberBalanceInfo from "../../DTO/Domain/MemberBalanceInfo";
 import StatementListPagedInfo from "../../DTO/Domain/StatementListPagedInfo";
 import StatementSearchParam from "../../DTO/Domain/StatementSearchParam";
 import IInvoiceService from "../../Services/Interfaces/IInvoiceService";
@@ -104,6 +105,64 @@ const InvoiceBusiness: IInvoiceBusiness = {
       }
     } catch {
       throw new Error("Failed to fetch available balance");
+    }
+  },
+  getMyBalance: async (networkId: number) => {
+    try {
+      let ret: BusinessResult<MemberBalanceInfo>;
+      let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+      if (!session) {
+        return {
+          ...ret,
+          sucesso: false,
+          mensagem: "Not logged"
+        };
+      }
+      let retServ = await _invoiceService.getMyBalance(networkId, session.token);
+      if (retServ.success) {
+        return {
+          ...ret,
+          dataResult: retServ.data,
+          sucesso: true
+        };
+      } else {
+        return {
+          ...ret,
+          sucesso: false,
+          mensagem: retServ.messageError
+        };
+      }
+    } catch {
+      throw new Error("Failed to fetch member balance");
+    }
+  },
+  getNetworkBalance: async (networkId: number) => {
+    try {
+      let ret: BusinessResult<MemberBalanceInfo>;
+      let session: AuthSession = AuthFactory.AuthBusiness.getSession();
+      if (!session) {
+        return {
+          ...ret,
+          sucesso: false,
+          mensagem: "Not logged"
+        };
+      }
+      let retServ = await _invoiceService.getNetworkBalance(networkId, session.token);
+      if (retServ.success) {
+        return {
+          ...ret,
+          dataResult: retServ.data,
+          sucesso: true
+        };
+      } else {
+        return {
+          ...ret,
+          sucesso: false,
+          mensagem: retServ.messageError
+        };
+      }
+    } catch {
+      throw new Error("Failed to fetch network balance");
     }
   }
 }

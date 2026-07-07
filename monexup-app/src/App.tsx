@@ -24,6 +24,7 @@ import NetworkListPage from './Pages/NetworkListPage';
 import ProductPage from './Pages/ProductPage';
 import ProductManagePage from './Pages/Admin/ProductManagePage';
 import ProductSearchPage from './Pages/Admin/ProductSearchPage';
+import StatementPage from './Pages/Admin/StatementPage';
 import ProductFormPage from './Pages/Admin/ProductFormPage';
 import CategoryManagePage from './Pages/Admin/CategoryManagePage';
 import FilterManagePage from './Pages/Admin/FilterManagePage';
@@ -243,6 +244,7 @@ function App() {
           </Route>
           <Route path="hierarchy" element={<HierarchyPage />} />
           <Route path="orders" element={<OrderSearchPage />} />
+          <Route path="statement" element={<StatementPage />} />
           <Route path="orders/:orderId" element={<OrderDetailPage />} />
           <Route path="orders/:orderId/invoices/:invoiceId" element={<InvoiceDetailPage />} />
           <Route path="products">

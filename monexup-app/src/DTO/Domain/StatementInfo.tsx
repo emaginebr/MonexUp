@@ -11,4 +11,6 @@ export default interface StatementInfo {
     amount: number;
     paidAt?: string;
     withdrawalDueDate?: string;
+    reversed: boolean;
+    status: string;
 }

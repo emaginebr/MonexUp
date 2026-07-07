@@ -1,5 +1,6 @@
 import StatementSearchParam from "../../DTO/Domain/StatementSearchParam";
 import StatementListPagedResult from "../../DTO/Services/StatementListPagedResult";
+import MemberBalanceInfo from "../../DTO/Domain/MemberBalanceInfo";
 import IHttpClient from "../../Infra/Interface/IHttpClient";
 import IInvoiceService from "../Interfaces/IInvoiceService";
 
@@ -18,6 +19,12 @@ const InvoiceService: IInvoiceService = {
     },
     getAvailableBalance: async (token: string) => {
         return await _httpClient.doGetAuth<number>("/Billing/getAvailableBalance", token);
+    },
+    getMyBalance: async (networkId: number, token: string) => {
+        return await _httpClient.doGetAuth<MemberBalanceInfo>("/Billing/my-balance/" + networkId, token);
+    },
+    getNetworkBalance: async (networkId: number, token: string) => {
+        return await _httpClient.doGetAuth<MemberBalanceInfo>("/Billing/network-balance/" + networkId, token);
     }
 }
 
