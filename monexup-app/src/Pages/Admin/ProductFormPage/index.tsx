@@ -111,11 +111,7 @@ export default function ProductFormPage() {
                 // variable as `Int!` while the server expects `Long!`. We
                 // bypass it with a raw GraphQL request that uses the right
                 // type and selects the donation fields too.
-                const lofnApiUrl =
-                    (typeof process !== "undefined" && (process as any).env?.REACT_APP_LOFN_API_URL)
-                    || (import.meta as any).env?.REACT_APP_LOFN_API_URL
-                    || (import.meta as any).env?.VITE_LOFN_API_URL
-                    || "";
+                const lofnApiUrl = process.env.REACT_APP_LOFN_API_URL || "";
                 if (!lofnApiUrl) throw new Error("LOFN_API_URL_MISSING");
                 const token = auth.sessionInfo?.token ?? "";
                 const r = await fetch(`${lofnApiUrl.replace(/\/$/, "")}/graphql/admin`, {
@@ -273,11 +269,7 @@ export default function ProductFormPage() {
             // `getStoreById` helper has a stale GraphQL query (declares
             // `storeId: Int!` while the server expects `Long!`), so we issue a
             // raw GraphQL request with the correct type instead.
-            const lofnApiUrl =
-                (typeof process !== "undefined" && (process as any).env?.REACT_APP_LOFN_API_URL)
-                || (import.meta as any).env?.REACT_APP_LOFN_API_URL
-                || (import.meta as any).env?.VITE_LOFN_API_URL
-                || "";
+            const lofnApiUrl = process.env.REACT_APP_LOFN_API_URL || "";
             if (!lofnApiUrl) {
                 console.error(
                     "[ProductForm] REACT_APP_LOFN_API_URL is not configured — cannot reach Lofn.",

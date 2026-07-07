@@ -44,11 +44,7 @@ export default function CategoryManagePage() {
     const categoryApi = useCategory();
 
     const lofnApiUrl = useMemo(
-        () =>
-            ((typeof process !== "undefined" && (process as any).env?.REACT_APP_LOFN_API_URL) ||
-                (import.meta as any).env?.REACT_APP_LOFN_API_URL ||
-                (import.meta as any).env?.VITE_LOFN_API_URL ||
-                "") as string,
+        () => process.env.REACT_APP_LOFN_API_URL || "",
         [],
     );
 
