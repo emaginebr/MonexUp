@@ -1,20 +1,9 @@
+# syntax=docker/dockerfile:1
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 80
-
-# Build libgdiplus with pango
-RUN apt-get update && apt-get install  -y --allow-unauthenticated \
-     libgif-dev autoconf libtool automake build-essential gettext libglib2.0-dev libcairo2-dev libtiff-dev libexif-dev
-RUN apt-get update && apt-get install -y libpango1.0-dev 
-
-RUN apt-get install -y --allow-unauthenticated git
-RUN git clone https://github.com/mono/libgdiplus.git /libgdiplus
-WORKDIR /libgdiplus
-RUN ./autogen.sh --with-pango --prefix=/usr
-RUN make  
-RUN make install
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
@@ -24,13 +13,14 @@ COPY ["MonexUp.Domain/MonexUp.Domain.csproj", "MonexUp.Domain/"]
 COPY ["MonexUp.Infra.Interfaces/MonexUp.Infra.Interfaces.csproj", "MonexUp.Infra.Interfaces/"]
 COPY ["MonexUp.DTO/MonexUp.DTO.csproj", "MonexUp.DTO/"]
 COPY ["MonexUp.Infra/MonexUp.Infra.csproj", "MonexUp.Infra/"]
-RUN dotnet restore "MonexUp.API/MonexUp.API.csproj"
+RUN --mount=type=cache,target=/root/.nuget/packages \
+    dotnet restore "MonexUp.API/MonexUp.API.csproj"
 COPY . .
 WORKDIR "/src/MonexUp.API"
-RUN dotnet build "MonexUp.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "MonexUp.API.csproj" -c Release -o /app/publish
+RUN --mount=type=cache,target=/root/.nuget/packages \
+    dotnet publish "MonexUp.API.csproj" -c Release -o /app/publish --no-restore
 
 FROM base AS final
 WORKDIR /app
