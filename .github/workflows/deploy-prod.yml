@@ -104,6 +104,7 @@ jobs:
           username: ${{ secrets.PROD_SSH_USER }}
           password: ${{ secrets.PROD_SSH_PASSWORD }}
           port: ${{ secrets.PROD_SSH_PORT || 22 }}
+          command_timeout: 30m
           script: |
             set -e
             DEPLOY_DIR="/opt/monexup"
