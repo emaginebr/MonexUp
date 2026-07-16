@@ -51,9 +51,9 @@ namespace MonexUp.Domain.Impl.Models
         {
             return _repositoryNetwork.ListByUser(userId, factory);
         }
-        public IEnumerable<IUserNetworkModel> ListByNetwork(long networkId, IUserNetworkDomainFactory factory)
+        public IEnumerable<IUserNetworkModel> ListByNetwork(long networkId, bool includeAllStatuses, IUserNetworkDomainFactory factory)
         {
-            return _repositoryNetwork.ListByNetwork(networkId, factory);
+            return _repositoryNetwork.ListByNetwork(networkId, includeAllStatuses, factory);
         }
 
         public IEnumerable<IUserNetworkModel> GetByReferrer(long networkId, long referrerId, IUserNetworkDomainFactory factory)

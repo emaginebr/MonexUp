@@ -184,7 +184,38 @@ export default function UserProvider(props: any) {
             let ret: Promise<ProviderResult>;
             setLoadingUpdate(true);
             try {
-                const nauthUser = await nauth.createUser(user as any);
+                // NAuth's `/User/insert` validates via non-nullable RT +
+                // required-array rules. Build the payload with the SAME shape
+                // as `UserInsertedInfo` in NAuth backend: slug auto-derived,
+                // empty strings for optional textual fields, empty arrays for
+                // collections, birthDate as null so the NullableDateTimeConverter
+                // accepts it. Drop client-only fields (userId, hash, status,
+                // createAt/updateAt) that would confuse the model binder.
+                const slug =
+                    user.slug ||
+                    (user.name || "")
+                        .toLowerCase()
+                        .normalize("NFD")
+                        .replace(/[̀-ͯ]/g, "")
+                        .replace(/[^a-z0-9]+/g, "-")
+                        .replace(/^-+|-+$/g, "")
+                        .slice(0, 60) ||
+                    `user-${Date.now()}`;
+                const payload: any = {
+                    slug,
+                    imageUrl: user.imageUrl || "",
+                    name: user.name || "",
+                    email: user.email || "",
+                    isAdmin: user.isAdmin === true,
+                    birthDate: user.birthDate ? user.birthDate : null,
+                    idDocument: user.idDocument || "",
+                    pixKey: user.pixKey || "",
+                    password: user.password || "",
+                    roles: Array.isArray(user.roles) ? user.roles : [],
+                    phones: Array.isArray(user.phones) ? user.phones : [],
+                    addresses: Array.isArray(user.addresses) ? user.addresses : [],
+                };
+                const nauthUser = await nauth.createUser(payload);
                 const localUser = mapNAuthUserToLocal(nauthUser);
                 setLoadingUpdate(false);
                 _setUser(localUser);

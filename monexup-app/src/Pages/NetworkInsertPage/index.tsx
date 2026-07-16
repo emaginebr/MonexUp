@@ -476,15 +476,31 @@ export default function NetworkInsertPage() {
                                                                 );
                                                                 return;
                                                             }
+                                                            const email = userContext.user?.email || "";
+                                                            const password = userContext.user?.password || "";
                                                             const ret = await userContext.insert(
                                                                 userContext.user,
                                                             );
-                                                            if (ret.sucesso) {
-                                                                showSuccessMessage(ret.mensagemSucesso);
-                                                                setStep(2);
-                                                            } else {
+                                                            if (!ret.sucesso) {
                                                                 throwError(ret.mensagemErro);
+                                                                return;
                                                             }
+                                                            // Auto-login so step 2 (network insert)
+                                                            // has a valid bearer token — the
+                                                            // network-create endpoint is Authorize.
+                                                            const retLogin = await authContext.loginWithEmail(
+                                                                email,
+                                                                password,
+                                                            );
+                                                            if (retLogin?.sucesso === false) {
+                                                                throwError(
+                                                                    retLogin.mensagemErro ||
+                                                                        t("storefront_action_error"),
+                                                                );
+                                                                return;
+                                                            }
+                                                            showSuccessMessage(ret.mensagemSucesso);
+                                                            setStep(2);
                                                         }}
                                                         className="cta-primary inline-flex items-center justify-center gap-2 h-12 px-6 rounded-md bg-orange-500 hover:bg-orange-600 text-white font-semibold shadow-glow-md transition-colors duration-fast disabled:opacity-60 disabled:cursor-not-allowed"
                                                     >

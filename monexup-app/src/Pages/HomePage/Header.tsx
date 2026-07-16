@@ -158,7 +158,7 @@ export default function Header() {
     closeUserMenu();
     const ret = authContext.logout();
     if (ret.sucesso) {
-      navigate(0);
+      navigate("/");
     }
   };
 

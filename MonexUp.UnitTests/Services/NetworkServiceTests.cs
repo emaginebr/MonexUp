@@ -350,5 +350,44 @@ namespace MonexUp.UnitTests.Services
             mockUserNetwork.VerifySet(m => m.ProfileId = 42);
             mockUserNetwork.VerifySet(m => m.ReferrerId = referrerId);
         }
+
+        [Fact]
+        public void ListByNetwork_Authenticated_ShouldRequestAllStatuses()
+        {
+            // Arrange
+            long networkId = 7;
+            var rows = new List<IUserNetworkModel> { new Mock<IUserNetworkModel>().Object };
+
+            var mockBuilder = new Mock<IUserNetworkModel>();
+            mockBuilder.Setup(m => m.ListByNetwork(networkId, true, It.IsAny<IUserNetworkDomainFactory>()))
+                .Returns(rows);
+            _userNetworkFactory.Setup(f => f.BuildUserNetworkModel()).Returns(mockBuilder.Object);
+
+            // Act
+            var result = _service.ListByNetwork(networkId, includeAllStatuses: true);
+
+            // Assert
+            Assert.Single(result);
+            mockBuilder.Verify(m => m.ListByNetwork(networkId, true, _userNetworkFactory.Object), Times.Once);
+        }
+
+        [Fact]
+        public void ListByNetwork_Anonymous_ShouldRequestActiveOnly()
+        {
+            // Arrange
+            long networkId = 7;
+
+            var mockBuilder = new Mock<IUserNetworkModel>();
+            mockBuilder.Setup(m => m.ListByNetwork(networkId, false, It.IsAny<IUserNetworkDomainFactory>()))
+                .Returns(new List<IUserNetworkModel>());
+            _userNetworkFactory.Setup(f => f.BuildUserNetworkModel()).Returns(mockBuilder.Object);
+
+            // Act
+            var result = _service.ListByNetwork(networkId, includeAllStatuses: false);
+
+            // Assert
+            Assert.Empty(result);
+            mockBuilder.Verify(m => m.ListByNetwork(networkId, false, _userNetworkFactory.Object), Times.Once);
+        }
     }
 }

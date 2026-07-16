@@ -12,7 +12,7 @@ export default interface INetworkService {
     update: (network: NetworkInfo, token: string) => Promise<ApiResponse<NetworkInfo>>;
     listAll: () => Promise<ApiResponse<NetworkInfo[]>>;
     listByUser: (token: string) => Promise<ApiResponse<UserNetworkInfo[]>>;
-    listByNetwork: (networkSlug: string) => Promise<ApiResponse<UserNetworkInfo[]>>;
+    listByNetwork: (networkSlug: string, token?: string) => Promise<ApiResponse<UserNetworkInfo[]>>;
     getById: (networkId: number, token: string) => Promise<ApiResponse<NetworkInfo>>;
     getBySlug: (networkSlug: string) => Promise<ApiResponse<NetworkInfo>>;
     getUserNetwork: (networkId: number, token: string) => Promise<ApiResponse<UserNetworkInfo>>;

@@ -70,11 +70,11 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
-      port: 3000,
+      port: Number(process.env.PORT) || 3000,
       open: false,
     },
     preview: {
-      port: 3000,
+      port: Number(process.env.PORT) || 3000,
     },
     resolve: {
       alias: {

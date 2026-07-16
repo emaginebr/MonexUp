@@ -74,13 +74,20 @@ namespace DB.Infra.Repository
             return rows.Select(x => DbToModel(factory, x));
         }
 
-        public IEnumerable<IUserNetworkModel> ListByNetwork(long networkId, IUserNetworkDomainFactory factory)
+        public IEnumerable<IUserNetworkModel> ListByNetwork(long networkId, bool includeAllStatuses, IUserNetworkDomainFactory factory)
         {
             // No role filter — /admin/teams needs every UserNetwork row so its
-            // profile chip can render for Users too. Status filter kept to hide
-            // Inactive/Blocked members.
-            var rows = _ccsContext.UserNetworks
-                .Where(x => x.NetworkId == networkId && x.Status == 1).ToList();
+            // profile chip can render for Users too.
+            // includeAllStatuses (authenticated caller) returns every status,
+            // including WaitForApproval (2), so pending members show up; anonymous
+            // callers keep seeing only Active (1) members.
+            var q = _ccsContext.UserNetworks
+                .Where(x => x.NetworkId == networkId);
+            if (!includeAllStatuses)
+            {
+                q = q.Where(x => x.Status == 1);
+            }
+            var rows = q.ToList();
             return rows.Select(x => DbToModel(factory, x));
         }
 

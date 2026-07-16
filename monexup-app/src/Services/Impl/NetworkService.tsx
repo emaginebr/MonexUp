@@ -26,7 +26,14 @@ const NetworkService: INetworkService = {
     listByUser: async (token: string) => {
         return await _httpClient.doGetAuth<UserNetworkInfo[]>("/Network/listByUser", token);
     },
-    listByNetwork: async (networkSlug: string) => {
+    listByNetwork: async (networkSlug: string, token?: string) => {
+        // Sends Authorization when a session exists so the backend can
+        // resolve NAuth user profile (name/email) via `GetByIdAsync(token)`.
+        // Endpoint itself is public — anon callers still get the shell,
+        // just without user details.
+        if (token) {
+            return await _httpClient.doGetAuth<UserNetworkInfo[]>("/Network/listByNetwork/" + networkSlug, token);
+        }
         return await _httpClient.doGet<UserNetworkInfo[]>("/Network/listByNetwork/" + networkSlug, {});
     },
     getById: async (networkId: number, token: string) => {

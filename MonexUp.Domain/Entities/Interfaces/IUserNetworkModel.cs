@@ -26,7 +26,7 @@ namespace MonexUp.Domain.Interfaces.Models
         IUserProfileModel GetProfile(IUserProfileDomainFactory factory);
 
         IEnumerable<IUserNetworkModel> ListByUser(long userId, IUserNetworkDomainFactory factory);
-        IEnumerable<IUserNetworkModel> ListByNetwork(long networkId, IUserNetworkDomainFactory factory);
+        IEnumerable<IUserNetworkModel> ListByNetwork(long networkId, bool includeAllStatuses, IUserNetworkDomainFactory factory);
         IEnumerable<IUserNetworkModel> GetByReferrer(long networkId, long referrerId, IUserNetworkDomainFactory factory);
         IEnumerable<IUserNetworkModel> Search(long networkId, string keyword, long? profileId, int pageNum, out int pageCount, IUserNetworkDomainFactory factory);
         IUserNetworkModel Get(long networkId, long userId, IUserNetworkDomainFactory factory);

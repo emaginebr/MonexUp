@@ -161,8 +161,13 @@ namespace MonexUp.API.Controllers
             var network = _networkService.GetBySlug(networkSlug);
             if (network == null) throw new Exception("Network not found");
 
+            // Authenticated callers (manager/admin screens) see every status,
+            // including WaitForApproval, so pending members are visible. Anonymous
+            // (public storefront) callers keep seeing only Active members.
+            var includeAllStatuses = !string.IsNullOrWhiteSpace(token);
+
             var userNetworks = _networkService
-                .ListByNetwork(network.NetworkId)
+                .ListByNetwork(network.NetworkId, includeAllStatuses)
                 .ToList();
             var userNetworkInfos = new List<UserNetworkInfo>();
             foreach (var x in userNetworks)

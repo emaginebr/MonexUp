@@ -168,7 +168,7 @@ export default function SellerAddPage() {
                         return;
                     }
                     showSuccessMessage(t("sellerAddPage.inviteJoined"));
-                    navigate(networkSlug ? "/" + networkSlug : "/admin/dashboard");
+                    navigate("/admin/dashboard");
                     return;
                 }
                 // Regular signup: log in with the fresh credentials and hand

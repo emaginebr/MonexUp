@@ -4,6 +4,7 @@ using Flurl.Http;
 using MonexUp.ApiTests.Fixtures;
 using MonexUp.ApiTests.Helpers;
 using MonexUp.DTO.Network;
+using MonexUp.DTO.User;
 
 namespace MonexUp.ApiTests.Controllers
 {
@@ -157,6 +158,40 @@ namespace MonexUp.ApiTests.Controllers
                 .GetAsync();
 
             response.StatusCode.Should().NotBe(401, "endpoint is anonymous");
+        }
+
+        [Fact]
+        public async Task ListByNetwork_Authenticated_ShouldReturnOkWithCreatorMember()
+        {
+            // The creator becomes an Active NetworkManager member on insert.
+            var network = await CreateNetworkAsync();
+
+            var response = await _fixture.CreateAuthenticatedRequest($"/network/listByNetwork/{network.Slug}")
+                .AllowAnyHttpStatus()
+                .GetAsync();
+
+            response.StatusCode.Should().Be(200);
+            var members = await response.GetJsonAsync<List<UserNetworkInfo>>();
+            members.Should().NotBeNull();
+            members.Should().Contain(m => m.NetworkId == network.NetworkId,
+                "the authenticated caller must see the membership of the network they just created");
+        }
+
+        [Fact]
+        public async Task ListByNetwork_Anonymous_ShouldReturnOnlyActiveMembers()
+        {
+            var network = await CreateNetworkAsync();
+
+            var response = await _fixture.CreateAnonymousRequest($"/network/listByNetwork/{network.Slug}")
+                .AllowAnyHttpStatus()
+                .GetAsync();
+
+            response.StatusCode.Should().Be(200);
+            var members = await response.GetJsonAsync<List<UserNetworkInfo>>();
+            members.Should().NotBeNull();
+            // Anonymous callers must never see WaitForApproval/Inactive/Blocked members.
+            members.Should().OnlyContain(m => m.Status == UserNetworkStatusEnum.Active,
+                "anonymous (public storefront) callers only see Active members");
         }
 
         [Fact]

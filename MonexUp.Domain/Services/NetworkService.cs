@@ -110,27 +110,29 @@ namespace MonexUp.Domain.Impl.Services
 
             var md = model.Insert(_networkFactory);
 
+            // Create the network's default profiles first so the manager
+            // membership can reference the "Gerente" profile it belongs to.
+            var managerProfile = _userProfileFactory.BuildUserProfileModel();
+            managerProfile.NetworkId = md.NetworkId;
+            managerProfile.Name = "Gerente";
+            managerProfile.Commission = 0;
+            managerProfile.Level = 1;
+            managerProfile = managerProfile.Insert(_userProfileFactory);
+
+            var sellerProfile = _userProfileFactory.BuildUserProfileModel();
+            sellerProfile.NetworkId = md.NetworkId;
+            sellerProfile.Name = "Vendedor";
+            sellerProfile.Commission = 0;
+            sellerProfile.Level = 2;
+            sellerProfile.Insert(_userProfileFactory);
+
             var modelUser = _userNetworkFactory.BuildUserNetworkModel();
             modelUser.NetworkId = md.NetworkId;
             modelUser.UserId = userId;
-            modelUser.ProfileId = null;
+            modelUser.ProfileId = managerProfile.ProfileId;
             modelUser.Role = DTO.User.UserRoleEnum.NetworkManager;
             modelUser.Status = DTO.User.UserNetworkStatusEnum.Active;
             modelUser.Insert(_userNetworkFactory);
-
-            var modelProfile = _userProfileFactory.BuildUserProfileModel();
-            modelProfile.NetworkId = md.NetworkId;
-            modelProfile.Name = "Gerente";
-            modelProfile.Commission = 0;
-            modelProfile.Level = 1;
-            modelProfile.Insert(_userProfileFactory);
-
-            modelProfile = _userProfileFactory.BuildUserProfileModel();
-            modelProfile.NetworkId = md.NetworkId;
-            modelProfile.Name = "Vendedor";
-            modelProfile.Commission = 0;
-            modelProfile.Level = 2;
-            modelProfile.Insert(_userProfileFactory);
 
             return md;
         }
@@ -187,6 +189,12 @@ namespace MonexUp.Domain.Impl.Services
                 }
             }
 
+            // Preserve store IDs that aren't in the user-editable form. The
+            // repository does a full-row ModelToDb copy, so leaving them
+            // unset would wipe ProxyPayStore/LofnStore state from the DB.
+            var existing = _networkFactory.BuildNetworkModel()
+                .GetById(network.NetworkId, _networkFactory);
+
             model.NetworkId = network.NetworkId;
             model.Name = network.Name;
             model.Slug = network.Slug;
@@ -198,6 +206,9 @@ namespace MonexUp.Domain.Impl.Services
             model.WithdrawalMin = network.WithdrawalMin;
             model.WithdrawalPeriod = network.WithdrawalPeriod;
             model.Status = network.Status;
+            model.LofnStoreId = existing?.LofnStoreId;
+            model.ProxyPayStoreId = existing?.ProxyPayStoreId;
+            model.ProxyPayClientId = existing?.ProxyPayClientId;
             model.Slug = GenerateSlug(model);
 
             var md = model.Update(_networkFactory);
@@ -213,9 +224,9 @@ namespace MonexUp.Domain.Impl.Services
             return _userNetworkFactory.BuildUserNetworkModel().ListByUser(userId, _userNetworkFactory).ToList();
         }
 
-        public IList<IUserNetworkModel> ListByNetwork(long networkId)
+        public IList<IUserNetworkModel> ListByNetwork(long networkId, bool includeAllStatuses)
         {
-            return _userNetworkFactory.BuildUserNetworkModel().ListByNetwork(networkId, _userNetworkFactory).ToList();
+            return _userNetworkFactory.BuildUserNetworkModel().ListByNetwork(networkId, includeAllStatuses, _userNetworkFactory).ToList();
         }
 
         public INetworkModel GetById(long networkId)

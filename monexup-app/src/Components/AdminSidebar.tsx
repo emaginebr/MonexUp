@@ -348,7 +348,7 @@ export default function AdminSidebar() {
           </div>
         )}
 
-        {/* My Network — Painel + manager-only items */}
+        {/* My Network — Painel + manager preferences */}
         <SidebarGroup label={t("my_network")} collapsed={collapsed}>
           <SidebarItem
             icon={LayoutDashboard}
@@ -358,38 +358,42 @@ export default function AdminSidebar() {
             onClick={() => navigate("/admin/dashboard")}
           />
           {role >= UserRoleEnum.NetworkManager && (
-            <>
-              <SidebarItem
-                icon={Settings}
-                label={t("preferences")}
-                active={isActive("/admin/network")}
-                collapsed={collapsed}
-                onClick={() => navigate("/admin/network")}
-              />
-              <SidebarItem
-                icon={NetworkIcon}
-                label={t("team_structure")}
-                active={isActive("/admin/team-structure")}
-                collapsed={collapsed}
-                onClick={() => navigate("/admin/team-structure")}
-              />
-              <SidebarItem
-                icon={Users}
-                label={t("teams")}
-                active={isActive("/admin/teams")}
-                collapsed={collapsed}
-                onClick={() => navigate("/admin/teams")}
-              />
-              <SidebarItem
-                icon={Share2}
-                label={t("hierarchy")}
-                active={isActive("/admin/hierarchy")}
-                collapsed={collapsed}
-                onClick={() => navigate("/admin/hierarchy")}
-              />
-            </>
+            <SidebarItem
+              icon={Settings}
+              label={t("preferences")}
+              active={isActive("/admin/network")}
+              collapsed={collapsed}
+              onClick={() => navigate("/admin/network")}
+            />
           )}
         </SidebarGroup>
+
+        {/* Equipe cluster — team-structure / teams / hierarchy */}
+        {role >= UserRoleEnum.NetworkManager && (
+          <SidebarGroup label={t("admin_sidebar_team", "Equipe")} collapsed={collapsed}>
+            <SidebarItem
+              icon={NetworkIcon}
+              label={t("team_structure")}
+              active={isActive("/admin/team-structure")}
+              collapsed={collapsed}
+              onClick={() => navigate("/admin/team-structure")}
+            />
+            <SidebarItem
+              icon={Users}
+              label={t("teams")}
+              active={isActive("/admin/teams")}
+              collapsed={collapsed}
+              onClick={() => navigate("/admin/teams")}
+            />
+            <SidebarItem
+              icon={Share2}
+              label={t("hierarchy")}
+              active={isActive("/admin/hierarchy")}
+              collapsed={collapsed}
+              onClick={() => navigate("/admin/hierarchy")}
+            />
+          </SidebarGroup>
+        )}
 
         {/* NetworkManager+ — catalog cluster */}
         {role >= UserRoleEnum.NetworkManager && (
@@ -415,18 +419,18 @@ export default function AdminSidebar() {
         {role >= UserRoleEnum.Seller && (
           <SidebarGroup label={t("finances")} collapsed={collapsed}>
             <SidebarItem
-              icon={ListOrdered}
-              label={t("orders")}
-              active={isActive("/admin/orders")}
-              collapsed={collapsed}
-              onClick={() => navigate("/admin/orders")}
-            />
-            <SidebarItem
               icon={ReceiptText}
               label={t("admin_statement_title", "Extrato")}
               active={isActive("/admin/statement")}
               collapsed={collapsed}
               onClick={() => navigate("/admin/statement")}
+            />
+            <SidebarItem
+              icon={ListOrdered}
+              label={t("orders")}
+              active={isActive("/admin/orders")}
+              collapsed={collapsed}
+              onClick={() => navigate("/admin/orders")}
             />
             {role >= UserRoleEnum.NetworkManager && (
               <SidebarItem

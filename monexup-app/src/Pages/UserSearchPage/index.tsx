@@ -17,6 +17,7 @@ import { UserRoleEnum } from "../../DTO/Enum/UserRoleEnum";
 import UserNetworkSearchInfo from "../../DTO/Domain/UserNetworkSearchInfo";
 import NetworkContext from "../../Contexts/Network/NetworkContext";
 import UserContext from "../../Contexts/User/UserContext";
+import AuthContext from "../../Contexts/Auth/AuthContext";
 import FormField from "../NetworkEditPage/FormField";
 
 import InviteModal from "../Admin/InviteModal";
@@ -51,6 +52,7 @@ export default function UserSearchPage() {
 
   const userContext = useContext(UserContext);
   const networkContext = useContext(NetworkContext);
+  const authContext = useContext(AuthContext);
 
   const { pageNum } = useParams();
 
@@ -103,46 +105,26 @@ export default function UserSearchPage() {
     }
   };
 
-  const searchUsers = (page: number, term?: string) => {
-    if (!networkContext.userNetwork) return;
-    userContext
-      .search(
-        networkContext.userNetwork.networkId,
-        term ?? keyword,
-        page,
-        null
-      )
-      .then((ret) => {
-        if (!ret.sucesso) {
-          throwError(ret.mensagemErro);
-        }
-      });
+  // The team list on this page uses ONLY the MonexUp `/Network/listByNetwork`
+  // endpoint (authenticated). NAuth's `/User/search` was dropped because it
+  // is admin-only and returns 401 for regular Network Managers.
+  const searchUsers = (_page: number, _term?: string) => {
+    // No-op — kept as a stable reference for `refreshCurrentPage` callers.
+    // Refresh happens via `networkContext.listByNetwork` below.
   };
 
-  useEffect(() => {
-    if (networkContext.userNetwork) {
-      let pageNumInt: number = parseInt(pageNum ?? "");
-      if (!pageNumInt) {
-        pageNumInt = 1;
-      }
-      searchUsers(pageNumInt, "");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // NAuth's searchUsers doesn't carry MonexUp profile data. Pull the full
-  // network team list once (already used elsewhere via networkContext) so we
-  // can join `profile` per userId when rendering the row.
   useEffect(() => {
     const slug =
       networkContext.network?.slug ||
       (networkContext.userNetwork as any)?.network?.slug;
     if (!slug) return;
+    if (!authContext.sessionInfo?.token) return;
     networkContext.listByNetwork(slug);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     networkContext.network?.slug,
     (networkContext.userNetwork as any)?.network?.slug,
+    authContext.sessionInfo?.token,
   ]);
 
   const profileByUserId = useMemo(() => {
@@ -160,10 +142,8 @@ export default function UserSearchPage() {
 
   // -- Per-row action handlers (preserve legacy behavior verbatim) --------
   const refreshCurrentPage = () => {
-    const current = userContext.searchResult?.pageNum ?? 1;
-    searchUsers(current);
-    // Also re-pull team list so profile chip reflects the new profile after
-    // promote/demote (which change UserNetwork.ProfileId server-side).
+    // Re-pull team list so profile chip / status reflects the new state
+    // after promote/demote/changeStatus (which mutate UserNetwork server-side).
     const slug =
       networkContext.network?.slug ||
       (networkContext.userNetwork as any)?.network?.slug;
@@ -268,18 +248,60 @@ export default function UserSearchPage() {
   };
 
   // -- Derived state -------------------------------------------------------
-  const result = userContext.searchResult;
-  const users: UserNetworkSearchInfo[] = result?.users ?? [];
-  const isLoading = userContext.loadingSearch;
+  // Build the row list from `networkContext.teams` — the only data source now.
+  // the user list from `networkContext.teams` — the full network UserNetwork
+  // list, already loaded above. Apply keyword filter client-side.
+  const usersFromTeams: UserNetworkSearchInfo[] = useMemo(() => {
+    const teams = (networkContext as any).teams as any[] | undefined;
+    if (!Array.isArray(teams)) return [];
+    const term = (keyword || "").trim().toLowerCase();
+    return teams
+      .filter((t) => {
+        if (!term) return true;
+        const hay = `${t?.user?.name || ""} ${t?.user?.email || ""}`.toLowerCase();
+        return hay.includes(term);
+      })
+      .map((t) => {
+        const uid = t?.userId ?? t?.user?.userId ?? 0;
+        // If the backend couldn't hydrate NAuth user (missing bearer), fill
+        // name/email from the current session when the row is the caller.
+        const selfMatch = uid === authContext.sessionInfo?.userId;
+        return {
+          userId: uid,
+          networkId: t?.networkId ?? 0,
+          profileId: t?.profileId ?? 0,
+          name:
+            t?.user?.name ||
+            (selfMatch ? authContext.sessionInfo?.name : "") ||
+            "",
+          email:
+            t?.user?.email ||
+            (selfMatch ? authContext.sessionInfo?.email : "") ||
+            "",
+          slug: t?.user?.slug ?? "",
+          profile: t?.profile?.name ?? "",
+          level: t?.profile?.level ?? 0,
+          commission: t?.profile?.commission ?? 0,
+          role: t?.role,
+          status: t?.status,
+        };
+      }) as UserNetworkSearchInfo[];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [(networkContext as any).teams, keyword]);
+
+  const users: UserNetworkSearchInfo[] = usersFromTeams;
+  const isLoading =
+    Boolean((networkContext as any).loadingTeam) &&
+    usersFromTeams.length === 0;
   const isEmpty = !isLoading && users.length === 0;
 
-  const currentPage =
-    result?.pageNum ?? result?.page ?? 1;
-  const totalPages =
-    result?.pageCount ?? result?.totalPages ?? 1;
-  const showPagination = !isLoading && !!result && totalPages > 1;
-  const canPrev = currentPage > 1;
-  const canNext = currentPage < totalPages;
+  // Team endpoint returns the full list — no server-side pagination. Hide the
+  // pager unless we later add client-side paging.
+  const currentPage = 1;
+  const totalPages = 1;
+  const showPagination = false;
+  const canPrev = false;
+  const canNext = false;
 
   const baseRowLabels = {
     roleLabel: t("userSearchPage.tableHeaders.role"),

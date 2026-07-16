@@ -22,10 +22,10 @@ export default function NetworkAwareProxyPayProvider({ children }: Props) {
     networkCtx?.network?.proxypayClientId ||
     '';
 
-  if (!clientId) {
-    return <>{children}</>;
-  }
-
+  // ALWAYS wrap in <ProxyPayProvider>. Toggling the wrapper based on
+  // `clientId` was unmounting/remounting every descendant whenever a network
+  // load / setNetwork updated the clientId. NetworkInsertPage lost its local
+  // `step` state on step-2 → step-4 transitions because of this.
   const config = { baseUrl, clientId, tenantId };
   return <ProxyPayProvider config={config}>{children}</ProxyPayProvider>;
 }

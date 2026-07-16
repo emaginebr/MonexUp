@@ -7,9 +7,13 @@ meta {
 get {
   url: {{baseUrl}}/network/listByNetwork/:networkSlug
   body: none
-  auth: none
+  auth: bearer
 }
 
 params:path {
   networkSlug: teste1
+}
+
+auth:bearer {
+  token: {{token}}
 }

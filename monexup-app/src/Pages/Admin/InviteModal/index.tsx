@@ -93,9 +93,9 @@ export default function InviteModal(param: IInviteModalParam) {
         <>
             <Modal show={param.show} onHide={param.onClose} centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>
-                        <Mail size={18} className="me-2" aria-hidden="true" />
-                        {t("inviteModal.title")}
+                    <Modal.Title className="d-flex align-items-center gap-2">
+                        <Mail size={18} aria-hidden="true" />
+                        <span>{t("inviteModal.title")}</span>
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>

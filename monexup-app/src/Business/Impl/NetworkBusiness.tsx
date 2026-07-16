@@ -138,7 +138,8 @@ const NetworkBusiness: INetworkBusiness = {
   listByNetwork: async (networkSlug: string) => {
     try {
         let ret: BusinessResult<UserNetworkInfo[]>;
-        let retServ = await _networkService.listByNetwork(networkSlug);
+        const session = AuthFactory.AuthBusiness.getSession();
+        let retServ = await _networkService.listByNetwork(networkSlug, session?.token);
         if (retServ.success) {
           return {
             ...ret,

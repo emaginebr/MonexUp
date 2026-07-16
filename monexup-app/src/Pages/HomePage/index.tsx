@@ -7,6 +7,7 @@ import NetworkPart from "./NetworkPart";
 import UserPart from "./UserPart";
 import UserContext from "../../Contexts/User/UserContext";
 import NetworkContext from "../../Contexts/Network/NetworkContext";
+import AuthContext from "../../Contexts/Auth/AuthContext";
 import MessageToast from "../../Components/MessageToast";
 import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 
@@ -27,6 +28,7 @@ import { MessageToastEnum } from "../../DTO/Enum/MessageToastEnum";
 export default function HomePage() {
   const userContext = useContext(UserContext);
   const networkContext = useContext(NetworkContext);
+  const authContext = useContext(AuthContext);
 
   const [showMessage, setShowMessage] = useState<boolean>(false);
   const [messageText, setMessageText] = useState<string>("");
@@ -37,11 +39,16 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    userContext.list(3).then((ret) => {
-      if (!ret.sucesso) {
-        throwError(ret.mensagemErro);
-      }
-    });
+    // Home is public — `userContext.list` calls NAuth's authenticated
+    // searchUsers endpoint. Guard so anonymous visitors don't see a 401
+    // toast on landing; the "top partners" widget just renders empty.
+    if (authContext.sessionInfo) {
+      userContext.list(3).then((ret) => {
+        if (!ret.sucesso) {
+          throwError(ret.mensagemErro);
+        }
+      });
+    }
     networkContext.listAll().then((ret) => {
       if (!ret.sucesso) {
         throwError(ret.mensagemErro);
