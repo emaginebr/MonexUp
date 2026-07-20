@@ -10,6 +10,13 @@ services:
     restart: unless-stopped
     expose:
       - "80"
+    # Liveness (/): reinicia só se o processo travar de fato — não depende do banco.
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:80

@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Npgsql;
 using System;
 using NAuth.ACL;
 using NAuth.ACL.Interfaces;
@@ -33,6 +34,40 @@ namespace MonexUp.Application
     public static class Initializer
     {
 
+        // Configura o Npgsql com resiliência a quedas do banco:
+        // - EnableRetryOnFailure: reexecuta operações em falhas transitórias (banco reiniciando/rede)
+        // - CommandTimeout: comando não fica pendurado indefinidamente
+        // - Connect Timeout curto + KeepAlive + poda de conexões ociosas: falha rápido e descarta
+        //   sockets mortos, evitando travar o pool/threads e permitindo recuperação sem reiniciar.
+        private static void ConfigureNpgsql(DbContextOptionsBuilder builder, string connectionString)
+        {
+            builder.UseLazyLoadingProxies()
+                   .UseNpgsql(BuildResilientConnectionString(connectionString), npgsql =>
+                   {
+                       npgsql.EnableRetryOnFailure(
+                           maxRetryCount: 5,
+                           maxRetryDelay: TimeSpan.FromSeconds(10),
+                           errorCodesToAdd: null);
+                       npgsql.CommandTimeout(30);
+                   });
+        }
+
+        private static string BuildResilientConnectionString(string connectionString)
+        {
+            if (string.IsNullOrWhiteSpace(connectionString))
+                return connectionString;
+
+            var builder = new NpgsqlConnectionStringBuilder(connectionString)
+            {
+                Timeout = 10,                    // falha rápido ao abrir conexão quando o banco está fora
+                KeepAlive = 30,                  // detecta conexões TCP mortas
+                ConnectionIdleLifetime = 60,     // fecha conexões ociosas
+                ConnectionPruningInterval = 10,  // remove conexões mortas do pool periodicamente
+            };
+
+            return builder.ConnectionString;
+        }
+
         private static void injectDependency(Type serviceType, Type implementationType, IServiceCollection services, bool scoped = true)
         {
             if(scoped)
@@ -43,9 +78,9 @@ namespace MonexUp.Application
         public static void Configure(IServiceCollection services, ConfigurationParam config, IConfiguration configuration, bool scoped = true)
         {
             if (scoped)
-                services.AddDbContext<MonexUpContext>(x => x.UseLazyLoadingProxies().UseNpgsql(config.ConnectionString));
+                services.AddDbContext<MonexUpContext>(x => ConfigureNpgsql(x, config.ConnectionString));
             else
-                services.AddDbContextFactory<MonexUpContext>(x => x.UseLazyLoadingProxies().UseNpgsql(config.ConnectionString));
+                services.AddDbContextFactory<MonexUpContext>(x => ConfigureNpgsql(x, config.ConnectionString));
 
             #region Infra
             injectDependency(typeof(MonexUpContext), typeof(MonexUpContext), services, scoped);

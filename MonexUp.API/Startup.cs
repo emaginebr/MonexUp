@@ -38,7 +38,8 @@ namespace MonexUp.API
             };
             Initializer.Configure(services, config, Configuration);
             services.AddControllers();
-            services.AddHealthChecks();
+            services.AddHealthChecks()
+                .AddCheck<HealthChecks.DbHealthCheck>("database", tags: new[] { "ready" });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { 
@@ -71,9 +72,31 @@ namespace MonexUp.API
             }
 
 
+            // Liveness: só indica que o processo está vivo. NÃO depende do banco,
+            // para que uma queda de DB não dispare reinício do container.
             app.UseHealthChecks("/",
                 new HealthCheckOptions()
                 {
+                    Predicate = _ => false,
+                    ResponseWriter = async (context, report) =>
+                    {
+                        var result = JsonSerializer.Serialize(
+                            new
+                            {
+                                currentTime = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"),
+                                statusApplication = report.Status.ToString(),
+                            });
+
+                        context.Response.ContentType = MediaTypeNames.Application.Json;
+                        await context.Response.WriteAsync(result);
+                    }
+                });
+
+            // Readiness: reflete o estado do banco (para proxy/LB decidir rotear tráfego).
+            app.UseHealthChecks("/health/ready",
+                new HealthCheckOptions()
+                {
+                    Predicate = check => check.Tags.Contains("ready"),
                     ResponseWriter = async (context, report) =>
                     {
                         var result = JsonSerializer.Serialize(
